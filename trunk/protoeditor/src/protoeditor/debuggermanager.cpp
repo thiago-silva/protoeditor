@@ -183,6 +183,9 @@ void DebuggerManager::connectDebugger()
 
   connect(m_debugger, SIGNAL(sigStepDone()),
           this, SLOT(slotStepDone()));
+
+  connect(m_debugger, SIGNAL(sigBreakpointReached()),
+          this, SLOT(slotBreakpointReached()));
 }
 
 
@@ -601,6 +604,11 @@ void DebuggerManager::slotDebugEnded()
 void DebuggerManager::slotStepDone()
 {
   m_window->setDebugStatusMsg("Step done");
+}
+
+void DebuggerManager::slotBreakpointReached()
+{
+  m_window->setDebugStatusMsg("Breakpoint reached");
 }
 
 void DebuggerManager::slotInternalError(const QString& message)

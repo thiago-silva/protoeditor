@@ -63,6 +63,7 @@ private slots:
   void slotDebugStart();
   void slotDebugStop();
   void slotStepDone();
+  void slotBreakpointReached();
   void slotDebugStepInto();
   void slotDebugStepOver();
   void slotDebugStepOut();
