@@ -27,8 +27,7 @@ class QListBox;
 class QListBoxItem;
 class SiteSettings;
 
-class SiteSettingsWidget : public QWidget
-{
+class SiteSettingsWidget : public QWidget {
   Q_OBJECT
 public:
   SiteSettingsWidget(QWidget *parent = 0, const char *name = 0);
@@ -40,6 +39,7 @@ public:
 
   QListBox      *m_sitesListBox;
 
+  void populate();
   void updateSettings();
 private slots:
   void slotAdd();
@@ -49,15 +49,28 @@ private slots:
   void slotListDoubleClicked(QListBoxItem*);
 
 private:
-  void loadValues();
-
   void addSite(const QString& name, const QString& host, int port,
                const QString& remoteBaseDir, const QString& localBaseDir);
 
   void modifySite(const QString& name, const QString& host, int port,
-               const QString& remoteBaseDir, const QString& localBaseDir);
+                  const QString& remoteBaseDir, const QString& localBaseDir);
 
-  QMap<QString, SiteSettings*> m_siteMap;
+  class Site {
+  public:
+    Site() : port(0) {};
+    Site(const QString& n, const QString& h, int p,
+         const QString& r, const QString& l)
+        : name(n), host(h), port(p), remoteBaseDir(r), localBaseDir(l) {}
+    ~Site() {}
+
+    QString name;
+    QString host;
+    int     port;
+    QString remoteBaseDir;
+    QString localBaseDir;
+  };
+
+  QMap<QString, Site> m_siteMap;
 };
 
 #endif

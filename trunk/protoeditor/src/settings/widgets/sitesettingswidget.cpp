@@ -76,20 +76,21 @@ SiteSettingsWidget::SiteSettingsWidget(QWidget *parent, const char *name)
 
   connect(m_sitesListBox, SIGNAL(doubleClicked(QListBoxItem*)),
     this, SLOT(slotListDoubleClicked(QListBoxItem*)));
-
-  loadValues();
 }
 
 SiteSettingsWidget::~SiteSettingsWidget()
 {}
 
-void SiteSettingsWidget::loadValues()
+void SiteSettingsWidget::populate()
 {
+  m_sitesListBox->clear();
+  m_siteMap.clear();
+
   QValueList<SiteSettings*> list = ProtoeditorSettings::self()->siteSettingsList();
   QValueList<SiteSettings*>::iterator it;
   for(it = list.begin(); it != list.end(); ++it) {
-    m_siteMap[(*it)->name()] = (*it);
-    m_sitesListBox->insertItem((*it)->name());
+    addSite((*it)->name(), (*it)->host(),
+      (*it)->port(), (*it)->remoteBaseDir(), (*it)->localBaseDir());
   }
 }
 
@@ -116,9 +117,9 @@ void SiteSettingsWidget::slotModify()
 
   SiteSettingsDialog* dialog = new SiteSettingsDialog(this);
 
-  SiteSettings* s = m_siteMap[m_sitesListBox->text(m_sitesListBox->currentItem())];
+  Site s = m_siteMap[m_sitesListBox->text(m_sitesListBox->currentItem())];
 
-  dialog->populate(s->name(), s->host(), s->port(), s->remoteBaseDir(), s->localBaseDir());
+  dialog->populate(s.name, s.host, s.port, s.remoteBaseDir, s.localBaseDir);
   dialog->setUpdate();
   if(dialog->exec() == QDialog::Accepted) {
     modifySite(dialog->name(), dialog->host(), dialog->port(),
@@ -155,12 +156,12 @@ void SiteSettingsWidget::slotListDoubleClicked(QListBoxItem*)
 void SiteSettingsWidget::modifySite(const QString& name, const QString& host, int port,
                                  const QString& remoteBaseDir, const QString& localBaseDir)
 {
-  SiteSettings* s = m_siteMap[name];
-  s->setName(name);
-  s->setHost(host);
-  s->setPort(port);
-  s->setRemoteBaseDir(remoteBaseDir);
-  s->setLocalBaseDir(localBaseDir);
+  Site s = m_siteMap[name];
+  s.name = name;
+  s.host = host;
+  s.port = port;
+  s.remoteBaseDir = remoteBaseDir;
+  s.localBaseDir  = localBaseDir;
   //s->setMatchCase
   //s->setDebuggger
 }
@@ -168,10 +169,11 @@ void SiteSettingsWidget::modifySite(const QString& name, const QString& host, in
 void SiteSettingsWidget::addSite(const QString& name, const QString& host, int port,
                                  const QString& remoteBaseDir, const QString& localBaseDir)
 {
-  SiteSettings* s = new SiteSettings(QString::number(m_sitesListBox->count()));
-  s->load(name, host, port, remoteBaseDir, localBaseDir,
-    /* TODO: */
-    false, "DBG");
+  Site s(name, host, port, remoteBaseDir, localBaseDir);
+
+//s->load(name, host, port, remoteBaseDir, localBaseDir,
+//     /* TODO: */
+//     false, "DBG");
 
   m_siteMap[name] = s;
   m_sitesListBox->insertItem(name);
@@ -181,9 +183,12 @@ void SiteSettingsWidget::updateSettings()
 {
   ProtoeditorSettings::self()->clearSites();
 
-  QMap<QString, SiteSettings*>::Iterator it;
-  for(it = m_siteMap.begin(); it != m_siteMap.end(); ++it ) {
-    ProtoeditorSettings::self()->addSite(it.data());
+  QMap<QString, Site>::Iterator it;
+  int count = 0;
+  for(it = m_siteMap.begin(); it != m_siteMap.end(); ++it, ++count ) {
+    ProtoeditorSettings::self()->addSite(count,
+      it.data().name, it.data().host, it.data().port, it.data().remoteBaseDir,
+      it.data().localBaseDir);
   }
 }
 
