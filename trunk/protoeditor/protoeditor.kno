@@ -1,8 +1,9 @@
-\NewEntry 0 Mental Notes / Random ideas
+\CurrentEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look on PHP Designer 2005.<br /></li>
-<li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /><br /></li>
+<li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /></li>
+<li>Make taskbar app button blink on JIT<br /></li>
 <li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
 <li>Include other StdActions/Kate actions (like &quot;goto line&quot;)<br /></li>
@@ -54,6 +55,7 @@
 <p></p>
 </body></html>
 
+
 \NewEntry 0 Site and non-implementation notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
@@ -64,8 +66,7 @@
 <li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
 </body></html>
 
-
-\CurrentEntry 0 Implementation
+\NewEntry 0 Implementation
 
 \NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
