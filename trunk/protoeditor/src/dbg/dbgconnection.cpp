@@ -63,9 +63,9 @@ void DBGConnection::slotClosed()
   clearSocket();
 }
 
-void DBGConnection::slotError(int errno)
+void DBGConnection::slotError(int error)
 {
-  switch(errno) {
+  switch(error) {
   case QSocket::ErrConnectionRefused:
     emit sigError(QString("Connection refused"));
     break;
