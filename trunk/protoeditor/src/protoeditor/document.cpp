@@ -102,6 +102,11 @@ bool Document::open(const KURL& url)
   return true;
 }
 
+bool Document::close()
+{
+  return m_view->document()->closeURL();
+}
+
 void Document::setupMarks()
 {
   KTextEditor::MarkInterfaceExtension* imarkex =

@@ -31,7 +31,8 @@ public:
   bool save();
   bool saveAs(const KURL&);
   bool open(const KURL& url);
-
+  bool close();
+  
   void gotoLine(int line);
   int currentLine();
   void markActiveBreakpoint(int line);
