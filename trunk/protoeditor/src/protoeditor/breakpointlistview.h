@@ -43,6 +43,7 @@ public:
   void resetBreakpointItems();
 
   QValueList<DebuggerBreakpoint*> breakpoints();
+  QValueList<DebuggerBreakpoint*> breakpointsFrom(const QString&);
 
 signals:
   //this signals are sent after TextEditor processed the Marks
@@ -50,13 +51,15 @@ signals:
   void sigBreakpointChanged(DebuggerBreakpoint*);
   void sigBreakpointRemoved(DebuggerBreakpoint*);
 
+  void sigDoubleClick(const QString&, int);
+
   //Breakpoint was deleted here, not from TextEditor Mark
   //void sigBreakpointDeleted(DebuggerBreakpoint*);
 
 public slots:
   //connection with KTextEditor
-  void slotBreakpointMarked(QString, int);
-  void slotBreakpointUnmarked(QString, int);
+  void slotBreakpointMarked(const QString&, int);
+  void slotBreakpointUnmarked(const QString&, int);
 
 private slots:
   void slotCicked(QListViewItem*, const QPoint&, int);

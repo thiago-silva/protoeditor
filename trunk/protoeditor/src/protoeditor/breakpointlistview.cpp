@@ -27,6 +27,7 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
  : KListView(parent, name)
 {
 
+  setSorting(-1);
   setAllColumnsShowFocus(true);
 
   addColumn(tr2i18n(""));
@@ -72,11 +73,11 @@ void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col
 
   if(col == StatusIconCol) {
     if(item->breakpoint()->status() == DebuggerBreakpoint::DISABLED) {
-      item->breakpoint()->setStatus(DebuggerBreakpoint::ENABLED);
+      item->setUserBpStatus(DebuggerBreakpoint::ENABLED);
       item->showBreakpoint();
       emit sigBreakpointChanged(item->breakpoint());
     } else if(item->breakpoint()->status() == DebuggerBreakpoint::ENABLED) {
-      item->breakpoint()->setStatus(DebuggerBreakpoint::DISABLED);
+      item->setUserBpStatus(DebuggerBreakpoint::DISABLED);
       item->showBreakpoint();
       emit sigBreakpointChanged(item->breakpoint());
     }
@@ -98,6 +99,7 @@ void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, i
     case FileNameCol:
     case LineCol:
     case HitCountCol:
+      emit sigDoubleClick(item->breakpoint()->filePath(), item->breakpoint()->line());
       break;
   }
 }
@@ -157,18 +159,38 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints() {
   return list;
 }
 
-void BreakpointListView::slotBreakpointMarked(QString filePath, int line) {
+QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QString& filePath) {
+  QValueList<DebuggerBreakpoint*> list;
+
+  BreakpointListViewItem* item =
+    dynamic_cast<BreakpointListViewItem*>(firstChild());
+
+  while(item) {
+    if(item->breakpoint()->filePath() == filePath) {
+      list.append(item->breakpoint());
+    }
+    item =
+      dynamic_cast<BreakpointListViewItem*>(item-> nextSibling());
+  }
+
+  return list;
+}
+
+void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line) {
 
   //note: TextEditor lines are 0 based
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(0, filePath, line+1);
   //addBreakpoint(bp);
 
   BreakpointListViewItem* item = new BreakpointListViewItem(this, bp);
-  emit sigBreakpointCreated(bp);
 
+  //insert new item to the bottom of the list
+  item->moveItem(lastItem());
+
+  emit sigBreakpointCreated(bp);
 }
 
-void BreakpointListView::slotBreakpointUnmarked(QString filePath, int line) {
+void BreakpointListView::slotBreakpointUnmarked(const QString& filePath, int line) {
   //note: TextEditor lines are 0 based
   BreakpointListViewItem*  item = findBreakpoint(filePath, line+1);
 
