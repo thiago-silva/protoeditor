@@ -27,6 +27,7 @@
 #include "dbgrequestor.h"
 #include "dbgnetdata.h"
 #include "dbgstack.h"
+#include "debuggerstack.h"
 
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
@@ -84,7 +85,6 @@ void DBGNet::requestOptions(dbgint options)
 void DBGNet::requestContinue()
 {
   m_requestor->requestContinue();
-  RequestCommonData();
 }
 
 void DBGNet::requestStop()
@@ -95,19 +95,16 @@ void DBGNet::requestStop()
 void DBGNet::requestStepInto()
 {
   m_requestor->requestStepInto();
-  RequestCommonData();
 }
 
 void DBGNet::requestStepOver()
 {
   m_requestor->requestStepOver();
-  RequestCommonData();
 }
 
 void DBGNet::requestStepOut()
 {
   m_requestor->requestStepOut();
-  RequestCommonData();
 }
 
 void DBGNet::requestLocalVariables(dbgint scopeid)
@@ -121,6 +118,9 @@ void DBGNet::requestGlobalVariables()
   //so we know if we are asking for a vars on global or local scope
   m_varScopeRequestList.push_back(GLOBAL_SCOPE_ID);
   m_requestor->requestVariables(GLOBAL_SCOPE_ID);
+  //m_requestor->requestVariables(
+  //  m_dbgStack->debuggerStack()->bottomExecutionPoint()->id());
+
 }
 
 void DBGNet::requestWatch(const QString& expression, dbgint scopeid)
@@ -152,12 +152,19 @@ bool DBGNet::processHeader(DBGHeader* header)
     return false;
   }
 
-  if(header->cmd() == DBGC_STARTUP) {
-    //so lets start too
-    m_requestor->addHeaderFlags(DBGF_STARTED);
-
-    emit sigDBGStarted();
-    RequestCommonData();
+  switch(header->cmd()) {
+    case DBGC_STARTUP:
+      //so lets start too
+      m_requestor->addHeaderFlags(DBGF_STARTED);
+      m_requestor->requestStepInto();
+      emit sigDBGStarted();
+      break;
+    case DBGC_STEPINTO_DONE:
+    case DBGC_STEPOVER_DONE:
+    case DBGC_STEPOUT_DONE:
+      m_requestor->requestSrcTree();
+      requestGlobalVariables();
+      break;
   }
 
   return true;
