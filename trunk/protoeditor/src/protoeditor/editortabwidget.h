@@ -22,23 +22,20 @@
 #define EDITORTABWIDGET_H
 
 #include <ktabwidget.h>
-#include <kurl.h>
 #include <qvaluelist.h>
 #include <ktexteditor/markinterface.h>
-#include <qpair.h>
 
-class KTextEdit;
 class MainWindow;
+class KURL;
+class Document;
 
 namespace KTextEditor
 {
   class View;
-//   class Document;
 }
 
 namespace KParts
 {
-//   class PartManager;
   class Part;
 }
 
@@ -51,10 +48,10 @@ public:
 
   //void setMainWindow(MainWindow*);
 
-  void openDocument(KURL url);
+  void openDocument(const KURL& url);
   void closeCurrentDocument();
   void closeAllDocuments();
-  void setCurrentDocument(const QString&, bool forceOpen = false);
+  void setCurrentDocumentTab(const QString&, bool forceOpen = false);
 
   bool saveCurrentFile();
   bool saveCurrentFileAs(const KURL & url);
@@ -71,9 +68,9 @@ public:
   void markDisabledBreakpoint(const QString&, int);
   void unmarkDisabledBreakpoint(const QString&, int);
   void markExecutionPoint(const QString&, int);
-  void unmarkExecutionPoint(const QString&, int);
+  void unmarkExecutionPoint(const QString&);
   void markPreExecutionPoint(const QString&, int);
-  void unmarkPreExecutionPoint(const QString&, int);
+  void unmarkPreExecutionPoint(const QString&);
 
   bool hasBreakpointAt(const QString& , int);
 
@@ -86,79 +83,31 @@ signals:
   void sigBreakpointUnmarked(const QString&, int);
   void sigNewDocument();
 
-  /*
-    void sigHasNoFiles();
-    void sigHasFiles();
-   
-    void sigHasNoUndo();
-    void sigHasUndo();
-   
-    void sigHasNoRedo();
-    void sigHasRedo();
-  */
-
-public slots:
-  //     void slotUndo();
-  //     void slotRedo();
-  //     void slotCut();
-  //     void slotCopy();
-  //     void slotPaste();
-  //     void slotSelectAll();
-
-  /*
-  void slotSearch();
-  void slotSearchAgain();
-  void slotReplace();
-  void slotGotoLine();
-  */
-  //     void slotConfigEditor();
-
 private slots:
-  void slotMarkChanged();
-  //     void slotUndoChanged();
-
   void slotCurrentChanged(QWidget*);
-
-  //     void slotActivePartChanged(KParts::Part * part);
-  //     void slotNewPart(KParts::Part *newPart, bool setActiv);
+  void slotBreakpointMarked(Document* doc, int line);
+  void slotBreakpointUnmarked(Document* doc, int line);
 
 private:
-
-  typedef  struct
-  {
-    QString path;
-    KTextEditor::View* view;
-    QValueList<KTextEditor::Mark> marks;
-    //       bool hasUndo;
-    //       bool hasRedo;
-  }
-  Document_t;
-
-
-  void                        createDocument(KURL url);
+  Document*                   document(uint);
+  Document*                   document(const QString&);
+  Document*                   currentDocument();
+  
+  void                        createDocument(const KURL& url);
   void                        setupMarks(KTextEditor::View* view);
 
   int                         documentIndex(const QString& filepath);
-  //   KTextEditor::View*          createKTextEditor(KURL);
-  KTextEditor::MarkInterface* documentMarkIf(const QString&);
-  void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
-  void                        loadMarks(Document_t&, KTextEditor::Document*);
-
-  //   void enableEditorActions();
-  //   void disableEditorActions();
-  //   void enableUndoAction();
-  //   void disableUndoAction();
-  //   void enableRedoAction();
-  //   void disableRedoAction();
+//   void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
+//   void                        loadMarks(Document_t&, KTextEditor::Document*);
 
 
   bool m_terminating;
-  QValueList<Document_t> m_docList;
+  QValueList<Document*> m_docList;
 
-  //
-  bool m_markGuard;
+
+  //bool m_markGuard;
   //we don't want sigBreakpointUnmarked() to be emited when the document close.
-  bool m_closeGuard;
+  //bool m_closeGuard;
 
   MainWindow* m_window;
 

@@ -20,27 +20,15 @@
 
 #include "editortabwidget.h"
 #include "mainwindow.h"
+#include "document.h"
 
-#include <ktexteditor/document.h>
-#include <ktexteditor/editorchooser.h>
-#include <ktexteditor/view.h>
-#include <ktexteditor/markinterface.h>
-#include <ktexteditor/markinterfaceextension.h>
-#include <ktexteditor/configinterface.h>
-#include <ktexteditor/viewcursorinterface.h>
-#include <ktexteditor/clipboardinterface.h>
-#include <ktexteditor/selectioninterface.h>
-#include <ktexteditor/undointerface.h>
 #include <kparts/partmanager.h>
 #include <ktexteditor/popupmenuinterface.h>
+#include <ktexteditor/view.h>
 #include <kactioncollection.h>
-#include <kiconloader.h>
-#include <kdeversion.h>
-
-#include <qlayout.h>
 
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
-    : KTabWidget(parent, name), m_terminating(false), m_markGuard(false),m_closeGuard(false),
+  : KTabWidget(parent, name), m_terminating(false),/* m_markGuard(false),m_closeGuard(false),*/
     m_window(window), m_currentView(0)
 {
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
@@ -58,7 +46,7 @@ void EditorTabWidget::terminate()
 }
 
 
-void EditorTabWidget::openDocument(KURL url)
+void EditorTabWidget::openDocument(const KURL& url)
 {
   int index;
   if((index = documentIndex(url.path())) != -1)
@@ -76,38 +64,29 @@ void EditorTabWidget::openDocument(KURL url)
 void EditorTabWidget::closeCurrentDocument()
 {
   if(count() == 0) return;
-  
+
   if(!m_terminating)
   {
     m_window->guiFactory()->removeClient(m_currentView);
     m_currentView = 0L;
   }
-  
-  m_closeGuard = true;
 
-  int index = currentPageIndex();
+//   m_closeGuard = true;
 
-  QValueList<Document_t>::iterator it = m_docList.at(index);
+  Document* doc = currentDocument();
 
-  KTextEditor::Document* doc = (*it).view->document();
-  doc->closeURL();
-
-  KTextEditor::View* view = (*it).view;
-
-  QWidget* w = page(index);
+  QWidget* w = page(currentPageIndex());
   removePage(w);
 
-  delete view;
+  m_docList.remove(doc);
   delete doc;
 
-
-  m_docList.remove(it);
-
-  if((count() == 0) && !m_terminating) {
+  if((count() == 0) && !m_terminating)
+  {
     m_window->actionStateChanged("has_nofileopened");
   }
 
-  m_closeGuard = false;
+//   m_closeGuard = false;
 }
 
 void EditorTabWidget::closeAllDocuments()
@@ -116,33 +95,9 @@ void EditorTabWidget::closeAllDocuments()
   {
     closeCurrentDocument();
   }
-  /*
-  int i = 0;
-  QWidget* w;
-  KTextEditor::Document* doc;
-  KTextEditor::View* view;
-
-  QValueList<Document_t>::iterator it;
-  for( it = m_docList.begin(); it != m_docList.end(); ++it, ++i )
-  {
-    view = (*it).view;
-    doc = (*it).view->document();
-    doc->closeURL();
-
-    delete view;
-    delete doc;
-
-    w = page(i);
-    removePage(w);
-
-    i++;
-  }
-
-  m_docList.clear();
-  */
 }
 
-void EditorTabWidget::setCurrentDocument(const QString& filePath, bool forceOpen)
+void EditorTabWidget::setCurrentDocumentTab(const QString& filePath, bool forceOpen)
 {
   int index = documentIndex(filePath);
   if(index != -1)
@@ -159,34 +114,23 @@ bool EditorTabWidget::saveCurrentFile()
 {
   if(count() == 0) return false;
 
-  KTextEditor::Document *doc = (*(m_docList.at(currentPageIndex()))).view->document();
-  return doc->save();
+  return currentDocument()->save();
 }
 
 bool EditorTabWidget::saveCurrentFileAs(const KURL & url)
 {
   if(count() == 0) return false;
 
-  KTextEditor::Document *doc = (*(m_docList.at(currentPageIndex()))).view->document();
-  return doc->saveAs(url);
+  return currentDocument()->saveAs(url);
 }
 
 void EditorTabWidget::gotoLineAtFile(const QString& filePath, int line)
 {
-  int index;
-  KTextEditor::View* view;
-  KTextEditor::ViewCursorInterface *vci;
+  setCurrentDocumentTab(filePath, true);
 
-  setCurrentDocument(filePath, true);
+  if(currentPageIndex() == -1) return;
 
-  if((index = currentPageIndex()) == -1) return;
-
-  Document_t d;
-  d = *(m_docList.at(index));
-  view = d.view;
-
-  vci = dynamic_cast<KTextEditor::ViewCursorInterface*>(view);
-  vci->setCursorPosition(line, 0);
+  currentDocument()->gotoLine(line);
 }
 
 
@@ -195,7 +139,7 @@ const QString& EditorTabWidget::documentPath(int index)
   int size = m_docList.count();
   if((index >= 0) && (index < size))
   {
-    return (*(m_docList.at(index))).path;
+    return document(index)->path();
   }
   else
   {
@@ -210,407 +154,133 @@ const QString& EditorTabWidget::currentDocumentPath()
 
 int EditorTabWidget::currentDocumentLine()
 {
-  int index;
-  uint line, col;
-  KTextEditor::View* view;
-  KTextEditor::ViewCursorInterface *vci;
+  if(currentPageIndex() == -1) return 0;
 
-  if((index = currentPageIndex()) == -1) return 0;
-
-  Document_t d;
-  d = *(m_docList.at(index));
-  view = d.view;
-
-  vci = dynamic_cast<KTextEditor::ViewCursorInterface*>(view);
-  vci->cursorPosition(&line, &col);
-  return line+1;
+  return currentDocument()->currentLine();
 }
-
 
 void EditorTabWidget::markActiveBreakpoint(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  if(!imark) return;
-  m_markGuard = true;
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imark->addMark(line-1, KTextEditor::MarkInterface::BreakpointActive);
-#else
-  imark->addMark(line-1, KTextEditor::MarkInterface::markType02);
-#endif
-  m_markGuard = false;
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->markActiveBreakpoint(line);
+  }
 }
 
 void EditorTabWidget::unmarkActiveBreakpoint(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  m_markGuard = true;
-  if(!imark) return;
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imark->removeMark(line-1, KTextEditor::MarkInterface::BreakpointActive);
-#else
-  imark->removeMark(line-1, KTextEditor::MarkInterface::markType02);
-#endif
-  m_markGuard = false;
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->unmarkActiveBreakpoint(line);
+  }
 }
 
 void EditorTabWidget::markDisabledBreakpoint(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  m_markGuard = true;
-  if(!imark) return;
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imark->addMark(line-1, KTextEditor::MarkInterface::BreakpointDisabled);
-#else
-  imark->addMark(line-1, KTextEditor::MarkInterface::markType04);
-#endif
-  m_markGuard = false;
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->markDisabledBreakpoint(line);
+  }
 }
 
 void EditorTabWidget::unmarkDisabledBreakpoint(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  m_markGuard = true;
-  if(!imark) return;
-
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imark->removeMark(line-1, KTextEditor::MarkInterface::BreakpointDisabled);
-#else
-  imark->removeMark(line-1, KTextEditor::MarkInterface::markType04);
-#endif
-  m_markGuard = false;
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->unmarkDisabledBreakpoint(line);
+  }
 }
 
 void EditorTabWidget::markExecutionPoint(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  if(!imark) return;
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imark->addMark(line-1, KTextEditor::MarkInterface::Execution);
-#else
-  imark->addMark(line-1, KTextEditor::MarkInterface::markType05);
-#endif
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->markExecutionPoint(line);
+  }
 }
 
-void EditorTabWidget::unmarkExecutionPoint(const QString& filePath, int line)
+void EditorTabWidget::unmarkExecutionPoint(const QString& filePath)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  if(!imark) return;
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imark->removeMark(line-1, KTextEditor::MarkInterface::Execution);
-#else
-  imark->removeMark(line-1, KTextEditor::MarkInterface::markType05);
-#endif
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->unmarkExecutionPoint();
+  }
 }
 
 void EditorTabWidget::markPreExecutionPoint(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  if(!imark) return;
-  imark->addMark(line-1, KTextEditor::MarkInterface::markType08);
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->markPreExecutionPoint(line);
+  }
 }
 
-void EditorTabWidget::unmarkPreExecutionPoint(const QString& filePath, int line)
+void EditorTabWidget::unmarkPreExecutionPoint(const QString& filePath)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-  if(!imark) return;
-  imark->removeMark(line-1, KTextEditor::MarkInterface::markType08);
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    document(filePath)->unmarkPreExecutionPoint();
+  }
 }
 
 bool EditorTabWidget::hasBreakpointAt(const QString& filePath, int line)
 {
-  KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  return
-    imark->mark(line-1) &
-    (KTextEditor::MarkInterface::BreakpointDisabled |
-     KTextEditor::MarkInterface::BreakpointActive);
-#else
-  return
-    imark->mark(line-1) &
-    (KTextEditor::MarkInterface::markType04 |
-     KTextEditor::MarkInterface::markType02);
-#endif
+  Document* doc = document(filePath);
+  if(doc)
+  {
+    return document(filePath)->hasBreakpointAt(line);
+  } else {
+    return false;
+  }
 }
 
-void EditorTabWidget::createDocument(KURL url)
+void EditorTabWidget::createDocument(const KURL& url)
 {
+  Document* doc = new Document(this);
 
-  KTextEditor::Document *doc =
-    KTextEditor::EditorChooser::createDocument(
-      0L, "KTextEditor::Document");
-
-  if(!doc->openURL(url))
+  if(!doc->open(url))
   {
+    delete doc;
     return;
   }
 
-  QWidget* tab = new QWidget(this);
-  QVBoxLayout *lay = new QVBoxLayout(tab, 1, 1);
-
-  KTextEditor::View * view = doc->createView(tab);
-
-  lay->addWidget(view);
-  insertTab(tab, url.fileName());
-
-  setupMarks(view);
-
-  KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(view);
+  connect(doc, SIGNAL(sigBreakpointMarked(Document*, int )), this,
+          SLOT(slotBreakpointMarked(Document*, int)));
+  
+  connect(doc, SIGNAL(sigBreakpointUnmarked(Document*, int )), this,
+          SLOT(slotBreakpointUnmarked(Document*, int)));
+  
+  insertTab(doc->tab(), url.fileName());
+  KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(doc->view());
   if (popupIf)
     popupIf->installPopup((QPopupMenu *)m_window->factory()->container("ktexteditor_popup", m_window));
 
-  Document_t d;
-  d.path = url.path();
-  d.view = view;
-  m_docList.append(d);
+  m_docList.append(doc);
 
   setCurrentPage(count()-1);
-}
-
-void EditorTabWidget::setupMarks(KTextEditor::View* view)
-{
-  KTextEditor::MarkInterfaceExtension* imarkex =
-    dynamic_cast<KTextEditor::MarkInterfaceExtension*>(view->document());
-
-  if(!imarkex)
-  {
-    return;
-  }
-  KIconLoader *loader = KGlobal::iconLoader();
-
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imarkex->setPixmap(KTextEditor::MarkInterface::Execution, loader->loadIcon(
-                       "executionpoint", KIcon::Small));
-#else
-  imarkex->setPixmap(KTextEditor::MarkInterface::markType05, loader->loadIcon(
-                       "executionpoint", KIcon::Small));
-#endif
-
-  imarkex->setPixmap(KTextEditor::MarkInterface::markType08, loader->loadIcon(
-                       "preexecutionpoint", KIcon::Small));
-
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imarkex->setPixmap(KTextEditor::MarkInterface::BreakpointActive, loader->loadIcon(
-                       "activebreakpoint",KIcon::Small));
-#else
-  imarkex->setPixmap(KTextEditor::MarkInterface::markType02, loader->loadIcon(
-                       "activebreakpoint", KIcon::Small));
-#endif
-
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imarkex->setPixmap(KTextEditor::MarkInterface::BreakpointDisabled, loader->loadIcon(
-                       "disabledbreakpoint",KIcon::Small));
-#else
-  imarkex->setPixmap(KTextEditor::MarkInterface::markType04, loader->loadIcon(
-                       "disabledbreakpoint", KIcon::Small));
-#endif
-
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imarkex->setDescription(KTextEditor::MarkInterface::BreakpointActive, "Breakpoint");
-#else
-  imarkex->setDescription(KTextEditor::MarkInterface::markType02, "Breakpoint");
-#endif
-
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imarkex->setMarksUserChangable(KTextEditor::MarkInterface::Bookmark + KTextEditor::MarkInterface::BreakpointActive);
-#else
-  imarkex->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
-#endif
-
 }
 
 int EditorTabWidget::documentIndex(const QString& filePath)
 {
   int i = 0;
 
-  QValueList<Document_t>::iterator it;
+  QValueList<Document*>::iterator it;
   for (it = m_docList.begin(); it != m_docList.end(); ++it, i++ )
   {
-    if((*it).path == filePath)
+    if((*it)->path() == filePath)
     {
       return i;
     }
   }
   return -1;
-}
-
-KTextEditor::MarkInterface* EditorTabWidget::documentMarkIf(const QString& path)
-{
-  int index = documentIndex(path);
-  if(index == -1) return NULL;
-
-  return dynamic_cast<KTextEditor::MarkInterface*>(
-           (*(m_docList.at(index))).view->document());
-}
-
-
-void EditorTabWidget::slotMarkChanged()
-{
-  //I get sick looking at this code...
-
-  //terminating: prevent from crash
-  if(m_terminating) return;
-
-  QValueList<Document_t>::iterator it = m_docList.at(currentPageIndex());
-
-  QPtrList<KTextEditor::Mark> currentMarks = documentMarkIf((*it).path)->marks();
-
-  QValueList<KTextEditor::Mark> & oldMarks = (*it).marks;
-
-  KTextEditor::Mark  *cur;
-  QValueList<KTextEditor::Mark>::iterator  old;
-
-  //closeGuard: prevent from emit signals to remove bp marks(we want them persistent)
-  //m_markGuard: prevent from processing  marks twice
-  if(m_closeGuard || m_markGuard) goto end;
-
-  if(oldMarks.count() == currentMarks.count())
-  {
-    //--2+ marks on the same line | mark changed position
-    KTextEditor::Mark mark;
-
-    for(cur = currentMarks.first(), old = oldMarks.begin();
-        cur;
-        cur = currentMarks.next(), ++old)
-    {
-
-      if((cur->line == (*old).line) && (cur->type != (*old).type))
-      {
-
-        //--2+ marks on the same line
-
-        mark.line = cur->line;
-        if(cur->type > (*old).type)
-        {
-          mark.type = cur->type - (*old).type;
-          //add
-          dispatchMark(mark, true);
-        }
-        else
-        {
-          //remove
-          mark.type = (*old).type - cur->type;
-          dispatchMark(mark, false);
-        }
-        //break;
-
-      }
-      else if((*old).line != cur->line)
-      {
-        //mark changed position
-
-        //remove old
-        dispatchMark((*old), false);
-        //add new
-        dispatchMark(*cur, true);
-      }
-    }
-
-  }
-  else if(oldMarks.count() > currentMarks.count())
-  {
-    //a mark was removed
-    if(currentMarks.count() == 0)
-    {
-      dispatchMark(*(oldMarks.begin()), false);
-    }
-    else
-    {
-      bool found;
-      for(old = oldMarks.begin(); old != oldMarks.end(); ++old)
-      {
-        found = false;
-        for(cur = currentMarks.first(); cur; cur = currentMarks.next())
-        {
-          if(((*old).line == cur->line) && ((*old).type |= cur->type))
-          {
-            found = true;
-            break;
-          }
-        }
-        if(found == false)
-        {
-          dispatchMark(*old, false);
-          break;
-        }
-      }
-    }
-  }
-  else
-  {
-    //a mark was added
-    if(oldMarks.count() == 0)
-    {
-      dispatchMark(*(currentMarks.first()), true);
-    }
-    else
-    {
-      bool found;
-      for(cur = currentMarks.first(); cur; cur = currentMarks.next())
-      {
-        found = false;
-        for(old = oldMarks.begin(); old != oldMarks.end(); ++old)
-        {
-          if(((*old).line == cur->line) && ((*old).type |= cur->type))
-          {
-            found = true;
-            break;
-          }
-        }
-        if(found == false)
-        {
-          dispatchMark(*cur, true);
-          break;
-        }
-      }
-    }
-  }
-
-end:
-  loadMarks((*it), (*it).view->document());
-}
-
-
-void EditorTabWidget::dispatchMark(KTextEditor::Mark& mark, bool adding)
-{
-#if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  if(!((mark.type & KTextEditor::MarkInterface::BreakpointDisabled) ||
-       ((mark.type & KTextEditor::MarkInterface::BreakpointActive))))
-  {
-    return;
-  }
-#else
-  if(!((mark.type & KTextEditor::MarkInterface::markType04) ||
-       ((mark.type & KTextEditor::MarkInterface::markType02))))
-  {
-    return;
-  }
-#endif
-
-  if(adding)
-  {
-    emit sigBreakpointMarked(currentDocumentPath(), mark.line);
-  }
-  else
-  {
-    emit sigBreakpointUnmarked(currentDocumentPath(), mark.line);
-  }
-}
-
-void EditorTabWidget::loadMarks(Document_t& d, KTextEditor::Document* doc)
-{
-  d.marks.clear();
-
-  KTextEditor::MarkInterface* imark =
-    dynamic_cast<KTextEditor::MarkInterface*>(doc);
-
-  //this 'for' doesn't use first()/next() because it modifies the current item in the list
-  //and it is already being used in the 'for' of slotMarkChanged()
-
-  int size = imark->marks().count();
-  for(int i = 0; i < size; i++)
-  {
-    d.marks.append((*imark->marks().at(i)));
-  }
 }
 
 void EditorTabWidget::slotCurrentChanged(QWidget*)
@@ -625,16 +295,54 @@ void EditorTabWidget::slotCurrentChanged(QWidget*)
   if(count())
   {
     m_window->actionStateChanged("has_fileopened");
-    
-    m_currentView = (*(m_docList.at(currentPageIndex()))).view;
+
+    m_currentView = document(currentPageIndex())->view();
     m_window->guiFactory()->addClient(m_currentView);
   }
 }
+
+void EditorTabWidget::slotBreakpointMarked(Document* doc, int line)
+{
+  emit sigBreakpointMarked(doc->path(), line);
+}
+
+void EditorTabWidget::slotBreakpointUnmarked(Document* doc, int line)
+{
+  emit sigBreakpointUnmarked(doc->path(), line);
+}
+
 
 KTextEditor::View* EditorTabWidget::currentView()
 {
   if(count() == 0) return 0;
   return m_currentView;
+}
+
+Document* EditorTabWidget::document(uint index)
+{
+  if(index > (m_docList.count()-1)) {
+    return 0L;
+  } else {
+    return *(m_docList.at(index));
+  }
+}
+
+Document* EditorTabWidget::document(const QString& filePath)
+{
+  QValueList<Document*>::iterator it;
+  for(it = m_docList.begin(); it != m_docList.end(); ++it) {
+
+    if((*it)->path() == filePath) {
+      return (*it);
+    }
+  }
+
+  return 0L;
+}
+
+Document* EditorTabWidget::currentDocument()
+{
+  return document(currentPageIndex());
 }
 
 
