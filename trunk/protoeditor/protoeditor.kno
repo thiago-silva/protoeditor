@@ -97,8 +97,7 @@
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
 <li>Features / Usability:</li>
-<ul type="disc"><li>Add signal/slots for &quot;file changed on disk&quot;</li>
-<li>Add to editor context menu:</li>
+<ul type="disc"><li>Add to editor context menu:</li>
 <ul type="disc"><li>Watch &lt;var under cursor&gt;</li>
 <li>Toggle Breakpoint</li></ul>
 <li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags</li>
