@@ -34,7 +34,7 @@
 #include "sitesettings.h"
 
 #include <kdebug.h>
-
+#include <knotifyclient.h>
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
     : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0),
@@ -201,6 +201,9 @@ bool DBGNet::processHeader(DBGHeader* header)
       //...tell everyone we are running.
       emit sigDBGStarted();
 
+      //...fancy notification on taskbar
+      KNotifyClient::userEvent(0, "", KNotifyClient::Taskbar);
+      
       if(!(m_opts & SOF_BREAKONLOAD)) {
         //workaround for my lazyness (I don't know why setting SOF_BREAKONLOAD
         //is not enough to avoid the load break)
