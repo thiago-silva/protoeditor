@@ -58,10 +58,10 @@ public:
   void unmarkActiveBreakpoint(QString, int);
   void markDisabledBreakpoint(QString, int);
   void unmarkDisabledBreakpoint(QString, int);
-  void markExecutionLine(QString, int);
-  void unmarkExecutionLine(QString, int);
-  void markPreExecutionLine(QString, int);
-  void unmarkPreExecutionLine(QString, int);
+  void markExecutionPoint(QString, int);
+  void unmarkExecutionPoint(QString, int);
+  void markPreExecutionPoint(QString, int);
+  void unmarkPreExecutionPoint(QString, int);
 
 
   KTextEditor::View* anyView();

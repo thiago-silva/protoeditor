@@ -257,7 +257,7 @@ void EditorTabWidget::unmarkDisabledBreakpoint(QString filepath, int line)
   m_markGuard = false;
 }
 
-void EditorTabWidget::markExecutionLine(QString filepath, int line)
+void EditorTabWidget::markExecutionPoint(QString filepath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
@@ -268,7 +268,7 @@ void EditorTabWidget::markExecutionLine(QString filepath, int line)
   #endif
 }
 
-void EditorTabWidget::unmarkExecutionLine(QString filepath, int line)
+void EditorTabWidget::unmarkExecutionPoint(QString filepath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
@@ -279,14 +279,14 @@ void EditorTabWidget::unmarkExecutionLine(QString filepath, int line)
   #endif
 }
 
-void EditorTabWidget::markPreExecutionLine(QString filepath, int line)
+void EditorTabWidget::markPreExecutionPoint(QString filepath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
   imark->addMark(line-1, KTextEditor::MarkInterface::markType08);
 }
 
-void EditorTabWidget::unmarkPreExecutionLine(QString filepath, int line)
+void EditorTabWidget::unmarkPreExecutionPoint(QString filepath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
@@ -313,14 +313,14 @@ void EditorTabWidget::createDocument(KURL url/*, QString text*/)
 
     #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setPixmap(KTextEditor::MarkInterface::Execution, loader->loadIcon(
-                         "executionline", KIcon::Small));
+                         "executionpoint", KIcon::Small));
     #else
     imarkex->setPixmap(KTextEditor::MarkInterface::markType05, loader->loadIcon(
-                         "executionline", KIcon::Small));
+                         "executionpoint", KIcon::Small));
     #endif
 
     imarkex->setPixmap(KTextEditor::MarkInterface::markType08, loader->loadIcon(
-                         "preexecutionline", KIcon::Small));
+                         "preexecutionpoint", KIcon::Small));
 
     #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setPixmap(KTextEditor::MarkInterface::BreakpointActive, loader->loadIcon(
@@ -622,11 +622,11 @@ void EditorTabWidget::dispatchMark(KTextEditor::Mark& mark, bool adding)
       case Bookmark:
         kdDebug() << t << "bookmark: " << mark.line << "\n";
         break;
-      case CurrentExecutionLine:
-        kdDebug() << t << "CurrentExecutionLine: "  << mark.line << "\n";
+      case CurrentExecutionPoint:
+        kdDebug() << t << "CurrentExecutionPoint: "  << mark.line << "\n";
           break;
-      case PreExecutionLine:
-        kdDebug() << t << "PreExecutionLine: "  << mark.line << "\n";;
+      case PreExecutionPoint:
+        kdDebug() << t << "PreExecutionPoint: "  << mark.line << "\n";;
           break;
       case ActiveBreakpoint:
         kdDebug() << t << "ActiveBreakpoint: "  << mark.line << "\n";;
