@@ -333,10 +333,17 @@ void EditorTabWidget::unmarkPreExecutionPoint(const QString& filePath, int line)
 bool EditorTabWidget::hasBreakpointAt(const QString& filePath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filePath);
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
   return
     imark->mark(line-1) &
       (KTextEditor::MarkInterface::BreakpointDisabled |
        KTextEditor::MarkInterface::BreakpointActive);
+  #else
+  return
+    imark->mark(line-1) &
+      (KTextEditor::MarkInterface::markType04 |
+       KTextEditor::MarkInterface::markType02);
+  #endif
 }
 
 void EditorTabWidget::createDocument(KURL url/*, const QString& text*/)
