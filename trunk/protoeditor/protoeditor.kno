@@ -87,9 +87,9 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO Now
+\CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Implement the profiler<br /><br />Create Actions:</li>
+<ul type="disc"><li>Create Actions:</li>
 <li>Run (gear.png) / Start debug</li>
 <ul type="disc"><li>[ ]  Default file</li>
 <li>[x] Current file</li>
@@ -109,9 +109,9 @@
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
 <li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)<br /></li>
 <li>Add signal/slots for &quot;file changed on disk&quot;<br /></li>
-<li>Show filepath on title bar<br /></li>
 <li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)</li></ul>
 </body></html>
+
 
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -141,13 +141,12 @@
 <p>	filepath | line | hits | (time_avg_hit) time/hit (ms) | totaltime (ms) | min time (ms)  | maxtime (ms) | context</p>
 </body></html>
 
-\CurrentEntry 1 Bug reminder
+\NewEntry 1 Bug reminder
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
 <li>DBGnet::processProf() : Profiler calc is hardcoded. Use prof_c to get the freq (divide for freq and multip for 1000. See script).</li>
 <ul type="disc"><li> $time_max = $dbg_prof_results[&quot;tm_max&quot;][$idx] * 1000;</li></ul></ul>
 </body></html>
-
 
 \NewEntry 1 Usability issues
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
