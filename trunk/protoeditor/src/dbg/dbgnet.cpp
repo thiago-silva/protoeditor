@@ -40,7 +40,7 @@
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
     : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0), m_profFreq(-1),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
-    m_dbgStack(0), m_dbgFileInfo(0), m_isProfiling(false)
+    m_dbgStack(0), m_dbgFileInfo(0), m_isProfiling(false), m_setupProfile(false)
 {
   m_receiver    = new DBGReceiver(this);
   m_requestor   = new DBGRequestor();
@@ -196,9 +196,7 @@ void DBGNet::receivePack(DBGResponsePack* pack)
 
 void DBGNet::setupProfile()
 {
-  static bool t = false;
-
-  if(t) return;
+  if(m_setupProfile) return;
   
   if(m_dbgFileInfo->contextUpdated())
   {
@@ -231,7 +229,7 @@ void DBGNet::setupProfile()
 
     //every data we need were requested. We continue to end now
     m_requestor->requestContinue();
-    t = true;
+    m_setupProfile = true;
   }
 }
 
@@ -274,7 +272,7 @@ bool DBGNet::processHeader(DBGHeader* header)
       if(m_isProfiling)
       {
         //get module info
-//         m_requestor->requestSrcTree();
+//      m_requestor->requestSrcTree();
         //get frequency info
         m_requestor->requestProfileFreqData(TEST_LOOPS);
         //get lines info to set temp breakpoint on the last valid line
@@ -568,6 +566,7 @@ void DBGNet::slotDBGClosed()
   m_varScopeRequestList.clear();
 
   m_isProfiling = false;
+  m_setupProfile = false;
 }
 
 void DBGNet::slotError(const QString& msg)

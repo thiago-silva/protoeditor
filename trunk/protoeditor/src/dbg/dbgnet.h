@@ -134,6 +134,7 @@ private:
   DBGStack          *m_dbgStack;
   DBGFileInfo       *m_dbgFileInfo;
   bool              m_isProfiling;
+  bool              m_setupProfile;
   QValueList<dbgint> m_varScopeRequestList; //so we know wich context the vars belong
 };
 
