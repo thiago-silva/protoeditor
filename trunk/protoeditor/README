@@ -34,40 +34,66 @@ Project site:
   2.2 Debugger Configuration
 
   First, configure your php DBG module. Make sure it is active with phpinfo().
+  For details about DBG installation, check the DBG site: http://dd.cron.ru
 
   To configure DBG on Protoeditor:
 
-    Go to the "Settings -> Configure Protoeditor", set the "Local basedir" to your
-    local root folder (ie. /home/me/php/helloworld). On "Server basedir",
-    the remote location of the root folder (ie. /usr/apache/htdocs/helloworld).
-    For "Listen port", you can choose the default: 7869. This is the port on wich
-    your computer waits for DBG connection. Finally, set the "Host" to the http
-    server address (ie. 192.168.0.30).
+    Check the DBG options on Protoeditor settings. Most of them are self explanatory.
+    (Yes, I will work on appropriated documentation).
 
-    If you are debugging locally, just setup to something like:
+    JIT note: if enabled, Protoeditor will listen on the given port while the application
+    is running. Otherwise, it will only listen to the port when a debug session is active.
 
-    Local basedir  : /home/me/phpsite
-    Server basedir : /usr/apache/htdocs/phpsite
-    Listen port    : 7869
-    Host           : localhost
+    Sites:
 
-    Now, open the hipotetical /home/me/phpsite/index.php.
-    Start the debug session on the menu (it starts to listen the connection).
-    Oh well, just run and have fun.
+      From version 0.6, Protoeditor supports different settings for remote/local
+      directory mapping. On other IDE's this is simply the configuration for a given project.
+      Since Protoeditor is not project centric, it uses "Site" configuration.
+      Each site has the following entries:
 
+        -Site name       : a simple name to identify this site
+        -Host            : the ip/hostname of the http server
+        -Port            : the port of the http server
+        -Remote base dir : the remote directory of the site (eg. /var/www/htdocs/mysite)
+        -Local base dir  : the local directory of the site (eg. /home/me/mysite)
+
+        (other entries might appear in future versions)
+
+    Many Sites can be registered and they are selected through the combo box on the
+    main window toolbar. When starting the debugger, it will connect to the Site's
+    host:port and use the given directories to map file paths from remote to local
+    and vice-versa.
+
+    Example of a local Site:
+
+    Site name       : home
+    Host            : localhost
+    Port            : 80
+    Remote base dir : /home/me/phpsite
+    Local base dir  : /usr/apache/htdocs/phpsite
 
   2.3 Main window
 
-    Now, some tricks and notes:
+    Now, some tricks, notes and not-so-obvious-features:
 
-      -On the variables list, you can expand the array/object childs and
-      on the next stepin/stepout/break, the item remains expanded (I haven't seen this
-      implemented in many PHP IDE's ;-)
+      Variales list:
 
-      -Again, on the variables list and watches, you can change the value
-      of some variable on the fly: just double click on the value and change it.
+        -Expanded array/object childs remains expanded through step-in/step-out/break,
+        (I haven't seen this implemented in many PHP IDE's ;-)
 
-      -Multiple breakpoints on the same file/line currently is not supported.
+        -To modify a variable value on the fly, simply double click on it's value and
+        edit it.
+
+        -Right button on a variable popup a menu to copy the variable to the clipboard.
+
+    Breakpoints:
+
+      -Multiple breakpoints on the same file/line is not supported.
+
+    Browsers:
+
+      -When using Konqueror, Protoeditor keeps talking to the same window. This is
+      not possible on the other browsers (Protoeditor uses the topmost instance).
 
 3.0 Future plans
 
@@ -88,21 +114,26 @@ Project site:
 
 5.0 Troubleshooting
 
-  5.1 Nothing happens when hitting "Run".
+  5.1 Nothing happens when I start the debugger.
 
-    If you are trying to run and nothing happens, first, make sure you can access the http server.
-    Then, take a look at the debug output on the console. It should have something like:
+    If you are trying to run the debugger and nothing happens,
+    first, make sure you can access the http server and DBG is installed and configured
+    properly. Then, take a look at Protoeditor output on the console.
+    It should have something like:
 
       "protoeditor: Requesting "/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
 
-    Where "/index.php" is the file you are running, "7869" is the port you typed on "Listen port" of
-    the configuration and "192.168.0.20" is the host you typed on "Host".
+    Where the relevant data are:
+      /index.php   - the file you are running.
+      7869         - the port you typed on "Listen port" of DBG settings.
+      192.168.0.20 - the host you typed on your current Site's "Host".
 
     This is an HTTP request, so if you see something like:
 
       "protoeditor: Requesting "/home/me/test/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
 
-    You probably typed something wrong for the paths.
+    unless you can access "http://192.168.0.20/home/me/test/index.php",
+    you probably set incorrect values for local/remote base dirs on the Site settings.
 
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>

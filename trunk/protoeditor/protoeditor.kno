@@ -58,10 +58,10 @@
 
 \NewEntry 0 Site and non-implementation notes
 
-\NewEntry 1 Releasing notes
+\CurrentEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>1: Test current CVS version on other distro/KDE versions</li>
-<li>2: Change version on kdevelop file and configure.in/configure.in.in</li>
+<li>2: Change version on kdevelop file, configure.in/configure.in.in and protoeditor.cpp</li>
 <li>3: Create NEWS file</li>
 <li>4: Create ChangeLog file</li>
 <li>5: Update README version</li>
@@ -70,6 +70,7 @@
 <p></p>
 <p></p>
 </body></html>
+
 
 \NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -84,7 +85,7 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <li>Run</li>
@@ -119,7 +120,6 @@
 <li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget<br /></li>
 <li>Try to get default kate settings from the user's katerc</li></ul>
 </body></html>
-
 
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
