@@ -30,20 +30,28 @@
 class KTextEdit;
 class MainWindow;
 
-namespace KTextEditor {
+namespace KTextEditor
+{
   class View;
+//   class Document;
+}
+
+namespace KParts
+{
+//   class PartManager;
+  class Part;
 }
 
 class EditorTabWidget : public KTabWidget
 {
-Q_OBJECT
+  Q_OBJECT
 public:
   EditorTabWidget(QWidget* parent, MainWindow *window, const char *name = 0);
   ~EditorTabWidget();
 
   //void setMainWindow(MainWindow*);
 
-  void addDocument(KURL url);
+  void openDocument(KURL url);
   void closeCurrentDocument();
   void closeAllDocuments();
   void setCurrentDocument(const QString&, bool forceOpen = false);
@@ -78,62 +86,70 @@ signals:
   void sigBreakpointUnmarked(const QString&, int);
   void sigNewDocument();
 
-/*
-  void sigHasNoFiles();
-  void sigHasFiles();
-
-  void sigHasNoUndo();
-  void sigHasUndo();
-
-  void sigHasNoRedo();
-  void sigHasRedo();
-*/
+  /*
+    void sigHasNoFiles();
+    void sigHasFiles();
+   
+    void sigHasNoUndo();
+    void sigHasUndo();
+   
+    void sigHasNoRedo();
+    void sigHasRedo();
+  */
 
 public slots:
-    void slotUndo();
-    void slotRedo();
-    void slotCut();
-    void slotCopy();
-    void slotPaste();
-    void slotSelectAll();
-    /*
-    void slotSearch();
-    void slotSearchAgain();
-    void slotReplace();
-    void slotGotoLine();
-    */
-    void slotConfigEditor();
+  //     void slotUndo();
+  //     void slotRedo();
+  //     void slotCut();
+  //     void slotCopy();
+  //     void slotPaste();
+  //     void slotSelectAll();
+
+  /*
+  void slotSearch();
+  void slotSearchAgain();
+  void slotReplace();
+  void slotGotoLine();
+  */
+  //     void slotConfigEditor();
 
 private slots:
-    void slotMarkChanged();
-    void slotUndoChanged();
+  void slotMarkChanged();
+  //     void slotUndoChanged();
 
-    void slotCurrentChanged(QWidget*);
+  void slotCurrentChanged(QWidget*);
+
+  //     void slotActivePartChanged(KParts::Part * part);
+  //     void slotNewPart(KParts::Part *newPart, bool setActiv);
 
 private:
 
-  typedef  struct {
-      QString path;
-      KTextEditor::View* view;
-      QValueList<KTextEditor::Mark> marks;
-      bool hasUndo;
-      bool hasRedo;
-  } Document_t;
+  typedef  struct
+  {
+    QString path;
+    KTextEditor::View* view;
+    QValueList<KTextEditor::Mark> marks;
+    //       bool hasUndo;
+    //       bool hasRedo;
+  }
+  Document_t;
 
 
   void                        createDocument(KURL url);
+  void                        setupMarks(KTextEditor::View* view);
+
   int                         documentIndex(const QString& filepath);
-  KTextEditor::View*          openKDocument(KURL);
+  //   KTextEditor::View*          createKTextEditor(KURL);
   KTextEditor::MarkInterface* documentMarkIf(const QString&);
   void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
   void                        loadMarks(Document_t&, KTextEditor::Document*);
 
-  void enableEditorActions();
-  void disableEditorActions();
-  void enableUndoAction();
-  void disableUndoAction();
-  void enableRedoAction();
-  void disableRedoAction();
+  //   void enableEditorActions();
+  //   void disableEditorActions();
+  //   void enableUndoAction();
+  //   void disableUndoAction();
+  //   void enableRedoAction();
+  //   void disableRedoAction();
 
 
   bool m_terminating;
@@ -145,6 +161,9 @@ private:
   bool m_closeGuard;
 
   MainWindow* m_window;
+
+   KTextEditor::View* m_currentView;
+//   KParts::PartManager* m_partManager;
 };
 
 #endif

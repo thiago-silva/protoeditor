@@ -2,6 +2,27 @@
 <kpartgui name="protoeditor" version="1">
 
   <MenuBar>
+    
+    <Menu name="file" noMerge="1">
+      <text>&amp;File</text>
+      <Action name="file_open"/>
+      <Action name="file_open_recent"/>
+      <Separator/>
+      <DefineGroup name="save_merge"/>
+      <Separator/>
+      <DefineGroup name="revert_merge"/>
+      <Separator/>
+      <DefineGroup name="print_merge"/>     
+
+      <Action name="file_close"/>
+      <Action name="file_close_all"/>
+      <Separator/>      
+      <Action name="file_quit"/>            
+    </Menu>
+    
+    <Merge name="edit" />
+    <Merge name="view" />
+   
     <Menu name="menu_script"><text>&amp;Script</text>
      <text>Script Menu</text>
      <Action name="script_run"/>
@@ -15,27 +36,44 @@
      <Action name="debug_toggle_bp"/>
     </Menu>
 
-    <Menu name="settings">
-    <text>&amp;Settings</text>
-      <Separator />
-      <Action name="settings_editor"/>
-      <Action name="settings_protoeditor"/>
-    </Menu>
+    
+    <Merge name="tools" />
+    
+    <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
+      <Action name="options_configure_keybinding" />
+      <Action name="options_configure_toolbars" />
+      <Separator/>
+      <Merge/>
+      <Action name="settings_protoeditor" />
+   </Menu>
+
   </MenuBar>
 
-  <ToolBar name="toolbar_script">
-     <text>Script Toolbar</text>
-     <Action name="site"/>
-     <Separator />
-     <Action name="script_run"/>
-     <Separator />
-     <Action name="debug_stop"/>
-     <Action name="debug_start"/>
-     <Action name="debug_step_over"/>
-     <Action name="debug_step_into"/>
-     <Action name="debug_step_out"/>
+  <Menu name="ktexteditor_popup" noMerge="1">
+    <DefineGroup name="popup_operations" />
+  </Menu>
+
+  <ToolBar name="mainToolBar" noMerge="1">
+    <text>Main Toolbar</text>
+    <Action name="file_open" />
+    <Separator />
+    <Merge/>
   </ToolBar>
 
+  <ToolBar name="debug_toolbar" noMerge="1" newline="true">
+    <Action name="site"/>
+    <Separator />
+    <Action name="script_run"/>
+    <Separator />
+    <Action name="debug_stop"/>
+    <Action name="debug_start"/>
+    <Action name="debug_step_over"/>
+    <Action name="debug_step_into"/>
+    <Action name="debug_step_out"/>
+  </ToolBar>
+
+  <!--         States        -->
+  
   <State name="debug_disabled">
     <disable>
       <Action name="script_run"/>
@@ -69,7 +107,8 @@
       <Action name="debug_step_out"/>
     </enable>
   </State>
-
+  
+<!--
   <State name="has_nofileopened">
     <disable>
       <Action name="script_run"/>
@@ -106,5 +145,5 @@
       <Action name="settings_editor"/>
       <Action name="debug_toggle_bp"/>
     </enable>
-  </State>
+  </State> -->
 </kpartgui>

@@ -21,7 +21,8 @@
 #ifndef MAINWINDOWBASE_H
 #define MAINWINDOWBASE_H
 
-#include <kmainwindow.h>
+// #include <kmainwindow.h>
+#include <kparts/mainwindow.h>
 #include <qstring.h>
 
 class EditorTabWidget;
@@ -42,6 +43,7 @@ class KRecentFilesAction;
 class KURL;
 class KSelectAction;
 
+
 /*
 
 namespace KTextEditor {
@@ -49,7 +51,8 @@ namespace KTextEditor {
 }
 */
 
-class MainWindow : public KMainWindow
+// class MainWindow : public KMainWindow
+class MainWindow : public KParts::MainWindow
 {
   Q_OBJECT
 

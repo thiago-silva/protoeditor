@@ -64,7 +64,8 @@
 
 
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-    : KMainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
+//     : KMainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
+  : KParts::MainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
 {
   if(!name) { setName("MainWindow"); }
 
@@ -74,11 +75,9 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   createWidgets();
 
-  setStandardToolBarMenuEnabled(true);
-
   setupActions();
 
-  createGUI();
+   createGUI(0);
 
   resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
   clearWState(WState_Polished);
@@ -95,7 +94,7 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   loadSites();
 
-  stateChanged("has_nofileopened");
+
   stateChanged("debug_disabled");
 }
 
@@ -148,14 +147,20 @@ void MainWindow::setupActions()
 
   //file menu
   KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
-
+  
   m_actionRecent = KStdAction::openRecent(this, SLOT(slotFileRecent(const KURL&)), actionCollection());
   m_actionRecent->loadEntries(kapp->config());//,"Recent Files");
 
   KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
+
+  (void)new KAction(i18n("Close All"), 0, this, SLOT(slotCloseAllFiles()), actionCollection(), "file_close_all");
+  
+  KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
+  
+  /*
+  KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
   KStdAction::save(this, SLOT(slotSaveFile()), actionCollection());
   KStdAction::saveAs(this, SLOT(slotSaveFileAs()), actionCollection());
-  KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 
   //edit menu
@@ -165,36 +170,37 @@ void MainWindow::setupActions()
   KStdAction::copy(m_tabEditor,      SLOT(slotCopy()), actionCollection());
   KStdAction::paste(m_tabEditor,     SLOT(slotPaste()), actionCollection());
   KStdAction::selectAll(m_tabEditor, SLOT(slotSelectAll()), actionCollection());
-
-  KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
+  */
 
   KStdAction::keyBindings(this, SLOT(slotEditKeys()), actionCollection());
   KStdAction::configureToolbars(this, SLOT(slotEditToolbars()), actionCollection());
+  KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
-  (void)new KAction(i18n("Configure &Editor..."), 0, m_tabEditor, SLOT(slotConfigEditor()), actionCollection(), "settings_editor");
+//   (void)new KAction(i18n("Configure &Editor..."), 0, m_tabEditor, SLOT(slotConfigEditor()), actionCollection(), "settings_editor");
 
   m_siteAction = new KSelectAction("Site", 0, actionCollection(), "site");
 //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
 //                     SLOT(slotDebugRun()), actionCollection(), "script_run");
 
-  (void)new KAction(i18n("&Start"), "dbgrun", "F5", m_debugger_manager,
+  (void)new KAction(i18n("Start"), "dbgstart", "F5", m_debugger_manager,
                     SLOT(slotDebugRun()), actionCollection(), "debug_start");
 
-  (void)new KAction(i18n("Sto&p"), "stop", "ESC", m_debugger_manager,
+  (void)new KAction(i18n("Stop"), "stop", "ESC", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
-  (void)new KAction(i18n("Step &Over"), "dbgnext", "F6", m_debugger_manager,
+  (void)new KAction(i18n("Step Over"), "dbgnext", "F6", m_debugger_manager,
                     SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
 
-  (void)new KAction(i18n("Step &Into"), "dbgstep", "F7", m_debugger_manager,
+  (void)new KAction(i18n("Step Into"), "dbgstep", "F7", m_debugger_manager,
                     SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
 
-  (void)new KAction(i18n("Step O&ut"), "dbgstepout", "F8", m_debugger_manager,
+  (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-  (void)new KAction(i18n("&Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
+  (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
-
+  
+  setStandardToolBarMenuEnabled(true);
 }
 
 void MainWindow::createWidgets()
@@ -330,7 +336,7 @@ void MainWindow::openFile(const KURL& url)
 {
   KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
   if(file.isReadable()) {
-    m_tabEditor->addDocument(url);
+    m_tabEditor->openDocument(url);
     m_actionRecent->addURL(url);
 
   } else {
@@ -368,6 +374,13 @@ void MainWindow::slotSaveFileAs()
   }
 }
 
+// bool MainWindow::close()
+// {
+//   m_tabEditor->closeAllDocuments();
+//   m_actionRecent->saveEntries(kapp->config());
+//   kapp->config()->sync();
+// }
+
 void MainWindow::slotClose()
 {
   m_actionRecent->saveEntries(kapp->config());
@@ -391,7 +404,9 @@ void MainWindow::slotEditKeys()
 
   if(m_tabEditor->count() != 0) {
     KTextEditor::View* view  = m_tabEditor->anyView();
-    dlg.insert(view->actionCollection());
+    if(view) {
+      dlg.insert(view->actionCollection());
+    }  
   }
 
   dlg.configure();
@@ -406,7 +421,7 @@ void MainWindow::slotEditToolbars()
 {
   KEditToolbar dlg(actionCollection());
   if (dlg.exec())
-    createGUI();
+    createGUI(0);
 }
 
 void MainWindow::slotShowSettings()
