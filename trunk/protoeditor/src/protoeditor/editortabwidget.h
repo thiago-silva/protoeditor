@@ -83,22 +83,25 @@ signals:
   void sigBreakpointUnmarked(const QString&, int);
   void sigNewDocument();
 
+protected slots:
+  virtual void   closeRequest(int);
+  virtual void   contextMenu(int, const QPoint &);
 private slots:
   void slotCurrentChanged(QWidget*);
   void slotBreakpointMarked(Document* doc, int line);
   void slotBreakpointUnmarked(Document* doc, int line);
-
 private:
+  void                        closeDocument(int);
   Document*                   document(uint);
   Document*                   document(const QString&);
   Document*                   currentDocument();
-  
+
   bool                        createDocument(const KURL& url);
   void                        setupMarks(KTextEditor::View* view);
 
   int                         documentIndex(const QString& filepath);
-//   void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
-//   void                        loadMarks(Document_t&, KTextEditor::Document*);
+  //   void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
+  //   void                        loadMarks(Document_t&, KTextEditor::Document*);
 
 
   bool m_terminating;
@@ -111,8 +114,8 @@ private:
 
   MainWindow* m_window;
 
-   KTextEditor::View* m_currentView;
-//   KParts::PartManager* m_partManager;
+  KTextEditor::View* m_currentView;
+  //   KParts::PartManager* m_partManager;
 };
 
 #endif

@@ -26,12 +26,22 @@
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/view.h>
 #include <kactioncollection.h>
+#include <kiconloader.h>
+#include <kmimetype.h>
+#include <kpopupmenu.h>
+// #include <qiconset.h>
 
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
-  : KTabWidget(parent, name), m_terminating(false),/* m_markGuard(false),m_closeGuard(false),*/
+    : KTabWidget(parent, name), m_terminating(false),/* m_markGuard(false),m_closeGuard(false),*/
     m_window(window), m_currentView(0)
 {
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
+
+  //reordering with middle button: need extra coding to work (it alters the index of the tabs
+  //wich should be in sync with the list)
+  //   setTabReorderingEnabled(true);
+  setHoverCloseButton (true);
+  setHoverCloseButtonDelayed (true);
 }
 
 EditorTabWidget::~EditorTabWidget()
@@ -61,28 +71,33 @@ bool EditorTabWidget::openDocument(const KURL& url)
     {
       emit sigNewDocument();
       return true;
-    } else
+    }
+    else
     {
       return false;
     }
   }
 }
 
-void EditorTabWidget::closeCurrentDocument()
+void EditorTabWidget::closeDocument(int index)
 {
-  if(count() == 0) return;
+  if((index < 0) || (count() == 0))
+  {
+    return;
+  }
 
   if(!m_terminating)
   {
-    m_window->guiFactory()->removeClient(m_currentView);
-    m_currentView = 0L;
+    m_window->guiFactory()->removeClient(document(index)->view());
+    if(index == currentPageIndex())
+    {
+      m_currentView = 0L;
+    }
   }
 
-//   m_closeGuard = true;
+  Document* doc = document(index);
 
-  Document* doc = currentDocument();
-
-  QWidget* w = page(currentPageIndex());
+  QWidget* w = page(index);
   removePage(w);
 
   m_docList.remove(doc);
@@ -93,8 +108,37 @@ void EditorTabWidget::closeCurrentDocument()
     m_window->actionStateChanged("has_nofileopened");
     m_window->setCaption(QString::null);
   }
+}
 
-//   m_closeGuard = false;
+void EditorTabWidget::closeCurrentDocument()
+{
+  closeDocument(currentPageIndex());
+  /*
+    if(count() == 0) return;
+   
+    if(!m_terminating)
+    {
+      m_window->guiFactory()->removeClient(m_currentView);
+      m_currentView = 0L;
+    }
+   
+  //   m_closeGuard = true;
+   
+    Document* doc = currentDocument();
+   
+    QWidget* w = page(currentPageIndex());
+    removePage(w);
+   
+    m_docList.remove(doc);
+    delete doc;
+   
+    if((count() == 0) && !m_terminating)
+    {
+      m_window->actionStateChanged("has_nofileopened");
+      m_window->setCaption(QString::null);
+    }
+   
+  //   m_closeGuard = false;*/
 }
 
 void EditorTabWidget::closeAllDocuments()
@@ -245,7 +289,9 @@ bool EditorTabWidget::hasBreakpointAt(const QString& filePath, int line)
   if(doc)
   {
     return document(filePath)->hasBreakpointAt(line);
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
@@ -262,11 +308,19 @@ bool EditorTabWidget::createDocument(const KURL& url)
 
   connect(doc, SIGNAL(sigBreakpointMarked(Document*, int )), this,
           SLOT(slotBreakpointMarked(Document*, int)));
-  
+
   connect(doc, SIGNAL(sigBreakpointUnmarked(Document*, int )), this,
           SLOT(slotBreakpointUnmarked(Document*, int)));
-  
-  insertTab(doc->tab(), url.fileName());
+
+
+  QIconSet mimeIcon (KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
+  if (mimeIcon.isNull())
+  {
+    mimeIcon = QIconSet(SmallIcon("document"));
+  }
+
+  addTab(doc->tab(), mimeIcon, url.fileName());
+
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(doc->view());
   if (popupIf)
     popupIf->installPopup((QPopupMenu *)m_window->factory()->container("ktexteditor_popup", m_window));
@@ -292,12 +346,17 @@ int EditorTabWidget::documentIndex(const QString& filePath)
   return -1;
 }
 
+void EditorTabWidget::closeRequest (int index)
+{
+  closeDocument(index);
+}
+
 void EditorTabWidget::slotCurrentChanged(QWidget*)
 {
   if(m_terminating) return;
 
   m_window->setCaption(currentDocumentPath());
-  
+
   if(m_currentView)
   {
     m_window->guiFactory()->removeClient(m_currentView);
@@ -322,6 +381,40 @@ void EditorTabWidget::slotBreakpointUnmarked(Document* doc, int line)
   emit sigBreakpointUnmarked(doc->path(), line);
 }
 
+void EditorTabWidget::contextMenu(int index, const QPoint & p)
+{
+  enum { Close, CloseOthers, CloseAll };
+
+  KPopupMenu* menu = new KPopupMenu(this);
+  menu->insertItem(SmallIcon("fileclose"), "Close", Close);
+  menu->insertItem("Close Other Tabs", CloseOthers);
+  menu->insertItem("Close All", CloseAll);
+
+  Document* doc = document(index);
+  int idx = 0;
+  switch(menu->exec(p))
+  {
+    case Close:
+      closeDocument(index);
+      break;
+    case CloseOthers:
+      while(count() != 1)
+      {
+        if(document(idx) != doc)
+        {
+          closeDocument(idx);
+        }
+        else
+        {
+          idx++;
+        }
+      }
+      break;
+    case CloseAll:
+      closeAllDocuments();
+      break;
+  }
+}
 
 KTextEditor::View* EditorTabWidget::currentView()
 {
@@ -331,9 +424,12 @@ KTextEditor::View* EditorTabWidget::currentView()
 
 Document* EditorTabWidget::document(uint index)
 {
-  if(index > (m_docList.count()-1)) {
+  if(index > (m_docList.count()-1))
+  {
     return 0L;
-  } else {
+  }
+  else
+  {
     return *(m_docList.at(index));
   }
 }
@@ -341,9 +437,11 @@ Document* EditorTabWidget::document(uint index)
 Document* EditorTabWidget::document(const QString& filePath)
 {
   QValueList<Document*>::iterator it;
-  for(it = m_docList.begin(); it != m_docList.end(); ++it) {
+  for(it = m_docList.begin(); it != m_docList.end(); ++it)
+  {
 
-    if((*it)->path() == filePath) {
+    if((*it)->path() == filePath)
+    {
       return (*it);
     }
   }
