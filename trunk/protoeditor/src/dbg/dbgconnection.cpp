@@ -25,6 +25,7 @@
 #include <qsocketdevice.h>
 #include <qsocketnotifier.h>
 
+#include <kdebug.h>
 #include <klocale.h>
 
 DBGConnection::DBGConnection(QObject * parent, const char * name)
@@ -42,6 +43,7 @@ DBGConnection::~DBGConnection()
 void DBGConnection::clearDevice()
 {
   if(m_listening) {
+    kdDebug() << "DBG: Stop listening on port " << m_device->port() << endl;
     m_device->close();
     m_listening = false;
   }
