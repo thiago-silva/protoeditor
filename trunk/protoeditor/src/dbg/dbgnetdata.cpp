@@ -387,8 +387,8 @@ char* DBGTagRawdata::toArray()
   m_raw = toNetwork(m_id  , m_raw, 0);
   m_raw = toNetwork(m_size, m_raw, 4);
 
-  long i;
-  for(long j = 0, i = 8; j < m_size; i++, j++)
+  long i = 8;
+  for(long j = 0; j < m_size; i++, j++)
   {
     m_raw[i] = m_data[j];
   }
