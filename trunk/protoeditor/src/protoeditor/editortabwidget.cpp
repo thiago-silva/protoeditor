@@ -29,7 +29,9 @@
 #include <kiconloader.h>
 #include <kmimetype.h>
 #include <kpopupmenu.h>
-// #include <qiconset.h>
+
+//Tied to Kate
+#include <kate/document.h>
 
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
     : KTabWidget(parent, name), m_terminating(false),
@@ -300,6 +302,11 @@ bool EditorTabWidget::createDocument(const KURL& url)
   connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
           SLOT(sigStatusMsg(const QString&)));
 
+  //activate the reload dialog when external changes happen to the text
+  Kate::Document* kdoc = dynamic_cast<Kate::Document*>(doc);
+  if(kdoc)
+    kdoc->setFileChangedDialogsActivated(true);
+    
   QIconSet mimeIcon (KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
   if (mimeIcon.isNull())
   {
