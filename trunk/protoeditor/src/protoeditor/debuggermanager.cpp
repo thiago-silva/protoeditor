@@ -37,6 +37,7 @@
 #include <kstatusbar.h>
 #include <kaction.h>
 #include <klineedit.h>
+//#include <ktexteditor/editinterface.h>
 #include <ktextedit.h>
 #include <kpushbutton.h>
 
@@ -471,6 +472,8 @@ void DebuggerManager::slotSessionEnded()
 
 void DebuggerManager::slotDebugStarted()
 {
+  m_window->edOutput()->clear();
+
   m_debugger->addBreakpoints(
     m_window->breakpointListView()->breakpoints());
 
@@ -498,6 +501,7 @@ void DebuggerManager::slotDebugEnded()
   m_window->globalVarList()->setReadOnly(true);
   m_window->localVarList()->setReadOnly(true);
   m_window->watchList()->setReadOnly(true);
+
 
   m_window->statusBar()->message("Debug ended");
 
