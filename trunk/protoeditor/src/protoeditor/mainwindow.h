@@ -85,7 +85,6 @@ private slots:
   */
 
   void slotShowSettings();
-  void slotDebugToggleBp();
   void slotFileRecent(const KURL&);
 
   void slotClose();

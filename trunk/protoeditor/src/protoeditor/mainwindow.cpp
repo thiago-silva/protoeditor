@@ -130,28 +130,28 @@ void MainWindow::setupActions()
 
   // DEBUGGER Actions
   (void)new KAction(i18n("&Start Session"), "connect_creating", "F9", m_debugger_manager,
-    SLOT(slotDebugStartSession()), actionCollection(), "debug_start_session");
+                    SLOT(slotDebugStartSession()), actionCollection(), "debug_start_session");
 
   (void)new KAction(i18n("&End Session"), "connect_no", "F10", m_debugger_manager,
-    SLOT(slotDebugEndSession()), actionCollection(), "debug_end_session");
+                    SLOT(slotDebugEndSession()), actionCollection(), "debug_end_session");
 
   (void)new KAction(i18n("&Run"), "dbgrun", "F5", m_debugger_manager,
-    SLOT(slotDebugRun()), actionCollection(), "debug_run");
+                    SLOT(slotDebugRun()), actionCollection(), "debug_run");
 
   (void)new KAction(i18n("&Stop"), "stop", "ESC", m_debugger_manager,
-    SLOT(slotDebugStop()), actionCollection(), "debug_stop");
+                    SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
   (void)new KAction(i18n("Step &Over"), "dbgnext", "F6", m_debugger_manager,
-    SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
+                    SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
 
   (void)new KAction(i18n("Step &Into"), "dbgstep", "F7", m_debugger_manager,
-    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
+                    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
 
   (void)new KAction(i18n("Step O&ut"), "dbgstepout", "F8", m_debugger_manager,
-    SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
+                    SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-  (void)new KAction(i18n("&Toggle Breakpoint"), "activebreakpoint", "", this,
-    SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
+  (void)new KAction(i18n("&Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
+                    SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
 }
 
 void MainWindow::createWidgets()
@@ -284,7 +284,8 @@ void MainWindow::slotOpenFile()
 }
 
 
-void MainWindow::openFile(const KURL& url) {
+void MainWindow::openFile(const KURL& url)
+{
   KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
   if(file.isReadable()) {
     m_tabEditor->addDocument(url);
@@ -301,7 +302,8 @@ void MainWindow::openFile(const KURL& url) {
 }
 
 
-void MainWindow::slotFileRecent(const KURL& url) {
+void MainWindow::slotFileRecent(const KURL& url)
+{
   openFile(url);
 }
 
@@ -328,7 +330,8 @@ void MainWindow::slotSaveFileAs()
   }
 }
 
-void MainWindow::slotClose() {
+void MainWindow::slotClose()
+{
   //tabEditor()->terminate();
   m_actionRecent->saveEntries(kapp->config(), "Recent Files");
 }
@@ -442,9 +445,6 @@ void MainWindow::initDebuggerSettings()
   if(!m_debuggerSettings) {
     m_debuggerSettings = new DebuggerSettingsWidget(0, "Debugger");
   }
-}
-
-void MainWindow::slotDebugToggleBp() {
 }
 
 void MainWindow::showSorry(const QString& msg) const
