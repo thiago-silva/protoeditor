@@ -71,7 +71,8 @@ private slots:
 
   void slotAddWatch();
   void slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
-  void slotVarModified(Variable* var);
+  void slotGlobalVarModified(Variable* var);
+  void slotLocalVarModified(Variable* var);
   void slotBreakpointCreated(DebuggerBreakpoint*);
   void slotBreakpointChanged(DebuggerBreakpoint*);
   void slotBreakpointRemoved(DebuggerBreakpoint*);

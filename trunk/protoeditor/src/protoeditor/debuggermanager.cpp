@@ -61,7 +61,7 @@ void DebuggerManager::init()
 
 
   connect(m_window->watchList(), SIGNAL(sigVarModified(Variable*)),
-          this, SLOT(slotVarModified(Variable*)));
+          this, SLOT(slotLocalVarModified(Variable*)));
 
 
   //-------STACK UI
@@ -71,10 +71,10 @@ void DebuggerManager::init()
 
   //-----VARS UI
   connect(m_window->globalVarList(), SIGNAL(sigVarModified(Variable*)),
-          this, SLOT(slotVarModified(Variable*)));
+          this, SLOT(slotGlobalVarModified(Variable*)));
 
   connect(m_window->localVarList(), SIGNAL(sigVarModified(Variable*)),
-          this, SLOT(slotVarModified(Variable*)));
+          this, SLOT(slotLocalVarModified(Variable*)));
 
   //---BREAKPOINT UI -- TextEditor * BreakpointListview
   connect(m_window->tabEditor(),
@@ -295,11 +295,19 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, Debugge
   }
 
   if(m_debugger) {
-    m_debugger->requestLocalVariables(nw);
+    m_debugger->changeCurrentExecutionPoint(nw);
   }
 }
 
-void DebuggerManager::slotVarModified(Variable* var)
+void DebuggerManager::slotGlobalVarModified(Variable* var)
+{
+  if(!m_debugger) return;
+
+  m_debugger->modifyVariable(var,
+                             m_window->stackCombo()->stack()->bottomExecutionPoint());
+}
+
+void DebuggerManager::slotLocalVarModified(Variable* var)
 {
   if(!m_debugger) return;
 
@@ -410,14 +418,6 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   ed->gotoLineAtFile(execPoint->filePath(), execPoint->line()-1);
 
   ed->markExecutionPoint(execPoint->filePath(), execPoint->line());
-
-  //--request stack context dependent vars
-
-  //if(m_debugger) {
-  //  m_debugger->requestLocalVariables(execPoint);
-  //  //---requesting watches
-  //  m_debugger->requestWatches(execPoint);
-  //}
 }
 
 void DebuggerManager::updateGlobalVars(VariablesList_t* vars) {
