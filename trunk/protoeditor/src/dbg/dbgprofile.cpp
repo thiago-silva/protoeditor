@@ -121,7 +121,7 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
     : KDialog(parent, name),
     m_listView(0), m_profileData(0)
 {
-  setCaption("Profile (EXPERIMENTAL)");
+  setCaption("DBG Profiler");
   
   QVBoxLayout* l = new QVBoxLayout(this);
 
@@ -137,6 +137,13 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
   m_listView->addColumn("Total time (ms)");
   m_listView->addColumn("Min time (ms)");
   m_listView->addColumn("Max time (ms)");
+
+  m_listView->setColumnAlignment(LineCol, Qt::AlignHCenter);
+  m_listView->setColumnAlignment(HitsCol, Qt::AlignHCenter);
+  m_listView->setColumnAlignment(AvgCol, Qt::AlignHCenter);
+  m_listView->setColumnAlignment(TotalCol, Qt::AlignHCenter);
+  m_listView->setColumnAlignment(MinCol, Qt::AlignHCenter);
+  m_listView->setColumnAlignment(MaxCol, Qt::AlignHCenter);
       
   l->addWidget(m_listView);
   
@@ -148,6 +155,12 @@ DBGProfileDialog::~DBGProfileDialog()
   delete m_profileData;
 }
 
+void DBGProfileDialog::closeEvent(QCloseEvent * e)
+{
+  emit sigClose();
+  KDialog::closeEvent(e);
+}
+  
 void DBGProfileDialog::clear()
 {
   m_listView->clear();

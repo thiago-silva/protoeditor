@@ -73,6 +73,13 @@ public:
 
   void clear();
   void setData(DBGProfileData*);
+
+signals:
+  void sigClose();
+  
+protected:
+  virtual void closeEvent(QCloseEvent * e);
+  
 private:
   enum {FilePathCol, LineCol, /*ContextCol,*/ HitsCol, AvgCol, TotalCol, MinCol, MaxCol};
 
