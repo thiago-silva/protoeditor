@@ -230,12 +230,12 @@ void VariablesListView::addVariable(Variable* variable, VariablesListViewItem* p
 
   if(!parent) {
     item = new VariablesListViewItem(this, variable);
+    //add new item to the bottom of the list
+    item->moveItem(lastItem());
   } else {
     item = new VariablesListViewItem(parent, variable);
+    item->moveItem(item->lastItem());
   }
-
-  //add new item to the bottom of the list
-  item->moveItem(lastItem());
 }
 
 

@@ -42,6 +42,8 @@ public:
   QString stringPath();
   Variable* variable();
 
+  virtual QListViewItem* lastItem();
+
   virtual void setRenameEnabled( int col, bool b );
 
 private:

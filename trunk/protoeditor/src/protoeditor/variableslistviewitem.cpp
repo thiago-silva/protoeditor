@@ -88,6 +88,20 @@ Variable* VariablesListViewItem::variable() {
   return m_variable;
 }
 
+QListViewItem* VariablesListViewItem::lastItem()
+{
+  QListViewItem* current;
+  QListViewItem* last = 0;
+  VariablesListViewItem* i;
+  current = this;
+
+  while((current = current->nextSibling()) != 0) {
+    i = dynamic_cast<VariablesListViewItem*>(current);
+    last = current;
+  }
+  return last;
+}
+
 void VariablesListViewItem::setRenameEnabled( int col, bool b ) {
   QListViewItem::setRenameEnabled(col, b);
 
