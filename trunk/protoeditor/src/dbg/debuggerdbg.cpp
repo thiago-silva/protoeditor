@@ -40,8 +40,8 @@
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     : AbstractDebugger(parent), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
-    m_dbgSettings(0), m_net(0), m_profileDialog(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
-    m_globalExecutionPointID(GLOBAL_SCOPE_ID)
+    m_isProfilingEnabled(false), m_dbgSettings(0), m_net(0), m_profileDialog(0),
+    m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
   m_dbgSettings = new DBGSettings();
 
@@ -306,24 +306,28 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::profile()
+void DebuggerDBG::enableProfile(bool value)
 {
-  if(isRunning())
-  {
-    if(m_profileDialog)
-    {
-      m_profileDialog->clear();
-    }
+  m_isProfilingEnabled = value;
 
-    m_net->profile();
+  if(m_isProfilingEnabled)
+  {
+    profileDialog()->show();
   }
+  else
+  {
+    profileDialog()->close();    
+  }
+  
+  requestProfileData();
 }
 
-KDialog* DebuggerDBG::profileDialog()
+DBGProfileDialog* DebuggerDBG::profileDialog()
 {
   if(!m_profileDialog)
   {
     m_profileDialog = new DBGProfileDialog(0, "profile");
+    connect(m_profileDialog, SIGNAL(sigClose()), manager(), SLOT(slotProfileDialogClosed()));
   }
 
   return m_profileDialog;
@@ -503,11 +507,7 @@ void DebuggerDBG::slotInternalError(const QString& msg)
 
 void DebuggerDBG::slotDBGStarted()
 {
-  if(m_profileDialog)
-  {
-    m_profileDialog->clear();
-  }
-
+  m_firstStep = true;
   m_isRunning = true;
   emit sigDebugStarted();
 }
@@ -533,6 +533,19 @@ void DebuggerDBG::processStepData()
   m_net->requestVariables(m_currentExecutionPointID, false);
   m_net->requestVariables(m_globalExecutionPointID, true);
   requestWatches(m_currentExecutionPointID);
+  requestProfileData();
+}
+
+void DebuggerDBG::requestProfileData()
+{
+  if(isRunning())
+  {
+    if(m_isProfilingEnabled)
+    {
+      profileDialog()->clear();
+      m_net->profile();
+    }
+  }
 }
 
 void DebuggerDBG::slotBreakpoint()
@@ -544,7 +557,16 @@ void DebuggerDBG::slotBreakpoint()
 void DebuggerDBG::slotStepDone()
 {
   processStepData();
-  emit sigStepDone();
+
+  //hide the first step. Its done automatically on DBGNet::processHeader() - DBGC_STARTUP.
+  if(!m_firstStep)
+  {
+    emit sigStepDone();
+  }
+  else
+  {
+    m_firstStep = false;
+  }
 }
 
 #include "debuggerdbg.moc"

@@ -63,9 +63,8 @@ public:
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
-  virtual void profile();
-  virtual KDialog* profileDialog();
-  
+  virtual void enableProfile(bool);
+
   /* Internal use (provided for DBGNet use) */
   void updateStack(DebuggerStack*);
   void updateVar(const QString& result, const QString& str, bool isGlobal);
@@ -90,16 +89,20 @@ private slots:
   void slotStepDone();
   void slotBreakpoint();
 private:
+  DBGProfileDialog* profileDialog();
+    
   bool startJIT();
   void stopJIT();
   void requestWatches(int scopeid);
   int getDBGOptions();
   void processStepData();
+  void requestProfileData();
 
   QString                 m_name;
   bool                    m_isJITActive;
   bool                    m_isRunning;
-
+  bool                    m_isProfilingEnabled;
+  
   DBGSettings            *m_dbgSettings;
 
   DBGNet                 *m_net;
@@ -110,6 +113,7 @@ private:
   //DebuggerExecutionPoint *m_globalExecutionPoint;  //aways the bottom of the stack
   QString                 m_output;
   QValueList<QString>     m_wathcesList;
+  bool                    m_firstStep;
 };
 
 
