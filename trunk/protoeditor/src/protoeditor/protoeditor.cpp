@@ -25,10 +25,12 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 
+#include <config.h>
+
 static const char description[] =
   I18N_NOOP("A little KDE PHP Debugger client");
 
-static const char version[] = "0.5.2";
+static const char version[] = VERSION;
 
 static KCmdLineOptions options[] =
   {
