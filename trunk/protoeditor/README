@@ -6,7 +6,7 @@ Project site:
 
 1.0 About:
 
-  Protoeditor is a little KDE text editor developed for PHP debugging with the
+  Protoeditor is a small KDE text editor developed for PHP debugging with the
   free version of DBG debugger (http://dd.cron.ru/dbg), version 2.11.*.
   It was first implemented as a test application while doing a plugin for
   Quanta+ (http://www.kdewebdev.org) and now it became quite usable.
@@ -21,9 +21,13 @@ Project site:
   we can do what we actually need. Remember: this is a client for the *free* version
   of DBG. Don't try to use it with the commercial version. Won't work!
 
-2.0 Notes
+2.0 Requirements:
 
-  2.1 Kate
+  * KDE 3.2 + should be fine.
+
+3.0 Notes
+
+  3.1 Kate
 
   The first time you execute Protoeditor, its configuration won't exist so,
   kate will load the default settings for the editor, wich might not include Icon Border.
@@ -31,7 +35,7 @@ Project site:
   and, on "View defaults", mark "Show Icon Border". Then you will be able to see
   the execution points and breakpoints.
 
-  2.2 Debugger Configuration
+  3.2 Debugger Configuration
 
   First, configure your php DBG module. Make sure it is active with phpinfo().
   For details about DBG installation, check the DBG site: http://dd.cron.ru
@@ -56,13 +60,15 @@ Project site:
         -Port            : the port of the http server
         -Remote base dir : the remote directory of the site (eg. /var/www/htdocs/mysite)
         -Local base dir  : the local directory of the site (eg. /home/me/mysite)
-
+        -Default file    : the default script to be debuged when this site is selected.
+        
         (other entries might appear in future versions)
 
     Many Sites can be registered and they are selected through the combo box on the
     main window toolbar. When starting the debugger, it will connect to the Site's
     host:port and use the given directories to map file paths from remote to local
-    and vice-versa.
+    and vice-versa. If the Site has a "default file", it will be opened automatically (or
+    activated, if already opened).
 
     Example of a local Site:
 
@@ -71,8 +77,15 @@ Project site:
     Port            : 80
     Remote base dir : /home/me/phpsite
     Local base dir  : /usr/apache/htdocs/phpsite
+    Default file    : /usr/apache/htdocs/phpsite/index.php
 
-  2.3 Main window
+  3.3 Profiler
+
+    Currently, DBG Profiler is supported. Be sure to have it enabled on php.ini settings.
+    It still very basic, but matches the same basic features of other IDE's that uses DBG profiler.
+    Also, there are plans to go further on profile analysis and statistics.
+    
+  3.4 Main window
 
     Now, some tricks, notes and not-so-obvious-features:
 
@@ -86,21 +99,23 @@ Project site:
 
         -Right button on a variable popup a menu to copy the variable to the clipboard.
 
-    Breakpoints:
+      Breakpoints:
 
-      -Multiple breakpoints on the same file/line is not supported.
+        -Multiple breakpoints on the same file/line is not supported.
 
-    Browsers:
+      Browsers:
 
-      -When using Konqueror, Protoeditor keeps talking to the same window. This is
-      not possible on the other browsers (Protoeditor uses the topmost instance).
+        -When using Konqueror, Protoeditor keeps talking to the same window. This is
+        not possible on the other browsers (Protoeditor uses the topmost instance).
 
-3.0 Future plans
+4.0 Future plans
 
   DBG is good. Very good. But there are some catches for the free version. So, when I finish
-  the DBG client, I might start working on XDebug (http://www.xdebug.org/) support.
+  the DBG client, I might start working on XDebug (http://www.xdebug.org/) and Gubed
+  (http://gubed.sourceforge.net) support. Also, other debuggers for languages such as python
+  and perl would be nice.
 
-4.0 Extra info
+5.0 Extra info
 
   I started working on this a year ago because, at the time, I needed for my job
   (working with php applications on GNU/Linux). We didn't want to spend money on
