@@ -60,7 +60,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -93,10 +92,7 @@
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <ul type="disc"><li>Run (gear.png) / Start debug</li>
-<ul type="disc"><li>[ ]  Default file</li>
-<li>[x] Current file</li>
-<li>-------------------</li>
-<li>Run with args</li>
+<ul type="disc"><li>Run with args</li>
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
 <li>Features / Usability:</li>
@@ -105,14 +101,17 @@
 <li>Create context menus for the listviews (breakpoints/variables/messages, etc)</li>
 <li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
 <li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on dbg settings</li>
-<li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget</li>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;</li>
 <li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)</li>
 <li>Add signal/slots for &quot;file changed on disk&quot;</li>
-<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)<br /><br /></li></ul>
+<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)</li>
+<li>CGI</li>
+<li>Add to editor context menu:</li>
+<ul type="disc"><li>Watch &lt;var under cursor&gt;</li>
+<li>Toggle Breakpoint<br /></li></ul></ul>
 <li>Implementation:</li>
-<ul type="disc"><li>set static objects to be deleted<br /><br /><br /></li></ul>
-<li>Start Gubed support</li></ul>
+<ul type="disc"><li>set static objects to be deleted<br /></li></ul>
+<li>Improve Profile / Start Gubed support</li></ul>
 </body></html>
 
 
@@ -148,8 +147,19 @@
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
 <li>DBGnet::processProf() : Profiler calc is hardcoded. Use prof_c to get the freq (divide for freq and multip for 1000. See script).</li>
-<ul type="disc"><li> $time_max = $dbg_prof_results[&quot;tm_max&quot;][$idx] * 1000;</li></ul></ul>
+<ul type="disc"><li> $time_max = $dbg_prof_results[&quot;tm_max&quot;][$idx] * 1000;<br /><br /></li></ul>
+<li>Unable to configure Site on some situations:</li>
+<ul type="disc"><li>url: http://localhost/~zz/teste/teste.php</li>
+<li>host: localhost</li>
+<li>Remotebase: /var/www/htdocs</li>
+<li>LocalBase:    /home/me/htdocs</li></ul>
+<div></div>
+<ul type="disc"><li>Resolution:</li>
+<ul type="disc"><li>Substitute &quot;Host&quot; for &quot;URL&quot;, wich will be on the form &quot;http://localhost&quot; and can be &quot;http://localhost/~zz&quot;<br /><br /><br /></li></ul></ul>
+<li>Crash:</li>
+<ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash</li></ul></ul>
 </body></html>
+
 
 \NewEntry 1 Usability issues
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
