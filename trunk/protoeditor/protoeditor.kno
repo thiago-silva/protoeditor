@@ -1,8 +1,7 @@
-\NewEntry 0 Mental Notes / Random ideas
+\CurrentEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look at http://www.enginsite.com/php-editor.htm<br /></li>
-<li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /></li>
 <li>Change the colums of breakpoint and message listviews.</li>
 <ul type="disc"><li>Create a column for the filename only</li>
 <li>Create a column for the path of the file<br /></li></ul>
@@ -10,17 +9,14 @@
 <li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
-<li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /></li>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
 <li>Add &quot;New&quot; from KstdAction<br /></li>
-<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)<br /></li>
+<li>Add the debugger being used on the status bar.<br /></li>
 <li>Try to get default kate settings from the user's katerc<br /></li>
-<li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
-<li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
+<li>See the possibility to setup katepart to show line number / icon margin on the first run.<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
-<ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info.<br /></li></ul>
-<li>Add context Menu for the editor<br /></li>
+<ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info it supports.<br /></li></ul>
 <li>Context menu for VariableListView:</li>
 <ul type="disc"><li>Copy (copy variable to clipboard)</li>
 <li>for scalars:</li>
@@ -32,22 +28,17 @@
 <li>-&quot;Modify object...&quot; (show dialog to modify the values of the members)<br /><br /></li></ul></ul>
 <li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;, &quot;run default file&quot; (like PHPEd)</li>
 <ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)<br /></li></ul>
-<li>When the state of the tabs change, set an icon or something so the user know there are more info (usefull for the Message tab)<br /><br /></li>
-<li>Use QTabWidget like konqueror/kdevelop (close button, icons, etc)<br /></li>
-<li>Implement the profiling features.<br /></li>
+<li>When the state of the bottom tabs change, set an icon or something so the user know there are more info (usefull for the Message tab)<br /></li>
 <li>Refactor, test, refactor, test...</li>
-<ul type="disc"><li>change it++ to ++it</li>
-<li>create namespaces (DBG, PHP, etc)?</li>
+<ul type="disc"><li>create namespaces (DBG, PHP, etc)?</li>
 <li>rename: variableparser to phpvariableparser </li>
-<li>Check regexp on the variableparser</li>
-<li>improve DBGReceiver so it can handle exceptional transmission behaviors.</li>
-<li>Check int/long declarations and make it uniform.</li>
+<li>Rename loglist to messagelist</li>
+<li>long/int variables are kindda messy. check it.</li>
 <li>Copy constructors, memory leak check...</li>
 <li>remove unescessary includes</li>
-<li>...<br /></li></ul>
+<li>And so on, and so on....<br /></li></ul>
 <li>Quanta idea for capabilities: </li>
 <ul type="disc"><li>Create a class to hold the capabilities supported by quanta. <br /><br /></li></ul>
-<li>Change LogListview to MessageListView. <br /></li>
 <li>Note about watches:</li>
 <ul type="disc"><li>When there is no debugger loadded, there is no way to add a watch using a Variable object (since Variable class is abstract and can't be contructed)<br /></li></ul>
 <li>Add HTML output tab?<br /></li>
@@ -60,6 +51,7 @@
 <li>Note: the VariableListViewItem shouldn't delete the Variable member. The applicatin crashes because it might be deleting a variable that was already deleted (this occurs when a item is expanded). <br /></li></ul></ul>
 <p></p>
 </body></html>
+
 
 \NewEntry 0 Site and non-implementation notes
 
@@ -89,7 +81,7 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <ul type="disc"><li>Run (gear.png) / Start debug</li>
@@ -97,18 +89,16 @@
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
 <li>Features / Usability:</li>
-<ul type="disc"><li>Add to editor context menu:</li>
-<ul type="disc"><li>Watch &lt;var under cursor&gt;</li>
-<li>Toggle Breakpoint</li></ul>
-<li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags</li>
-<li>Create context menus for the listviews (breakpoints/messages, etc)</li>
-<li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
+<ul type="disc"><li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags</li>
 <li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings</li>
 <li>Add terminal output</li>
 <li>CGI</li></ul>
 <li>Implementation:</li>
-<ul type="disc"><li>set static objects to be deleted<br /></li></ul>
-<li>Improve Profile / Start Gubed support<br /></li></ul>
+<ul type="disc"><li>set static objects to be deleted<br /><br /></li></ul>
+<li>Create classes MessageWidget, WatchWidget, BreakpointWidget, etc. holding the listviews, than, make them responsable for buttons such as btAddWatch.</li>
+<ul type="disc"><li>Create context menus for the listviews (breakpoints/messages, etc)</li>
+<li>Add Breakpoint/Watches buttons (add, clear, disable..). <br /><br /></li></ul>
+<li>Improve Profile / Start Gubed support</li></ul>
 </body></html>
 
 
