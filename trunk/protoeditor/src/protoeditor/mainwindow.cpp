@@ -138,16 +138,16 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("&Run"), "dbgrun", "F5", m_debugger_manager,
     SLOT(slotDebugRun()), actionCollection(), "debug_run");
 
-  (void)new KAction(i18n("&Stop"), "stop", "F8", m_debugger_manager,
+  (void)new KAction(i18n("&Stop"), "stop", "ESC", m_debugger_manager,
     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
-  (void)new KAction(i18n("Step &Into"), "dbgstep", "", m_debugger_manager,
-    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
-
-  (void)new KAction(i18n("Step &Over"), "dbgnext", "", m_debugger_manager,
+  (void)new KAction(i18n("Step &Over"), "dbgnext", "F6", m_debugger_manager,
     SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
 
-  (void)new KAction(i18n("Step O&ut"), "dbgstepout", "", m_debugger_manager,
+  (void)new KAction(i18n("Step &Into"), "dbgstep", "F7", m_debugger_manager,
+    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
+
+  (void)new KAction(i18n("Step O&ut"), "dbgstepout", "F8", m_debugger_manager,
     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
   (void)new KAction(i18n("&Toggle Breakpoint"), "activebreakpoint", "", this,
@@ -245,6 +245,10 @@ void MainWindow::createWidgets()
   m_edOutput = new KTextEdit(outputTab);
   outputTabLayout->addWidget(m_edOutput);
   m_edOutput->setReadOnly(true);
+  m_edOutput->setTextFormat(Qt::PlainText);
+  m_edOutput->setPaper( QBrush(QColor("white")));
+
+  //m_edOutput->setTextFormat(Qt::LogText);
   tabDebug->insertTab(outputTab, QString("Output"));
 
   /*
@@ -314,7 +318,15 @@ void MainWindow::slotSaveFile()
 }
 
 void MainWindow::slotSaveFileAs()
-{}
+{
+  KURL url = KFileDialog::getSaveURL(":protoeditor_openphp", "*.php", this);
+
+  if(!url.isEmpty()) {
+    if(!m_tabEditor->saveCurrentFileAs(url)) {
+      showSorry("Unable to save file");
+    }
+  }
+}
 
 void MainWindow::slotClose() {
   //tabEditor()->terminate();
@@ -335,8 +347,6 @@ void MainWindow::slotEditKeys()
 {
   KKeyDialog dlg;
   dlg.insert(actionCollection());
-
-  KTextEditor::View* view = 0;
 
   if(m_tabEditor->count() != 0) {
     KTextEditor::View* view  = m_tabEditor->anyView();
