@@ -55,6 +55,9 @@ public:
 
   const QString& documentPath(int index);
 
+  const QString& currentDocumentPath();
+  int            currentDocumentLine();
+
   void markActiveBreakpoint(const QString&, int);
   void unmarkActiveBreakpoint(const QString&, int);
   void markDisabledBreakpoint(const QString&, int);
@@ -64,6 +67,7 @@ public:
   void markPreExecutionPoint(const QString&, int);
   void unmarkPreExecutionPoint(const QString&, int);
 
+  bool hasBreakpointAt(const QString& , int);
 
   KTextEditor::View* anyView();
 
