@@ -423,11 +423,21 @@ void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
 
   ASSERT(m_profFreq != -1);
 
+  QString moduleName = m_dbgFileInfo->moduleName(proftag->modNo());
   int ctxid = m_dbgFileInfo->contextId(proftag->modNo(), proftag->lineNo());
+  
+  QString contextName = m_dbgFileInfo->contextName(ctxid);
+  if(contextName.isEmpty())
+  {
+    contextName = moduleName.section('/', -1).append("::main");
+  }
+
+  contextName.append("()");
+  
   m_debugger->addProfileData(proftag->modNo(),
-                             m_dbgFileInfo->moduleName(proftag->modNo()),
+                             moduleName,
                              ctxid,
-                             m_dbgFileInfo->contextName(ctxid),
+                             contextName,
                              proftag->lineNo(),
                              proftag->hitCount(),
                              (((double)(proftag->minLo() | (proftag->minHi() << 32)) / m_profFreq) * 1000),
