@@ -36,6 +36,7 @@ public:
 
   QComboBox *m_cbBrowser;
 
+  void populate();
   void updateSettings();
 private slots:
   void slotUseBrowser(int);

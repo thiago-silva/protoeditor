@@ -57,6 +57,12 @@ ExtOutputSettingsWidget::ExtOutputSettingsWidget(QWidget *parent, const char *na
   connect(m_ckUseExternalBrowser, SIGNAL(stateChanged(int)), this, SLOT(slotUseBrowser(int)));
 }
 
+void ExtOutputSettingsWidget::populate()
+{
+  m_cbBrowser->setCurrentItem(ProtoeditorSettings::self()->extOutputSettings()->browser());
+  m_ckUseExternalBrowser->setChecked(ProtoeditorSettings::self()->extOutputSettings()->useExternalBrowser());
+}
+
 void ExtOutputSettingsWidget::slotUseBrowser(int value)
 {
   if(QButton::On == value) {

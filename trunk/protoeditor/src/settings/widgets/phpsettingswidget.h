@@ -34,6 +34,8 @@ public:
   PHPSettingsWidget(QWidget *parent = 0, const char *name = 0);
   ~PHPSettingsWidget();
 
+  void populate();
+
   void updateSettings();
 private:
   KLineEdit         *m_edPHPBinaryPath;

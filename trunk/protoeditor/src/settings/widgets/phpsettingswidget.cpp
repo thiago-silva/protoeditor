@@ -80,6 +80,14 @@ PHPSettingsWidget::~PHPSettingsWidget()
 {
 }
 
+void PHPSettingsWidget::populate()
+{
+  QValueList<DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+    (*it)->widget()->populate();
+  }
+}
+
 void PHPSettingsWidget::updateSettings()
 {
   //PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
