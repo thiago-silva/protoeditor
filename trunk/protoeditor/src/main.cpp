@@ -28,7 +28,7 @@
 static const char description[] =
     I18N_NOOP("A KDE KPart Application");
 
-static const char version[] = "0.1";
+static const char version[] = "0.5";
 
 static KCmdLineOptions options[] =
 {
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 {
 
 
-    KAboutData about("Protoeditor", I18N_NOOP("Protoeditor"), version, description,
+    KAboutData about("protoeditor", I18N_NOOP("Protoeditor"), version, description,
          KAboutData::License_GPL, "(C) %{YEAR} Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
     about.addAuthor( "Thiago Silva", 0, "thiago.silva@kdemail.com" );
     KCmdLineArgs::init(argc, argv, &about);
