@@ -53,8 +53,7 @@
 <p></p>
 </body></html>
 
-
-\CurrentEntry 0 Site and non-implementation notes
+\NewEntry 0 Site and non-implementation notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
 <li>Create a logo for the site</li>
@@ -62,12 +61,12 @@
 <li>Create user documentation</li></ul>
 </body></html>
 
-
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO Now
+\CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Test new dbg backend (debug protoeditor and run steps, add watches/breakpoints, etc to remember what is missing)<br /></li>
+<li>Test Watches!!!<br /></li>
 <li>Create Actions:</li>
 <ul type="disc"><li>Run</li>
 <ul type="disc"><li>Default file</li>
@@ -77,9 +76,13 @@
 <li>Step into/over/out</li>
 <li>Stop</li>
 <li>Pause</li></ul>
-<li>Add the other KTextEdit Actions<br /><br /></li>
-<li>Add the icon for unresolved breakpoint</li></ul>
+<li>Add the other KTextEdit Actions<br /></li>
+<li>Add Breakpoint buttons (add, clear, disable..). Add Breakpoint Context Menu<br /></li>
+<li>Add the icon for unresolved breakpoint<br /></li>
+<li>When php error ocurr, add it to the Messages listview.<br /></li>
+<li>Test output/html output</li></ul>
 </body></html>
+
 
 \NewEntry 1 Bug reminder
 
@@ -92,7 +95,6 @@
 <ul type="disc"><li>Implement the toggle breakpoint on the editor margin</li>
 <li> <br /><br /></li></ul></ul>
 </body></html>
-
 
 \NewEntry 0 KDE faqs, howtos, standards
 
@@ -576,7 +578,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 1 pcre changes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>http://support.nusphere.com/viewtopic.php?t=1074&amp;highlight=pcre <br /><br /> Posted: Fri Oct 08, 2004 3:17 pm</p>
@@ -671,5 +672,4 @@
 <p>#define DBGC_PAUSE      0x0013    /* pause current session as soon as possible */</p>
 <p></p>
 </body></html>
-
 
