@@ -47,10 +47,8 @@
 #include <qvaluelist.h>
 
 #include <kdialogbase.h>
-
+#include <kiconloader.h>
 #include <ktextedit.h>
-//#include <kconfigdialog.h>
-
 
 /*
 #include <ktexteditor/document.h>
@@ -121,29 +119,26 @@ void MainWindow::loadSites()
   m_siteAction->setComboWidth(150);
 }
 
-
-/* Thanks to KEdit author, we copy and paste :-) */
 void MainWindow::setupStatusBar()
 {
   m_statusBar = new KStatusBar(this);
-  /*
-    statusBar()->insertItem("", ID_GENERAL, 10 );
-    statusBar()->insertFixedItem( i18n("OVR"), ID_INS_OVR );
-    statusBar()->insertFixedItem( i18n("Line:000000 Col: 000"), ID_LINE_COLUMN );
 
-    statusBar()->setItemAlignment( ID_GENERAL, AlignLeft|AlignVCenter );
-    statusBar()->setItemAlignment( ID_LINE_COLUMN, AlignLeft|AlignVCenter );
-    statusBar()->setItemAlignment( ID_INS_OVR, AlignLeft|AlignVCenter );
+  //first item: debug led
+  m_led = new QLabel(this);
+  m_led->setPixmap(QPixmap(UserIcon("indicator_off")));
+  statusBar()->addWidget(m_led);
 
-    statusBar()->changeItem( i18n("Line: 1 Col: 1"), ID_LINE_COLUMN );
-    statusBar()->changeItem( i18n("INS"), ID_INS_OVR );
-  */
+  //second item: debug msgs
+  statusBar()->insertItem("", DebugMsgStatus);
+  statusBar()->setItemFixed(DebugMsgStatus, 120);
+  
+  //third item: editor msgs
+  statusBar()->insertFixedItem("", EditorMsgStatus, true);
+  statusBar()->setItemFixed(EditorMsgStatus, 230);
 }
 
 void MainWindow::setupActions()
 {
-  //NOTE: there are A LOT of std actions that can be used.
-
   //file menu
   KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
 
@@ -441,6 +436,7 @@ void MainWindow::slotQuit()
   {
     close();
   }
+  kapp->config()->sync();
 }
 
 void MainWindow::closeEvent(QCloseEvent * e)
@@ -488,6 +484,30 @@ void MainWindow::slotEditToolbars()
   }
 }
 
+void MainWindow::setEditorStatusMsg(const QString& msg)
+{
+  statusBar()->changeItem(msg, EditorMsgStatus);
+}
+void MainWindow::setDebugStatusMsg(const QString& msg)
+{
+  statusBar()->changeItem(msg, DebugMsgStatus);
+}
+
+void MainWindow::setLedEnabled(bool on)
+{
+  if(on)
+  {
+    m_led->setPixmap(QPixmap(UserIcon("indicator_on")));
+  }
+  else
+  {
+    m_led->setPixmap(QPixmap(UserIcon("indicator_off")));
+  }
+//   m_led = new QLabel(this);
+//   m_led->setPixmap(QPixmap(UserIcon("indicator_off")));
+//   statusBar()->addWidget(m_led);
+}
+  
 void MainWindow::slotShowSettings()
 {
   ConfigDlg::showDialog();

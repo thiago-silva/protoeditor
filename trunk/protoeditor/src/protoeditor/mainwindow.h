@@ -43,6 +43,7 @@ class KRecentFilesAction;
 class KURL;
 class KSelectAction;
 class KDialogBase;
+class QLabel;
 
 
 /*
@@ -84,6 +85,9 @@ public:
   enum { SiteScript, ActiveScript };
   int preferredScript();
 
+  void setEditorStatusMsg(const QString&);
+  void setDebugStatusMsg(const QString&);
+  void setLedEnabled(bool);
 private slots:
   void slotOpenFile();
   void slotCloseFile();
@@ -115,11 +119,16 @@ private slots:
 protected:
   virtual void closeEvent(QCloseEvent * e);
 private:
+  
+  //StatusBar item IDs
+  enum { DebugMsgStatus, EditorMsgStatus };
+    
   void setupStatusBar();
   void setupActions();
   void createWidgets();
   void loadSites();
 
+  QLabel* m_led;  
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;
   VariablesListView* m_globaVarList;
