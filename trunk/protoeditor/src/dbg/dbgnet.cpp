@@ -37,8 +37,7 @@
 #include <knotifyclient.h>
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_profiling(false),
-    m_opts(0), m_sessionId(0), m_headerFlags(0),
+    : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
     m_dbgStack(0), m_dbgFileInfo(0)
 {
@@ -162,12 +161,6 @@ void DBGNet::requestBreakpointRemoval(int bpid)
 
 void DBGNet::profile()
 {
-  m_profiling = true;
-  requestProfileData();
-}
-
-void DBGNet::requestProfileData()
-{
   m_requestor->requestProfileData(1); //the main module is aways 1
 }
 
@@ -214,9 +207,6 @@ bool DBGNet::processHeader(DBGHeader* header)
     case DBGC_PAUSE:
       break;
     case DBGC_STARTUP:
-      
-      m_firsStep = true;
-      
       //so lets start too...
       m_requestor->addHeaderFlags(DBGF_STARTED);
 
@@ -247,21 +237,14 @@ bool DBGNet::processHeader(DBGHeader* header)
       }
       break;
     case DBGC_BREAKPOINT:
+      emit sigBreakpoint();      
       processStepData();
-      emit sigBreakpoint();
-      break;      
+      break;
     case DBGC_STEPINTO_DONE:
     case DBGC_STEPOVER_DONE:
     case DBGC_STEPOUT_DONE:
+      emit sigStepDone();
       processStepData();
-
-      //We don't want to notify the first step. So lets hide it from the public.
-      //(The first step is forced on DBGC_STARTUP above)
-      if(!m_firsStep) {
-        emit sigStepDone();
-      } else {
-        m_firsStep = false;
-      }
       break;
   }
   return true;
@@ -271,11 +254,6 @@ void DBGNet::processStepData()
 {
   m_dbgStack->clear();
   m_requestor->requestSrcTree();
-
-  if(m_profiling)
-  {
-    requestProfileData();
-  }
 }
 
 void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack)
@@ -455,8 +433,6 @@ void DBGNet::slotDBGClosed()
 
   emit sigDBGClosed();
 
-  m_profiling = false;
-  
   m_receiver->clear();
   m_requestor->clear();
 

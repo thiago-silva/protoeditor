@@ -109,13 +109,11 @@ private slots:
 
 private:
   void processStepData();
-  void requestProfileData();
   bool processHeader(DBGHeader* header);
   void shipStack();
 
   void error(const QString&);
 
-  bool               m_profiling;
   dbgint             m_opts;
   dbgint             m_sessionId;
   dbgint             m_headerFlags;
@@ -127,8 +125,6 @@ private:
   DBGStack          *m_dbgStack;
   DBGFileInfo       *m_dbgFileInfo;
   QValueList<dbgint> m_varScopeRequestList; //so we know wich context the vars belong
-  bool              m_firsStep;
-
 };
 
 #endif
