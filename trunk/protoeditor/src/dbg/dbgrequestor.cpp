@@ -188,17 +188,15 @@ void DBGRequestor::clear()
   m_socket = NULL;
 }
 
-/********************************************************************************/
+/***************************** BROWSER ***************************************************/
 
 Browser::Browser()
-    : m_http(0), m_browserProcess(0), m_dcopClient(0), m_processRunning(false)
+    : m_http(0), m_browserRequestor(0)
 {}
 
 Browser::~Browser()
 {
-  if(m_browserProcess) m_browserProcess->kill();
-
-  delete m_browserProcess;
+  delete m_browserRequestor;
   delete m_http;
 }
 
@@ -208,74 +206,6 @@ void Browser::request(const QString& url)
     doBrowserRequest(url);
   } else {
     doHTTPRequest(KURL(url));
-  }
-}
-
-void Browser::doBrowserRequest(const QString& url)
-{
-  initBrowserCommunication();
-
-  if(!m_processRunning) {
-    openURLOnBrowser(url);
-    return;
-  }
-
-  QString cmd = Settings::browserCmd();
-
-  QByteArray data;
-  QDataStream arg(data, IO_WriteOnly);
-  arg << url;
-
-  kdDebug() << "asking for browser ("
-  << m_browserProcess->pid()
-  << ") to open URL: "
-  << url
-  << endl;
-
-  if(!m_dcopClient->send(
-       (cmd + "-" + QString::number(m_browserProcess->pid())).ascii()
-       , "konqueror-mainwindow#1", "openURL(QString)"
-       , data)) {
-    emit sigError("Error opening browser");
-  }
-}
-
-void Browser::initBrowserCommunication()
-{
-  if(!m_dcopClient) {
-    m_dcopClient = KApplication::dcopClient();
-
-    if(!m_dcopClient->attach()) {
-      emit sigError("Could not init browser communication");
-    }
-  }
-
-  if(!m_processRunning) {
-
-    if(m_browserProcess) {
-      delete m_browserProcess;
-    }
-
-    m_browserProcess = new KProcess;
-    connect(m_browserProcess, SIGNAL(processExited(KProcess*)),
-      this, SLOT(slotProcessExited(KProcess*)));
-  }
-}
-
-void Browser::openURLOnBrowser(const QString& url)
-{
-  QString cmd = Settings::browserCmd();
-
-  *m_browserProcess << cmd;
-  *m_browserProcess << url;
-
-  kdDebug() << "processing browser request: " << cmd << " " << url << endl;
-
-  if(!m_browserProcess->start()) {
-    emit sigError("Error opening browser");
-  } else {
-    kdDebug() << "New browser PID: " << m_browserProcess->pid() << endl;
-    m_processRunning = true;
   }
 }
 
@@ -304,10 +234,295 @@ void Browser::slotHttpDone(bool error)
   }
 }
 
-void Browser::slotProcessExited(KProcess*)
+void Browser::doBrowserRequest(const QString& url)
+{
+  m_browserRequestor = BrowserRequestor::retrieveBrowser(Settings::browser(), this);
+  //TODO: assert-me
+  m_browserRequestor->doRequest(url);
+}
+
+/***************************** BROWSER REQUESTOR *****************************************/
+
+BrowserRequestor* BrowserRequestor::m_browserRequestor = 0;
+
+BrowserRequestor::BrowserRequestor()
+ : m_browserProcess(0), m_processRunning(false)
+
+{}
+
+BrowserRequestor::~BrowserRequestor()
+{
+  delete m_browserProcess;
+}
+
+BrowserRequestor* BrowserRequestor::retrieveBrowser(int browser, Browser* br)
+{
+  switch(browser) {
+    case Settings::EnumBrowser::Konqueror:
+      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Konqueror)) {
+        return m_browserRequestor;
+      }
+      delete m_browserRequestor;
+      m_browserRequestor = new KonquerorRequestor();
+      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
+        SIGNAL(sigError(const QString&)));
+      break;
+    case Settings::EnumBrowser::Mozilla:
+      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Mozilla)) {
+        return m_browserRequestor;
+      }
+      delete m_browserRequestor;
+      m_browserRequestor = new MozillaRequestor();
+      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
+        SIGNAL(sigError(const QString&)));
+      break;
+    case Settings::EnumBrowser::Firefox:
+      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Firefox)) {
+        return m_browserRequestor;
+      }
+      delete m_browserRequestor;
+      m_browserRequestor = new FirefoxRequestor();
+      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
+        SIGNAL(sigError(const QString&)));
+      break;
+    case Settings::EnumBrowser::Opera:
+      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Opera)) {
+        return m_browserRequestor;
+      }
+      delete m_browserRequestor;
+      m_browserRequestor = new OperaRequestor();
+      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
+        SIGNAL(sigError(const QString&)));
+      break;
+  }
+  return m_browserRequestor;
+}
+
+void BrowserRequestor::init()
+{
+  if(!m_processRunning) {
+
+    delete m_browserProcess;
+
+    m_browserProcess = new KProcess;
+    connect(m_browserProcess, SIGNAL(processExited(KProcess*)),
+            this, SLOT(slotProcessExited(KProcess*)));
+  }
+}
+
+void BrowserRequestor::slotProcessExited(KProcess*)
 {
   //proc->kill();
   m_processRunning = false;
+}
+
+
+/***************************** KONQUEROR *****************************************/
+
+KonquerorRequestor::KonquerorRequestor()
+  : BrowserRequestor(), m_dcopClient(0)
+{
+}
+KonquerorRequestor::~KonquerorRequestor()
+{
+}
+
+void KonquerorRequestor::doRequest(const QString& url)
+{
+  init();
+
+  if(!m_processRunning) {
+    openNewKonqueror(url);
+    return;
+  }
+
+  QByteArray data;
+  QDataStream arg(data, IO_WriteOnly);
+  arg << url;
+
+  kdDebug() << "asking for konqueror ("
+  << m_browserProcess->pid()
+  << ") to open URL: "
+  << url
+  << endl;
+
+  QString cmd = "konqueror";
+
+  if(!m_dcopClient->send(
+       (cmd + "-" + QString::number(m_browserProcess->pid())).ascii()
+       , "konqueror-mainwindow#1", "openURL(QString)"
+       , data)) {
+    emit sigError("Error opening browser");
+  }
+}
+
+void KonquerorRequestor::openNewKonqueror(const QString& url)
+{
+  QString cmd = "konqueror";
+  *m_browserProcess << cmd;
+  *m_browserProcess << url;
+
+  kdDebug() << "creating new Konqueror window for: " << url << endl;
+
+  if(!m_browserProcess->start()) {
+    emit sigError("Error opening Konqueror");
+  } else {
+    kdDebug() << "New konqueror PID: " << m_browserProcess->pid() << endl;
+    m_processRunning = true;
+  }
+}
+
+int KonquerorRequestor::id()
+{
+  return Settings::EnumBrowser::Konqueror;
+}
+
+void KonquerorRequestor::init()
+{
+  BrowserRequestor::init();
+
+  if(!m_dcopClient) {
+    m_dcopClient = KApplication::dcopClient();
+
+    if(!m_dcopClient->attach()) {
+      emit sigError("Could not init browser communication");
+    }
+  }
+}
+
+
+/******************* MOZILLA *********************************/
+MozillaRequestor::MozillaRequestor()
+  : BrowserRequestor()
+{
+}
+MozillaRequestor::~MozillaRequestor()
+{
+}
+
+void MozillaRequestor::doRequest(const QString& url)
+{
+  init();
+
+  QString arg = "openURL(" + url + ")";
+
+  if(m_processRunning) {
+    m_browserProcess->detach();
+  }
+
+  m_browserProcess->clearArguments();
+  *m_browserProcess  << "mozilla";
+  *m_browserProcess  << "-remote";
+  *m_browserProcess << arg;
+
+
+  if(!m_browserProcess->start(KProcess::Block)) {
+    emit sigError("Error executing remote Mozilla");
+  } else {
+    if(m_browserProcess->exitStatus() != 0) {
+      //no mozilla instance? Create new one
+      m_browserProcess->clearArguments();
+      *m_browserProcess  << "mozilla";
+      *m_browserProcess  << url;
+      if(!m_browserProcess->start()) {
+        emit sigError("Error executing Mozilla");
+      } else {
+        m_processRunning = true;
+      }
+    }
+  }
+}
+
+int MozillaRequestor::id()
+{
+  return Settings::EnumBrowser::Mozilla;
+}
+
+
+/************************ FIREFOX ***********************************************/
+FirefoxRequestor::FirefoxRequestor()
+  : BrowserRequestor()
+{
+}
+FirefoxRequestor::~FirefoxRequestor()
+{
+}
+
+void FirefoxRequestor::doRequest(const QString& url)
+{
+  init();
+
+  QString arg = "openURL(" + url + ")";
+
+  if(m_processRunning) {
+    m_browserProcess->detach();
+  }
+
+  m_browserProcess->clearArguments();
+  *m_browserProcess  << "firefox";
+  *m_browserProcess  << "-remote";
+  *m_browserProcess << arg;
+
+
+  if(!m_browserProcess->start(KProcess::Block)) {
+    emit sigError("Error executing remote Firefox");
+  } else {
+    if(m_browserProcess->exitStatus() != 0) {
+      //no firefox instance? Create new one
+      m_browserProcess->clearArguments();
+      *m_browserProcess  << "firefox";
+      *m_browserProcess  << url;
+      if(!m_browserProcess->start()) {
+        emit sigError("Error executing Firefox");
+      } else {
+        m_processRunning = true;
+      }
+    }
+  }
+}
+
+int FirefoxRequestor::id()
+{
+  return Settings::EnumBrowser::Firefox;
+}
+
+
+/**************************** Opera **********************************************/
+
+OperaRequestor::OperaRequestor()
+  : BrowserRequestor()
+{
+}
+OperaRequestor::~OperaRequestor()
+{
+}
+
+void OperaRequestor::doRequest(const QString& url)
+{
+  init();
+
+  QString arg = "openURL(" + url + ")";
+
+  if(m_processRunning) {
+    m_browserProcess->detach();
+  }
+
+  m_browserProcess->clearArguments();
+  *m_browserProcess  << "opera";
+  *m_browserProcess  << "-remote";
+  *m_browserProcess << arg;
+
+
+  if(!m_browserProcess->start()) {
+    emit sigError("Error executing remote Opera");
+  } else {
+    m_processRunning = true;
+  }
+}
+
+int OperaRequestor::id()
+{
+  return Settings::EnumBrowser::Opera;
 }
 
 #include "dbgrequestor.moc"

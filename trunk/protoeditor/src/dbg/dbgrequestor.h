@@ -34,8 +34,82 @@ class DCOPClient;
 class QHttp;
 class KURL;
 
+class Browser;
 
-class  Browser : public QObject
+class BrowserRequestor : public QObject
+{
+  Q_OBJECT
+public:
+  BrowserRequestor();
+  virtual ~BrowserRequestor();
+
+  static BrowserRequestor* retrieveBrowser(int, Browser*);
+
+  virtual void doRequest(const QString&) = 0;
+  virtual int  id() = 0;
+signals:
+  void sigError(const QString&);
+
+protected:
+  void init();
+
+  static BrowserRequestor *m_browserRequestor;
+
+  KProcess         *m_browserProcess;
+  bool              m_processRunning;
+
+private slots:
+  void slotProcessExited(KProcess*);
+};
+
+class KonquerorRequestor : public BrowserRequestor
+{
+  Q_OBJECT
+public:
+  KonquerorRequestor();
+  ~KonquerorRequestor();
+  virtual void doRequest(const QString&);
+  virtual int  id();
+private:
+  void init();
+  void openNewKonqueror(const QString&);
+  DCOPClient *m_dcopClient;
+};
+
+
+class MozillaRequestor : public BrowserRequestor
+{
+  Q_OBJECT
+public:
+  MozillaRequestor();
+  ~MozillaRequestor();
+  virtual void doRequest(const QString&);
+  virtual int  id();
+};
+
+class FirefoxRequestor : public BrowserRequestor
+{
+  Q_OBJECT
+public:
+  FirefoxRequestor();
+  ~FirefoxRequestor();
+  virtual void doRequest(const QString&);
+  virtual int  id();
+};
+
+class OperaRequestor : public BrowserRequestor
+{
+  Q_OBJECT
+public:
+  OperaRequestor();
+  ~OperaRequestor();
+  virtual void doRequest(const QString&);
+  virtual int  id();
+};
+
+/**************************************************************/
+
+class Browser : public QObject
 {
   Q_OBJECT
 public:
@@ -46,26 +120,18 @@ public:
 signals:
   void sigError(const QString& error);
 
-// private slots:
-//   void slotProcessExited(KProcess*);
-
 private slots:
   void slotHttpDone(bool);
-  void slotProcessExited(KProcess*);
 private:
-  void initBrowserCommunication();
-  void doBrowserRequest(const QString& url);
-  void openURLOnBrowser(const QString& url);
-
   void doHTTPRequest(const KURL& url);
+  void doBrowserRequest(const QString&);
   void initHTTPCommunication();
 
-  QHttp      *m_http;
-  KProcess   *m_browserProcess;
-  DCOPClient *m_dcopClient;
-  bool        m_processRunning;
+  QHttp            *m_http;
+  BrowserRequestor *m_browserRequestor;
 };
 
+/********************************************************************************/
 
 class DBGRequestor : public QObject
 {

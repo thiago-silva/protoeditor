@@ -35,9 +35,15 @@
       <label>Use external browser</label>
       <default>false</default>
     </entry>
-    <entry name="BrowserCmd" type="String">
-      <label>Browser command</label>
-      <default>konqueror</default>
+    <entry name="Browser" type="Enum">
+      <choices>
+        <choice name="Konqueror"/>
+        <choice name="Mozilla"/>
+        <choice name="Firefox"/>
+        <choice name="Opera"/>
+      </choices>
+      <label>Browser</label>
+      <default>Konqueror</default>
     </entry>
   </group>
 </kcfg>

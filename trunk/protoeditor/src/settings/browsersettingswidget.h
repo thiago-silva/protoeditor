@@ -24,7 +24,8 @@
 
 class QCheckBox;
 class QLabel;
-class KLineEdit;
+//class KLineEdit;
+class QComboBox;
 
 class BrowserSettingsWidget : public QWidget
 {
@@ -36,7 +37,8 @@ public:
   QCheckBox *m_ckUseExternalBrowser;
 
   QLabel    *m_lbBrowserCmd;
-  KLineEdit *m_edBrowserCmd;
+  //KLineEdit *m_edBrowserCmd;
+  QComboBox *m_cbBrowser;
 
 private slots:
   void slotUseBrowser(int);
