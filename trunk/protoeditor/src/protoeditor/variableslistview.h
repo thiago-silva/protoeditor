@@ -30,7 +30,7 @@ class KPopupMenu;
 
 class VariablesListView : public KListView
 {
-Q_OBJECT
+  Q_OBJECT
 public:
   enum { NameCol = 0, ValueCol, TypeCol };
 
@@ -52,8 +52,10 @@ protected slots:
   void slotDoubleClick(QListViewItem *, const QPoint &, int );
 
   void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
-  //void slotCopyVarToClipboard(int);
+
 protected:
+  enum { CopyVarItem, CopyValueItem };
+  
   void markExpanded(VariablesListViewItem* item);
   void markColapsed(VariablesListViewItem* item);
 

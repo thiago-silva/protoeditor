@@ -31,7 +31,7 @@
 
 
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
-  : KListView(parent, name), m_variables(0), m_isReadOnly(false)
+    : KListView(parent, name), m_variables(0), m_isReadOnly(false)
 {
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
@@ -50,36 +50,40 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   setColumnWidth(TypeCol,  150);
 
   connect(this, SIGNAL(expanded(QListViewItem*)),
-    this, SLOT(slotItemExpanded(QListViewItem*)));
+          this, SLOT(slotItemExpanded(QListViewItem*)));
   connect(this, SIGNAL(collapsed(QListViewItem*)),
-    this, SLOT(slotItemCollapsed(QListViewItem*)));
+          this, SLOT(slotItemCollapsed(QListViewItem*)));
 
   connect(this, SIGNAL(itemRenamed(QListViewItem*, int, const QString&)),
-    this, SLOT(slotItemRenamed(QListViewItem*, int, const QString&)));
+          this, SLOT(slotItemRenamed(QListViewItem*, int, const QString&)));
 
   connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )),
-    this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
+          this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
 
   m_menu = new KPopupMenu(this);
-  m_menu->insertItem("Copy variable");
+  m_menu->insertItem("Copy variable", CopyVarItem);
+  m_menu->insertItem("Copy value", CopyValueItem);
 
   //connect(m_menu, SIGNAL(activated(int)), this, SLOT(slotCopyVarToClipboard(int)));
 
   connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& , int)),
-            this, SLOT(slotContextMenuRequested(QListViewItem *, const QPoint &, int)));
+          this, SLOT(slotContextMenuRequested(QListViewItem *, const QPoint &, int)));
 }
 
-void VariablesListView::setReadOnly(bool readOnly) {
+void VariablesListView::setReadOnly(bool readOnly)
+{
   m_isReadOnly = readOnly;
 
   QListViewItem* item = firstChild();
-  while(item) {
+  while(item)
+  {
     item->setRenameEnabled(ValueCol, !m_isReadOnly);
     item = item->nextSibling();
   }
 }
 
-bool VariablesListView::isReadOnly() {
+bool VariablesListView::isReadOnly()
+{
   return m_isReadOnly;
 }
 
@@ -88,8 +92,10 @@ bool VariablesListView::isReadOnly() {
  * The ListView doesn't start renaming if the item is not previously selected
  * And that sux...so, here we go.
  */
-void VariablesListView::slotDoubleClick( QListViewItem *item, const QPoint &, int col) {
-  if(col == ValueCol) {
+void VariablesListView::slotDoubleClick( QListViewItem *item, const QPoint &, int col)
+{
+  if(col == ValueCol)
+  {
     item->startRename(ValueCol);
   }
 }
@@ -99,7 +105,8 @@ VariablesListView::~VariablesListView()
   //clear();
 }
 
-void VariablesListView::slotItemRenamed(QListViewItem * item, int, const QString & text) {
+void VariablesListView::slotItemRenamed(QListViewItem * item, int, const QString & text)
+{
 
   VariablesListViewItem* vitem =
     dynamic_cast<VariablesListViewItem*>(item);
@@ -126,16 +133,23 @@ void VariablesListView::slotItemExpanded(QListViewItem* item)
 
 void VariablesListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int col)
 {
-  if(col != NameCol) return;
+  //   if(col != NameCol) return;
 
-  if(m_menu->exec(p)) {
-    QClipboard* clip = kapp->clipboard();
+  int selection = m_menu->exec(p);
+  if(selection == -1) return;
 
-    VariablesListViewItem* converted = dynamic_cast<VariablesListViewItem*>(item);
-    //QString txt = converted->variable()->name() + " = "
-    //              + converted->variable()->value()->toString();
-
-    clip->setText(converted->variable()->toString(), QClipboard::Clipboard);
+  QClipboard* clip = kapp->clipboard();
+  VariablesListViewItem* converted =
+      dynamic_cast<VariablesListViewItem*>(item);
+  
+  switch(selection)
+  {
+    case CopyVarItem:
+      clip->setText(converted->variable()->toString(), QClipboard::Clipboard);
+      break;
+    case CopyValueItem:
+      clip->setText(converted->variable()->value()->toString(), QClipboard::Clipboard);
+      break;
   }
 }
 
@@ -149,13 +163,15 @@ void VariablesListView::markExpanded(VariablesListViewItem* item)
   m_expanded.push_back(item->stringPath());
 }
 
-void VariablesListView::populateChildren(VariablesListViewItem* item) {
+void VariablesListView::populateChildren(VariablesListViewItem* item)
+{
   /*
     Populate array/object children at request time
     so it can support recursive references easily
   */
 
-  if(item->childCount() > 0) {
+  if(item->childCount() > 0)
+  {
     return;
   }
 
@@ -179,7 +195,8 @@ void VariablesListView::setVariables(VariablesList_t* vars)
   VariablesListViewItem* item;
 
   item = dynamic_cast<VariablesListViewItem*>(selectedItem());
-  if(item) {
+  if(item)
+  {
     currentSelected = item->stringPath();
   }
 
@@ -217,7 +234,8 @@ void VariablesListView::reexpandItems()
 
   VariablesListViewItem* item;
   QValueList<QString>::iterator it;
-  for(it = paths.begin(); it != paths.end(); it++) {
+  for(it = paths.begin(); it != paths.end(); it++)
+  {
     item = getItemFromPath(*it);
     if(item) item->setOpen(true);
   }
@@ -232,23 +250,31 @@ VariablesListViewItem* VariablesListView::getItemFromPath(QString path)
   QString s, comp;
   VariablesListViewItem* item = dynamic_cast<VariablesListViewItem*>(firstChild());
 
-  do {
+  do
+  {
     if((!item) || (index >= sections)) break;
     s = item->text(0);
     comp = path.section('/', index, index);
-    if(item->text(VariablesListView::NameCol) == path.section('/', index, index)) {
+    if(item->text(VariablesListView::NameCol) == path.section('/', index, index))
+    {
       index++;
-      if(index == sections) {
+      if(index == sections)
+      {
         return dynamic_cast<VariablesListViewItem*>(item);
-      } else {
+      }
+      else
+      {
         populateChildren(item);
         item = dynamic_cast<VariablesListViewItem*>(item->firstChild());
       }
-    } else {
+    }
+    else
+    {
       item = dynamic_cast<VariablesListViewItem*>(item->nextSibling());
       continue;
     }
-  } while(true);
+  }
+  while(true);
 
   return NULL;
 }
@@ -257,18 +283,22 @@ void VariablesListView::addVariable(Variable* variable, VariablesListViewItem* p
 {
   VariablesListViewItem* item;
 
-  if(!parent) {
+  if(!parent)
+  {
     item = new VariablesListViewItem(this, variable);
     //add new item to the bottom of the list
     item->moveItem(lastItem());
-  } else {
+  }
+  else
+  {
     item = new VariablesListViewItem(parent, variable);
     item->moveItem(item->lastItem());
   }
 }
 
 
-void VariablesListView::deleteVars() {
+void VariablesListView::deleteVars()
+{
   if(!m_variables) return;
 
   for(VariablesList_t::iterator it = m_variables->begin(); it != m_variables->end(); ++it)
