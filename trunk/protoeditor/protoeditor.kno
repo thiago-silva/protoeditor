@@ -1,4 +1,4 @@
-\CurrentEntry 0 Mental Notes / Random ideas
+\NewEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look on PHP Designer 2005.<br /></li>
@@ -9,7 +9,8 @@
 <li>Include other StdActions/Kate actions (like &quot;goto line&quot;)<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
-<li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /><br /></li>
+<li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
+<li>Have a look at KMainWindow and XMLGUI stuff<br /><br /></li>
 <li>Reimplement EditorTabWidget::slotMarkChanged().</li>
 <ul type="disc"><li>Make it simple. Walk trough the old/new marks. If some line differs on Breakpoint marks, remove/add it<br /></li></ul>
 <li>Open file buttom on toolbar with pulldown menu that shows recent files.<br /></li>
@@ -57,7 +58,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
@@ -70,12 +70,10 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO Now
+\CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Finish/Test toggleBreakpoint action</li>
-<li>Alternate icons of breakpoint active/disabled</li></ul>
-<li type="disc"><br />Create Actions:</li>
-<ul type="disc"><li>Run</li>
+<ul type="disc"><li>Create Actions:</li>
+<li>Run</li>
 <ul type="disc"><li>Default file</li>
 <li>Current file</li>
 <li>Run with args</li>
@@ -84,10 +82,13 @@
 <li>Add the other KTextEdit Actions</li>
 <li>Add &quot;New&quot; from KstdAction<br /></li>
 <li>Open URL in browser</li>
-<li>Add configuration profile<br /></li>
+<li>Add configuration profile<br /><br /></li>
+<li>Add icons that Protoeditor uses on the distribution<br /></li>
+<li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags<br /></li>
 <li>Create context menus for the listviews</li>
-<li>Add Breakpoint/Watches buttons (add, clear, disable..). Add Breakpoint Context Menu</li></ul>
+<li>Add Breakpoint/Watches buttons (add, clear, disable..). Add Breakpoint Context Menu<br /></li></ul>
 </body></html>
+
 
 \NewEntry 1 Bug reminder
 
