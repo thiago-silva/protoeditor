@@ -37,7 +37,7 @@
 
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_sessionId(0), m_headerFlags(0),
+    : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
     m_dbgStack(0), m_dbgFileInfo(0)
 {
@@ -93,6 +93,7 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listen
 
 void DBGNet::requestOptions(dbgint options)
 {
+  m_opts = options;
   m_requestor->requestOptions(options);
 }
 
@@ -154,6 +155,11 @@ void DBGNet::requestBreakpointRemoval(int bpid) {
   m_requestor->requestBreakpointRemoval(bpid);
 }
 
+void DBGNet::setOptions(int op)
+{
+  m_opts = op;
+}
+
 void DBGNet::receivePack(DBGResponsePack* pack)
 {
   if(!processHeader(pack->header())) {
@@ -186,22 +192,34 @@ bool DBGNet::processHeader(DBGHeader* header)
     case DBGC_PAUSE:
       break;
     case DBGC_STARTUP:
-      //so lets start too
+      //so lets start too...
       m_requestor->addHeaderFlags(DBGF_STARTED);
 
-      //ask for module information
-      m_requestor->requestSrcTree();
+      //...sending options...
+      m_requestor->requestOptions(m_opts);
 
-      //is annoying having to step twice in the begginig. Lets do the the first.
-      m_requestor->requestStepInto();
-
-      //tell everyone we are ok.
+      //...tell everyone we are running.
       emit sigDBGStarted();
+
+      if(!(m_opts & SOF_BREAKONLOAD)) {
+        //workaround for my lazyness (I don't know why setting SOF_BREAKONLOAD
+        //is not enough to avoid the load break)
+        m_requestor->requestContinue();
+      } else {
+
+        //...asking for module information..
+        m_requestor->requestSrcTree();
+
+        //workaround for the double step on the begginning
+        //is annoying having to step twice in the begginig. Lets do the the first.
+        m_requestor->requestStepInto();
+      }
       break;
     case DBGC_BREAKPOINT:
     case DBGC_STEPINTO_DONE:
     case DBGC_STEPOVER_DONE:
     case DBGC_STEPOUT_DONE:
+      m_dbgStack->clear();
       m_requestor->requestSrcTree();
       emit sigStepDone();
       break;

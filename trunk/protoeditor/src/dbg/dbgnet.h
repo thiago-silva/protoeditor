@@ -89,7 +89,7 @@ public:
 
   void processBreakpoint(const DBGTagBreakpoint*, DBGResponsePack* pack);
 
-
+   void setOptions(int);
 signals:
   void sigError(const QString&);
   void sigDBGStarted();
@@ -108,6 +108,7 @@ private:
   void error(const QString&);
 
 
+  dbgint             m_opts;
   dbgint             m_sessionId;
   dbgint             m_headerFlags;
   DebuggerDBG       *m_debugger;
