@@ -115,17 +115,16 @@ void DBGNet::requestStepOut()
   m_requestor->requestStepOut();
 }
 
-void DBGNet::requestLocalVariables(dbgint scopeid)
-{
-  m_varScopeRequestList.push_back(scopeid);
-  m_requestor->requestVariables(scopeid);
-}
 
-void DBGNet::requestGlobalVariables()
+void DBGNet::requestVariables(dbgint scopeid, bool isGglobal)
 {
   //so we know if we are asking for a vars on global or local scope
-  m_varScopeRequestList.push_back(GLOBAL_SCOPE_ID);
-  m_requestor->requestVariables(GLOBAL_SCOPE_ID);
+  if(isGglobal) {
+    m_varScopeRequestList.push_back(GLOBAL_SCOPE_ID);
+  } else {
+    m_varScopeRequestList.push_back(scopeid);
+  }
+  m_requestor->requestVariables(scopeid);
 }
 
 void DBGNet::requestWatch(const QString& expression, dbgint scopeid)
@@ -262,7 +261,7 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
   if(scopeid == WATCH_SCOPE_ID) {
     m_debugger->updateWatch(result, str/*, error*/);
   } else {
-    m_debugger->updateVar(result, str/*, error*/, scopeid);
+    m_debugger->updateVar(result, str/*, error*/, (scopeid==GLOBAL_SCOPE_ID)?true:false);
   }
 }
 

@@ -65,8 +65,7 @@ public:
   void requestStepOver();
   void requestStepOut();
 
-  void requestLocalVariables(dbgint scopeid);
-  void requestGlobalVariables();
+  void requestVariables(dbgint scopeid, bool isGglobal);
   void requestWatch(const QString& expression, dbgint scopeid);
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointRemoval(int bpid);
