@@ -142,7 +142,7 @@ void MainWindow::setupStatusBar()
   m_lbEditorMsg->setSizePolicy(QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ));
   m_lbEditorMsg->setAlignment( Qt::AlignCenter );
   m_statusBar->addWidget(m_lbEditorMsg, 1 /*stretch*/, false );
-  
+
 }
 
 void MainWindow::setupActions()
@@ -174,8 +174,8 @@ void MainWindow::setupActions()
   m_defaultScriptAction->setItems(l);
   m_defaultScriptAction->setCurrentItem(0);
 
-//   connect(m_defaultScriptAction, SIGNAL(activated(int)),
-//           this, SLOT(slotDefaultScriptChanged(int)));
+  //   connect(m_defaultScriptAction, SIGNAL(activated(int)),
+  //           this, SLOT(slotDefaultScriptChanged(int)));
 
 
   //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
@@ -196,7 +196,7 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-  (void)new KAction(i18n("Profile (EXPERIMENTAL)"), "", "Alt+P", m_debugger_manager,
+  (void)new KToggleAction(i18n("Show Profile Dialog"), "", "Alt+P", m_debugger_manager,
                     SLOT(slotProfile()), actionCollection(), "profile");
 
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
@@ -369,7 +369,7 @@ void MainWindow::openFile(const KURL& url)
       return;
     }
   }
-  
+
   m_actionRecent->removeURL(url);
   showSorry(QString("\"") + url.prettyURL() + "\" is unreadable.");
 }
@@ -512,7 +512,7 @@ void MainWindow::setLedEnabled(bool on)
     m_lbLed->setPixmap(QPixmap(UserIcon("indicator_off")));
   }
 }
-  
+
 void MainWindow::slotShowSettings()
 {
   ConfigDlg::showDialog();
