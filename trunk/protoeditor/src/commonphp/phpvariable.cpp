@@ -37,7 +37,11 @@ QString PHPVariable::compositeName()
   QString cname;
   if(parent()) {
     cname = parent()->compositeName();
-    cname += "['" + name() + "']";
+    if(parent()->value()->typeName() == "Array") {
+      cname += "['" + name() + "']";
+    } else {
+      cname += "->" + name();
+    }
   } else {
     cname = name();
   }
@@ -127,15 +131,6 @@ QString PHPArrayValue::toString()
 QString PHPArrayValue::typeName()
 {
   return QString("Array");
-  /*
-  QString s = "Array[";
-  if(m_list) {
-    s += QString::number(m_list->count()) + "]";
-  } else {
-    s += "0]";
-  }
-  return s;
-  */
 }
 
 //----------------------------------------------------------------
