@@ -43,8 +43,6 @@ EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char
     : KTabWidget(parent, name), m_terminating(false), m_markGuard(false),m_closeGuard(false),
     m_window(window), m_currentView(0)
 {
-//   m_partManager = new KParts::PartManager(m_window);
-
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
 }
 
@@ -78,7 +76,13 @@ void EditorTabWidget::openDocument(KURL url)
 void EditorTabWidget::closeCurrentDocument()
 {
   if(count() == 0) return;
-
+  
+  if(!m_terminating)
+  {
+    m_window->guiFactory()->removeClient(m_currentView);
+    m_currentView = 0L;
+  }
+  
   m_closeGuard = true;
 
   int index = currentPageIndex();
@@ -92,13 +96,16 @@ void EditorTabWidget::closeCurrentDocument()
 
   QWidget* w = page(index);
   removePage(w);
-    
+
   delete view;
   delete doc;
 
 
   m_docList.remove(it);
 
+  if((count() == 0) && !m_terminating) {
+    m_window->actionStateChanged("has_nofileopened");
+  }
 
   m_closeGuard = false;
 }
@@ -109,9 +116,6 @@ void EditorTabWidget::closeAllDocuments()
   {
     closeCurrentDocument();
   }
-  int size = m_docList.count();
-  int x;
-  x = 2;
   /*
   int i = 0;
   QWidget* w;
@@ -609,17 +613,10 @@ void EditorTabWidget::loadMarks(Document_t& d, KTextEditor::Document* doc)
   }
 }
 
-void EditorTabWidget::slotCurrentChanged(QWidget* w)
+void EditorTabWidget::slotCurrentChanged(QWidget*)
 {
-//   if(count())
-//   {
-//     KTextEditor::View* v = (*(m_docList.at(currentPageIndex()))).view;
-//     m_partManager->setActivePart(v->document(), v);
-//     m_partManager->setSelectedPart(v->document(), v);
-//   }
-
   if(m_terminating) return;
-  
+
   if(m_currentView)
   {
     m_window->guiFactory()->removeClient(m_currentView);
@@ -627,16 +624,17 @@ void EditorTabWidget::slotCurrentChanged(QWidget* w)
 
   if(count())
   {
+    m_window->actionStateChanged("has_fileopened");
+    
     m_currentView = (*(m_docList.at(currentPageIndex()))).view;
     m_window->guiFactory()->addClient(m_currentView);
   }
 }
 
-KTextEditor::View* EditorTabWidget::anyView()
+KTextEditor::View* EditorTabWidget::currentView()
 {
   if(count() == 0) return 0;
-
-  return m_docList.first().view;
+  return m_currentView;
 }
 
 

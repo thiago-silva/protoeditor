@@ -77,7 +77,7 @@ public:
 
   bool hasBreakpointAt(const QString& , int);
 
-  KTextEditor::View* anyView();
+  KTextEditor::View* currentView();
 
   void terminate();
 
