@@ -307,7 +307,8 @@ bool EditorTabWidget::createDocument(const KURL& url)
   }
 
   addTab(doc->tab(), mimeIcon, url.fileName());
-
+  setTabToolTip(doc->tab(), doc->path());
+  
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(doc->view());
   if (popupIf)
     popupIf->installPopup((QPopupMenu *)m_window->factory()->container("ktexteditor_popup", m_window));
