@@ -26,6 +26,7 @@
 #include "variable.h"
 
 class VariablesListViewItem;
+class KPopupMenu;
 
 class VariablesListView : public KListView
 {
@@ -43,13 +44,15 @@ public:
 signals:
   void sigVarModified(Variable*);
 
-public slots:
+protected slots:
   void slotItemExpanded(QListViewItem * item);
   void slotItemCollapsed(QListViewItem * item);
   void slotItemRenamed(QListViewItem * item, int col, const QString & text);
 
   void slotDoubleClick(QListViewItem *, const QPoint &, int );
 
+  void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
+  //void slotCopyVarToClipboard(int);
 protected:
   void markExpanded(VariablesListViewItem* item);
   void markColapsed(VariablesListViewItem* item);
@@ -63,6 +66,7 @@ protected:
   VariablesListViewItem* getItemFromPath(QString path);
   void deleteVars();
 
+  KPopupMenu* m_menu;
   QValueList<QString> m_expanded;
   VariablesList_t*    m_variables;
   bool m_isReadOnly;

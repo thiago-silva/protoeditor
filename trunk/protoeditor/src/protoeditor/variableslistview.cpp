@@ -19,10 +19,16 @@
  ***************************************************************************/
 
 #include "variableslistview.h"
+#include "variableslistviewitem.h"
+
 #include <klocale.h>
 #include <kdebug.h>
-#include "variableslistviewitem.h"
+#include <kpopupmenu.h>
+#include <kapplication.h>
+
 #include <qheader.h>
+#include <qclipboard.h>
+
 
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
   : KListView(parent, name), m_variables(0), m_isReadOnly(false)
@@ -53,6 +59,14 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
 
   connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )),
     this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
+
+  m_menu = new KPopupMenu(this);
+  m_menu->insertItem("Copy variable");
+
+  //connect(m_menu, SIGNAL(activated(int)), this, SLOT(slotCopyVarToClipboard(int)));
+
+  connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& , int)),
+            this, SLOT(slotContextMenuRequested(QListViewItem *, const QPoint &, int)));
 }
 
 void VariablesListView::setReadOnly(bool readOnly) {
@@ -108,6 +122,21 @@ void VariablesListView::slotItemExpanded(QListViewItem* item)
   VariablesListViewItem* converted = dynamic_cast<VariablesListViewItem*>(item);
   populateChildren(converted);
   markExpanded(converted);
+}
+
+void VariablesListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int col)
+{
+  if(col != NameCol) return;
+
+  if(m_menu->exec(p)) {
+    QClipboard* clip = kapp->clipboard();
+
+    VariablesListViewItem* converted = dynamic_cast<VariablesListViewItem*>(item);
+    //QString txt = converted->variable()->name() + " = "
+    //              + converted->variable()->value()->toString();
+
+    clip->setText(converted->variable()->toString(), QClipboard::Clipboard);
+  }
 }
 
 void VariablesListView::markColapsed(VariablesListViewItem* item)
