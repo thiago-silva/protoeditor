@@ -73,7 +73,7 @@ public:
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointRemoval(int bpid);
 
-  void requestProfileData();
+  void profile();
   
   //DBGReceiver communicatDBGNetes through those:
   void receivePack(DBGResponsePack* pack);
@@ -107,11 +107,13 @@ private slots:
   void slotError(const QString&);
 
 private:
+  void requestProfileData();
   bool processHeader(DBGHeader* header);
   void shipStack();
 
   void error(const QString&);
 
+  bool               m_profiling;
   dbgint             m_opts;
   dbgint             m_sessionId;
   dbgint             m_headerFlags;

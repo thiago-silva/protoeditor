@@ -37,7 +37,8 @@
 #include <knotifyclient.h>
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0),
+    : QObject(parent, name), m_profiling(false),
+    m_opts(0), m_sessionId(0), m_headerFlags(0),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
     m_dbgStack(0), m_dbgFileInfo(0)
 {
@@ -47,10 +48,10 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
   m_dbgStack    = new DBGStack();
 
   connect(m_receiver, SIGNAL(sigError(const QString&)),
-    this, SLOT(slotError(const QString&)));
+          this, SLOT(slotError(const QString&)));
 
   connect(m_requestor, SIGNAL(sigError(const QString&)),
-    this, SLOT(slotError(const QString&)));
+          this, SLOT(slotError(const QString&)));
 
   m_con = new DBGConnection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
@@ -85,10 +86,10 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listen
 
   m_sessionId = sessid;
   m_requestor->makeHttpRequest(site->host()
-                              , site->port()
-                              , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
-                              , listenPort
-                              , sessid);
+                               , site->port()
+                               , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
+                               , listenPort
+                               , sessid);
 }
 
 void DBGNet::requestOptions(dbgint options)
@@ -126,9 +127,12 @@ void DBGNet::requestStepOut()
 void DBGNet::requestVariables(dbgint scopeid, bool isGglobal)
 {
   //so we know if we are asking for a vars on global or local scope
-  if(isGglobal) {
+  if(isGglobal)
+  {
     m_varScopeRequestList.push_back(GLOBAL_SCOPE_ID);
-  } else {
+  }
+  else
+  {
     m_varScopeRequestList.push_back(scopeid);
   }
   m_requestor->requestVariables(scopeid);
@@ -143,16 +147,23 @@ void DBGNet::requestWatch(const QString& expression, dbgint scopeid)
 void DBGNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
   m_requestor->requestBreakpoint( bp->id()
-                                , m_dbgFileInfo->moduleNumber(bp->filePath())
-                                , m_dbgFileInfo->toRemoteFilePath(bp->filePath())
-                                , bp->line()
-                                , bp->condition()
-                                , bp->status()
-                                , bp->skipHits());
+                                  , m_dbgFileInfo->moduleNumber(bp->filePath())
+                                  , m_dbgFileInfo->toRemoteFilePath(bp->filePath())
+                                  , bp->line()
+                                  , bp->condition()
+                                  , bp->status()
+                                  , bp->skipHits());
 }
 
-void DBGNet::requestBreakpointRemoval(int bpid) {
+void DBGNet::requestBreakpointRemoval(int bpid)
+{
   m_requestor->requestBreakpointRemoval(bpid);
+}
+
+void DBGNet::profile()
+{
+  m_profiling = true;
+  requestProfileData();
 }
 
 void DBGNet::requestProfileData()
@@ -167,13 +178,15 @@ void DBGNet::setOptions(int op)
 
 void DBGNet::receivePack(DBGResponsePack* pack)
 {
-  if(!processHeader(pack->header())) {
+  if(!processHeader(pack->header()))
+  {
     return;
   }
 
   DBGResponseTag* tag = NULL;
   pack->rewind();
-  while((tag = pack->next()) != NULL) {
+  while((tag = pack->next()) != NULL)
+  {
     tag->process(this, pack);
   }
 
@@ -182,12 +195,16 @@ void DBGNet::receivePack(DBGResponsePack* pack)
 
 bool DBGNet::processHeader(DBGHeader* header)
 {
-  if(header->sync() != DBGSYNC) {
+  if(header->sync() != DBGSYNC)
+  {
     error("Network sync error.");
     return false;
   }
 
-  switch(header->cmd()) {
+  //TODO: create dbgStarted() and dbgStepDone() to organize this.
+  
+  switch(header->cmd())
+  {
     case DBGC_REPLY:
     case DBGC_END:
     case DBGC_EMBEDDED_BREAK:
@@ -208,12 +225,15 @@ bool DBGNet::processHeader(DBGHeader* header)
 
       //...fancy notification on taskbar
       KNotifyClient::userEvent(0, "", KNotifyClient::Taskbar);
-      
-      if(!(m_opts & SOF_BREAKONLOAD)) {
+
+      if(!(m_opts & SOF_BREAKONLOAD))
+      {
         //workaround for my lazyness (I don't know why setting SOF_BREAKONLOAD
         //is not enough to avoid the load break)
         m_requestor->requestContinue();
-      } else {
+      }
+      else
+      {
 
         //...asking for module information..
         m_requestor->requestSrcTree();
@@ -230,6 +250,12 @@ bool DBGNet::processHeader(DBGHeader* header)
       m_dbgStack->clear();
       m_requestor->requestSrcTree();
       emit sigStepDone();
+      
+      if(m_profiling)
+      {
+        requestProfileData();
+      }
+      
       break;
   }
   return true;
@@ -237,37 +263,38 @@ bool DBGNet::processHeader(DBGHeader* header)
 
 void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack)
 {
-  switch(sid->sesstype()) {
-  case DBG_JIT:
-    m_sessionId = QString(pack->retrieveRawdata(sid->isid())->data()).toLong();
-    break;
-  case DBG_REQ:
-    break;
-  case DBG_COMPAT:
-  case DBG_EMB:
-    //TODO: don't know about those
-    break;
+  switch(sid->sesstype())
+  {
+    case DBG_JIT:
+      m_sessionId = QString(pack->retrieveRawdata(sid->isid())->data()).toLong();
+      break;
+    case DBG_REQ:
+      break;
+    case DBG_COMPAT:
+    case DBG_EMB:
+      //TODO: don't know about those
+      break;
   }
 }
 
 void DBGNet::processStack(const DBGResponseTagStack* stack, DBGResponsePack* pack)
 {
   m_dbgStack->add(stack->modNo()
-                , pack->retrieveRawdata(stack->idescr())->data()
-                , stack->lineNo(), stack->scopeId());
+                  , pack->retrieveRawdata(stack->idescr())->data()
+                  , stack->lineNo(), stack->scopeId());
 }
 
 void DBGNet::processDBGVersion(const DBGResponseTagVersion* version, DBGResponsePack* pack)
 {
   m_debugger->checkDBGVersion(version->majorVersion()
-    , version->minorVersion()
-    , pack->retrieveRawdata(version->idescription())->data());
+                              , version->minorVersion()
+                              , pack->retrieveRawdata(version->idescription())->data());
 }
 
 void DBGNet::processSrcTree(const DBGResponseTagSrcTree* src, DBGResponsePack* pack)
 {
   m_dbgFileInfo->setModulePath(src->modNo(),
-    pack->retrieveRawdata(src->imodName())->data());
+                               pack->retrieveRawdata(src->imodName())->data());
 }
 
 void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
@@ -283,16 +310,20 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 
   //note: eval errors are annoying to be displayed to the user
 
-  if(!error.isEmpty()) {
+  if(!error.isEmpty())
+  {
     kdDebug() << "Eval error: " << error << endl;
   }
 
   dbgint scopeid = m_varScopeRequestList.first();
   m_varScopeRequestList.pop_front();
 
-  if(scopeid == WATCH_SCOPE_ID) {
+  if(scopeid == WATCH_SCOPE_ID)
+  {
     m_debugger->updateWatch(result, str/*, error*/);
-  } else {
+  }
+  else
+  {
     m_debugger->updateVar(result, str/*, error*/, (scopeid==GLOBAL_SCOPE_ID)?true:false);
   }
 }
@@ -302,19 +333,21 @@ void DBGNet::processLog(const DBGResponseTagLog* log, DBGResponsePack* pack)
   QString logmsg;
   QString module;
 
-  if(log->ilog()) {
+  if(log->ilog())
+  {
     logmsg = pack->retrieveRawdata(log->ilog())->data();
   }
 
-  if(log->imodName()) {
+  if(log->imodName())
+  {
     module = pack->retrieveRawdata(log->imodName())->data();
   }
 
   m_debugger->debugLog(log->type()
-                     , logmsg
-                     , log->lineNo()
-                     , m_dbgFileInfo->toLocalFilePath(module)
-                     , log->extInfo());
+                       , logmsg
+                       , log->lineNo()
+                       , m_dbgFileInfo->toLocalFilePath(module)
+                       , log->extInfo());
 }
 
 void DBGNet::processError(const DBGResponseTagError* error, DBGResponsePack* pack)
@@ -327,46 +360,46 @@ void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack
   QString modname;
   QString condition;
 
-  if(bp->imodname()) {
+  if(bp->imodname())
+  {
     modname = pack->retrieveRawdata(bp->imodname())->data();
   }
-  if(bp->icondition()) {
+  if(bp->icondition())
+  {
     condition = pack->retrieveRawdata(bp->icondition())->data();
   }
 
   m_debugger->updateBreakpoint(bp->bpNo()
-    , m_dbgFileInfo->toLocalFilePath(modname)
-    , bp->lineNo()
-    , bp->state()
-    //, bp->isTemp()
-    , bp->hitCount()
-    , bp->skipHits()
-    , condition
-    //, (bp->isUnderHit()==1)?true:false
-    );
+                               , m_dbgFileInfo->toLocalFilePath(modname)
+                               , bp->lineNo()
+                               , bp->state()
+                               //, bp->isTemp()
+                               , bp->hitCount()
+                               , bp->skipHits()
+                               , condition
+                               //, (bp->isUnderHit()==1)?true:false
+                              );
 }
 
 void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack* pack)
 {
-  //NOTE: I'm not very confident about those conversions
+  //NOTE: I'm not very confident about those bit << conversions
   //TODO: recover 1000000 from prof_c
-  long l = proftag->minLo();
-  long long conv = (long long) l | (proftag->minHi() << 32);
-  double d = (double) conv / 1000000;
-  
+
   m_debugger->addProfileData(m_dbgFileInfo->moduleName(proftag->modNo()),
-                              proftag->lineNo(),
-                              proftag->hitCoun(),
-                              (double)(proftag->minLo() | (proftag->minHi() << 32)),
-                              (double)(proftag->maxLo() | (proftag->maxHi() << 32)),
-                              (double)(proftag->sumLo() | (proftag->sumHi() << 32)));
+                             proftag->lineNo(),
+                             proftag->hitCoun(),
+                             (((double)(proftag->minLo() | (proftag->minHi() << 32)) / 1000000) * 1000),
+                             (((double)(proftag->maxLo() | (proftag->maxHi() << 32)) / 1000000) * 1000),
+                             (((double)(proftag->sumLo() | (proftag->sumHi() << 32)) / 1000000) * 1000));
 }
 
 void DBGNet::shipStack()
 {
   if(m_dbgStack->isEmpty()) return;
 
-  if(m_dbgFileInfo->updated()) {
+  if(m_dbgFileInfo->updated())
+  {
     m_debugger->updateStack(m_dbgStack->debuggerStack(m_dbgFileInfo));
 
     m_dbgFileInfo->clearStatus();
@@ -386,6 +419,8 @@ void DBGNet::slotDBGClosed()
 
   emit sigDBGClosed();
 
+  m_profiling = false;
+  
   m_receiver->clear();
   m_requestor->clear();
 
