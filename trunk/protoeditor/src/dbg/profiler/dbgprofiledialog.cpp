@@ -41,6 +41,7 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
   m_btModule = new QToolButton(this);
   m_btModule->setText("Module");
   m_btModule->setToggleButton(true);
+  m_btModule->setOn(true);
 //   m_btModule->setAutoRaise(true);
   hbox->addWidget(m_btModule);
 
