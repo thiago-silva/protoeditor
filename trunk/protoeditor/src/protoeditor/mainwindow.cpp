@@ -124,17 +124,25 @@ void MainWindow::setupStatusBar()
   m_statusBar = new KStatusBar(this);
 
   //first item: debug led
-  m_led = new QLabel(this);
-  m_led->setPixmap(QPixmap(UserIcon("indicator_off")));
-  statusBar()->addWidget(m_led);
+  m_lbLed = new QLabel(this);
+  m_lbLed->setPixmap(QPixmap(UserIcon("indicator_off")));
+  m_lbLed->setAlignment( Qt::AlignCenter );
+  m_lbLed->setSizePolicy(QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Expanding ));
+  m_statusBar->addWidget(m_lbLed);
 
   //second item: debug msgs
-  statusBar()->insertItem("", DebugMsgStatus);
-  statusBar()->setItemFixed(DebugMsgStatus, 120);
+  m_lbDebugMsg = new QLabel(this);
+  m_lbDebugMsg->setMinimumSize( 0, 0 );
+  m_lbDebugMsg->setSizePolicy(QSizePolicy( QSizePolicy::Ignored, QSizePolicy::Fixed ));
+  m_statusBar->addWidget(m_lbDebugMsg, 1 /*stretch*/, false );
+
+  //Third item: editor msgs
+  m_lbEditorMsg = new QLabel(this);
+  m_lbEditorMsg->setMinimumSize( 230, 0 );
+  m_lbEditorMsg->setSizePolicy(QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ));
+  m_lbEditorMsg->setAlignment( Qt::AlignCenter );
+  m_statusBar->addWidget(m_lbEditorMsg, 1 /*stretch*/, false );
   
-  //third item: editor msgs
-  statusBar()->insertFixedItem("", EditorMsgStatus, true);
-  statusBar()->setItemFixed(EditorMsgStatus, 230);
 }
 
 void MainWindow::setupActions()
@@ -486,26 +494,23 @@ void MainWindow::slotEditToolbars()
 
 void MainWindow::setEditorStatusMsg(const QString& msg)
 {
-  statusBar()->changeItem(msg, EditorMsgStatus);
+  m_lbEditorMsg->setText(msg);
 }
 void MainWindow::setDebugStatusMsg(const QString& msg)
 {
-  statusBar()->changeItem(msg, DebugMsgStatus);
+  m_lbDebugMsg->setText(msg);
 }
 
 void MainWindow::setLedEnabled(bool on)
 {
   if(on)
   {
-    m_led->setPixmap(QPixmap(UserIcon("indicator_on")));
+    m_lbLed->setPixmap(QPixmap(UserIcon("indicator_on")));
   }
   else
   {
-    m_led->setPixmap(QPixmap(UserIcon("indicator_off")));
+    m_lbLed->setPixmap(QPixmap(UserIcon("indicator_off")));
   }
-//   m_led = new QLabel(this);
-//   m_led->setPixmap(QPixmap(UserIcon("indicator_off")));
-//   statusBar()->addWidget(m_led);
 }
   
 void MainWindow::slotShowSettings()

@@ -45,7 +45,6 @@ class KSelectAction;
 class KDialogBase;
 class QLabel;
 
-
 /*
  
 namespace KTextEditor {
@@ -119,16 +118,14 @@ private slots:
 protected:
   virtual void closeEvent(QCloseEvent * e);
 private:
-  
-  //StatusBar item IDs
-  enum { DebugMsgStatus, EditorMsgStatus };
-    
   void setupStatusBar();
   void setupActions();
   void createWidgets();
   void loadSites();
 
-  QLabel* m_led;  
+  QLabel* m_lbLed;
+  QLabel *m_lbDebugMsg;
+  QLabel *m_lbEditorMsg;
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;
   VariablesListView* m_globaVarList;
