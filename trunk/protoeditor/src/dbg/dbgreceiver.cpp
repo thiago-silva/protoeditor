@@ -139,9 +139,9 @@ DBGHeader*  DBGReceiver::readHeader()
 {
   if(!m_socket) return NULL;
 
-  char data[16];
+  char data[DBGHeader::SIZE];
   long ret;
-  if((ret = m_socket->readBlock(data, 16)) != 16) {
+  if((ret = m_socket->readBlock(data, DBGHeader::SIZE)) != DBGHeader::SIZE) {
     return NULL;
   } else {
     return new DBGHeader(data);
@@ -152,9 +152,9 @@ DBGFrame* DBGReceiver::readFrame()
 {
   if(!m_socket) return NULL;
 
-  char data[8];
+  char data[DBGFrame::SIZE];
   int ret;
-  if((ret = m_socket->readBlock(data, 8)) != 8) {
+  if((ret = m_socket->readBlock(data, DBGFrame::SIZE)) != DBGFrame::SIZE) {
     return NULL;
   } else {
     return new DBGFrame(data);
