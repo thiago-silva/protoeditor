@@ -1,4 +1,4 @@
-\CurrentEntry 0 Mental Notes / Random ideas
+\NewEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look on PHP Designer 2005.<br /></li>
@@ -9,14 +9,12 @@
 <li>Include other StdActions/Kate actions (like &quot;goto line&quot;)<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
+<li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
 <li>Open file buttom on toolbar with pulldown menu that shows recent files.<br /></li>
-<li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /><br /></li>
+<li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
 <li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
 <ul type="disc"><li>All it should do is request a setep. The client should be responsable for feeding the manager with all the info.<br /><br /><br /></li></ul>
-<li>VariableListView: Options of sorting:</li>
-<ul type="disc"><li>No sorting (new variables are added to the bottom)</li>
-<li>sorted (user is able to sort clicking on the header of a column (name/value, etc)<br /><br /></li></ul>
 <li>Add context Menu for the editor<br /></li>
 <li>Context menu for VariableListView:</li>
 <ul type="disc"><li>for scalars:</li>
@@ -33,7 +31,7 @@
 <li>Implement the full options for DBG (halt on error, break on load, etc) see FRAME_SET_OPT<br /></li>
 <li>Refactor, test, refactor, test...</li>
 <ul type="disc"><li>change it++ to ++it</li>
-<li>create namespaces (DBG, PHP, etc)</li>
+<li>create namespaces (DBG, PHP, etc)?</li>
 <li>rename: variableparser to phpvariableparser </li>
 <li>Check regexp on the variableparser</li>
 <li>improve DBGReceiver so it can handle exceptional transmission behaviors.</li>
@@ -42,10 +40,8 @@
 <li>remove unescessary includes</li>
 <li>...<br /></li></ul>
 <li>Quanta idea for capabilities: </li>
-<ul type="disc"><li>Create a class to hold the capabilities supported by quanta. <br /><br /><br /></li></ul>
+<ul type="disc"><li>Create a class to hold the capabilities supported by quanta. <br /><br /></li></ul>
 <li>Change LogListview to MessageListView. <br /></li>
-<li>-o DebuggerDBG está muito responsavel em termos de controle. Ele assume que ao chegar uma stack, ele assume que deve pedir as variaveis. Criar uma classe DBGNet para que usa o Requestor e receiver? Assim pode-se usar o esquema do dbg-cli de ler o header.cmd e responder deacordo.<br /><br /></li>
-<li>Add VariableListView::readOnly() / setReadOnly() (when debugger is inactive, user shouldn't change the values of the vars)<br /></li>
 <li>Note about watches:</li>
 <ul type="disc"><li>When there is no debugger loadded, there is no way to add a watch using a Variable object (since Variable class is abstract and can't be contructed)<br /></li></ul>
 <li>Add HTML output tab?<br /></li>
@@ -74,25 +70,24 @@
 
 \NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Test new dbg backend (debug protoeditor and run steps, add watches/breakpoints, etc to remember what is missing)<br /></li>
-<li>Test Watches!!!<br /></li>
-<li>Create Actions:</li>
+<li type="disc">Create Actions:</li>
 <ul type="disc"><li>Run</li>
 <ul type="disc"><li>Default file</li>
 <li>Current file</li>
 <li>Run with args</li>
-<li>Run to the cursor<br /></li></ul>
+<li>Run to the cursor<br /></li>
 <li>Step into/over/out</li>
 <li>Stop</li>
 <li>Pause</li></ul>
 <li>Add the other KTextEdit Actions<br /></li>
+<li>Create context menus for the listviews<br /></li>
 <li>Add Breakpoint buttons (add, clear, disable..). Add Breakpoint Context Menu<br /></li>
-<li>Add the icon for unresolved breakpoint<br /></li>
-<li>When php error ocurr, add it to the Messages listview.<br /><br /></li>
-<li>When clicking on a breakpoint trough BreakpointListView, goto the file/line.</li>
-<li>When clicking on a message of the loglistview, goto file/line<br /></li>
-<li>Test output/html output</li></ul>
+<li>Add &quot;New&quot; from KstdAction<br /></li>
+<li>Open URL in browser<br /></li>
+<li>Add default file to run<br /></li>
+<li>Add configuration profile</li></ul>
 </body></html>
+
 
 \NewEntry 1 Bug reminder
 
@@ -576,7 +571,7 @@
 
 \NewEntry 0 hacking dbg-cli
 
-\NewEntry 1 notes about the pack send/receive
+\CurrentEntry 1 notes about the pack send/receive
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>cmd list:<br />(set mode 1 //sets HTTP mode)</p>
 <p></p>

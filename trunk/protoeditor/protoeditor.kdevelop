@@ -60,7 +60,7 @@
         <cxxflags>-O0 -Wall -g3</cxxflags>
         <envvars/>
         <topsourcedir/>
-        <cppflags/>
+        <cppflags>-Wall</cppflags>
         <ldflags/>
         <ccompilerbinary/>
         <cxxcompilerbinary/>
