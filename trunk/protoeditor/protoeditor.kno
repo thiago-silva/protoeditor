@@ -1,7 +1,7 @@
 \NewEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --leak-check=yes ./protoeditor<br /></li>
-<li>Take a look on PHP Designer 2005.<br /><br /></li>
+<li>Take a look on PHP Designer 2005.<br /></li>
 <li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /><br /></li>
 <li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
@@ -53,6 +53,7 @@
 <p></p>
 </body></html>
 
+
 \NewEntry 0 Site and non-implementation notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
@@ -79,7 +80,9 @@
 <li>Add the other KTextEdit Actions<br /></li>
 <li>Add Breakpoint buttons (add, clear, disable..). Add Breakpoint Context Menu<br /></li>
 <li>Add the icon for unresolved breakpoint<br /></li>
-<li>When php error ocurr, add it to the Messages listview.<br /></li>
+<li>When php error ocurr, add it to the Messages listview.<br /><br /></li>
+<li>When clicking on a breakpoint trough BreakpointListView, goto the file/line.</li>
+<li>When clicking on a message of the loglistview, goto file/line<br /></li>
 <li>Test output/html output</li></ul>
 </body></html>
 
@@ -497,7 +500,7 @@
 <p>Another way of sharing your patch is to attach it to a bug report on KDE Bugs. Most of what was written in this tutorial applies here too, in an adapted form of course. Please note that you cannot attach a patch directly when reporting a new bug. However when the new bug is created, you can then attach files, therefore also patches.</p>
 </body></html>
 
-\NewEntry 1 quanta HACKING
+\NewEntry 0 quanta HACKING
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p> Quanta's coding style is a real mess as it was written by many persons, and</p>
 <p>some had changed their style on-the-fly. ;-) From now on, if you add new code</p>

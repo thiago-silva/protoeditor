@@ -426,6 +426,7 @@ void MainWindow::slotShowSettings()
 
   dialog->show();
 }
+
 void MainWindow::initDebuggerSettings()
 {
   if(!m_debuggerSettings) {
