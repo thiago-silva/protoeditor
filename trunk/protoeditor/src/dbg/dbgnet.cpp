@@ -299,15 +299,31 @@ void DBGNet::processSrcTree(const DBGResponseTagSrcTree* src, DBGResponsePack* p
 
 void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 {
-  QString error =
-    (eval->ierror())?pack->retrieveRawdata(eval->ierror())->data():QString::null;
+  /* Note about setAscii()
+    When the script uses the session feature,
+    DBG sends some variables with \0 characters in the middle,
+    wich fools QString attribution, having at the end a broken
+    text with the serialized vars.
+    BUG: #1156552
+  */
+  
+  QString error;
+  QString str;
+  QString result;
 
-  QString str =
-    (eval->istr())?pack->retrieveRawdata(eval->istr())->data():QString::null;
+  if(eval->ierror()) {
+    error.setAscii(pack->retrieveRawdata(eval->ierror())->data());
+  }
 
-  QString result =
-    (eval->iresult())?pack->retrieveRawdata(eval->iresult())->data():QString::null;
+  if(eval->istr()) {
+    str.setAscii(pack->retrieveRawdata(eval->istr())->data());
+  }
 
+  if(eval->iresult())
+  {
+    result.setAscii(pack->retrieveRawdata(eval->iresult())->data());
+  }
+  
   //note: eval errors are annoying to be displayed to the user
 
   if(!error.isEmpty())
