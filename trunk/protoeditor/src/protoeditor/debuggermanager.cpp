@@ -599,7 +599,7 @@ void DebuggerManager::slotDebugEnded()
   }
 
   m_window->actionStateChanged("debug_stopped");
-  m_window->actionCollection()->action("debug_start")->setText("Start");
+  m_window->actionCollection()->action("debug_start")->setText("Start Debug");
   /*
   m_window->actionCollection()->action("debug_stop")->setEnabled(false);
   m_window->actionCollection()->action("debug_step_into")->setEnabled(false);
