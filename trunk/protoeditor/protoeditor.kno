@@ -11,6 +11,7 @@
 <li>Change QSocket to KSocket (or similar)?<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
+<li>Add &quot;New&quot; from KstdAction<br /></li>
 <li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)<br /></li>
 <li>Try to get default kate settings from the user's katerc<br /></li>
 <li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
@@ -59,6 +60,7 @@
 <p></p>
 </body></html>
 
+
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -90,26 +92,27 @@
 \CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
-<li>Run (gear.png) / Start debug</li>
+<ul type="disc"><li>Run (gear.png) / Start debug</li>
 <ul type="disc"><li>[ ]  Default file</li>
 <li>[x] Current file</li>
 <li>-------------------</li>
 <li>Run with args</li>
 <li>Run to the cursor</li></ul>
-<li>Pause<br /></li>
-<li>Add &quot;New&quot; from KstdAction<br /></li>
-<li>Add terminal output<br /></li>
-<li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags<br /></li>
+<li>Pause<br /></li></ul>
+<li>Features / Usability:</li>
+<ul type="disc"><li>Add terminal output</li>
+<li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags</li>
 <li>Create context menus for the listviews (breakpoints/variables/messages, etc)</li>
-<div></div>
-<li>Add Breakpoint/Watches buttons (add, clear, disable..). <br /></li>
-<li>set static objects to be deleted<br /></li>
-<li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on dbg settings<br /></li>
-<li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget<br /></li>
-<li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
-<li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)<br /></li>
-<li>Add signal/slots for &quot;file changed on disk&quot;<br /></li>
-<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)</li></ul>
+<li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
+<li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on dbg settings</li>
+<li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget</li>
+<li>See KPDF for the toolbar button &quot;open / openrecent&quot;</li>
+<li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)</li>
+<li>Add signal/slots for &quot;file changed on disk&quot;</li>
+<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)<br /><br /></li></ul>
+<li>Implementation:</li>
+<ul type="disc"><li>set static objects to be deleted<br /><br /><br /></li></ul>
+<li>Start Gubed support</li></ul>
 </body></html>
 
 
