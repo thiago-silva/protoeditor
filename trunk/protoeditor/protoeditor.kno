@@ -61,7 +61,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -97,8 +96,6 @@
 <ul type="disc"><li>Run with args</li>
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
-<li>Test the size of the path on the Protoeditor caption (if is too big, what happens)</li>
-<li>See if can make a hint on over the tab to show the complete path of the documeent<br /></li>
 <li>Features / Usability:</li>
 <ul type="disc"><li>Add signal/slots for &quot;file changed on disk&quot;</li>
 <li>Add to editor context menu:</li>
@@ -160,7 +157,6 @@
 <li>Crash:</li>
 <ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash</li></ul></ul>
 </body></html>
-
 
 \NewEntry 1 Usability issues
 
