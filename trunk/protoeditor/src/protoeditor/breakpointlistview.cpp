@@ -143,6 +143,41 @@ void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp) {
   }
 }
 
+void BreakpointListView::toggleBreakpoint(const QString& filePath, int line)
+{
+  BreakpointListViewItem*  item = findBreakpoint(filePath, line);
+  if(item) {
+    removeBreakpoint(item->breakpoint());
+  } else {
+    addBreakpoint(filePath, line);
+  }
+}
+
+void BreakpointListView::addBreakpoint(const QString& filePath, int line)
+{
+  //note: TextEditor lines are 0 based
+  DebuggerBreakpoint* bp = new DebuggerBreakpoint(0, filePath, line);
+  //addBreakpoint(bp);
+
+  BreakpointListViewItem* item = new BreakpointListViewItem(this, bp);
+
+  //insert new item to the bottom of the list
+  item->moveItem(lastItem());
+
+  emit sigBreakpointCreated(bp);
+}
+
+void BreakpointListView::removeBreakpoint(DebuggerBreakpoint* bp)
+{
+  BreakpointListViewItem*  item = findBreakpoint(bp);
+
+  if(item) {
+   takeItem(item);
+  }
+  emit sigBreakpointRemoved(bp);
+  delete item;
+}
+
 QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints() {
 
   QValueList<DebuggerBreakpoint*> list;
@@ -176,29 +211,14 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QStrin
   return list;
 }
 
-void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line) {
-
-  //note: TextEditor lines are 0 based
-  DebuggerBreakpoint* bp = new DebuggerBreakpoint(0, filePath, line+1);
-  //addBreakpoint(bp);
-
-  BreakpointListViewItem* item = new BreakpointListViewItem(this, bp);
-
-  //insert new item to the bottom of the list
-  item->moveItem(lastItem());
-
-  emit sigBreakpointCreated(bp);
+void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line)
+{
+  toggleBreakpoint(filePath, line+1);
 }
 
-void BreakpointListView::slotBreakpointUnmarked(const QString& filePath, int line) {
-  //note: TextEditor lines are 0 based
-  BreakpointListViewItem*  item = findBreakpoint(filePath, line+1);
-
-  if(item) {
-   takeItem(item);
-  }
-  emit sigBreakpointRemoved(item->breakpoint());
-  delete item;
+void BreakpointListView::slotBreakpointUnmarked(const QString& filePath, int line)
+{
+  toggleBreakpoint(filePath, line+1);
 }
 
 /*

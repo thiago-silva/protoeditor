@@ -40,6 +40,8 @@ public:
 
   void updateBreakpoint(DebuggerBreakpoint*);
 
+  void toggleBreakpoint(const QString&, int);
+
   void resetBreakpointItems();
 
   QValueList<DebuggerBreakpoint*> breakpoints();
@@ -70,7 +72,8 @@ protected:
   virtual void keyPressEvent(QKeyEvent* e);
 
 private:
-  //void addBreakpoint(DebuggerBreakpoint*);
+  void addBreakpoint(const QString&, int);
+  void removeBreakpoint(DebuggerBreakpoint*);
 
   BreakpointListViewItem*  findBreakpoint(DebuggerBreakpoint*);
   BreakpointListViewItem*  findBreakpoint(QString, int);
