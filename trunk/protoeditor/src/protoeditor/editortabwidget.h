@@ -48,7 +48,7 @@ public:
 
   //void setMainWindow(MainWindow*);
 
-  void openDocument(const KURL& url);
+  bool openDocument(const KURL& url);
   void closeCurrentDocument();
   void closeAllDocuments();
   void setCurrentDocumentTab(const QString&, bool forceOpen = false);
@@ -93,7 +93,7 @@ private:
   Document*                   document(const QString&);
   Document*                   currentDocument();
   
-  void                        createDocument(const KURL& url);
+  bool                        createDocument(const KURL& url);
   void                        setupMarks(KTextEditor::View* view);
 
   int                         documentIndex(const QString& filepath);

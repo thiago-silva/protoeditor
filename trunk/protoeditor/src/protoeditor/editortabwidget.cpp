@@ -46,18 +46,25 @@ void EditorTabWidget::terminate()
 }
 
 
-void EditorTabWidget::openDocument(const KURL& url)
+bool EditorTabWidget::openDocument(const KURL& url)
 {
   int index;
   if((index = documentIndex(url.path())) != -1)
   {
     //file already opened, show it
     this->setCurrentPage(index);
+    return true;
   }
   else
   {
-    createDocument(url);
-    emit sigNewDocument();
+    if(createDocument(url))
+    {
+      emit sigNewDocument();
+      return true;
+    } else
+    {
+      return false;
+    }
   }
 }
 
@@ -243,14 +250,14 @@ bool EditorTabWidget::hasBreakpointAt(const QString& filePath, int line)
   }
 }
 
-void EditorTabWidget::createDocument(const KURL& url)
+bool EditorTabWidget::createDocument(const KURL& url)
 {
   Document* doc = new Document(this);
 
   if(!doc->open(url))
   {
     delete doc;
-    return;
+    return false;
   }
 
   connect(doc, SIGNAL(sigBreakpointMarked(Document*, int )), this,
@@ -267,6 +274,7 @@ void EditorTabWidget::createDocument(const KURL& url)
   m_docList.append(doc);
 
   setCurrentPage(count()-1);
+  return true;
 }
 
 int EditorTabWidget::documentIndex(const QString& filePath)
