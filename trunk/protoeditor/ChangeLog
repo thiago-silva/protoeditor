@@ -1,37 +1,42 @@
-2005-02-14 05:58  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 06:30  thiago_silva
+
+	* src/dbg/: dbgfileinfo.cpp (1.5), dbgfileinfo.h (1.4):
+	  -Using DBGFileInfo to handle module number, path conversions, etc
+
+2005-02-14 05:58  thiago_silva
 
 	* src/settings/: browsersettings.kcfgc (1.1),
 	  browsersettingswidget.cpp (1.1), browsersettingswidget.h (1.1):
 	  -Added browser settings
 
-2005-02-14 05:58  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 05:58  thiago_silva
 
 	* src/settings/debuggersettings.kcfgc (1.2):
 	  -protoeditor.kcfg splited into browser.kcfg and debugger.kcfg
 
-2005-02-14 05:57  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 05:57  thiago_silva
 
 	* src/settings/: browser.kcfg (1.1), debugger.kcfg (1.1):
 	  -protoeditor.kcfg splited into browser.kcfg and debugger.kcfg
 	  -Added browser settings
 
-2005-02-14 05:52  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 05:52  thiago_silva
 
 	* src/settings/protoeditor.kcfg (1.2):
 	  -protoeditor.kcfg splited into browser.kcfg and debugger.kcfg
 
-2005-02-14 05:51  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 05:51  thiago_silva
 
 	* src/protoeditor/: mainwindow.cpp (1.5), mainwindow.h (1.3):
 	  -Added browser settings to be displayed
 
-2005-02-14 05:50  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 05:50  thiago_silva
 
 	* src/protoeditor/debuggermanager.cpp (1.6):
 	  * Bug Fixes:
 	  clear output text when starting debugger
 
-2005-02-14 05:48  thiago_silva <thiago_silva@kdemail.net>
+2005-02-14 05:48  thiago_silva
 
 	* src/dbg/: dbgrequestor.cpp (1.4), dbgrequestor.h (1.4):
 	  -Implemented 2 methods for http request:
@@ -42,19 +47,19 @@
 	  -Possibility to launch custom external browser when debugging
 	  (tested only with Konqueror)
 
-2005-02-13 14:51  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 14:51  thiago_silva
 
 	* src/protoeditor/: debuggermanager.cpp (1.5), editortabwidget.cpp
 	  (1.8):
 	  * New Feature:
 	  -Disabled breakpoint uses associated icon
 
-2005-02-13 14:46  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 14:46  thiago_silva
 
 	* src/protoeditor/: mainwindow.cpp (1.4), mainwindow.h (1.2):
 	  -Added default shortcut for toggle breakpoint
 
-2005-02-13 14:44  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 14:44  thiago_silva
 
 	* src/protoeditor/: editortabwidget.cpp (1.7), editortabwidget.h
 	  (1.4):
@@ -62,14 +67,14 @@
 	  * New Feature:
 	  -Implemented Toggle Breakpoint Menu/Shortcut
 
-2005-02-13 14:43  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 14:43  thiago_silva
 
 	* src/protoeditor/: debuggermanager.cpp (1.4), debuggermanager.h
 	  (1.4):
 	  * New Feature:
 	  -Implemented Toggle Breakpoint Menu/Shortcut
 
-2005-02-13 14:42  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 14:42  thiago_silva
 
 	* src/protoeditor/: breakpointlistview.cpp (1.4),
 	  breakpointlistview.h (1.4):
@@ -77,7 +82,7 @@
 	  * New Feature:
 	  -Implemented Toggle Breakpoint Menu/Shortcut
 
-2005-02-13 02:14  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 02:14  thiago_silva
 
 	* src/dbg/: debuggerdbg.cpp (1.5), debuggerdbg.h (1.4):
 	  -Now, responsable for requesting setp data
@@ -88,23 +93,23 @@
 	  -Checking for DBG version
 	  -Modifications on DBG option request
 
-2005-02-13 02:10  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 02:10  thiago_silva
 
 	* src/dbg/: dbgstack.cpp (1.3), dbgstack.h (1.3):
 	  -Improved to cooperate with DBGFileInfo
 
-2005-02-13 02:07  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 02:07  thiago_silva
 
 	* src/dbg/: dbgrequestor.cpp (1.3), dbgrequestor.h (1.3),
 	  dbgrequestpackbuilder.cpp (1.3), dbgrequestpackbuilder.h (1.3):
 	  -Improved Breakpoint code
 
-2005-02-13 02:06  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 02:06  thiago_silva
 
 	* src/dbg/dbgnetdata.cpp (1.2):
 	  -Improved process design
 
-2005-02-13 02:05  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 02:05  thiago_silva
 
 	* src/dbg/: dbgnet.cpp (1.4), dbgnet.h (1.2):
 	  -Using DBGFileInfo to handle module number, path conversions, etc
@@ -116,19 +121,19 @@
 	  -Checking for DBG version
 	  -Improved process design
 
-2005-02-13 01:59  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:59  thiago_silva
 
 	* src/commonphp/phpvariable.cpp (1.2):
 	  * Bug Fixes:
 	  -Changing value of objects need different name composition from
 	  arrays
 
-2005-02-13 01:58  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:58  thiago_silva
 
 	* src/common/: debuggerstack.cpp (1.3), debuggerstack.h (1.3):
 	  -Added convenience function to access bottom context
 
-2005-02-13 01:56  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:56  thiago_silva
 
 	* src/protoeditor/: variableslistviewitem.cpp (1.2),
 	  variableslistviewitem.h (1.2):
@@ -136,7 +141,7 @@
 	  -When debugger is not running, variables list and watches are set
 	  to readonly
 
-2005-02-13 01:55  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:55  thiago_silva
 
 	* src/protoeditor/: variableslistview.cpp (1.2),
 	  variableslistview.h (1.2):
@@ -145,7 +150,7 @@
 	  to readonly
 	  -Items are appended to the end of the list
 
-2005-02-13 01:53  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:53  thiago_silva
 
 	* src/protoeditor/mainwindow.cpp (1.3):
 	  * New Feature:
@@ -153,14 +158,14 @@
 	  -Improved output window
 	  -Save as...
 
-2005-02-13 01:52  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:52  thiago_silva
 
 	* src/protoeditor/: loglistview.cpp (1.2), loglistview.h (1.2):
 	  * New Feature:
 	  -Items are appended to the end of the list
 	  -DblClick on item makes document/line visible
 
-2005-02-13 01:50  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:50  thiago_silva
 
 	* src/protoeditor/: editortabwidget.cpp (1.6), editortabwidget.h
 	  (1.3):
@@ -174,7 +179,7 @@
 	  -Save as...
 	  -Improved Breakpoint mark handling
 
-2005-02-13 01:44  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:44  thiago_silva
 
 	* src/protoeditor/: debuggermanager.cpp (1.3), debuggermanager.h
 	  (1.3):
@@ -192,13 +197,13 @@
 	  -When debugger is not running, variables list and watches are set
 	  to read only
 
-2005-02-13 01:33  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:33  thiago_silva
 
 	* src/protoeditor/debuggercombostack.cpp (1.3):
 	  -Remove the ability to remember the stack context selected
 	  between steps
 
-2005-02-13 01:32  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:32  thiago_silva
 
 	* src/protoeditor/: breakpointlistviewitem.cpp (1.2),
 	  breakpointlistviewitem.h (1.2):
@@ -206,7 +211,7 @@
 	  * New Feature:
 	  -Remember the status of the bp the user selected
 
-2005-02-13 01:30  thiago_silva <thiago_silva@kdemail.net>
+2005-02-13 01:30  thiago_silva
 
 	* src/protoeditor/: breakpointlistview.cpp (1.3),
 	  breakpointlistview.h (1.3):
@@ -218,38 +223,38 @@
 	  -Implemented persistent Breakpoints (ie. document closes and its
 	  bps persists).
 
-2005-02-11 23:58  thiago_silva <thiago_silva@kdemail.net>
+2005-02-11 23:58  thiago_silva
 
 	* src/commonphp/variableparser.cpp (1.2):
 	  * Bug Fixes:
 	  crash when parsing negative integers. Thanks and sorry again,
 	  nikotto ;)
 
-2005-02-10 23:30  thiago_silva <thiago_silva@kdemail.net>
+2005-02-10 23:30  thiago_silva
 
 	* src/dbg/debuggerdbg.cpp (1.4):
 	  when changing the value of watch, update it.
 
-2005-02-10 23:29  thiago_silva <thiago_silva@kdemail.net>
+2005-02-10 23:29  thiago_silva
 
 	* src/dbg/dbgnet.cpp (1.3):
 	  starting to remake the header.cmd handling stuff
 
-2005-02-09 21:53  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 21:53  thiago_silva
 
 	* src/dbg/dbgnet.cpp (1.2):
 	  * Bug Fixes:
 	  when opening the URL through the browser, DBG sends a DBG_REQ
 	  session type, not JIT. Then, it shouldn't compare session id's.
 
-2005-02-09 15:44  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 15:44  thiago_silva
 
 	* src/dbg/dbgconnection.cpp (1.3):
 	  * Bug Fixes:
 	  "errno" variable was getting compile errors on some linux
 	  configurations (maybe some lib typedef'd errno).
 
-2005-02-09 01:05  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 01:05  thiago_silva
 
 	* src/dbg/: dbgfileinfo.cpp (1.4), dbgfileinfo.h (1.3):
 	  -changed ExecutionLine to ExecutionPoint
@@ -263,7 +268,7 @@
 	  -Removed client responsability on data transmission to new class
 	  DBGNet
 
-2005-02-09 00:55  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:55  thiago_silva
 
 	* src/dbg/: dbgnet.cpp (1.1), dbgnet.h (1.1), dbgnetdata.cpp (1.1),
 	  dbgnetdata.h (1.1):
@@ -278,7 +283,7 @@
 	  -Removed client responsability on data transmission to new class
 	  DBGNet
 
-2005-02-09 00:52  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:52  thiago_silva
 
 	* data/icons/: hi16-action-executionline.png (1.2),
 	  hi16-action-executionpoint.png (1.1),
@@ -286,7 +291,7 @@
 	  hi16-action-preexecutionpoint.png (1.1):
 	  -changed ExecutionLine to ExecutionPoint
 
-2005-02-09 00:52  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:52  thiago_silva
 
 	* src/: common/abstractdebugger.cpp (1.2),
 	  common/abstractdebugger.h (1.3), common/debuggerstack.cpp (1.2),
@@ -317,19 +322,19 @@
 	  -Removed client responsability on data transmission to new class
 	  DBGNet
 
-2005-02-09 00:44  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:44  thiago_silva
 
 	* src/protoeditor/: breakpointlistview.cpp (1.2),
 	  breakpointlistview.h (1.2):
 	  QPtrList -> QValueList
 
-2005-02-09 00:43  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:43  thiago_silva
 
 	* src/protoeditor/: debuggercombostack.h (1.2),
 	  debuggercombostack.cpp (1.2):
 	  -changed ExecutionLine to ExecutionPoint
 
-2005-02-09 00:43  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:43  thiago_silva
 
 	* src/protoeditor/debuggermanager.cpp (1.2):
 	  -changed ExecutionLine to ExecutionPoint
@@ -337,41 +342,41 @@
 	  of DBG client calls manager directly
 	  -some extra fixes
 
-2005-02-09 00:39  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:39  thiago_silva
 
 	* src/protoeditor/debuggermanager.h (1.2):
 	  -changed ExecutionLine to ExecutionPoint
 	  -no more signals/slots to receive information. New implementation
 	  of DBG client calls manager directly
 
-2005-02-09 00:36  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:36  thiago_silva
 
 	* src/protoeditor/: editortabwidget.h (1.2), editortabwidget.cpp
 	  (1.5):
 	  -changed ExecutionLine to ExecutionPoint
 
-2005-02-09 00:35  thiago_silva <thiago_silva@kdemail.net>
+2005-02-09 00:35  thiago_silva
 
 	* src/protoeditor/protoeditorui.rc (1.2):
 	  switched the order of stepinto entry
 
-2005-02-08 23:16  thiago_silva <thiago_silva@kdemail.net>
+2005-02-08 23:16  thiago_silva
 
 	* protoeditor.kno (1.1):
 	  organized and translated to english :)
 
-2005-02-08 02:48  thiago_silva <thiago_silva@kdemail.net>
+2005-02-08 02:48  thiago_silva
 
 	* data/icons/Makefile.am (1.3):
 	  Added app icons
 
-2005-02-08 02:48  thiago_silva <thiago_silva@kdemail.net>
+2005-02-08 02:48  thiago_silva
 
 	* images/protoeditor.xcf (1.1):
 	  * News:
 	  Added GIMP image of the app icon.
 
-2005-02-08 02:48  thiago_silva <thiago_silva@kdemail.net>
+2005-02-08 02:48  thiago_silva
 
 	* data/icons/: hi16-app-protoeditor.png (1.1),
 	  hi22-app-protoeditor.png (1.1), hi32-app-protoeditor.png (1.1),
@@ -379,13 +384,13 @@
 	  * News:
 	  Finally added the app icons.
 
-2005-02-08 00:35  thiago_silva <thiago_silva@kdemail.net>
+2005-02-08 00:35  thiago_silva
 
 	* src/protoeditor/editortabwidget.cpp (1.4):
 	  * Bug Fixes:
 	  MarkInterface is different on KDE 3.2.x. KDE version check added.
 
-2005-02-07 04:36  thiago_silva <thiago_silva@kdemail.net>
+2005-02-07 04:36  thiago_silva
 
 	* src/protoeditor/editortabwidget.cpp (1.3):
 	  * Bug Fixes:
@@ -395,26 +400,26 @@
 
 2005-02-07 01:52  tag BETA_0_5_2_1
 
-2005-02-07 01:52  thiago_silva <thiago_silva@kdemail.net>
+2005-02-07 01:52  thiago_silva
 
 	* src/protoeditor/editortabwidget.cpp (1.2, BETA_0_5_2_1):
 	  * Bug Fixes:
 	  application was crashing on close. Added verification for
 	  slotCurrentChanged().
 
-2005-02-07 01:49  thiago_silva <thiago_silva@kdemail.net>
+2005-02-07 01:49  thiago_silva
 
 	* src/settings/debuggersettingswidget.cpp (1.2, BETA_0_5_2_1):
 	  Expanded the spacing between the widgets. On Fedora, some labels
 	  were overriden by other widgets
 
-2005-02-07 01:48  thiago_silva <thiago_silva@kdemail.net>
+2005-02-07 01:48  thiago_silva
 
 	* src/settings/Makefile.am (1.3, BETA_0_5_2_1):
 	  * Bug Fixes:
 	  libsettings should not be installed
 
-2005-02-07 00:15  thiago_silva <thiago_silva@kdemail.net>
+2005-02-07 00:15  thiago_silva
 
 	* README (1.5), configure.in (1.5), configure.in.in (1.3),
 	  protoeditor.kdevelop (1.5), src/protoeditor/protoeditor.cpp (1.2)
@@ -423,17 +428,17 @@
 
 2005-02-06 22:33  tag BETA_0_5_2
 
-2005-02-06 22:33  thiago_silva <thiago_silva@kdemail.net>
+2005-02-06 22:33  thiago_silva
 
 	* src/settings/Makefile.am (1.2, BETA_0_5_2):
 	  fixed includes
 
-2005-02-06 22:30  thiago_silva <thiago_silva@kdemail.net>
+2005-02-06 22:30  thiago_silva
 
 	* configure.in (1.4, BETA_0_5_2):
 	  icon Makefile.am creation changed
 
-2005-02-06 21:18  thiago_silva <thiago_silva@kdemail.net>
+2005-02-06 21:18  thiago_silva
 
 	* src/: breakpointlistview.cpp (1.2), breakpointlistview.h (1.2),
 	  breakpointlistviewitem.cpp (1.2), breakpointlistviewitem.h (1.2),
@@ -454,7 +459,7 @@
 	  -src/* goes to src/protoeditor except settings files. They go to
 	  src/settings
 
-2005-02-06 21:11  thiago_silva <thiago_silva@kdemail.net>
+2005-02-06 21:11  thiago_silva
 
 	* data/icons/Makefile.am (1.2, BETA_0_5_2_1),
 	  data/icons/hi16-action-activebreakpoint.png (1.1, BETA_0_5_2_1),
@@ -518,7 +523,7 @@
 	  protoeditoricon_ICON)
 	  -other little things I can't remember :/
 
-2005-02-06 20:52  thiago_silva <thiago_silva@kdemail.net>
+2005-02-06 20:52  thiago_silva
 
 	* src/Makefile.am (1.3, BETA_0_5_2_1, BETA_0_5_2), configure.in
 	  (1.3), src/settings/Makefile.am (1.1),
@@ -530,18 +535,18 @@
 	  -src/* goes to src/protoeditor except settings files. They go to
 	  src/settings
 
-2005-02-05 18:26  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 18:26  thiago_silva
 
 	* src/: mainwindow.cpp (1.6), mainwindow.h (1.6):
 	  -added "Open recent" action
 	  -fixed slotEditToolbar
 
-2005-02-05 18:24  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 18:24  thiago_silva
 
 	* src/editortabwidget.cpp (1.4):
 	  -check wether the file could be opened.
 
-2005-02-05 17:01  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 17:01  thiago_silva
 
 	* src/: mainwindow.cpp (1.5), mainwindow.h (1.5):
 	  -out: QFileDialog
@@ -549,14 +554,14 @@
 	  -we dont need m_currentOpenPath/KConfig anymore, since
 	  KFileDialog remembers the path for us :)
 
-2005-02-05 16:34  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 16:34  thiago_silva
 
 	* configure.in (1.2), configure.in.in (1.2, BETA_0_5_2):
 	  there are some problems creating the kcfg settings using
 	  #MIN_CONFIG(3.0.0).
 	  fixed with #MIN_CONFIG(3.2)
 
-2005-02-05 16:31  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 16:31  thiago_silva
 
 	* src/: dbugrconfigform.cpp (1.2), dbugrconfigform.h (1.2),
 	  dbugrconfigformbase.ui (1.2), debuggerconfigform_interface.h
@@ -567,24 +572,24 @@
 	  -out: dbugrconfigform settings
 	  -in: kcfg based settings
 
-2005-02-05 16:27  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 16:27  thiago_silva
 
 	* src/: main.cpp (1.5), protoeditor.cpp (1.4):
 	  -renamed from main.cpp to protoeditor.cpp
 
-2005-02-05 16:24  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 16:24  thiago_silva
 
 	* src/: editortabwidget.cpp (1.3), editortabwidget.h (1.3):
 	  -using KURL
 
-2005-02-05 16:20  thiago_silva <thiago_silva@kdemail.net>
+2005-02-05 16:20  thiago_silva
 
 	* src/Makefile.am (1.2):
 	  -add shelldesktopdir data
 	  -add shellrc data
 	  -add kde_kcfg data
 
-2005-02-03 03:29  thiago_silva <thiago_silva@kdemail.net>
+2005-02-03 03:29  thiago_silva
 
 	* src/: debuggermanager.cpp (1.2), debuggermanager.h (1.2),
 	  editortabwidget.cpp (1.2), editortabwidget.h (1.2), main.cpp
@@ -599,29 +604,29 @@
 
 2005-01-30 21:08  tag BETA_0_5_1
 
-2005-01-30 21:08  thiago_silva <thiago_silva@kdemail.net>
+2005-01-30 21:08  thiago_silva
 
 	* README (1.3, BETA_0_5_1):
 	  add DBG version
 
-2005-01-30 20:41  thiago_silva <thiago_silva@kdemail.net>
+2005-01-30 20:41  thiago_silva
 
 	* src/: main.cpp (1.3), mainwindow.cpp (1.2), mainwindow.h (1.2),
 	  protoeditor.cpp (1.2), protoeditor.h (1.2) (utags: BETA_0_5_1):
 	  remember the path of the last file the user opened.
 
-2005-01-30 18:08  thiago_silva <thiago_silva@kdemail.net>
+2005-01-30 18:08  thiago_silva
 
 	* README (1.2), protoeditor.kdevelop (1.2, BETA_0_5_1),
 	  protoeditor.kdevelop.pcs (1.2), protoeditor.kdevses (1.2):
 	  removing non-important kdevelop files
 
-2005-01-29 20:23  thiago_silva <thiago_silva@kdemail.net>
+2005-01-29 20:23  thiago_silva
 
 	* src/main.cpp (1.2):
 	  Icons were not been loaded because the app name
 
-2005-01-28 00:43  thiago_silva <thiago_silva@kdemail.net>
+2005-01-28 00:43  thiago_silva
 
 	* ChangeLog (1.1), INSTALL (1.1), NEWS (1.1), TODO (1.1), AUTHORS
 	  (1.1), COPYING (1.1), Makefile.am (1.1), Makefile.cvs (1.1),
