@@ -195,18 +195,18 @@ DBGProfileListViewItem* DBGProfileListView::getRootItem(DBGProfileData* data)
   return 0;
 }
 
-DBGProfileListViewItem* DBGProfileListView::lastRootItem()
+QListViewItem* DBGProfileListView::lastRootItem()
 {
-  int count = childCount();
   QListViewItem* item = firstChild();
-  QListViewItem* current = 0;
+  QListViewItem* lastItem = 0;
 
-  for(int i = 0; i < count; i++)
+  while(item)
   {
-    current = item->nextSibling();
+    lastItem = item;    
+    item = item->nextSibling();
   }
 
-  return dynamic_cast<DBGProfileListViewItem*>(current);
+  return lastItem;
 }
 
 void DBGProfileListView::addToList(DBGProfileData* data)

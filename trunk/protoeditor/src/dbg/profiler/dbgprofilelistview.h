@@ -64,7 +64,7 @@ private:
   DBGProfileListViewItem* getRootItem(DBGProfileData* data);
   DBGProfileListViewItem* getModuleRootItem(int modid);
   DBGProfileListViewItem* getContextRootItem(int ctxid);
-  DBGProfileListViewItem* lastRootItem();
+  QListViewItem* lastRootItem();
   
   void addToList(DBGProfileData* data);
   void reloadList();
