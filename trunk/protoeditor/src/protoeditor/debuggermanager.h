@@ -53,17 +53,12 @@ public:
   void debugError(const QString&);
   void updateOutput(const QString&);
 
-signals:
-  void sigSettingsChanged();
-
 public slots:
   void slotConfigurationChanged();
 
 private slots:
   /* Application - DebuggerManager */
 
-  void slotDebugStartSession();
-  void slotDebugEndSession();
   void slotDebugRun();
   void slotDebugStop();
   void slotDebugStepInto();
@@ -85,32 +80,14 @@ private slots:
 
   /* DebuggerClient - DebuggerManager */
 
-
-  void slotSessionStarted();
-  void slotSessionEnded();
   void slotDebugStarted();
   void slotDebugEnded();
 
   //Debugger internal error (conection, listen port, etc)
   void slotInternalError(const QString&);
-  /*
 
-  void slotSessionStarted();
-  void slotSessionEnded();
-  void slotDebugStarted();
-  void slotDebugEnded();
-  void slotVariablesChanged(VariablesList_t*, bool);
-  void slotWatchChanged(Variable*);
-  //void slotStackChanged(DebuggerStack*);
-  void slotDebugBreakpointChanged(DebuggerBreakpoint*);
-  void slotDebugMessage(int, QString, int, QString);
-  void slotDebugOutput(QString);
-  void slotDebugError(QString);    //Session debug error
-  */
 
 private:
-  //disable all
-  void disableAllDebugActions();
   void connectDebugger();
 
   void loadDebugger();

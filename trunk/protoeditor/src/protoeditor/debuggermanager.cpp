@@ -31,6 +31,8 @@
 #include "debuggerbreakpoint.h"
 #include "breakpointlistview.h"
 
+#include "protoeditorsettings.h"
+
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kstatusbar.h>
@@ -111,20 +113,7 @@ void DebuggerManager::init()
           this, SLOT(slotBrekpointDeleted(DebuggerBreakpoint*)));
   */
 
-  disableAllDebugActions();
   loadDebugger();
-}
-
-
-void DebuggerManager::disableAllDebugActions()
-{
-  m_window->actionCollection()->action("debug_start_session")->setEnabled(false);
-  m_window->actionCollection()->action("debug_end_session")->setEnabled(false);
-  m_window->actionCollection()->action("debug_run")->setEnabled(false);
-  m_window->actionCollection()->action("debug_stop")->setEnabled(false);
-  m_window->actionCollection()->action("debug_step_into")->setEnabled(false);
-  m_window->actionCollection()->action("debug_step_over")->setEnabled(false);
-  m_window->actionCollection()->action("debug_step_out")->setEnabled(false);
 }
 
 DebuggerManager::~DebuggerManager()
@@ -134,9 +123,7 @@ DebuggerManager::~DebuggerManager()
 
 void DebuggerManager::clearDebugger()
 {
-  if(m_debugger) m_debugger->endSession();
-
-  disableAllDebugActions();
+  //if(m_debugger) m_debugger->endSession();
 
   delete m_debugger;
   m_debugger = NULL;
@@ -170,21 +157,14 @@ void DebuggerManager::loadDebugger()
 
   if((m_debugger = DebuggerFactory::buildDebugger("DBG", this)) == NULL) {
     m_window->showError("Error loading debugger client");
-    disableAllDebugActions();
     return;
   }
 
-  m_window->actionCollection()->action("debug_start_session")->setEnabled(true);
+  connectDebugger();
 }
 
 void DebuggerManager::connectDebugger()
 {
-
-  connect(m_debugger, SIGNAL(sigSessionStarted()),
-          this, SLOT(slotSessionStarted()));
-
-  connect(m_debugger, SIGNAL(sigSessionEnded()),
-          this, SLOT(slotSessionEnded()));
 
   connect(m_debugger, SIGNAL(sigDebugStarted()),
           this, SLOT(slotDebugStarted()));
@@ -192,13 +172,10 @@ void DebuggerManager::connectDebugger()
   connect(m_debugger, SIGNAL(sigDebugEnded()),
           this, SLOT(slotDebugEnded()));
 
-
   connect(m_debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotInternalError(const QString&)));
-
-  connect(this, SIGNAL(sigSettingsChanged()),
-         m_debugger, SLOT(slotSettingsChanged()));
 }
+
 
 /******************************* Application interface ******************************************/
 
@@ -207,32 +184,15 @@ void DebuggerManager::slotConfigurationChanged()
   loadDebugger();
 }
 
-void DebuggerManager::slotDebugStartSession()
-{
-  if(m_debugger) {
-    m_debugger->startSession();
-  } else {
-    m_window->showSorry("No debugger selected");
-  }
-}
-
-void DebuggerManager::slotDebugEndSession()
-{
-  if(!m_debugger) return;
-
-  m_debugger->endSession();
-}
-
 void DebuggerManager::slotDebugRun()
 {
   if(!m_debugger) return;
 
   if(m_window->tabEditor()->count() != 0) {
     QString filepath = m_window->tabEditor()->currentDocumentPath();
-    /*
+
      m_debugger->run(filepath,
-      ProtoeditorSettings::self()->siteSettings(m_window->selectedSite()));
-     */
+      ProtoeditorSettings::self()->currentSiteSettings());
   } else {
     m_window->showSorry("Open a file to debug");
   }
@@ -463,19 +423,6 @@ void DebuggerManager::updateOutput(const QString& output) {
   m_window->edOutput()->setText(output);
 }
 
-void DebuggerManager::slotSessionStarted()
-{
-  m_window->actionCollection()->action("debug_start_session")->setEnabled(false);
-  m_window->actionCollection()->action("debug_end_session")->setEnabled(true);
-  m_window->actionCollection()->action("debug_run")->setEnabled(true);
-}
-
-void DebuggerManager::slotSessionEnded()
-{
-  disableAllDebugActions();
-  m_window->actionCollection()->action("debug_start_session")->setEnabled(true);
-}
-
 void DebuggerManager::slotDebugStarted()
 {
   m_window->edOutput()->clear();
@@ -494,10 +441,14 @@ void DebuggerManager::slotDebugStarted()
 
   m_window->statusBar()->message("Debug started");
 
+  m_window->actionStateChanged("debug_started");
+  m_window->actionCollection()->action("debug_start")->setText("Continue");
+  /*
   m_window->actionCollection()->action("debug_stop")->setEnabled(true);
   m_window->actionCollection()->action("debug_step_into")->setEnabled(true);
   m_window->actionCollection()->action("debug_step_over")->setEnabled(true);
   m_window->actionCollection()->action("debug_step_out")->setEnabled(true);
+  */
 }
 
 void DebuggerManager::slotDebugEnded()
@@ -530,11 +481,14 @@ void DebuggerManager::slotDebugEnded()
     ed->unmarkPreExecutionPoint(execPoint->filePath(), execPoint->line());
   }
 
+  m_window->actionStateChanged("debug_stopped");
+  m_window->actionCollection()->action("debug_start")->setText("Start");
+  /*
   m_window->actionCollection()->action("debug_stop")->setEnabled(false);
   m_window->actionCollection()->action("debug_step_into")->setEnabled(false);
   m_window->actionCollection()->action("debug_step_over")->setEnabled(false);
   m_window->actionCollection()->action("debug_step_out")->setEnabled(false);
-
+  */
 }
 
 void DebuggerManager::slotInternalError(const QString& message)
