@@ -1,0 +1,141 @@
+                            Protoeditor
+
+Project site:
+
+  http://protoeditor.sourceforge.net/
+
+1.0 About:
+
+  Protoeditor is a little KDE text editor developed for PHP debugging with the
+  free version of DBG debugger (http://dd.cron.ru/dbg), version 2.11.*.
+  It was first implemented as a test application while doing a plugin for
+  Quanta+ (http://www.kdewebdev.org) and now it became quite usable.
+
+  Protoeditor uses katepart as the text editor, so all the functionalities of a
+  _good_ editor are present (highlights, folding marks, etc, etc, etc).
+  This makes the debug experience more pratical.
+
+  Besides the editor and appearence, Protoeditor supports the main DBG features:
+  steps, watches, stack/backtrace, breakpoints, conditional breakpoints...
+  There are little things missing (and crashing) here and there, but with those,
+  we can do what we actually need. Remember: this is a client for the *free* version
+  of DBG. Don't try to use it with the commercial version. Won't work!
+
+2.0 Notes
+
+  2.1 Kate
+
+  The first time you execute Protoeditor, its configuration won't exist so,
+  kate will load the default settings for the editor, wich might not include Icon Border.
+  Just open a file (so you can configure the editor), goto "Editor" -> "Configure"
+  and, on "View defaults", mark "Show Icon Border". Then you will be able to see
+  the execution points and breakpoints.
+
+  2.2 Debugger Configuration
+
+  First, configure your php DBG module. Make sure it is active with phpinfo().
+  For details about DBG installation, check the DBG site: http://dd.cron.ru
+
+  To configure DBG on Protoeditor:
+
+    Check the DBG options on Protoeditor settings. Most of them are self explanatory.
+    (Yes, I will work on appropriated documentation).
+
+    JIT note: if enabled, Protoeditor will listen on the given port while the application
+    is running. Otherwise, it will only listen to the port when a debug session is active.
+
+    Sites:
+
+      From version 0.6, Protoeditor supports different settings for remote/local
+      directory mapping. On other IDE's this is simply the configuration for a given project.
+      Since Protoeditor is not project centric, it uses "Site" configuration.
+      Each site has the following entries:
+
+        -Site name       : a simple name to identify this site
+        -Host            : the ip/hostname of the http server
+        -Port            : the port of the http server
+        -Remote base dir : the remote directory of the site (eg. /var/www/htdocs/mysite)
+        -Local base dir  : the local directory of the site (eg. /home/me/mysite)
+
+        (other entries might appear in future versions)
+
+    Many Sites can be registered and they are selected through the combo box on the
+    main window toolbar. When starting the debugger, it will connect to the Site's
+    host:port and use the given directories to map file paths from remote to local
+    and vice-versa.
+
+    Example of a local Site:
+
+    Site name       : home
+    Host            : localhost
+    Port            : 80
+    Remote base dir : /home/me/phpsite
+    Local base dir  : /usr/apache/htdocs/phpsite
+
+  2.3 Main window
+
+    Now, some tricks, notes and not-so-obvious-features:
+
+      Variales list:
+
+        -Expanded array/object childs remains expanded through step-in/step-out/break,
+        (I haven't seen this implemented in many PHP IDE's ;-)
+
+        -To modify a variable value on the fly, simply double click on it's value and
+        edit it.
+
+        -Right button on a variable popup a menu to copy the variable to the clipboard.
+
+    Breakpoints:
+
+      -Multiple breakpoints on the same file/line is not supported.
+
+    Browsers:
+
+      -When using Konqueror, Protoeditor keeps talking to the same window. This is
+      not possible on the other browsers (Protoeditor uses the topmost instance).
+
+3.0 Future plans
+
+  DBG is good. Very good. But there are some catches for the free version. So, when I finish
+  the DBG client, I might start working on XDebug (http://www.xdebug.org/) support.
+
+4.0 Extra info
+
+  I started working on this a year ago because, at the time, I needed for my job
+  (working with php applications on GNU/Linux). We didn't want to spend money on
+  commercial products (as a matter of fact, we didn't like the available ones).
+  Since the free version of DBG satisfied me, I planned to integrate a client into
+  the KDE Quanta+ (http://www.kdewebdev.org) wich, at the time, Gubed
+  (http://gubed.sourceforge.net) was beginning to be incorporated. Also, there
+  was a discussion about incorporating many debuggers of many script languages into it.
+  So, be ready for Quanta+ :)
+
+
+5.0 Troubleshooting
+
+  5.1 Nothing happens when I start the debugger.
+
+    If you are trying to run the debugger and nothing happens,
+    first, make sure you can access the http server and DBG is installed and configured
+    properly. Then, take a look at Protoeditor output on the console.
+    It should have something like:
+
+      "protoeditor: Requesting "/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
+
+    Where the relevant data are:
+      /index.php   - the file you are running.
+      7869         - the port you typed on "Listen port" of DBG settings.
+      192.168.0.20 - the host you typed on your current Site's "Host".
+
+    This is an HTTP request, so if you see something like:
+
+      "protoeditor: Requesting "/home/me/test/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
+
+    unless you can access "http://192.168.0.20/home/me/test/index.php",
+    you probably set incorrect values for local/remote base dirs on the Site settings.
+
+------------------------------------------
+Thiago Silva <thiago.silva@kdemail.com>
+
+$Id$

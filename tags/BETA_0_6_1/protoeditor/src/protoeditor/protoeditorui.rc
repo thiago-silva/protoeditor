@@ -1,0 +1,110 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="protoeditor" version="1">
+
+  <MenuBar>
+    <Menu name="menu_script"><text>&amp;Script</text>
+     <text>Script Menu</text>
+     <Action name="script_run"/>
+     <Separator />
+     <Action name="debug_stop"/>
+     <Action name="debug_start"/>
+     <Action name="debug_step_over"/>
+     <Action name="debug_step_into"/>
+     <Action name="debug_step_out"/>
+     <Separator />
+     <Action name="debug_toggle_bp"/>
+    </Menu>
+
+    <Menu name="settings">
+    <text>&amp;Settings</text>
+      <Separator />
+      <Action name="settings_editor"/>
+      <Action name="settings_protoeditor"/>
+    </Menu>
+  </MenuBar>
+
+  <ToolBar name="toolbar_script">
+     <text>Script Toolbar</text>
+     <Action name="site"/>
+     <Separator />
+     <Action name="script_run"/>
+     <Separator />
+     <Action name="debug_stop"/>
+     <Action name="debug_start"/>
+     <Action name="debug_step_over"/>
+     <Action name="debug_step_into"/>
+     <Action name="debug_step_out"/>
+  </ToolBar>
+
+  <State name="debug_disabled">
+    <disable>
+      <Action name="script_run"/>
+      <Action name="debug_start"/>
+      <Action name="debug_stop"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </disable>
+  </State>
+
+  <State name="debug_stopped">
+    <enable>
+      <Action name="debug_start"/>
+      <Action name="debug_toggle_bp"/>
+    </enable>
+    <disable>
+      <Action name="debug_stop"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </disable>
+  </State>
+
+  <State name="debug_started">
+    <enable>
+      <Action name="debug_stop"/>
+      <Action name="debug_toggle_bp"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </enable>
+  </State>
+
+  <State name="has_nofileopened">
+    <disable>
+      <Action name="script_run"/>
+      <Action name="debug_start"/>
+      <Action name="file_close"/>
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+
+      <Action name="edit_undo"/>
+      <Action name="edit_redo"/>
+      <Action name="edit_cut"/>
+      <Action name="edit_copy"/>
+      <Action name="edit_paste"/>
+      <Action name="edit_select_all"/>
+
+      <Action name="settings_editor"/>
+      <Action name="debug_toggle_bp"/>
+    </disable>
+  </State>
+
+  <State name="has_fileopened">
+    <enable>
+      <Action name="script_run"/>
+      <Action name="debug_start"/>
+      <Action name="file_close"/>
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+
+      <Action name="edit_cut"/>
+      <Action name="edit_copy"/>
+      <Action name="edit_paste"/>
+      <Action name="edit_select_all"/>
+
+      <Action name="settings_editor"/>
+      <Action name="debug_toggle_bp"/>
+    </enable>
+  </State>
+</kpartgui>
