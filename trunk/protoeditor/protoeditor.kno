@@ -113,7 +113,8 @@
 <li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on dbg settings<br /></li>
 <li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget<br /></li>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
-<li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)<br /><br /></li>
+<li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)<br /></li>
+<li>Add signal/slots for &quot;file changed on disk&quot;<br /></li>
 <li>Show filepath on title bar<br /></li>
 <li>When all files are closed and debugger is running, next step opens the current file.</li></ul>
 </body></html>
