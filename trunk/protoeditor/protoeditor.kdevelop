@@ -27,7 +27,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>src/commonphp/libcommonphp.la</activetarget>
+      <activetarget>src/protoeditor</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -200,15 +200,15 @@
   <dist>
     <custom>false</custom>
     <bzip>false</bzip>
-    <archname/>
-    <appname>protoeditor.kdevelop</appname>
-    <version>0.1</version>
-    <release/>
+    <archname>%n-%v-%d</archname>
+    <appname>protoeditor</appname>
+    <version>0.5</version>
+    <release>2</release>
     <vendor/>
-    <licence/>
-    <summary/>
-    <group/>
-    <packager/>
+    <licence>GPL</licence>
+    <summary>A simple PHP editor and debugger client.</summary>
+    <group>Development</group>
+    <packager>Thiago Silva</packager>
     <description/>
     <changelog/>
     <devpackage>false</devpackage>
