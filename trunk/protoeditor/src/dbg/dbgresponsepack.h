@@ -28,11 +28,7 @@
 
 class DBGHeader;
 class DBGResponseTag;
-class DBGFrame;
 class DBGTagRawdata;
-class DBGResponseTagStack;
-class DBGResponseTagSrcLinesInfo;
-class DBGTagBreakpoint;
 
 class DBGResponsePack {
 public:
