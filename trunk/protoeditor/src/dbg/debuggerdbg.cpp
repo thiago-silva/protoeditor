@@ -57,8 +57,6 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
   connect(m_net, SIGNAL(sigDBGClosed()), this, SLOT(slotDBGClosed()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
-
-  slotSettingsChanged();
 }
 
 DebuggerDBG::~DebuggerDBG()
@@ -66,6 +64,11 @@ DebuggerDBG::~DebuggerDBG()
   delete m_net;
   delete m_dbgSettings;
   delete m_profileDialog;
+}
+
+void DebuggerDBG::init()
+{
+  slotSettingsChanged();
 }
 
 QString DebuggerDBG::name() const
@@ -82,10 +85,7 @@ void DebuggerDBG::slotSettingsChanged()
 {
   if(m_dbgSettings->enableJIT())
   {
-    if(!m_isJITActive)
-    {
-      startJIT();
-    }
+    startJIT();
   }
   else
   {
