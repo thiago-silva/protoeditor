@@ -29,6 +29,7 @@ class DBGSettings;
 class DBGNet;
 class DebuggerStack;
 class PHPVariable;
+class DBGProfileDialog;
 
 class DebuggerDBG : public AbstractDebugger
 {
@@ -61,17 +62,21 @@ public:
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
+  virtual void profile();
+  virtual KDialog* profileDialog();
+  
   /* Internal use (provided for DBGNet use) */
   void updateStack(DebuggerStack*);
   void updateVar(const QString& result, const QString& str, bool isGlobal);
   void updateWatch(const QString& result, const QString& str);
   void updateBreakpoint(int id, const QString& filePath, int line, int state, int hitcount, int skiphits,
                                const QString& condition);
+  
+  void addProfileData(const QString& filePath, int line, long hitcount, double min, double max, double sum);
+  
   void debugError(const QString& msg);
   void debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo);
   void checkDBGVersion(int, int, const QString&);
-
-  //DBGSettings* configuration();
 
 public slots:
   void slotSettingsChanged();
@@ -95,6 +100,7 @@ private:
   DBGSettings            *m_dbgSettings;
 
   DBGNet                 *m_net;
+  DBGProfileDialog       *m_profileDialog;
   int                     m_currentExecutionPointID;
   int                     m_globalExecutionPointID;
   //DebuggerExecutionPoint *m_currentExecutionPoint; //aways the top of the stack

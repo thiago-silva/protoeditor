@@ -155,6 +155,11 @@ void DBGNet::requestBreakpointRemoval(int bpid) {
   m_requestor->requestBreakpointRemoval(bpid);
 }
 
+void DBGNet::requestProfileData()
+{
+  m_requestor->requestProfileData(1); //the main module is aways 1
+}
+
 void DBGNet::setOptions(int op)
 {
   m_opts = op;
@@ -341,6 +346,21 @@ void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack
     );
 }
 
+void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack* pack)
+{
+  //NOTE: I'm not very confident about those conversions
+  //TODO: recover 1000000 from prof_c
+  long l = proftag->minLo();
+  long long conv = (long long) l | (proftag->minHi() << 32);
+  double d = (double) conv / 1000000;
+  
+  m_debugger->addProfileData(m_dbgFileInfo->moduleName(proftag->modNo()),
+                              proftag->lineNo(),
+                              proftag->hitCoun(),
+                              (double)(proftag->minLo() | (proftag->minHi() << 32)),
+                              (double)(proftag->maxLo() | (proftag->maxHi() << 32)),
+                              (double)(proftag->sumLo() | (proftag->sumHi() << 32)));
+}
 
 void DBGNet::shipStack()
 {

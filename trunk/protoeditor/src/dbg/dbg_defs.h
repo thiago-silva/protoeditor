@@ -216,10 +216,11 @@ const int TAG_BPS_SIZE                =  40;
 const int TAG_REQ_SRCLINESINFO_SIZE   =  4;
 const int TAG_REQ_SRCCTXINFO_SIZE     =  4;
 const int TAG_REQ_PROF_SIZE           =  4;
-const int TAG_REQ_PROF_C              =  4;
+const int TAG_REQ_PROF_C_SIZE         =  4;
 const int TAG_REQ_SET_OPT_SIZE        =  8; //for some reason, "4" here and DBG doesn't ack
 
 /* custom def, complements CURLOC_SCOPE_ID and GLOBAL_SCOPE_ID. Used on DBGNet */
 const int WATCH_SCOPE_ID = -2;
 
+const int FRAME_SIZE = 8;
 #endif

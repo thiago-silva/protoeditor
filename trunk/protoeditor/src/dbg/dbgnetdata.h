@@ -87,7 +87,7 @@ class DBGFrame : public Receivable, public Requestable
 {
 public:
   DBGFrame();
-  DBGFrame(dbgint name, dbgint datasize);
+  DBGFrame(dbgint name, dbgint datasize = 0);
   DBGFrame(char* responseBuffer);
   virtual ~DBGFrame();
 
@@ -353,9 +353,52 @@ private:
   dbgint m_imessage;
 };
 
-/********
- * REQUESTS     *
- ********/
+/* response tag for profile data */
+class DBGResponseTagProf : public DBGResponseTag
+{
+  public:
+    DBGResponseTagProf();
+    DBGResponseTagProf(char* responseBuffer);
+    ~DBGResponseTagProf();
+
+    void setModNo(dbgint);
+    void setLineNo(dbgint);
+    void setHitCount(dbgint);
+    void setMinLo(dbgint);
+    void setMinHi(dbgint);
+    void setMaxLo(dbgint);
+    void setMaxHi(dbgint);
+    void setSumLo(dbgint);
+    void setSumHi(dbgint);
+
+    dbgint modNo() const;
+    dbgint lineNo() const;
+    dbgint hitCoun() const;
+    dbgint minLo() const;
+    dbgint minHi() const;
+    dbgint maxLo() const;
+    dbgint maxHi() const;
+    dbgint sumLo() const;
+    dbgint sumHi() const;
+
+    virtual void process(DBGNet*, DBGResponsePack*) const;
+
+  private:
+    dbgint m_modNo;
+    dbgint m_lineNo;
+    dbgint m_hitCount;
+    dbgint m_minLo;
+    dbgint m_minHi;
+    dbgint m_maxLo;
+    dbgint m_maxHi;
+    dbgint m_sumLo;
+    dbgint m_sumHi;
+};
+
+
+/**********
+  REQUESTS
+ **********/
 
 /* request tag for evaluation information */
 class DBGRequestTagEval : public DBGRequestTag
@@ -458,5 +501,20 @@ private:
   dbgint m_opt_flags;
 };
 
+/* request tag for profile data */
+class DBGRequestTagProf : public DBGRequestTag
+{
+  public:
+    DBGRequestTagProf();
+    DBGRequestTagProf(dbgint);
+    ~DBGRequestTagProf();
+
+    void  setModNo(dbgint);
+    dbgint modno();
+
+    virtual char* toArray();
+  private:
+    dbgint m_modno;
+};
 
 #endif

@@ -46,6 +46,7 @@
 #include <kfileitem.h>
 #include <qvaluelist.h>
 
+#include <kdialogbase.h>
 
 #include <ktextedit.h>
 //#include <kconfigdialog.h>
@@ -72,9 +73,9 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
   setupStatusBar();
 
   m_debugger_manager = new DebuggerManager(this);
-    
+
   setupActions();
-  
+
   createWidgets();
 
   createGUI(0);
@@ -87,10 +88,10 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
   connect(kapp, SIGNAL(aboutToQuit()), this, SLOT(slotClose()));
 
   connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
-    this, SLOT(slotSettingsChanged()));
+          this, SLOT(slotSettingsChanged()));
 
   connect(m_siteAction, SIGNAL(activated(const QString&)),
-    ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+          ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
 
   loadSites();
 
@@ -104,12 +105,14 @@ void MainWindow::loadSites()
   QValueList<SiteSettings*> sitesList = ProtoeditorSettings::self()->siteSettingsList();
   QValueList<SiteSettings*>::iterator it;
 
-  for(it = sitesList.begin(); it != sitesList.end(); ++it) {
+  for(it = sitesList.begin(); it != sitesList.end(); ++it)
+  {
     strsites << (*it)->name();
   }
   m_siteAction->setItems(strsites);
 
-  if(strsites.count()) {
+  if(strsites.count())
+  {
 
     m_siteAction->setCurrentItem(0);
     //note 1: KSelectAction doesn't emit activated() when calling setCurrentItem()
@@ -146,14 +149,14 @@ void MainWindow::setupActions()
 
   //file menu
   KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
-  
+
   m_actionRecent = KStdAction::openRecent(this, SLOT(slotFileRecent(const KURL&)), actionCollection());
   m_actionRecent->loadEntries(kapp->config());//,"Recent Files");
 
   KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
 
   (void)new KAction(i18n("Close All"), 0, this, SLOT(slotCloseAllFiles()), actionCollection(), "file_close_all");
-  
+
   KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
   KStdAction::keyBindings(this, SLOT(slotEditKeys()), actionCollection());
@@ -161,8 +164,8 @@ void MainWindow::setupActions()
   KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
   m_siteAction = new KSelectAction("Site", 0, actionCollection(), "site");
-//   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
-//                     SLOT(slotDebugRun()), actionCollection(), "script_run");
+  //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
+  //                     SLOT(slotDebugRun()), actionCollection(), "script_run");
 
   (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", m_debugger_manager,
                     SLOT(slotDebugRun()), actionCollection(), "debug_start");
@@ -179,9 +182,12 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
+  (void)new KAction(i18n("Profile"), "", "Alt+P", m_debugger_manager,
+    SLOT(slotProfile()), actionCollection(), "profile");
+
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
-  
+
   setStandardToolBarMenuEnabled(true);
 }
 
@@ -285,7 +291,6 @@ void MainWindow::createWidgets()
   */
 
   tabDebug->insertTab(outputTab, QString("Output"));
-
 }
 
 MainWindow::~MainWindow()
@@ -299,33 +304,37 @@ void MainWindow::slotSettingsChanged()
   loadSites();
 }
 
-void MainWindow::openFile() {
+void MainWindow::openFile()
+{
   slotOpenFile();
 }
 
 void MainWindow::slotOpenFile()
 {
-
   QStringList strList =
     KFileDialog::getOpenFileNames(
       ":protoeditor", "*.php", this);
 
-  if(strList.count()) {
-    for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it ) {
+  if(strList.count())
+  {
+    for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it )
+    {
       openFile(*it);
     }
   }
 }
 
-
 void MainWindow::openFile(const KURL& url)
 {
   KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
-  if(file.isReadable()) {
+  if(file.isReadable())
+  {
     m_tabEditor->openDocument(url);
     m_actionRecent->addURL(url);
 
-  } else {
+  }
+  else
+  {
     m_actionRecent->removeURL(url);
     showSorry(url.prettyURL() + " is unreadable.");
   }
@@ -349,7 +358,8 @@ void MainWindow::slotCloseAllFiles()
 
 void MainWindow::slotSaveFile()
 {
-  if(!m_tabEditor->saveCurrentFile()) {
+  if(!m_tabEditor->saveCurrentFile())
+  {
     showSorry("Unable to save file");
   }
 }
@@ -358,8 +368,10 @@ void MainWindow::slotSaveFileAs()
 {
   KURL url = KFileDialog::getSaveURL(":protoeditor", "*.php", this);
 
-  if(!url.isEmpty()) {
-    if(!m_tabEditor->saveCurrentFileAs(url)) {
+  if(!url.isEmpty())
+  {
+    if(!m_tabEditor->saveCurrentFileAs(url))
+    {
       showSorry("Unable to save file");
     }
   }
@@ -393,11 +405,13 @@ void MainWindow::slotEditKeys()
   KKeyDialog dlg;
   dlg.insert(actionCollection());
 
-  if(m_tabEditor->count() != 0) {
+  if(m_tabEditor->count() != 0)
+  {
     KTextEditor::View* view  = m_tabEditor->currentView();
-    if(view) {
+    if(view)
+    {
       dlg.insert(view->actionCollection());
-    }  
+    }
   }
 
   dlg.configure();
@@ -411,7 +425,8 @@ void MainWindow::actionStateChanged(const QString& str)
 void MainWindow::slotEditToolbars()
 {
   KEditToolbar dlg(guiFactory());
-  if (dlg.exec()) {
+  if (dlg.exec())
+  {
     //setupGUI();
     applyMainWindowSettings( KGlobal::config(), autoSaveGroup() );
   }

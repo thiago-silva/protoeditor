@@ -28,6 +28,7 @@
 #include "debuggerbreakpoint.h"
 #include "dbgsettings.h"
 #include "phpdefs.h"
+#include "dbgprofile.h"
 
 #include "protoeditorsettings.h"
 
@@ -39,7 +40,7 @@
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     : AbstractDebugger(parent), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
-    m_dbgSettings(0), m_net(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
+    m_dbgSettings(0), m_net(0), m_profileDialog(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
     m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
   m_dbgSettings = new DBGSettings();
@@ -64,6 +65,7 @@ DebuggerDBG::~DebuggerDBG()
 {
   delete m_net;
   delete m_dbgSettings;
+  delete m_profileDialog;
 }
 
 QString DebuggerDBG::name() const
@@ -301,6 +303,29 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
+void DebuggerDBG::profile()
+{
+  if(isRunning())
+  {
+    if(m_profileDialog)
+    {
+      m_profileDialog->clear();
+    }
+
+    m_net->requestProfileData();
+  }
+}
+
+KDialog* DebuggerDBG::profileDialog()
+{
+  if(!m_profileDialog)
+  {
+    m_profileDialog = new DBGProfileDialog(0, "profile");
+  }
+
+  return m_profileDialog;
+}
+
 void DebuggerDBG::requestWatches(int scopeid)
 {
   if(isRunning())
@@ -394,6 +419,10 @@ void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, in
   manager()->updateBreakpoint(bp);
 }
 
+void DebuggerDBG::addProfileData(const QString& filePath, int line, long hitcount, double min, double max, double sum)
+{
+  m_profileDialog->setData(new DBGProfileData(filePath, "null", line, hitcount, sum / hitcount, sum, min, max));
+}
 
 void DebuggerDBG::debugError(/*int type,*/ const QString&)
 {

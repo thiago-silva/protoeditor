@@ -23,8 +23,8 @@
 
 #include <qobject.h>
 #include <qstring.h>
-//#include "variable.h"
 
+class KDialog;
 class DebuggerManager;
 class DebuggerBreakpoint;
 class DebuggerConfigurations;
@@ -65,6 +65,9 @@ public:
   virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
 
+  virtual void profile() = 0;
+
+  virtual KDialog* profileDialog() = 0;
 protected:
   virtual DebuggerManager* manager();
 

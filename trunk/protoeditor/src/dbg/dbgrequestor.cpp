@@ -165,6 +165,16 @@ void DBGRequestor::requestOptions(int op)
   delete requestPack;
 }
 
+void DBGRequestor::requestProfileData(int modno)
+{
+  if(!m_socket) return;
+
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildProfile(modno);
+  requestPack->header()->setFlags(m_headerFlags);
+  requestPack->send(m_socket);
+  delete requestPack;
+}
+
 void DBGRequestor::makeHttpRequest(const QString& host, int port, const QString& path, int listenPort, int sessionId)
 {
   QString reqUrl = QString("http://") + host + ":" + QString::number(port)

@@ -44,6 +44,7 @@ class DBGResponseTagEval;
 class DBGResponseTagLog;
 class DBGResponseTagError;
 class DBGTagBreakpoint;
+class DBGResponseTagProf;
 
 class SiteSettings;
 
@@ -72,6 +73,8 @@ public:
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointRemoval(int bpid);
 
+  void requestProfileData();
+  
   //DBGReceiver communicatDBGNetes through those:
   void receivePack(DBGResponsePack* pack);
   void receiveHeader(DBGHeader* header);
@@ -89,7 +92,9 @@ public:
 
   void processBreakpoint(const DBGTagBreakpoint*, DBGResponsePack* pack);
 
-   void setOptions(int);
+  void processProf(const DBGResponseTagProf*, DBGResponsePack* pack);
+  
+  void setOptions(int);
 signals:
   void sigError(const QString&);
   void sigDBGStarted();
@@ -106,7 +111,6 @@ private:
   void shipStack();
 
   void error(const QString&);
-
 
   dbgint             m_opts;
   dbgint             m_sessionId;

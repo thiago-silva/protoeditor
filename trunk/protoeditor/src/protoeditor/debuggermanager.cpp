@@ -41,6 +41,7 @@
 //#include <ktexteditor/editinterface.h>
 #include <ktextedit.h>
 #include <kpushbutton.h>
+#include <kdialogbase.h>
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
     : QObject(parent, name), m_debugger(0), m_window(window)
@@ -366,6 +367,18 @@ void DebuggerManager::slotNewDocument()
   for(it = bplist.begin(); it != bplist.end(); ++it)
   {
     m_window->tabEditor()->markActiveBreakpoint((*it)->filePath(), (*it)->line());
+  }
+}
+
+void DebuggerManager::slotProfile()
+{
+  if(m_debugger)
+  {
+    KDialog* d = m_debugger->profileDialog();
+    if(d) {
+      d->show();
+      m_debugger->profile();
+    }
   }
 }
 

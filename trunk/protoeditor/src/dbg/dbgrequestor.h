@@ -155,6 +155,8 @@ public:
   void requestBreakpointRemoval(int bpid);
   void requestOptions(int op);
 
+  void requestProfileData(int modno);
+  
   void makeHttpRequest(const QString& host, int port, const QString& path, int listenPort, int sessionId);
 
   void addHeaderFlags(dbgint);

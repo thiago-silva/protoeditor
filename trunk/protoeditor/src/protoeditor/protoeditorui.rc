@@ -30,6 +30,8 @@
      <Action name="debug_step_into"/>
      <Action name="debug_step_out"/>
      <Separator />
+     <Action name="profile"/>
+     <Separator />
      <Action name="debug_toggle_bp"/>
     </Menu>
 
@@ -79,6 +81,7 @@
       <Action name="file_close"/>
       <Action name="file_close_all"/>
       <Action name="debug_toggle_bp"/>
+      <Action name="profile"/>
     </disable>
   </State>
   
@@ -93,6 +96,7 @@
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
+      <Action name="profile"/>      
     </disable>
   </State>
 
@@ -103,6 +107,7 @@
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
+      <Action name="profile"/>
     </enable>
   </State>
   

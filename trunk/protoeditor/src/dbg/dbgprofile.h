@@ -17,29 +17,69 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+ 
+#ifndef DBGPROFILE_H
+#define DBGPROFILE_H
 
-#ifndef DBGREQUESTPACKBUILDER_H
-#define DBGREQUESTPACKBUILDER_H
-#include <qstring.h>
-#include "dbgrequestpack.h"
+#include <kdialog.h>
 
-class DBGPack;
-class DebuggerBreakpoint;
-
-class DBGRequestPackBuilder
+class DBGProfileData
 {
 public:
-  static DBGRequestPack* buildCommand(int cmd);
-  static DBGRequestPack* buildWatch(const QString expression, int scope_id);
-  //static DBGRequestPack* buildBreakpoint(int modno, DebuggerBreakpoint* breakpoint);
-  static DBGRequestPack* buildBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
-  //static DBGRequestPack* buildBreakpointList(int bpno);
-  static DBGRequestPack* buildDeletedBreakpoint(int bpid);
-  static DBGRequestPack* buildVars(int mod_no);
-  static DBGRequestPack* buildSrcTree();
-  static DBGRequestPack* buildOptions(int op);
-  static DBGRequestPack* buildProfile(int modno);
+  DBGProfileData();
+  DBGProfileData(const QString&, const QString&, int, int, double, double, double, double);
+  ~DBGProfileData();
+
+  void setFilePath(const QString&);
+  void setContext(const QString&);
+  void setLine(int);
+  void setHitCount(int);
+
+  void setTimeAvgHit(double);
+  void setTotalTime(double);
+  void setMinTime(double);
+  void setMaxTime(double);
+
+  const QString& filePath() const;
+  const QString& context() const;
+  int line() const;
+  int hitCount() const;
+  double timeAvgHit() const;
+  double totalTime() const;
+  double minTime() const;
+  double maxTime() const;
+private:
+  int m_line;
+  int m_hitCount;
+  double m_timeAvgHit;
+  double m_totalTime;
+  double m_minTime;
+  double m_maxTime;
+
+  QString m_filePath;
+  QString m_context;
 };
 
+//---------------------------------------------------------------
+
+class KListView;
+
+class DBGProfileDialog : public KDialog
+{
+  Q_OBJECT
+public:
+  DBGProfileDialog(QWidget* parent = 0, const char* name = 0);
+  ~DBGProfileDialog();
+
+  void clear();
+  void setData(DBGProfileData*);
+private:
+  enum {FilePathCol, LineCol, /*ContextCol,*/ HitsCol, AvgCol, TotalCol, MinCol, MaxCol};
+
+  void reloadData();
+  
+  KListView* m_listView;
+  DBGProfileData* m_profileData;
+};
 
 #endif

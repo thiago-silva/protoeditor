@@ -42,6 +42,7 @@ class BrowserSettingsWidget;
 class KRecentFilesAction;
 class KURL;
 class KSelectAction;
+class KDialogBase;
 
 
 /*
@@ -78,6 +79,7 @@ public:
 
   void openFile();
   void actionStateChanged(const QString&);
+
 private slots:
   void slotOpenFile();
   void slotCloseFile();

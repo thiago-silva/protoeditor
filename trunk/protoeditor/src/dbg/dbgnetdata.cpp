@@ -223,37 +223,38 @@ DBGRequestTag::DBGRequestTag(dbgint frameName)
 
   //size is only needed for the requestable tags
 
-  switch(frameName) {
-  case FRAME_RAWDATA:
-    setTagSize(TAG_RAWDATA_SIZE);
-    break;
-  case FRAME_SOURCE:
-    setTagSize(TAG_REQ_SOURCE_SIZE);
-    break;
-  case FRAME_BPL:
-    setTagSize(TAG_REQ_BPL_SIZE);
-    break;
-  case FRAME_EVAL:
-    setTagSize(TAG_REQ_EVAL_SIZE);
-    break;
-  case FRAME_BPS:
-    setTagSize(TAG_BPS_SIZE);
-    break;
-  case FRAME_SRCLINESINFO:
-    setTagSize(TAG_REQ_SRCLINESINFO_SIZE);
-    break;
-  case FRAME_SRCCTXINFO:
-    setTagSize(TAG_REQ_SRCCTXINFO_SIZE);
-    break;
-  case FRAME_PROF:
-    setTagSize(TAG_REQ_PROF_SIZE);
-    break;
-  case FRAME_PROF_C:
-    setTagSize(TAG_REQ_PROF_C);
-    break;
-  case FRAME_SET_OPT:
-    setTagSize(TAG_REQ_SET_OPT_SIZE);
-    break;
+  switch(frameName)
+  {
+    case FRAME_RAWDATA:
+      setTagSize(TAG_RAWDATA_SIZE);
+      break;
+    case FRAME_SOURCE:
+      setTagSize(TAG_REQ_SOURCE_SIZE);
+      break;
+    case FRAME_BPL:
+      setTagSize(TAG_REQ_BPL_SIZE);
+      break;
+    case FRAME_EVAL:
+      setTagSize(TAG_REQ_EVAL_SIZE);
+      break;
+    case FRAME_BPS:
+      setTagSize(TAG_BPS_SIZE);
+      break;
+    case FRAME_SRCLINESINFO:
+      setTagSize(TAG_REQ_SRCLINESINFO_SIZE);
+      break;
+    case FRAME_SRCCTXINFO:
+      setTagSize(TAG_REQ_SRCCTXINFO_SIZE);
+      break;
+    case FRAME_PROF:
+      setTagSize(TAG_REQ_PROF_SIZE);
+      break;
+    case FRAME_PROF_C:
+      setTagSize(TAG_REQ_PROF_C_SIZE);
+      break;
+    case FRAME_SET_OPT:
+      setTagSize(TAG_REQ_SET_OPT_SIZE);
+      break;
   }
 
 }
@@ -306,13 +307,15 @@ DBGTagRawdata::DBGTagRawdata(dbgint id, const char* data, long datasize)
   //m_data = (char*) data;
 
   dbgint i;
-  for(i = 0; i < datasize; i++) {
+  for(i = 0; i < datasize; i++)
+  {
     m_data[i] = data[i];
   }
 
   m_size = datasize + mod;
 
-  for( ; i < m_size; i++) {
+  for( ; i < m_size; i++)
+  {
     m_data[i] = 0;
   }
 }
@@ -327,7 +330,8 @@ DBGTagRawdata::DBGTagRawdata(char* responseBuffer)
 
   m_data = new char[m_size];
 
-  for(long i = 0; i < m_size; i++) {
+  for(long i = 0; i < m_size; i++)
+  {
     m_data[i] = responseBuffer[i+8];
   }
 }
@@ -348,7 +352,8 @@ void DBGTagRawdata::setData(char* data, long size)
   m_size = size;
 
   m_data = new char[m_size];
-  for(long i = 0; i < m_size; i++) {
+  for(long i = 0; i < m_size; i++)
+  {
     m_data[i] = data[i];
   }
   //m_data = data;
@@ -383,11 +388,13 @@ char* DBGTagRawdata::toArray()
   m_raw = toNetwork(m_size, m_raw, 4);
 
   long i;
-  for(long j = 0, i = 8; j < m_size; i++, j++) {
+  for(long j = 0, i = 8; j < m_size; i++, j++)
+  {
     m_raw[i] = m_data[j];
   }
 
-  for(; i < bsize; i++) {
+  for(; i < bsize; i++)
+  {
     m_raw[i] = 0;
   }
 
@@ -802,6 +809,116 @@ void DBGResponseTagError::process(DBGNet* net, DBGResponsePack* pack) const
 }
 
 /****************************
+ * DBGResponseTagProf
+ **************************/
+DBGResponseTagProf::DBGResponseTagProf()
+    : DBGBaseTag(FRAME_PROF), DBGResponseTag(FRAME_PROF),
+    m_modNo(0), m_lineNo(0), m_hitCount(0), m_minLo(0), m_minHi(0), m_maxLo(0), m_maxHi(0),
+    m_sumLo(0), m_sumHi(0)
+{}
+
+DBGResponseTagProf::DBGResponseTagProf(char* responseBuffer)
+    : DBGBaseTag(FRAME_PROF), DBGResponseTag(FRAME_PROF)
+{
+  m_modNo = fromNetwork(responseBuffer, 0);
+  m_lineNo = fromNetwork(responseBuffer, 4);
+  m_hitCount = fromNetwork(responseBuffer, 8);
+  m_minLo = fromNetwork(responseBuffer, 12);
+  m_minHi = fromNetwork(responseBuffer, 16);
+  m_maxLo = fromNetwork(responseBuffer, 20);
+  m_maxHi = fromNetwork(responseBuffer, 24);
+  m_sumLo = fromNetwork(responseBuffer, 28);
+  m_sumHi = fromNetwork(responseBuffer, 32);
+}
+
+DBGResponseTagProf::~DBGResponseTagProf()
+{}
+
+void DBGResponseTagProf::setModNo(dbgint modno)
+{
+  m_modNo = modno;
+}
+void DBGResponseTagProf::setLineNo(dbgint lineno)
+{
+  m_lineNo = lineno;
+}
+
+void DBGResponseTagProf::setHitCount(dbgint hitcount)
+{
+  m_hitCount = hitcount;
+}
+void DBGResponseTagProf::setMinLo(dbgint minlo)
+{
+  m_minLo = minlo;
+}
+void DBGResponseTagProf::setMinHi(dbgint minhi)
+{
+  m_minHi = minhi;
+}
+void DBGResponseTagProf::setMaxLo(dbgint maxlo)
+{
+  m_maxLo = maxlo;
+}
+void DBGResponseTagProf::setMaxHi(dbgint maxhi)
+{
+  m_maxHi = maxhi;
+}
+void DBGResponseTagProf::setSumLo(dbgint sumlo)
+{
+  m_sumLo = sumlo;
+}
+
+void DBGResponseTagProf::setSumHi(dbgint sumhi)
+{
+  m_sumHi = sumhi;
+}
+
+dbgint DBGResponseTagProf::modNo() const
+{
+  return m_modNo;
+}
+
+dbgint DBGResponseTagProf::lineNo() const
+{
+  return m_lineNo;
+}
+dbgint DBGResponseTagProf::hitCoun() const
+{
+  return m_hitCount;
+}
+
+dbgint DBGResponseTagProf::minLo() const
+{
+  return m_minLo;
+}
+dbgint DBGResponseTagProf::minHi() const
+{
+  return m_minHi;
+}
+dbgint DBGResponseTagProf::maxLo() const
+{
+  return m_maxLo;
+}
+dbgint DBGResponseTagProf::maxHi() const
+{
+  return m_maxHi;
+}
+dbgint DBGResponseTagProf::sumLo() const
+{
+  return m_sumLo;
+}
+dbgint DBGResponseTagProf::sumHi() const
+{
+  return m_sumHi;
+}
+
+void DBGResponseTagProf::process(DBGNet* net, DBGResponsePack* pack) const
+{
+  net->processProf(this, pack);
+}
+
+
+/****************************
  * DBGRequestTagEval
  **************************/
 
@@ -1068,5 +1185,38 @@ char* DBGRequestTagOptions::toArray()
   m_raw = new char[tagSize()];
 
   m_raw = toNetwork(m_opt_flags, m_raw , 0);
+  return m_raw;
+}
+
+/****************************
+ * DBGRequestTagProf
+ **************************/
+
+DBGRequestTagProf::DBGRequestTagProf()
+    : DBGBaseTag(FRAME_PROF), DBGRequestTag(FRAME_PROF), m_modno(0)
+{}
+
+DBGRequestTagProf::DBGRequestTagProf(dbgint modno)
+    : DBGBaseTag(FRAME_PROF), DBGRequestTag(FRAME_PROF), m_modno(modno)
+{}
+
+DBGRequestTagProf::~DBGRequestTagProf()
+{}
+
+void  DBGRequestTagProf::setModNo(dbgint modno)
+{
+  m_modno = modno;
+}
+
+dbgint DBGRequestTagProf::modno()
+{
+  return m_modno;
+}
+
+char* DBGRequestTagProf::toArray()
+{
+  m_raw = new char[tagSize()];
+
+  m_raw = toNetwork(m_modno, m_raw , 0);
   return m_raw;
 }

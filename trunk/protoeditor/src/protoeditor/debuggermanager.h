@@ -52,7 +52,7 @@ public:
   void debugMessage(int, const QString&, const QString&, int);
   void debugError(const QString&);
   void updateOutput(const QString&);
-
+  
 public slots:
   void slotConfigurationChanged();
 
@@ -77,6 +77,8 @@ private slots:
   void slotWatchRemoved(Variable*);
 
   void slotNewDocument();
+
+  void slotProfile();
 
   /* DebuggerClient - DebuggerManager */
 

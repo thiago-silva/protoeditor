@@ -156,7 +156,7 @@ DBGRequestPack* DBGRequestPackBuilder::buildSrcTree()
 {
   DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
 
-  DBGFrame* frame = new DBGFrame(FRAME_SRC_TREE, 0);
+  DBGFrame* frame = new DBGFrame(FRAME_SRC_TREE);
 
   p->addInfo(frame, NULL);
   return p;
@@ -165,9 +165,20 @@ DBGRequestPack* DBGRequestPackBuilder::buildSrcTree()
 DBGRequestPack* DBGRequestPackBuilder::buildOptions(int op) {
   DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
 
-  DBGFrame* frame = new DBGFrame(FRAME_SET_OPT, 8);
   DBGRequestTagOptions* tagop = new DBGRequestTagOptions(op);
+  DBGFrame* frame = new DBGFrame(FRAME_SET_OPT, tagop->tagSize());  
 
   p->addInfo(frame, tagop);
+  return p;
+}
+
+DBGRequestPack* DBGRequestPackBuilder::buildProfile(int modno)
+{
+  DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
+
+  DBGRequestTagProf* prof = new DBGRequestTagProf(modno);
+  DBGFrame* frame = new DBGFrame(FRAME_PROF, prof->tagSize());
+  
+  p->addInfo(frame, prof);
   return p;
 }

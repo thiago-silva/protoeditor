@@ -191,6 +191,9 @@ DBGResponseTag* DBGReceiver::buildTag(int frameName, char* buffer)
     case FRAME_ERROR:
       tag = new DBGResponseTagError(buffer);
       break;
+    case FRAME_PROF:
+      tag = new DBGResponseTagProf(buffer);
+      break;
     default:
       emit sigError("Error receiving network data.");
       break;
