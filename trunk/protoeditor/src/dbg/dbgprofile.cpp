@@ -121,7 +121,7 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
     : KDialog(parent, name),
     m_listView(0), m_profileData(0)
 {
-  setCaption("Profile");
+  setCaption("Profile (EXPERIMENTAL)");
   
   QVBoxLayout* l = new QVBoxLayout(this);
 
