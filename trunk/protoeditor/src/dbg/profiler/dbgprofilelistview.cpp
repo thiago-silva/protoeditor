@@ -36,7 +36,10 @@ DBGProfileListViewItem::DBGProfileListViewItem(KListViewItem *parent, DBGProfile
 
 DBGProfileListViewItem::~DBGProfileListViewItem()
 {
-  delete m_data;
+  if(!isRoot())
+  {
+     delete m_data;
+  }
 }
 
 bool DBGProfileListViewItem::isRoot()
