@@ -10,6 +10,8 @@
 DBGSettings::DBGSettings()
   : DebuggerSettingsInterface()
 {
+  m_widget = 0;
+  
   setCurrentGroup( QString::fromLatin1( "DBG" ) );
 
   KConfigSkeleton::ItemBool  *itemBreakOnLoad;
