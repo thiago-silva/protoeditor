@@ -301,8 +301,8 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 {
   /* Note about setAscii()
     When the script uses the session feature,
-    DBG sends some variables with \0 characters in the middle,
-    wich fools QString attribution, having at the end a broken
+    DBG sends some variables (ie. CRITERIUMLIST) with \0 characters in the middle,
+    wich fools QString attribution, then, having a broken
     text with the serialized vars.
     BUG: #1156552
   */
@@ -312,18 +312,21 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
   QString result;
 
   if(eval->ierror()) {
-    error.setAscii(pack->retrieveRawdata(eval->ierror())->data());
+    error.setAscii(pack->retrieveRawdata(eval->ierror())->data(),
+                   pack->retrieveRawdata(eval->ierror())->size());
   }
 
   if(eval->istr()) {
-    str.setAscii(pack->retrieveRawdata(eval->istr())->data());
+    str.setAscii(pack->retrieveRawdata(eval->istr())->data(),
+                 pack->retrieveRawdata(eval->istr())->size());
   }
 
   if(eval->iresult())
   {
-    result.setAscii(pack->retrieveRawdata(eval->iresult())->data());
+    result.setAscii(pack->retrieveRawdata(eval->iresult())->data(),
+                    pack->retrieveRawdata(eval->iresult())->size());
   }
-  
+
   //note: eval errors are annoying to be displayed to the user
 
   if(!error.isEmpty())
@@ -397,7 +400,7 @@ void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack
                               );
 }
 
-void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack* pack)
+void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
 {
   //NOTE: I'm not very confident about those bit << conversions
   //TODO: recover 1000000 from prof_c
