@@ -82,6 +82,7 @@ signals:
   void sigBreakpointMarked(const QString&, int);
   void sigBreakpointUnmarked(const QString&, int);
   void sigNewDocument();
+  void sigNoDocument();
   void sigAddWatch(const QString&);
 
 public slots:

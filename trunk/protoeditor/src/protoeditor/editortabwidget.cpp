@@ -106,6 +106,7 @@ bool EditorTabWidget::closeDocument(int index)
 
   if((count() == 0) && !m_terminating)
   {
+    emit sigNoDocument();
     m_window->actionStateChanged("has_nofileopened");
     m_window->setCaption(QString::null);
     m_window->setEditorStatusMsg(QString::null);
