@@ -28,7 +28,7 @@
 static const char description[] =
   I18N_NOOP("A little KDE PHP Debugger client");
 
-static const char version[] = "0.5";
+static const char version[] = "0.5.2";
 
 static KCmdLineOptions options[] =
   {
