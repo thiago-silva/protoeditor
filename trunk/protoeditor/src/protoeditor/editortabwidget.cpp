@@ -33,6 +33,7 @@
 #include <ktexteditor/undointerface.h>
 #include <kactioncollection.h>
 #include <kiconloader.h>
+#include <kdeversion.h>
 
 #include <qlayout.h>
 
@@ -164,7 +165,7 @@ void EditorTabWidget::setCurrentDocument(QString filePath, bool forceOpen)
   if(index != -1) {
     setCurrentPage(index);
   } else if(forceOpen) {
-    addDocument(KURL(filePath));
+    createDocument(KURL(filePath));
   }
 }
 
@@ -208,7 +209,11 @@ void EditorTabWidget::markActiveBreakpoint(QString filepath, int line)
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
   m_markGuard = true;
-  imark->addMark(line-1, KTextEditor::MarkInterface::BreakpointActive);
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
+    imark->addMark(line-1, KTextEditor::MarkInterface::BreakpointActive);
+  #else
+    imark->addMark(line-1, KTextEditor::MarkInterface::markType02);
+  #endif
   m_markGuard = false;
 }
 
@@ -217,7 +222,11 @@ void EditorTabWidget::unmarkActiveBreakpoint(QString filepath, int line)
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   m_markGuard = true;
   if(!imark) return;
-  imark->removeMark(line-1, KTextEditor::MarkInterface::BreakpointActive);
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
+    imark->removeMark(line-1, KTextEditor::MarkInterface::BreakpointActive);
+  #else
+    imark->removeMark(line-1, KTextEditor::MarkInterface::markType02);
+  #endif
   m_markGuard = false;
 }
 
@@ -226,7 +235,11 @@ void EditorTabWidget::markDisabledBreakpoint(QString filepath, int line)
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   m_markGuard = true;
   if(!imark) return;
-  imark->addMark(line-1, KTextEditor::MarkInterface::BreakpointDisabled);
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
+    imark->addMark(line-1, KTextEditor::MarkInterface::BreakpointDisabled);
+  #else
+    imark->addMark(line-1, KTextEditor::MarkInterface::markType04);
+  #endif
   m_markGuard = false;
 }
 
@@ -235,7 +248,12 @@ void EditorTabWidget::unmarkDisabledBreakpoint(QString filepath, int line)
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   m_markGuard = true;
   if(!imark) return;
-  imark->removeMark(line-1, KTextEditor::MarkInterface::BreakpointDisabled);
+
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
+    imark->removeMark(line-1, KTextEditor::MarkInterface::BreakpointDisabled);
+  #else
+    imark->removeMark(line-1, KTextEditor::MarkInterface::markType04);
+  #endif
   m_markGuard = false;
 }
 
@@ -243,14 +261,22 @@ void EditorTabWidget::markExecutionLine(QString filepath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
-  imark->addMark(line-1, KTextEditor::MarkInterface::Execution);
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
+    imark->addMark(line-1, KTextEditor::MarkInterface::Execution);
+  #else
+    imark->addMark(line-1, KTextEditor::MarkInterface::markType05);
+  #endif
 }
 
 void EditorTabWidget::unmarkExecutionLine(QString filepath, int line)
 {
   KTextEditor::MarkInterface* imark = documentMarkIf(filepath);
   if(!imark) return;
-  imark->removeMark(line-1, KTextEditor::MarkInterface::Execution);
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
+    imark->removeMark(line-1, KTextEditor::MarkInterface::Execution);
+   #else
+    imark->removeMark(line-1, KTextEditor::MarkInterface::markType05);
+  #endif
 }
 
 void EditorTabWidget::markPreExecutionLine(QString filepath, int line)
@@ -285,21 +311,45 @@ void EditorTabWidget::createDocument(KURL url/*, QString text*/)
   if(imarkex) {
     KIconLoader *loader = KGlobal::iconLoader();
 
+    #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setPixmap(KTextEditor::MarkInterface::Execution, loader->loadIcon(
                          "executionline", KIcon::Small));
+    #else
+    imarkex->setPixmap(KTextEditor::MarkInterface::markType05, loader->loadIcon(
+                         "executionline", KIcon::Small));
+    #endif
 
     imarkex->setPixmap(KTextEditor::MarkInterface::markType08, loader->loadIcon(
                          "preexecutionline", KIcon::Small));
 
+    #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setPixmap(KTextEditor::MarkInterface::BreakpointActive, loader->loadIcon(
                          "activebreakpoint",KIcon::Small));
+    #else
+    imarkex->setPixmap(KTextEditor::MarkInterface::markType02, loader->loadIcon(
+                         "activebreakpoint", KIcon::Small));
+    #endif
 
+    #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setPixmap(KTextEditor::MarkInterface::BreakpointDisabled, loader->loadIcon(
                          "inactivebreakpoint",KIcon::Small));
+    #else
+    imarkex->setPixmap(KTextEditor::MarkInterface::markType04, loader->loadIcon(
+                         "inactivebreakpoint", KIcon::Small));
+    #endif
 
+    #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setDescription(KTextEditor::MarkInterface::BreakpointActive, "Breakpoint");
+    #else
+    imarkex->setDescription(KTextEditor::MarkInterface::markType02, "Breakpoint");
+    #endif
 
+    #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setMarksUserChangable(KTextEditor::MarkInterface::Bookmark + KTextEditor::MarkInterface::BreakpointActive);
+    #else
+    imarkex->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
+    #endif
+
   }
 
   connect(view->document(), SIGNAL(marksChanged()), this, SLOT(slotMarkChanged()));
@@ -538,10 +588,17 @@ void EditorTabWidget::dispatchMark(KTextEditor::Mark& mark, bool adding)
 {
   if(m_markGuard == true) return;
 
+  #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
   if(!((mark.type & KTextEditor::MarkInterface::BreakpointDisabled) ||
        ((mark.type & KTextEditor::MarkInterface::BreakpointActive)))) {
     return;
   }
+  #else
+  if(!((mark.type & KTextEditor::MarkInterface::markType04) ||
+       ((mark.type & KTextEditor::MarkInterface::markType02)))) {
+    return;
+  }
+  #endif
 
   if(adding) {
     emit sigBreakpointMarked(
