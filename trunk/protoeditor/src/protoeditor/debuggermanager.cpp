@@ -221,8 +221,7 @@ void DebuggerManager::slotDebugRun()
   if(!m_debugger) return;
 
   if(m_window->tabEditor()->count() != 0) {
-    QString filepath = m_window->tabEditor()->documentPath(
-                         m_window->tabEditor()->currentPageIndex());
+    QString filepath = m_window->tabEditor()->currentDocumentPath();
     m_debugger->run(filepath);
   } else {
     m_window->showSorry("Open a file to debug");
@@ -251,6 +250,20 @@ void DebuggerManager::slotDebugStepOut()
 {
   if(!m_debugger) return;
   m_debugger->stepOut();
+}
+
+void DebuggerManager::slotDebugToggleBp()
+{
+  QString filePath = m_window->tabEditor()->currentDocumentPath();
+  int line = m_window->tabEditor()->currentDocumentLine();
+
+  if(!m_window->tabEditor()->hasBreakpointAt(filePath, line)) {
+    m_window->tabEditor()->markActiveBreakpoint(filePath, line);
+  } else {
+    m_window->tabEditor()->unmarkActiveBreakpoint(filePath, line);
+  }
+
+  m_window->breakpointListView()->toggleBreakpoint(filePath, line);
 }
 
 void DebuggerManager::slotAddWatch()
@@ -305,8 +318,9 @@ void DebuggerManager::slotBreakpointCreated(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 {
-  if(!m_debugger) return;
-  m_debugger->changeBreakpoint(bp);
+  if(m_debugger) {
+    m_debugger->changeBreakpoint(bp);
+  }
 }
 
 void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
@@ -337,7 +351,7 @@ void DebuggerManager::slotNewDocument()
 
   QValueList<DebuggerBreakpoint*> bplist =
     m_window->breakpointListView()->breakpointsFrom(
-      m_window->tabEditor()->documentPath(m_window->tabEditor()->currentPageIndex()));
+      m_window->tabEditor()->currentDocumentPath());
 
   QValueList<DebuggerBreakpoint*>::iterator it;
   for(it = bplist.begin(); it != bplist.end(); ++it) {

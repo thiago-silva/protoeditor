@@ -67,6 +67,7 @@ private slots:
   void slotDebugStepInto();
   void slotDebugStepOver();
   void slotDebugStepOut();
+  void slotDebugToggleBp();
 
   void slotAddWatch();
   void slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
