@@ -60,6 +60,7 @@ void DBGConnection::clearSocket()
     m_currentClient->close();
     delete m_currentClient;
     m_currentClient = NULL;
+    emit sigClientClosed();
   }
 }
 
@@ -82,7 +83,7 @@ void DBGConnection::slotIncomingConnection(int)
 void DBGConnection::slotClosed()
 {
   clearSocket();
-  emit sigClientClosed();
+//   emit sigClientClosed();
 }
 
 void DBGConnection::slotError(int error)
@@ -108,6 +109,7 @@ bool DBGConnection::isListening()
 void DBGConnection::closeClient()
 {
   clearSocket();
+//   emit sigClientClosed();
 }
 
 void DBGConnection::close()
