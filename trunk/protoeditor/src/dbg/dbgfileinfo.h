@@ -46,18 +46,25 @@ public:
   int contextId(int modno, int lineno);
   QString contextName(int ctxid);
   
-  
-  bool updated();
+  bool contextUpdated();
+  bool moduleUpdated();
 
-  void clearContextData();
-  void clearModuleData();
+//   void clearContextData();
+//   void clearModuleData();
   
-  void clearStatus();
+  void clear();
+  
+  void clearModuleStatus();
+  void clearContextStatus();
 
+  int lastLineFromModule(int modno);
+
+  int totalModules();
 private:
 
   SiteSettings*      m_site;
-  bool               m_statusUpdated;
+  bool               m_moduleUpdated;
+  bool               m_contextUpdated;
   QMap<int, QString> m_fileMap;
 
   class ContextData {

@@ -38,9 +38,9 @@
 #include <knotifyclient.h>
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
-  : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0), m_profFreq(-1),
+    : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0), m_profFreq(-1),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
-    m_dbgStack(0), m_dbgFileInfo(0)
+    m_dbgStack(0), m_dbgFileInfo(0), m_isProfiling(false)
 {
   m_receiver    = new DBGReceiver(this);
   m_requestor   = new DBGRequestor();
@@ -78,7 +78,6 @@ void DBGNet::stopListener()
 {
   m_con->close();
 }
-
 
 void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
 {
@@ -160,13 +159,10 @@ void DBGNet::requestBreakpointRemoval(int bpid)
   m_requestor->requestBreakpointRemoval(bpid);
 }
 
-void DBGNet::profile()
+void DBGNet::requestProfileData(const QString& filePath, SiteSettings* site, int port, dbgint sessid)
 {
-  m_dbgFileInfo->clearContextData();
-  m_requestor->requestProfileFreqData(TEST_LOOPS);
-  m_requestor->requestSrcLinesInfo(1);
-  m_requestor->requestSrcCtxInfo(1);
-  m_requestor->requestProfileData(1); //the main module is aways 1
+  m_isProfiling = true;
+  requestPage(filePath, site, port, sessid);
 }
 
 void DBGNet::setOptions(int op)
@@ -188,7 +184,55 @@ void DBGNet::receivePack(DBGResponsePack* pack)
     tag->process(this, pack);
   }
 
-  shipStack();
+  if(m_isProfiling)
+  {
+    setupProfile();
+  }
+  else
+  {
+    shipStack();
+  }
+}
+
+void DBGNet::setupProfile()
+{
+  static bool t = false;
+
+  if(t) return;
+  
+  if(m_dbgFileInfo->contextUpdated())
+  {
+    //set temporary breakpoint on last line of the first module
+
+//     QString filePath = m_dbgFileInfo->moduleName(1);
+    m_requestor->requestBreakpoint( 0   //bpno
+                                    , 1 //modno
+                                    , ""/*filePath*/
+                                    , m_dbgFileInfo->lastLineFromModule(1)
+                                    , ""
+                                    , BPS_ENABLED
+                                    , 0
+                                    , true);
+
+    m_dbgFileInfo->clearContextStatus();
+
+    //continue to reach it
+    m_requestor->requestContinue();
+  }
+  else if(m_dbgFileInfo->moduleUpdated())
+  {
+    int totalModules = m_dbgFileInfo->totalModules();
+    for(int i = 1; i <= totalModules; i++)
+    {
+      m_requestor->requestSrcLinesInfo(i);
+      m_requestor->requestSrcCtxInfo(i);
+      m_requestor->requestProfileData(i);
+    }
+
+    //every data we need were requested. We continue to end now
+    m_requestor->requestContinue();
+    t = true;
+  }
 }
 
 bool DBGNet::processHeader(DBGHeader* header)
@@ -200,7 +244,7 @@ bool DBGNet::processHeader(DBGHeader* header)
   }
 
   //TODO: create dbgStarted() and dbgStepDone() to organize this.
-  
+
   switch(header->cmd())
   {
     case DBGC_REPLY:
@@ -219,10 +263,24 @@ bool DBGNet::processHeader(DBGHeader* header)
       m_requestor->requestOptions(m_opts);
 
       //...tell everyone we are running.
-      emit sigDBGStarted();
+      if(!m_isProfiling)
+      {
+        emit sigDBGStarted();
+      }
 
       //...fancy notification on taskbar
       KNotifyClient::userEvent(0, "", KNotifyClient::Taskbar);
+
+      if(m_isProfiling)
+      {
+        //get module info
+//         m_requestor->requestSrcTree();
+        //get frequency info
+        m_requestor->requestProfileFreqData(TEST_LOOPS);
+        //get lines info to set temp breakpoint on the last valid line
+        m_requestor->requestSrcLinesInfo(1);
+        break;
+      }
 
       if(!(m_opts & SOF_BREAKONLOAD))
       {
@@ -240,16 +298,27 @@ bool DBGNet::processHeader(DBGHeader* header)
         //is annoying having to step twice in the begginig. Lets do the the first.
         m_requestor->requestStepInto();
       }
+
       break;
     case DBGC_BREAKPOINT:
-      emit sigBreakpoint();      
-      processStepData();
+      if(!m_isProfiling)
+      {
+        emit sigBreakpoint();
+        processStepData();
+      }
+      else
+      {
+        processProfileData();
+      }
       break;
     case DBGC_STEPINTO_DONE:
     case DBGC_STEPOVER_DONE:
     case DBGC_STEPOUT_DONE:
-      emit sigStepDone();
-      processStepData();
+      if(!m_isProfiling)
+      {
+        emit sigStepDone();
+        processStepData();
+      }
       break;
   }
   return true;
@@ -259,6 +328,11 @@ void DBGNet::processStepData()
 {
   m_dbgStack->clear();
   m_requestor->requestSrcTree();
+}
+
+void DBGNet::processProfileData()
+{
+   m_requestor->requestSrcTree();
 }
 
 void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack)
@@ -279,6 +353,8 @@ void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pac
 
 void DBGNet::processStack(const DBGResponseTagStack* stack, DBGResponsePack* pack)
 {
+  if(m_isProfiling) return;
+
   m_dbgStack->add(stack->modNo()
                   , pack->retrieveRawdata(stack->idescr())->data()
                   , stack->lineNo(), stack->scopeId());
@@ -316,6 +392,8 @@ void DBGNet::processSrcCtxInfo(const DBGResponseTagSrcCtxInfo* ctx, DBGResponseP
 
 void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 {
+  if(m_isProfiling) return;
+
   /* Note about setAscii()
     When the script uses the session feature,
     DBG sends some variables (ie. CRITERIUMLIST) with \0 characters in the middle,
@@ -323,17 +401,19 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
     text with the serialized vars.
     BUG: #1156552
   */
-  
+
   QString error;
   QString str;
   QString result;
 
-  if(eval->ierror()) {
+  if(eval->ierror())
+  {
     error.setAscii(pack->retrieveRawdata(eval->ierror())->data(),
                    pack->retrieveRawdata(eval->ierror())->size()-1);
   }
 
-  if(eval->istr()) {
+  if(eval->istr())
+  {
     str.setAscii(pack->retrieveRawdata(eval->istr())->data(),
                  pack->retrieveRawdata(eval->istr())->size()-1);
   }
@@ -366,6 +446,8 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 
 void DBGNet::processLog(const DBGResponseTagLog* log, DBGResponsePack* pack)
 {
+  if(m_isProfiling) return;
+
   QString logmsg;
   QString module;
 
@@ -393,6 +475,8 @@ void DBGNet::processError(const DBGResponseTagError* error, DBGResponsePack* pac
 
 void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack)
 {
+  if(m_isProfiling) return;
+
   QString modname;
   QString condition;
 
@@ -425,7 +509,7 @@ void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
 
   QString moduleName = m_dbgFileInfo->moduleName(proftag->modNo());
   int ctxid = m_dbgFileInfo->contextId(proftag->modNo(), proftag->lineNo());
-  
+
   QString contextName = m_dbgFileInfo->contextName(ctxid);
   if(contextName.isEmpty())
   {
@@ -433,7 +517,7 @@ void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
   }
 
   contextName.append("()");
-  
+
   m_debugger->addProfileData(proftag->modNo(),
                              moduleName,
                              ctxid,
@@ -455,11 +539,11 @@ void DBGNet::shipStack()
 {
   if(m_dbgStack->isEmpty()) return;
 
-  if(m_dbgFileInfo->updated())
+  if(m_dbgFileInfo->moduleUpdated())
   {
     m_debugger->updateStack(m_dbgStack->debuggerStack(m_dbgFileInfo));
 
-    m_dbgFileInfo->clearStatus();
+    m_dbgFileInfo->clearModuleStatus();
     m_dbgStack->clear();
   }
 }
@@ -480,8 +564,10 @@ void DBGNet::slotDBGClosed()
   m_requestor->clear();
 
   m_dbgStack->clear();
-  m_dbgFileInfo->clearModuleData();
+  m_dbgFileInfo->clear();
   m_varScopeRequestList.clear();
+
+  m_isProfiling = false;
 }
 
 void DBGNet::slotError(const QString& msg)

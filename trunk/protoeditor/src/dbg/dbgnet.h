@@ -76,7 +76,7 @@ public:
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointRemoval(int bpid);
 
-  void profile();
+  void requestProfileData(const QString& filePath, SiteSettings* site, int port, dbgint sessid);
   
   //DBGReceiver communicatDBGNetes through those:
   void receivePack(DBGResponsePack* pack);
@@ -115,8 +115,10 @@ private slots:
 
 private:
   void processStepData();
+  void processProfileData();
   bool processHeader(DBGHeader* header);
   void shipStack();
+  void setupProfile();
 
   void error(const QString&);
 
@@ -131,6 +133,7 @@ private:
 
   DBGStack          *m_dbgStack;
   DBGFileInfo       *m_dbgFileInfo;
+  bool              m_isProfiling;
   QValueList<dbgint> m_varScopeRequestList; //so we know wich context the vars belong
 };
 

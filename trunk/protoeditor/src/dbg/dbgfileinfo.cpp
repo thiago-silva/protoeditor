@@ -21,7 +21,7 @@
 #include "sitesettings.h"
 
 DBGFileInfo::DBGFileInfo()
-    : m_site(0), m_statusUpdated(false)
+  : m_site(0), m_moduleUpdated(false), m_contextUpdated(false)
 {}
 
 
@@ -84,12 +84,14 @@ void DBGFileInfo::addModuleInfo(int modno, const QString& remotefilePath)
 {
   m_fileMap[modno] = toLocalFilePath(remotefilePath);
 
-  m_statusUpdated = true;
+  m_moduleUpdated = true;
 }
 
 void DBGFileInfo::addContextInfo(int ctxid, int modno, int lineno)
 {
   m_contextList.append(ContextData(ctxid, modno, lineno));
+
+  m_contextUpdated = true;
 }
 
 void DBGFileInfo::setContextname(int ctxid, const QString& name)
@@ -129,25 +131,63 @@ QString DBGFileInfo::contextName(int ctxid)
       return (*it).ctxname;
     }
   }
+
   return QString::null;
 }
 
-void DBGFileInfo::clearStatus()
+void DBGFileInfo::clearModuleStatus()
 {
-  m_statusUpdated = false;
+  m_moduleUpdated = false;
 }
 
-bool  DBGFileInfo::updated()
+void DBGFileInfo::clearContextStatus()
 {
-  return m_statusUpdated;
+  m_contextUpdated = false;
 }
 
-void DBGFileInfo::clearModuleData()
+int DBGFileInfo::lastLineFromModule(int modno)
 {
+  int lastLine = 1;
+  QValueList<ContextData>::iterator it;
+  for(it = m_contextList.begin(); it != m_contextList.end(); ++it)
+  {
+    if((*it).modno == modno)
+    {
+      if((*it).lineno > lastLine)
+      {
+        lastLine = (*it).lineno;
+      }
+    }
+  }
+
+  return lastLine;  
+}
+
+int DBGFileInfo::totalModules()
+{
+  return m_fileMap.size();
+}
+
+bool DBGFileInfo::moduleUpdated()
+{
+  return m_moduleUpdated;
+}
+
+bool DBGFileInfo::contextUpdated()
+{
+  return m_contextUpdated;
+}
+
+// void DBGFileInfo::clearModuleData()
+// {
+//   m_fileMap.clear();
+// }
+
+void DBGFileInfo::clear()
+{
+  m_moduleUpdated = false;
+  m_contextUpdated = false;
+
   m_fileMap.clear();
-}
-
-void DBGFileInfo::clearContextData()
-{
   m_contextList.clear();
 }
