@@ -49,8 +49,8 @@ public:
   //void setMainWindow(MainWindow*);
 
   bool openDocument(const KURL& url);
-  void closeCurrentDocument();
-  void closeAllDocuments();
+  bool closeCurrentDocument();
+  bool closeAllDocuments();
   void setCurrentDocumentTab(const QString&, bool forceOpen = false);
 
   bool saveCurrentFile();
@@ -91,7 +91,7 @@ private slots:
   void slotBreakpointMarked(Document* doc, int line);
   void slotBreakpointUnmarked(Document* doc, int line);
 private:
-  void                        closeDocument(int);
+  bool                        closeDocument(int);
   Document*                   document(uint);
   Document*                   document(const QString&);
   Document*                   currentDocument();

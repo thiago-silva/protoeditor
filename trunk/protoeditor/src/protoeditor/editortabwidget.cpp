@@ -32,7 +32,7 @@
 // #include <qiconset.h>
 
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
-    : KTabWidget(parent, name), m_terminating(false),/* m_markGuard(false),m_closeGuard(false),*/
+    : KTabWidget(parent, name), m_terminating(false),
     m_window(window), m_currentView(0)
 {
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
@@ -79,23 +79,25 @@ bool EditorTabWidget::openDocument(const KURL& url)
   }
 }
 
-void EditorTabWidget::closeDocument(int index)
+bool EditorTabWidget::closeDocument(int index)
 {
   if((index < 0) || (count() == 0))
   {
-    return;
+    return false;
   }
 
+  Document* doc = document(index);
+
+  if(!doc->close()) return false; //file is modifiyed and the user hit "cancel" on prompt to save
+  
   if(!m_terminating)
   {
-    m_window->guiFactory()->removeClient(document(index)->view());
+    m_window->guiFactory()->removeClient(doc->view());
     if(index == currentPageIndex())
     {
       m_currentView = 0L;
     }
   }
-
-  Document* doc = document(index);
 
   QWidget* w = page(index);
   removePage(w);
@@ -108,45 +110,24 @@ void EditorTabWidget::closeDocument(int index)
     m_window->actionStateChanged("has_nofileopened");
     m_window->setCaption(QString::null);
   }
+
+  return true;
 }
 
-void EditorTabWidget::closeCurrentDocument()
+bool EditorTabWidget::closeCurrentDocument()
 {
-  closeDocument(currentPageIndex());
-  /*
-    if(count() == 0) return;
-   
-    if(!m_terminating)
-    {
-      m_window->guiFactory()->removeClient(m_currentView);
-      m_currentView = 0L;
-    }
-   
-  //   m_closeGuard = true;
-   
-    Document* doc = currentDocument();
-   
-    QWidget* w = page(currentPageIndex());
-    removePage(w);
-   
-    m_docList.remove(doc);
-    delete doc;
-   
-    if((count() == 0) && !m_terminating)
-    {
-      m_window->actionStateChanged("has_nofileopened");
-      m_window->setCaption(QString::null);
-    }
-   
-  //   m_closeGuard = false;*/
+  return closeDocument(currentPageIndex());
 }
 
-void EditorTabWidget::closeAllDocuments()
+bool EditorTabWidget::closeAllDocuments()
 {
   while(count())
   {
-    closeCurrentDocument();
+    //stop closing documents if the user hit "cancel" on save prompt
+    if(!closeCurrentDocument()) return false;
   }
+
+  return true;
 }
 
 void EditorTabWidget::setCurrentDocumentTab(const QString& filePath, bool forceOpen)
@@ -346,7 +327,7 @@ int EditorTabWidget::documentIndex(const QString& filePath)
   return -1;
 }
 
-void EditorTabWidget::closeRequest (int index)
+void EditorTabWidget::closeRequest(int index)
 {
   closeDocument(index);
 }
@@ -402,7 +383,8 @@ void EditorTabWidget::contextMenu(int index, const QPoint & p)
       {
         if(document(idx) != doc)
         {
-          closeDocument(idx);
+          //stop closing documents if the user hits "cancel" on save dialog
+          if(!closeDocument(idx)) break;
         }
         else
         {
