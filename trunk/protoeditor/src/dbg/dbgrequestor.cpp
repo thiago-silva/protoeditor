@@ -275,6 +275,7 @@ void Browser::slotHttpDone(bool error)
   if(error && (m_http->error() != QHttp::Aborted)) {
     emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
   }
+  m_http->abort();
 }
 
 void Browser::doBrowserRequest(const QString& url)
