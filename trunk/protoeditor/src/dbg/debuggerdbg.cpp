@@ -83,6 +83,7 @@ bool DebuggerDBG::isRunning() const
 
 void DebuggerDBG::reloadConfiguration()
 {
+  endSession();
   m_configuration->setLocalBaseDir(Settings::localBaseDir());
   m_configuration->setServerBaseDir(Settings::serverBaseDir());
   m_configuration->setListenPort(Settings::listenPort());

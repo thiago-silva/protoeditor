@@ -153,7 +153,6 @@ void DebuggerManager::loadDebugger()
 
   if(m_debugger && (m_debugger->id() == Settings::client())) {
     //is the same current debugger, just load its settings again
-    m_debugger->endSession();
     m_debugger->reloadConfiguration();
   } else {
     if(m_debugger) clearDebugger();
