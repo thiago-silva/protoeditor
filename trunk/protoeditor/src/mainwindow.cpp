@@ -31,8 +31,8 @@
 #include "debuggersettings.h"
 #include "debuggersettingswidget.h"
 
-#include <kapplication.h>
-#include <kconfig.h>
+//#include <kapplication.h>
+//#include <kconfig.h>
 #include <kstatusbar.h>
 #include <kaction.h>
 #include <klineedit.h>
@@ -45,10 +45,10 @@
 #include <kedittoolbar.h>
 #include <kconfigdialog.h>
 #include <ktexteditor/view.h>
-
+#include <kfiledialog.h>
 
 #include <qlayout.h>
-#include <qfiledialog.h>
+//#include <qfiledialog.h>
 #include <qsplitter.h>
 
 
@@ -74,11 +74,11 @@
 */
 
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-    : KMainWindow(parent, name, fl), m_currentOpenPath("/"), m_debuggerSettings(0)
+    : KMainWindow(parent, name, fl), /*m_currentOpenPath("/"),*/ m_debuggerSettings(0)
 {
   if(!name) { setName("MainWindow"); }
 
-  setupConfiguration();
+  //setupConfiguration();
   setupStatusBar();
   createWidgets();
   setStandardToolBarMenuEnabled(true);
@@ -96,6 +96,7 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 }
 
 
+/*
 void MainWindow::setupConfiguration()
 {
 
@@ -105,6 +106,7 @@ void MainWindow::setupConfiguration()
     m_currentOpenPath = config->readEntry("CurrentFilePath");
   }
 }
+*/
 
 /* Thanks to KEdit author, we copy and paste :-) */
 void MainWindow::setupStatusBar()
@@ -276,10 +278,11 @@ void MainWindow::createWidgets()
 */
 MainWindow::~MainWindow()
 {
-  saveCurrentPath();
+  //saveCurrentPath();
   /* TODO: delete all widgets? */
 }
 
+/*
 void MainWindow::saveCurrentPath()
 {
   KConfig* config = KApplication::kApplication()->config();
@@ -287,9 +290,25 @@ void MainWindow::saveCurrentPath()
   config->writeEntry("CurrentFilePath", m_currentOpenPath);
   config->sync();
 }
+*/
 
 void MainWindow::slotOpenFile()
 {
+  QStringList strList =
+    KFileDialog::getOpenFileNames(
+      ":protoeditor_openphp", "*.php", this);
+
+  if(strList.count()) {
+    for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it ) {
+      m_tabEditor->addDocument(*it);
+    }
+
+    //the active tab will be a brand new file with no history, so clear the
+    //undo/redo
+    slotHasNoRedo();
+    slotHasNoUndo();
+  }
+/*
   QString filePath = QFileDialog::getOpenFileName(m_currentOpenPath, "PHP (*.php)",
                                                   this, "open file dialog", "Choose a file" );
 
@@ -299,6 +318,7 @@ void MainWindow::slotOpenFile()
     slotHasNoRedo();
     slotHasNoUndo();
   }
+*/
 }
 
 

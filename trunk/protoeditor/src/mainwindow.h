@@ -82,12 +82,12 @@ private slots:
 
   void slotShowSettings();
 private:
-  void setupConfiguration();
+  //void setupConfiguration();
   void setupStatusBar();
   void setupActions();
   void createWidgets();
 
-  void saveCurrentPath();
+  //void saveCurrentPath();
   void initDebuggerSettings();
 
   EditorTabWidget* m_tabEditor;
@@ -106,7 +106,7 @@ private:
   DebuggerSettingsWidget* m_debuggerSettings;
 
   DebuggerManager* m_debugger_manager;
-  QString m_currentOpenPath;
+  //QString m_currentOpenPath;
 
 };
 
