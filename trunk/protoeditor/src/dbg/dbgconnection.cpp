@@ -60,7 +60,6 @@ void DBGConnection::clearSocket()
     m_currentClient->close();
     delete m_currentClient;
     m_currentClient = NULL;
-    emit sigClientClosed();
   }
 }
 
