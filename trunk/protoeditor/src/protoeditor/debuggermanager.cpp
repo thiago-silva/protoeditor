@@ -180,6 +180,9 @@ void DebuggerManager::connectDebugger()
 
   connect(m_debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotInternalError(const QString&)));
+
+  connect(m_debugger, SIGNAL(sigStepDone()),
+          this, SLOT(slotStepDone()));
 }
 
 
@@ -197,6 +200,7 @@ void DebuggerManager::slotDebugStart()
   if(m_debugger->isRunning())
   {
     m_debugger->continueExecution();
+    m_window->setDebugStatusMsg("Continuing...");
     return;
   }
 
@@ -228,6 +232,7 @@ void DebuggerManager::debugActiveScript()
 
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
+  m_window->setDebugStatusMsg("Starting...");
   m_debugger->run(filepath);
   
 }
@@ -258,30 +263,39 @@ void DebuggerManager::debugCurrentSiteScript()
   
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
+  m_window->setDebugStatusMsg("Starting...");
   m_debugger->run(filepath);
 }
 
 void DebuggerManager::slotDebugStop()
 {
   if(!m_debugger) return;
+
+  m_window->setDebugStatusMsg("Stoping...");
   m_debugger->stop();
 }
 
 void DebuggerManager::slotDebugStepInto()
 {
   if(!m_debugger) return;
+
+  m_window->setDebugStatusMsg("Steping...");
   m_debugger->stepInto();
 }
 
 void DebuggerManager::slotDebugStepOver()
 {
   if(!m_debugger) return;
+  
+  m_window->setDebugStatusMsg("Steping...");
   m_debugger->stepOver();
 }
 
 void DebuggerManager::slotDebugStepOut()
 {
   if(!m_debugger) return;
+
+  m_window->setDebugStatusMsg("Steping...");
   m_debugger->stepOut();
 }
 
@@ -426,6 +440,8 @@ void DebuggerManager::slotProfile()
     if(d)
     {
       d->show();
+
+      m_window->setDebugStatusMsg("Profiling...");
       m_debugger->profile();
     }
   }
@@ -528,8 +544,9 @@ void DebuggerManager::slotDebugStarted()
   m_window->logListView()->clear();
   m_window->stackCombo()->clear();
 
-  m_window->statusBar()->message("Debug started");
-
+  m_window->setDebugStatusMsg("Debug started");
+  m_window->setLedEnabled(true);
+  
   m_window->actionStateChanged("debug_started");
   m_window->actionCollection()->action("debug_start")->setText("Continue");
   /*
@@ -549,8 +566,8 @@ void DebuggerManager::slotDebugEnded()
   m_window->watchList()->setReadOnly(true);
 
 
-  m_window->statusBar()->message("Debug ended");
-
+  m_window->setDebugStatusMsg("Debug stopped");
+  m_window->setLedEnabled(false);
 
   EditorTabWidget* ed = m_window->tabEditor();
 
@@ -579,6 +596,11 @@ void DebuggerManager::slotDebugEnded()
   m_window->actionCollection()->action("debug_step_over")->setEnabled(false);
   m_window->actionCollection()->action("debug_step_out")->setEnabled(false);
   */
+}
+
+void DebuggerManager::slotStepDone()
+{
+  m_window->setDebugStatusMsg("Step done");
 }
 
 void DebuggerManager::slotInternalError(const QString& message)
