@@ -24,20 +24,27 @@
 #include <kiconloader.h>
 
 BreakpointListViewItem::BreakpointListViewItem(KListView *parent)
-    : KListViewItem(parent), m_breakpoint(0)
+    : KListViewItem(parent), m_breakpoint(0), m_offlineState(DebuggerBreakpoint::ENABLED)
 {
-  setRenameEnabled(BreakpointListView::ConditionCol, true);
-  setRenameEnabled(BreakpointListView::SkipHitsCol,  true);
-
+  init();
 }
 
 BreakpointListViewItem::BreakpointListViewItem(KListView *parent, DebuggerBreakpoint* bp)
-    : KListViewItem(parent), m_breakpoint(0)
+    : KListViewItem(parent), m_breakpoint(0), m_offlineState(DebuggerBreakpoint::ENABLED)
 {
+  init();
+  setBreakpoint(bp);
+}
+
+void BreakpointListViewItem::init() {
+
   setRenameEnabled(BreakpointListView::ConditionCol, true);
   setRenameEnabled(BreakpointListView::SkipHitsCol,  true);
 
-  setBreakpoint(bp);
+  KIconLoader *loader = KGlobal::iconLoader();
+  m_enabled    = loader->loadIcon("checkboxon", KIcon::Small);
+  m_disabled   = loader->loadIcon("checkboxoff", KIcon::Small);
+  m_unresolved = loader->loadIcon("info", KIcon::Small);
 }
 
 BreakpointListViewItem::~BreakpointListViewItem()
@@ -55,26 +62,21 @@ void BreakpointListViewItem::setBreakpoint(DebuggerBreakpoint* bp)
 }
 
 void BreakpointListViewItem::showBreakpoint() {
-
-  KIconLoader *loader = KGlobal::iconLoader();
   switch(m_breakpoint->status()) {
       case DebuggerBreakpoint::ENABLED:
       setText(BreakpointListView::StatusTextCol, "Enabled");
-      setPixmap(BreakpointListView::StatusIconCol, loader->loadIcon(
-                  "checkboxon", KIcon::Small));
+      setPixmap(BreakpointListView::StatusIconCol, m_enabled);
       break;
 
       case DebuggerBreakpoint::DISABLED:
       setText(BreakpointListView::StatusTextCol, "Disabled");
-      setPixmap(BreakpointListView::StatusIconCol, loader->loadIcon(
-                  "checkboxoff", KIcon::Small));
+      setPixmap(BreakpointListView::StatusIconCol, m_disabled);
       break;
 
       case DebuggerBreakpoint::UNRESOLVED:
       default:
       setText(BreakpointListView::StatusTextCol, "Unresolved");
-      setPixmap(BreakpointListView::StatusIconCol, loader->loadIcon(
-                  "interrogation", KIcon::Small));
+      setPixmap(BreakpointListView::StatusIconCol, m_unresolved);
       break;
   }
 
@@ -83,24 +85,21 @@ void BreakpointListViewItem::showBreakpoint() {
   setText(BreakpointListView::ConditionCol, m_breakpoint->condition());
   setText(BreakpointListView::SkipHitsCol,  QString::number(m_breakpoint->skipHits()));
   setText(BreakpointListView::HitCountCol,  QString::number(m_breakpoint->hitCount()));
+}
 
-
+void BreakpointListViewItem::setUserBpStatus(int status) {
+  m_breakpoint->setStatus(status);
+  m_offlineState = status;
 }
 
 void BreakpointListViewItem::reset() {
 
   m_breakpoint->setId(0);
-  if(m_breakpoint->status() == DebuggerBreakpoint::UNRESOLVED) {
-    m_breakpoint->setStatus(DebuggerBreakpoint::ENABLED);
-  }
+  //if(m_breakpoint->status() == DebuggerBreakpoint::UNRESOLVED) {
+  //  m_breakpoint->setStatus(DebuggerBreakpoint::ENABLED);
+  //}
+  m_breakpoint->setStatus(m_offlineState);
   showBreakpoint();
-  /*
-  KIconLoader *loader = KGlobal::iconLoader();
-
-  setText(BreakpointListView::StatusTextCol, "Enabled");
-  setPixmap(BreakpointListView::StatusIconCol, loader->loadIcon(
-    "checkboxoff", KIcon::User));
-  */
 }
 
 DebuggerBreakpoint* BreakpointListViewItem::breakpoint()

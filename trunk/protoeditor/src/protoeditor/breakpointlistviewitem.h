@@ -22,6 +22,7 @@
 #define BREAKPOINTLISTVIEWITEM_H
 
 #include <klistview.h>
+#include <qpixmap.h>
 
 class DebuggerBreakpoint;
 
@@ -38,8 +39,17 @@ public:
 
   void showBreakpoint();
   DebuggerBreakpoint* breakpoint();
+
+  void setUserBpStatus(int);
 private:
+  void init();
+
+  QPixmap m_enabled;
+  QPixmap m_disabled;
+  QPixmap m_unresolved;
+
   DebuggerBreakpoint* m_breakpoint;
+  int m_offlineState;
 };
 
 #endif
