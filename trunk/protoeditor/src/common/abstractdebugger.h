@@ -67,9 +67,8 @@ public:
   virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
 
-  virtual void profile() = 0;
+  virtual void enableProfile(bool) = 0;
 
-  virtual KDialog* profileDialog() = 0;
 protected:
   virtual DebuggerManager* manager();
 
