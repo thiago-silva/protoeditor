@@ -1,0 +1,240 @@
+2005-02-07 01:52  thiago_silva
+
+	* src/protoeditor/editortabwidget.cpp: FIXED: application was
+	  crashing on close. Added verification for slotCurrentChanged().
+
+2005-02-07 01:49  thiago_silva
+
+	* src/settings/debuggersettingswidget.cpp: Expanded the spacing
+	  between the widgets. On Fedora, some labels were overriden by
+	  other widgets
+
+2005-02-07 01:48  thiago_silva
+
+	* src/settings/Makefile.am: FIXED: libsettings should not be
+	  installed
+
+2005-02-07 00:15  thiago_silva
+
+	* README, configure.in, configure.in.in, protoeditor.kdevelop,
+	  src/protoeditor/protoeditor.cpp: version 5.0 > 5.0.2
+
+2005-02-06 22:33  thiago_silva
+
+	* src/settings/Makefile.am (tags: BETA_0_5_2): fixed includes
+
+2005-02-06 22:30  thiago_silva
+
+	* configure.in (tags: BETA_0_5_2): icon Makefile.am creation
+	  changed
+
+2005-02-06 21:18  thiago_silva
+
+	* src/: breakpointlistview.cpp, breakpointlistview.h,
+	  breakpointlistviewitem.cpp, breakpointlistviewitem.h,
+	  debuggercombostack.cpp, debuggercombostack.h,
+	  debuggerconfigurations.cpp, debuggerconfigurations.h,
+	  debuggerfactory.cpp, debuggerfactory.h, debuggermanager.cpp,
+	  debuggermanager.h, debuggersettings.kcfgc,
+	  debuggersettingswidget.cpp, debuggersettingswidget.h,
+	  editortabwidget.cpp, editortabwidget.h, loglistview.cpp,
+	  loglistview.h, mainwindow.cpp, mainwindow.h, protoeditor.cpp,
+	  protoeditor.desktop, protoeditor.kcfg, protoeditorui.rc,
+	  variableslistview.cpp, variableslistview.h,
+	  variableslistviewitem.cpp, variableslistviewitem.h,
+	  watchlistview.cpp, watchlistview.h: project tree modification:
+	  -src/* goes to src/protoeditor except settings files. They go to
+	  src/settings
+
+2005-02-06 21:11  thiago_silva
+
+	* data/icons/Makefile.am,
+	  data/icons/hi16-action-activebreakpoint.png,
+	  data/icons/hi16-action-checkboxoff.png,
+	  data/icons/hi16-action-checkboxon.png,
+	  data/icons/hi16-action-disabledbreakpoint.png,
+	  data/icons/hi16-action-executionline.png,
+	  data/icons/hi16-action-preexecutionline.png,
+	  data/icons/hi22-action-dbgnext.png,
+	  data/icons/hi22-action-dbgrun.png,
+	  data/icons/hi22-action-dbgstep.png, protoeditor.kdevelop,
+	  data/Makefile.am, data/icons/hi22-action-dbgstepout.png,
+	  src/common/Makefile.am, src/common/abstractdebugger.h,
+	  src/commonphp/Makefile.am, src/dbg/Makefile.am,
+	  src/dbg/dbgconfiguration.cpp, src/dbg/dbgconfiguration.h,
+	  src/dbg/dbgfileinfo.cpp, src/dbg/debuggerdbg.cpp,
+	  src/dbg/debuggerdbg.h, src/protoeditor/Makefile.am,
+	  src/protoeditor/breakpointlistview.cpp,
+	  src/protoeditor/breakpointlistview.h,
+	  src/protoeditor/breakpointlistviewitem.cpp,
+	  src/protoeditor/breakpointlistviewitem.h,
+	  src/protoeditor/debuggercombostack.cpp,
+	  src/protoeditor/debuggercombostack.h,
+	  src/protoeditor/debuggerfactory.cpp,
+	  src/protoeditor/debuggerfactory.h,
+	  src/protoeditor/debuggermanager.cpp,
+	  src/protoeditor/debuggermanager.h,
+	  src/protoeditor/editortabwidget.cpp,
+	  src/protoeditor/editortabwidget.h,
+	  src/protoeditor/loglistview.cpp, src/protoeditor/loglistview.h,
+	  src/protoeditor/mainwindow.cpp, src/protoeditor/mainwindow.h,
+	  src/protoeditor/protoeditor.cpp,
+	  src/protoeditor/protoeditor.desktop,
+	  src/protoeditor/protoeditorui.rc,
+	  src/protoeditor/variableslistview.cpp,
+	  src/protoeditor/variableslistview.h,
+	  src/protoeditor/variableslistviewitem.cpp,
+	  src/protoeditor/variableslistviewitem.h,
+	  src/protoeditor/watchlistview.cpp,
+	  src/protoeditor/watchlistview.h (utags: BETA_0_5_2): project tree
+	  modification: -src/* goes to src/protoeditor except settings
+	  files. They go to src/settings
+
+	  -Settings improvement -Debugger KActions added -Toolbar added
+	  -DebuggerManager and EditorTabWidget handling the menu/toolbar
+	  Actions state -DebuggerConfigurations is out. Using kcfg settings
+	  gobally -Changed the way icons are installed (using rule
+	  protoeditoricon_ICON) -other little things I can't remember :/
+
+2005-02-06 20:52  thiago_silva
+
+	* src/Makefile.am (tags: BETA_0_5_2), configure.in,
+	  src/settings/Makefile.am, src/settings/debuggersettings.kcfgc
+	  (tags: BETA_0_5_2), src/settings/debuggersettingswidget.cpp
+	  (tags: BETA_0_5_2), src/settings/debuggersettingswidget.h (tags:
+	  BETA_0_5_2), src/settings/protoeditor.kcfg (tags: BETA_0_5_2):
+	  project tree modification: -src/* goes to src/protoeditor except
+	  settings files. They go to src/settings
+
+2005-02-05 18:26  thiago_silva
+
+	* src/: mainwindow.cpp, mainwindow.h: -added "Open recent" action
+	  -fixed slotEditToolbar
+
+2005-02-05 18:24  thiago_silva
+
+	* src/editortabwidget.cpp: -check wether the file could be opened.
+
+2005-02-05 17:01  thiago_silva
+
+	* src/: mainwindow.cpp, mainwindow.h: -out: QFileDialog -in:
+	  KFileDialog -we dont need m_currentOpenPath/KConfig anymore,
+	  since KFileDialog remembers the path for us :)
+
+2005-02-05 16:34  thiago_silva
+
+	* configure.in, configure.in.in (tags: BETA_0_5_2): there are some
+	  problems creating the kcfg settings using #MIN_CONFIG(3.0.0).
+	  fixed with #MIN_CONFIG(3.2)
+
+2005-02-05 16:31  thiago_silva
+
+	* src/: dbugrconfigform.cpp, dbugrconfigform.h,
+	  dbugrconfigformbase.ui, debuggerconfigform_interface.h,
+	  debuggermanager.cpp, debuggermanager.h, debuggersettings.kcfgc,
+	  debuggersettingswidget.cpp, debuggersettingswidget.h,
+	  mainwindow.cpp, mainwindow.h, protoeditor.kcfg: -out:
+	  dbugrconfigform settings -in: kcfg based settings
+
+2005-02-05 16:27  thiago_silva
+
+	* src/: main.cpp, protoeditor.cpp: -renamed from main.cpp to
+	  protoeditor.cpp
+
+2005-02-05 16:24  thiago_silva
+
+	* src/: editortabwidget.cpp, editortabwidget.h: -using KURL
+
+2005-02-05 16:20  thiago_silva
+
+	* src/Makefile.am: -add shelldesktopdir data -add shellrc data -add
+	  kde_kcfg data
+
+2005-02-03 03:29  thiago_silva
+
+	* src/: debuggermanager.cpp, debuggermanager.h,
+	  editortabwidget.cpp, editortabwidget.h, main.cpp, mainwindow.cpp,
+	  mainwindow.h, protoeditor.desktop, protoeditorui.rc,
+	  mainwindowbase.cpp, mainwindowbase.h, protoeditor.cpp,
+	  protoeditor.h: -New Look using KDE framework :) --subst Q*
+	  classes for K* classes, using KActions, etc.	-got rid of
+	  ProtoEditor and MainWindowBase.  -introducing .rc file and
+	  .desktop file
+
+2005-01-30 21:08  thiago_silva
+
+	* README (tags: BETA_0_5_1): add DBG version
+
+2005-01-30 20:41  thiago_silva
+
+	* src/: main.cpp, mainwindow.cpp, mainwindow.h, protoeditor.cpp,
+	  protoeditor.h (utags: BETA_0_5_1): remember the path of the last
+	  file the user opened.
+
+2005-01-30 18:08  thiago_silva
+
+	* README, protoeditor.kdevelop (tags: BETA_0_5_1),
+	  protoeditor.kdevelop.pcs, protoeditor.kdevses: removing
+	  non-important kdevelop files
+
+2005-01-29 20:23  thiago_silva
+
+	* src/main.cpp: Icons were not been loaded because the app name
+
+2005-01-28 00:43  thiago_silva
+
+	* ChangeLog, INSTALL, NEWS, TODO, AUTHORS, COPYING, Makefile.am,
+	  Makefile.cvs, README, configure.files, configure.in,
+	  configure.in.in, protoeditor.kdevelop, protoeditor.kdevses,
+	  subdirs, protoeditor.kdevelop.pcs, src/Makefile.am,
+	  src/dbugrconfigform.cpp, src/dbugrconfigform.h,
+	  src/dbugrconfigformbase.ui, src/debuggermanager.cpp,
+	  src/editortabwidget.cpp, src/editortabwidget.h,
+	  src/loglistview.h, src/main.cpp, src/mainwindow.cpp,
+	  src/mainwindow.h, src/mainwindowbase.cpp, src/mainwindowbase.h,
+	  src/protoeditor.cpp, src/protoeditor.h,
+	  src/variableslistview.cpp, src/variableslistview.h,
+	  src/breakpointlistview.cpp, src/breakpointlistview.h,
+	  src/breakpointlistviewitem.cpp, src/breakpointlistviewitem.h,
+	  src/debuggercombostack.cpp, src/debuggercombostack.h,
+	  src/debuggerconfigform_interface.h,
+	  src/debuggerconfigurations.cpp, src/debuggerconfigurations.h,
+	  src/debuggerfactory.cpp, src/debuggerfactory.h,
+	  src/debuggermanager.h, src/loglistview.cpp,
+	  src/variableslistviewitem.cpp, src/variableslistviewitem.h,
+	  src/watchlistview.cpp, src/watchlistview.h, src/dbg/Makefile.am,
+	  src/dbg/dbgabstractdatarequest.cpp, src/dbg/dbgconnection.cpp,
+	  src/dbg/dbgframe.cpp, src/dbg/dbgheader.cpp,
+	  src/dbg/dbgnethelper.cpp, src/dbg/dbgreceiver.cpp,
+	  src/dbg/dbgrequestor.cpp, src/dbg/dbgrequestpack.cpp,
+	  src/dbg/dbgrequestpackbuilder.cpp, src/dbg/dbgresponsepack.cpp,
+	  src/dbg/dbgstack.cpp, src/dbg/dbgstack.h, src/dbg/dbgtags.cpp,
+	  src/common/Makefile.am, src/dbg/dbg_defs.h,
+	  src/dbg/dbgabstractdatarequest.h, src/dbg/dbgconfiguration.cpp,
+	  src/dbg/dbgconfiguration.h, src/dbg/dbgconnection.h,
+	  src/dbg/dbgfileinfo.cpp, src/dbg/dbgfileinfo.h,
+	  src/dbg/dbgframe.h, src/dbg/dbgheader.h, src/dbg/dbgnethelper.h,
+	  src/dbg/dbgreceiver.h, src/dbg/dbgrequestor.h,
+	  src/dbg/dbgrequestpack.h, src/dbg/dbgrequestpackbuilder.h,
+	  src/dbg/dbgresponsepack.h, src/dbg/dbgtags.h,
+	  src/dbg/debuggerdbg.cpp, src/dbg/debuggerdbg.h, admin/compile,
+	  admin/config.pl, admin/debianrules,
+	  src/common/abstractdebugger.cpp, src/common/abstractdebugger.h,
+	  src/common/debuggerbreakpoint.cpp,
+	  src/common/debuggerbreakpoint.h, src/common/debuggerstack.cpp,
+	  src/common/debuggerstack.h, src/common/variable.cpp,
+	  src/common/variable.h, src/commonphp/Makefile.am,
+	  src/commonphp/phpdefs.h, src/commonphp/phpvariable.cpp,
+	  src/commonphp/phpvariable.h, src/commonphp/variableparser.cpp,
+	  src/commonphp/variableparser.h, admin/acinclude.m4.in,
+	  admin/conf.change.pl, admin/nmcheck, admin/Doxyfile.am,
+	  admin/Doxyfile.global, admin/cvs.sh, admin/detect-autoconf.sh,
+	  admin/config.guess, admin/missing, admin/ChangeLog,
+	  admin/am_edit, admin/bcheck.pl, admin/configure.in.min,
+	  admin/Makefile.common, admin/config.sub, admin/cvs-clean.pl,
+	  admin/install-sh, admin/mkinstalldirs, admin/ylwrap,
+	  admin/depcomp, admin/ltmain.sh, admin/configure.in.bot.end,
+	  admin/libtool.m4.in, data/Makefile.am, data/icons/Makefile.am,
+	  ui/mainwindow.ui, ui/mainwindow.ui.h, ui/varstackwidget.ui:
+	  Initial revision
+

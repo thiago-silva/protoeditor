@@ -1,0 +1,87 @@
+/***************************************************************************
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+#include "debuggercombostack.h"
+#include "debuggerstack.h"
+
+DebuggerComboStack::DebuggerComboStack(QWidget* parent, const char* name)
+  : QComboBox(false, parent, name), m_currentExecutionLine(NULL), m_stack(NULL)
+{
+  connect(this, SIGNAL(activated(int)), this, SLOT(slotChanged(int)));
+}
+
+DebuggerComboStack::~DebuggerComboStack()
+{
+  delete m_stack;
+}
+
+void DebuggerComboStack::setStack(DebuggerStack* stack)
+{
+  int selectedId = -1;
+  int newIndex = 0;
+
+  if(count() > 0) {
+    selectedId = m_stack->debuggerExecutionLineList().at(currentItem())->id();
+  }
+
+  clear();
+
+  DebuggerStack::DebuggerExecutionLineList_t execLineList
+    = stack->debuggerExecutionLineList();
+
+  DebuggerExecutionLine* execLine;
+  for(execLine = execLineList.first(); execLine; execLine = execLineList.next()) {
+    insertItem(execLine->function() + " : " + QString::number(execLine->line()));
+    if(execLine->id() == selectedId) {
+      newIndex = count()-1;
+      m_currentExecutionLine = execLine;
+      setCurrentItem(newIndex);
+    }
+  }
+
+  if(newIndex == 0) {
+    setCurrentItem(0);
+    m_currentExecutionLine = execLineList.first();
+  }
+
+  if(m_stack) delete m_stack;
+  m_stack = stack;
+}
+
+DebuggerStack* DebuggerComboStack::stack() {
+  return m_stack;
+}
+
+DebuggerExecutionLine* DebuggerComboStack::selectedDebuggerExecutionLine() {
+  return m_currentExecutionLine;
+}
+
+void DebuggerComboStack::slotChanged(int index)
+{
+  DebuggerExecutionLine* execLine
+    = m_stack->debuggerExecutionLineList().at(index);
+
+  emit changed(m_currentExecutionLine, execLine);
+
+  m_currentExecutionLine = execLine;
+}
+
+
+#include "debuggercombostack.moc"
