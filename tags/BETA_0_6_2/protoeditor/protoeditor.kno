@@ -1,0 +1,758 @@
+\NewEntry 0 Mental Notes / Random ideas
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
+<li>Take a look at http://www.enginsite.com/php-editor.htm<br /></li>
+<li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /></li>
+<li>Change the colums of breakpoint and message listviews.</li>
+<ul type="disc"><li>Create a column for the filename only</li>
+<li>Create a column for the path of the file<br /></li></ul>
+<li>Add icons that Protoeditor uses on the distribution<br /></li>
+<li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
+<li>Change QSocket to KSocket (or similar)?<br /></li>
+<li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
+<li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
+<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)<br /></li>
+<li>Try to get default kate settings from the user's katerc<br /></li>
+<li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
+<li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
+<li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
+<li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
+<ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info.<br /></li></ul>
+<li>Add context Menu for the editor<br /></li>
+<li>Context menu for VariableListView:</li>
+<ul type="disc"><li>Copy (copy variable to clipboard)</li>
+<li>for scalars:</li>
+<ul type="disc"><li>&quot;Modify Value&quot; (same as double click)</li>
+<li>&quot;Modify trough dialog&quot;...(for big texts)</li>
+<li>&quot;Set value to null&quot;</li></ul>
+<li>for arrays/objects</li>
+<ul type="disc"><li>-&quot;Modify array...&quot; (show dialog to modify/delete keys and values)</li>
+<li>-&quot;Modify object...&quot; (show dialog to modify the values of the members)<br /><br /></li></ul></ul>
+<li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;, &quot;run default file&quot; (like PHPEd)</li>
+<ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)<br /></li></ul>
+<li>When the state of the tabs change, set an icon or something so the user know there are more info (usefull for the Message tab)<br /><br /></li>
+<li>Use QTabWidget like konqueror/kdevelop (close button, icons, etc)<br /></li>
+<li>Implement the profiling features.<br /></li>
+<li>Refactor, test, refactor, test...</li>
+<ul type="disc"><li>change it++ to ++it</li>
+<li>create namespaces (DBG, PHP, etc)?</li>
+<li>rename: variableparser to phpvariableparser </li>
+<li>Check regexp on the variableparser</li>
+<li>improve DBGReceiver so it can handle exceptional transmission behaviors.</li>
+<li>Check int/long declarations and make it uniform.</li>
+<li>Copy constructors, memory leak check...</li>
+<li>remove unescessary includes</li>
+<li>...<br /></li></ul>
+<li>Quanta idea for capabilities: </li>
+<ul type="disc"><li>Create a class to hold the capabilities supported by quanta. <br /><br /></li></ul>
+<li>Change LogListview to MessageListView. <br /></li>
+<li>Note about watches:</li>
+<ul type="disc"><li>When there is no debugger loadded, there is no way to add a watch using a Variable object (since Variable class is abstract and can't be contructed)<br /></li></ul>
+<li>Add HTML output tab?<br /></li>
+<li>Create a menu &quot;window&quot; with a list of opened files.</li>
+<li>use KMDI?<br /></li>
+<li>Test with a Win32 server running apache/php/dbg<br /></li>
+<li>Manager: Create two interfaces: one to be used by MainWindow, the other, to be used by the DebuggerClient. Do the same to DebuggerClient?<br /><br /></li>
+<li>Where-things-must-be-deleted-issue:</li>
+<ul type="disc"><li>Client shouldn't have to delete breakpoints and variables. Its up to a BpManager/VarManager/Pool or to the widgets to own the objects.</li>
+<li>Note: the VariableListViewItem shouldn't delete the Variable member. The applicatin crashes because it might be deleting a variable that was already deleted (this occurs when a item is expanded). <br /></li></ul></ul>
+<p></p>
+</body></html>
+
+\NewEntry 0 Site and non-implementation notes
+
+\NewEntry 1 Releasing notes
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>1: Test current CVS version on other distro/KDE versions</li>
+<li>2: Change version on kdevelop file, configure.in/configure.in.in and protoeditor.cpp</li>
+<li>3: Create NEWS file</li>
+<li>4: Create ChangeLog file</li>
+<li>5: Update README version</li>
+<li>6: TAG current CVS version</li>
+<li>7: Update site</li></ul>
+<p></p>
+<p></p>
+</body></html>
+
+\NewEntry 1 TODO
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
+<li>Add to menu: &quot;Bugs&quot;, &quot;Forum&quot;, &quot;CVSWeb&quot;....</li>
+<li>Create a logo for the site</li>
+<li>Create Doxygen documentation</li>
+<li>Create user documentation</li>
+<li>Backup sourceforge contents.</li>
+<li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
+</body></html>
+
+\NewEntry 0 Implementation
+
+\NewEntry 1 TODO Now
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Implement the profiler<br /><br />Create Actions:</li>
+<li>Run (gear.png) / Start debug</li>
+<ul type="disc"><li>[ ]  Default file</li>
+<li>[x] Current file</li>
+<li>-------------------</li>
+<li>Run with args</li>
+<li>Run to the cursor</li></ul>
+<li>Pause<br /></li>
+<li>Add &quot;New&quot; from KstdAction<br /></li>
+<li>Add terminal output<br /></li>
+<li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags<br /></li>
+<li>Create context menus for the listviews (breakpoints/variables/messages, etc)</li>
+<div></div>
+<li>Add Breakpoint/Watches buttons (add, clear, disable..). <br /></li>
+<li>set static objects to be deleted<br /></li>
+<li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on dbg settings<br /></li>
+<li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget<br /></li>
+<li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
+<li>Use the Konqueror TabWidget (with context menu to &quot;close&quot;, &quot;close all exept this&quot;, etc)<br /></li>
+<li>Add signal/slots for &quot;file changed on disk&quot;<br /></li>
+<li>Show filepath on title bar<br /></li>
+<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)</li></ul>
+</body></html>
+
+\NewEntry 1 new Settings notes
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>Each debugger has its own QWidget to be used on the settings dialog (it will be a child of QTabWidget). Maybe they should have its own KConfigSkeleton, registered on a hipotetical ConfigManager. ConfigManager would be responsable to inform all registered KConfigSkeleton subclasses registered to read/write its configuration.<br /><br />Besides the specific options of each debugger on the QWidget, they shall have a &quot;enable JIT&quot;. When its &quot;on&quot;, it will inform the debugger client to listen for incoming connections permanently. Otherwise, listening on port is temporary, ie, when a debugger is actually running. <br /><br />When a new connection arises for some debugger, they must know wich folder mapping to use. So they inform DebuggerManager about the incoming connection, and the manager is responsable for chose the apropriate registered Site according to the debugger triggered and the remote host (<span style="color:#ff0000">can't solve the remote port to help on this</span>) connected to the client. Also it's possible for a site to have many script languages. If there are 2 Sites registered for a given host (maybe the user's Site has different folder mapping for different languages), we wouldn't know wich one to use. So maybe, one more entry (Debugger) should be added.<br /><br />Each Site has the following entries:<br /></p>
+<ul type="disc"><li>name</li>
+<li>Host</li>
+<li>Port</li>
+<li>RemoteDir</li>
+<li>LocalDir</li>
+<li>Match file path in lower case (for win32 servers)</li>
+<li>Debugger &lt;combobox&gt; [DBG|...]<br /></li></ul>
+<p>	Site s = retrieveSite(remoteHost,debuggerName);<br />	useSite(s);<br /><br />If a debugger is triggered on a JIT, and no Site is found for it, a message should inform the user, showing the remote host/file called to be debuged.<br /><br />-----------------------------------------<br /><br /><br />Settings Dialog modules:<br /><br />[Debugger]<br />   |--[PHP]<br />   |--[Other]<br />[Site]<br />[Browser]<br />[Editor]<br /><br /><br />------------------------------------------------<br /><br />PHP Debugger<br />=========<br /><br />Default : &lt;combobox&gt; //if no site is selected, run in CGI/bin mode using this debugger<br /><br />[DBG] [Other]<br />           -----------------------------<br />                                              |<br />Listen on port: &lt;lineedit&gt;      |<br />other options....                     |<br />                                              |<br />-------------------------------------|<br /><br />-----------------------------------------------------------<br />Site configuration<br />===========<br /><br />Site name | Host | port | Remote base dir | Local base dir<br />Somesite   | host | 80   | /foo                    | /bar                <br /><br /><br />&lt;button add&gt;<br />&lt;button modify&gt;<br />&lt;buttom remove&gt;<br /><br /><br />*See KMAil identify configuration.<br />** If no site is selected to debug, run using local binary w/o directory mapping.<br /><br /><br />-------------------------------------------------------------------------------------------------------------------------------------------------------<br />MainWindow:<br /><br />use a combobox on toolbar with the list of sites to use (KSelectAction or something like that)<br /><br />*Local                 //use local binary application (ie. php, python...)<br />*&lt;separator&gt;<br />*Site1<br />*Site2<br /><br /><br />&quot;Run/Debug/Start session&quot; buttom has a dropdown menu with the debuggers associated with the current file's language (if no extension, show all debuggers on a multilevel menu with &quot;language&quot; as top level items) so the user can quickly change the debugger instead of changing default values on the settings.<br />	*<span style="color:#ff0000">This might not be good. Since we'll end up with 2+ toolbar buttons with the same dropdown menu. Maybe is better having another combobox on toolbar to hold the debuggers. Or, maybe, no combobox: just 2 menus, one for the site, other for the debugger (the last, I think would be a sub menu of the current 'Debug' menu)</span><br /></p>
+</body></html>
+
+\NewEntry 1 DBG Profiler
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>See http://dd.cron.ru/dbg/download.php?h=prof_sample2<br /><br /><br />PHPEdit views:<br /><br />moduleView:</p>
+<p>	filepath | hitcount | time/hit | totaltime | chart</p>
+<p></p>
+<p>contextView</p>
+<p>	context | hitcount | time/hit | totalTime | chart</p>
+<p></p>
+<p>detailView</p>
+<p>	file(lineno) | hitcount | time/hit | totalTime | chart</p>
+<p></p>
+<p>DBG script:</p>
+<p>	filepath | line | hits | (time_avg_hit) time/hit (ms) | totaltime (ms) | min time (ms)  | maxtime (ms) | context</p>
+</body></html>
+
+\CurrentEntry 1 Bug reminder
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
+<li>DBGnet::processProf() : Profiler calc is hardcoded. Use prof_c to get the freq (divide for freq and multip for 1000. See script).</li>
+<ul type="disc"><li> $time_max = $dbg_prof_results[&quot;tm_max&quot;][$idx] * 1000;</li></ul></ul>
+</body></html>
+
+
+\NewEntry 1 Usability issues
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Open a file, edit, close protoeditor. Its window is closed and a &quot;orfan&quot; dialog appears asking for saving the file. Protoeditor shouldn't close before the dialog appears</li></ul>
+</body></html>
+
+\NewEntry 0 Quanta
+
+\NewEntry 1 quanta HACKING
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p> Quanta's coding style is a real mess as it was written by many persons, and</p>
+<p>some had changed their style on-the-fly. ;-) From now on, if you add new code</p>
+<p>to Quanta please follow the below rules:</p>
+<p></p>
+<p>1. Use spaces instead of tabs.</p>
+<p>2. Indent with 2 spaces.</p>
+<p>3. Do not put spaces around parentheses, except in one case (grouping multiple</p>
+<p>   expressions): if ( (A || B) &amp;&amp; (C || D) )</p>
+<p>4. Do not put spaces around &quot;-&gt;&quot;, use: object-&gt;methodname().</p>
+<p>5. No extra spaces between parameters/arguments, just after commas: method(arg1, arg2, ...)</p>
+<p>6. Put spaces around =, &gt;, &lt;, !=, +, -, /, *: a = b * c / d</p>
+<p>7. Name the member variables as m_variablename if they are not public. See #8.</p>
+<p>8. Try to avoid public member variables. Write instead set/get methods. See #9.</p>
+<p>9. Don't put the &quot;get&quot; prefix ahead of the get method. Example:</p>
+<p>   Variable: m_foo</p>
+<p>   Get method: foo()</p>
+<p>   Set method: setFoo()</p>
+<p>10. Mention the argument names also in header files. Signals may be an exception.</p>
+<p>11. Use 0L when setting a pointer to NULL.</p>
+<p>12. I prefer to put the opening { in a new line, but I'm not strongly against putting</p>
+<p>    it in the same line as the expression, like: if (a) {</p>
+<p>13. Avoid inclusions in header files. Use forward declarations instead, like:</p>
+<p>   Header file:</p>
+<p>     class Foo;</p>
+<p>     class Foo2{</p>
+<p>       Foo* m_foo;</p>
+<p>     }</p>
+<p>   Implementation file:</p>
+<p>     #include &quot;foo.h&quot;</p>
+<p>14. Use .h and .cpp for file extension.</p>
+<p>15. Use layouts when creating UI files, otherwise the UI components are not resized when you</p>
+<p>      resize the main widget, translated interfaces or when you use another widget style the</p>
+<p>      dialog might look bad. The simple way to do this is in Qt Designer: click on an empty space</p>
+<p>      and Ctrl-G. Do it first for every container style widget (boxes, frames, tabwidget tabs, etc.)</p>
+<p>      Try to resize the dialog after you preview it.</p>
+<p>16. Make the tab order in widgets logical. Preview it and press tabs to see in which order are the</p>
+<p>      components focused.</p>
+<p>17. 15 and 16 is valid for Kommander scripts as well.</p>
+<p>18. Include the moc files in the .cpp files: use</p>
+<p>        #include &quot;qobject_derivated_class_file.moc&quot;</p>
+<p>      at the end of the cpp files.</p>
+<p>19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule</p>
+<p>    are:</p>
+<p>	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the</p>
+<p>	  file won't be recompiled if you modify it. Aside of being annoying can lead to unexpected</p>
+<p>	  runtime and linking errors.</p>
+<p>	- it's nicer to edit the sources in KDevelop. ;-)</p>
+<p>    So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can</p>
+<p>    still create and connect slots in Designer.</p>
+<p>20. Create a new file for each (non-trivial) class.</p>
+<p>21. Use forward declarations.</p>
+<p>22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.</p>
+<p></p>
+<p></p>
+<p>Last, but not least read the howto's and faq's on http://developer.kde.org</p>
+<p></p>
+</body></html>
+
+\NewEntry 1 TODO
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>Do it slowly, sending small patches. Check if it can be done now (Something about feature freeze status)</p>
+<ul type="disc"><li>Patches</li>
+<ul type="disc"><li>Implement the toggle breakpoint on the editor margin</li>
+<li> Improve BreakpointListView</li>
+<li>Improve VariablesListView and variable-related code/classes<br /><br /></li></ul></ul>
+</body></html>
+
+\NewEntry 0 sourceforge
+
+\NewEntry 1 backup
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>Remind your developers to backup their data. <br />Backup your file release data. <br />Backup your project web space. <br />Backup the contents of your MySQL database. <br />Backup your CVS repository content regularly.</p>
+</body></html>
+
+\NewEntry 0 KDE faqs, howtos, standards
+
+\NewEntry 1 patch
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p><br /><br />http://developer.kde.org/documentation/other/developer-faq.html:<br /><br />Q: 2.21. How do I create and submit a patch to KDE?</p>
+<p></p>
+<p> You have spotted a bug and you want to write the code to fix it. Or you want to code a specific feature. Sending a patch is very appreciated by developers. A tutorial is available but here is a description of how you should proceed: </p>
+<p>Get the latest KDE using CVS to check that the code you want to write has not been added yet.</p>
+<p> </p>
+<p>Check the bug database to see if your bug is not worked on.</p>
+<p> </p>
+<p>Get in contact with the author. His/her name is in the about box or in the source header. If the project has a mailing-list, browse the archives to see if your bug/feature has not been the subject of any discussion. If you can't find any mailing lists or author, simply write to kde-devel.</p>
+<p> </p>
+<p>Post a message explaining your intentions. It is important to inform the author(s) about what you are planning because somebody might already be working on your feature, or a better design could be proposed by the author, or he could give you some good advice.</p>
+<p> </p>
+<p>Next step is to code your feature. It is usually a good idea to keep an original at hand and to work on a copy. This allow to check the behaviours of both versions of the code. Respect the author's indentation and naming scheme, code carefully, think about side-effects and test everything many times.</p>
+<p> </p>
+<p>Using the latest KDE code, make a diff using either cvs diff -u or a diff -uNp original-dir new-dir. Don't send reversed patch. The first argument of diff should be the old directory and the second the new directory.</p>
+<p> </p>
+<p>Send a mail to the author/mailing-list with your patch as attachment (don't forget to attach it :-) ).</p>
+<p> </p>
+<p>People usually have some remarks on your work and you must work further on your patch to improve it. It is common to see three or four submission before acceptation.</p>
+<p> </p>
+<p>Ok, you have done it, your code has been included in KDE. You are now fully part of the KDE project. Thanx a lot.</p>
+</body></html>
+
+\NewEntry 1 Commom mistakes
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>http://developer.kde.org/documentation/other/mistakes.html<br /><br /><br />Intro</p>
+<p></p>
+<p> This document aims to combine the experience of many of the top KDE developers about Qt and KDE frameworks dos and don'ts. The way they were usually passed on to the next generation was by letting the youngsters make the mistakes and then yell at them in public. After reading this document you should be a lot less fearful of having your code reviewed by one of the more grumpy KDE developers :) We will go over things, which are not necessarily &quot;bugs&quot; but which make the code, either slower or less readable. </p>
+<p></p>
+<p>General C++</p>
+<p></p>
+<p> In this section we'll guide through some of the more dusty corners of C++ which either tend to be misused or which people simply get wrong. </p>
+<p></p>
+<p>Anonymous namespaces vs statics</p>
+<p></p>
+<p> If you have a method in a class that does not access any members and therefore does not need an object to operate, make it static. If additionally it is a private helper function that is not needed outside of the file, make it a file-static function. That hides the symbol completely.</p>
+<p></p>
+<p> Symbols defined in a C++ anonymous namespace do not have internal linkage. Anonymous namespaces only give an unique name for that translation unit and that is it; they don't change the linkage of the symbol at all. Linkage isn't changed on those because the second phase of two-phase name lookup ignores functions with internal linkages. Also, entities with internal linkage cannot be used as template arguments. </p>
+<p></p>
+<p> So for now instead of using anonymous namespaces use static if you don't want a symbol to be exported. </p>
+<p></p>
+<p>NULL pointer issues</p>
+<p></p>
+<p> First and foremost: it's fine to delete a null pointer. So the constructs like: </p>
+<p>    if (ptr)</p>
+<p>        delete ptr;</p>
+<p>    </p>
+<p> are simply redundant. </p>
+<p> Second of all you'll see null pointers marked with three types: 0, 0L and NULL. The argument against using NULL was that while C defines it as a 0 void pointer, C++ defines it to not be a 0 void pointer. All conforming C++ implementations will define NULL correctly so it's really not a problem. The argument for 0L was that it was handled correctly in variable argument functions, while 0 wasn't. Nowadays that's also an artifact.</p>
+<p> It's more a question of getting used to something. As far as the code in CVS goes you'll see 0 used more commonly than NULL. </p>
+<p> When you delete a pointer, make sure you also set it to 0. So the idiom is: </p>
+<p>    delete ptr; </p>
+<p>    ptr = 0;</p>
+<p>    </p>
+<p></p>
+<p>Member variables</p>
+<p></p>
+<p> You'll encounter four major styles of marking member variables in KDE: </p>
+<p>m_variable - lowercase m, underscore and the name of the variable starting with a lowercase letter</p>
+<p>mVariable - lowercase m and the name of variable starting with a uppercase letter</p>
+<p>variable_ - variable name starting with a lowercase letter and then an underscore</p>
+<p>_variable - underscore and the name of variable starting with a lowercase letter. It's being often frowned upon. Be careful: this notation is used in some codes for function parameters instead. </p>
+<p>As it often happens there's no one correct way of doing it, so remember to always follow the syntax used by the application/library to which you are committing. </p>
+<p></p>
+<p>Static variables</p>
+<p></p>
+<p></p>
+<p>Try to limit the number of static variables used in your code, especially when committing to a library. Construction and initialization of large number of static variables really hurts the startup times.</p>
+<p></p>
+<p></p>
+<p>Do not use class-static variables, especially not in libraries and loadable modules (but I would even discourage it in applications). Static objects lead to lots of problems (crashes) due to undefined order of construction/destruction. Instead, use a static pointer, together with KStaticDeleter.</p>
+<p></p>
+<p></p>
+<p>Forward Declarations</p>
+<p></p>
+<p> You will reduce compile times by forward declaring classes when possible instead of including their respective headers. For example: </p>
+<p>    #include &lt;qwidget.h&gt;     //bad</p>
+<p>    #include &lt;qstringlist.h&gt; //bad</p>
+<p>    #include &lt;qstring.h&gt;     //bad</p>
+<p>    class SomeInterface</p>
+<p>    {</p>
+<p>    public:</p>
+<p>        virtual void widgetAction( QWidget *widget ) =0;</p>
+<p>        virtual void stringAction( const QString&amp; str ) =0;</p>
+<p>        virtual void stringListAction( const QStringList&amp; strList ) =0;</p>
+<p>    };</p>
+<p>    </p>
+<p> The above should look as follows: </p>
+<p>    class QWidget;     //good</p>
+<p>    class QStringList; //good</p>
+<p>    class QString;     //good</p>
+<p>    class SomeInterface</p>
+<p>    {</p>
+<p>        //as above</p>
+<p>    };</p>
+<p>    </p>
+<p></p>
+<p>Iterators</p>
+<p></p>
+<p> There's few issues at hand here, so in no particular order: </p>
+<p>Cache the return of the end() method call before doing iteration over large containers. For example: </p>
+<p>    QValueList&lt;SomeClass&gt; container;</p>
+<p>    //code which inserts a large number of elements to the container</p>
+<p>    QValueListConstIterator end( container.end() );</p>
+<p>    for( QValueListConstIterator itr( container.begin() ); itr != end; ++itr ) {</p>
+<p>    }</p>
+<p>    </p>
+<p> This avoids the unnecessary creation of the temporary end() return object on each loop iteration, largely speeding it up. </p>
+<p>Prefer to use const_iterators over normal iterators when possible. Containers, which are being implicitly shared often detach when a call to a non-const begin() or end() methods is made (QValueList is an example of such a container). When using a const_iterator also watch out that you're really calling the const version of begin() and end(). Unless your container is actually const itself this probably won't be the case, possibly causing an unnecessary detach of your container. So basically whenever you use const_iterator initialize them using constBegin()/constEnd() instead of begin()/end(), to be on the safe side. </p>
+<p>Prefer to use pre-increment over post-increment operators on iterators. You'll avoid creating an unnecessary temporary object. </p>
+<p></p>
+<p>Data Structures</p>
+<p></p>
+<p> In this section we'll go over some our most common pet-peeves which affect data structures very commonly seen in Qt/KDE applications. </p>
+<p></p>
+<p>QPtrList</p>
+<p></p>
+<p> QPtrList, as the name describes, is a list of pointers. QPtrList's are not implicitly shared. That means that every time you have constructs like : </p>
+<p>    class SomeClass</p>
+<p>    {</p>
+<p>    public:</p>
+<p>        QPtrList returnList() const;</p>
+<p>    private:</p>
+<p>        QPtrList m_list;</p>
+<p>    };</p>
+<p>    </p>
+<p> each invocation of the returnList method will copy the full QPtrList by iterating over all of its elements and inserting them in the newly created QPtrList. </p>
+<p> So we recommend to use QValueList instead of QPtrList. You'll loose the ability to auto delete the pointers on destruction of the list, but it's trivial to add code which does that in the destructor of your class. </p>
+<p></p>
+<p>QCString</p>
+<p></p>
+<p> One of the most common mistakes is using QCString::length() method in a loop. QCString::length() calls strlen on each invocation, so calling it in a loop, as in </p>
+<p>    QCString someCString = ...; </p>
+<p>    for( int i = 0; i &lt; someCString.length(); ++i ) {</p>
+<p>        //Do something</p>
+<p>    }</p>
+<p>    </p>
+<p> Will result in exactly strlen(someCString)+1 calls of strlen(someCString). </p>
+<p> If you have to use QCString, remember to cache the result of QCString::length() method if you're planning to use it in a loop. </p>
+<p></p>
+<p>QByteArray</p>
+<p></p>
+<p> Often in KDE code developers want to transform the QByteArray to a QCString. The code which is often tried looks as follows: </p>
+<p>    void someFunc( const QByteArray&amp; data ) </p>
+<p>    {</p>
+<p>        QCString str( data ); //this is wrong!</p>
+<p>    }</p>
+<p>    </p>
+<p> The trick here is that QByteArray don't have to be null terminated. This introduces a subtle problem of trying to create a non-null terminated string. The correct code for constructing QCString's from QByteArray's is: QCString str( data, data.length() + 1 ); </p>
+<p></p>
+<p>QString</p>
+<p></p>
+<p> It is common to want to test to see if a QString is null. It is faster to do this using the isNull() method than by comparing to the static QString::null value. </p>
+<p>   if ( mystring.isNull() ) { // YES!</p>
+<p>   }</p>
+<p>   if ( mystring == QString:: null ) { // NO!</p>
+<p>   }</p>
+<p>   </p>
+<p> Another twist to this comes when you want to test for the empty string rather that a null string - again Qt provides a method for the job. In many cases this can be preferred to testing for null: </p>
+<p>   if ( mystring.isEmpty() ) { // YES!</p>
+<p>   }</p>
+<p>   if ( mystring == &quot;&quot; ) { // NO!</p>
+<p>   }</p>
+<p>   </p>
+<p></p>
+<p>QString</p>
+<p></p>
+<p> If you're reading in a file it is faster to convert it from the local encoding to Unicode (QString) in one go rather than line by line. This means that methods like QIODevice::readAll() are often a good solution, followed by a single QString instantiation. </p>
+<p></p>
+<p>For larger files consider reading a block of lines then performing the conversion, that way you get the opportunity to update your GUI. This can be accomplished either by using qApp-&gt;processEvents() or by reentering the event loop normally and using a timer to read in the blocks in the background. </p>
+<p></p>
+<p></p>
+<p>QString</p>
+<p></p>
+<p> Pass QStrings as const QString&amp;. Even though QString is implicitly shared it is still more efficient (and safer) to pass const references as opposed to objects by value. So the canonical signature of a method taking QString arguments would be: </p>
+<p>    void myMethod( const QString &amp; foo, const QString &amp; bar );</p>
+<p>    </p>
+<p> Actually, pretty much everything should be passed by const reference if possible. :) </p>
+<p></p>
+<p>QString</p>
+<p></p>
+<p> While QString is the tool of choice for many string handling situations there is one where it is particularly inefficient. If you are pushing about and working on data in QCStrings or QByteArrays take care not to pass it through methods which take QString parameters and then make QCStrings or QByteArrays from them again. For example: </p>
+<p>   </p>
+<p>    QCString myData;</p>
+<p>    QString myNewData = mangleData( myData );</p>
+<p></p>
+<p>    QString mangleData( const QString data ) </p>
+<p>    {</p>
+<p>        QCString str = data.latin1();</p>
+<p>        // mangle </p>
+<p>        return QString(str);</p>
+<p>    }</p>
+<p>    </p>
+<p> The expensive thing happening here is the conversion to QString which does conversion to Unicode internally. That is unnecessary as the first thing the method does is convert back to latin1(). So if you are sure that the Unicode conversion is not needed, try to avoid inadvertently using QString along the way. so the above example should read: </p>
+<p>    QCString myData;</p>
+<p>    QCString myNewData = mangleData( myData );</p>
+<p></p>
+<p>    QCString mangleData( const QCString&amp; data )</p>
+<p>    </p>
+<p></p>
+<p>QDomElement</p>
+<p></p>
+<p> When parsing XML documents, one often needs to iterate over all the elements. You may be tempted to use the following code for that: </p>
+<p>    for ( QDomElement e = baseElement.firstChild().toElement(); !e.isNull();</p>
+<p>          e = e.nextSibling().toElement() )</p>
+<p>    {</p>
+<p>       ...</p>
+<p>    }</p>
+<p>    </p>
+<p> That is not correct though, the above loop will stop prematurely when it encounters a QDomNode that is something other than an element. A comment for example. The correct loop looks like: </p>
+<p>    for ( QDomNode n = baseElement.firstChild(); !n.isNull();</p>
+<p>           n = n.nextSibling() )</p>
+<p>    {</p>
+<p>        QDomElement e = n.toElement();</p>
+<p>        if (e.isNull()) continue;</p>
+<p>        ...</p>
+<p>    }</p>
+<p>    </p>
+<p></p>
+<p>QObject</p>
+<p></p>
+<p> If you ever need to delete a QObject derived class from within one of its own methods, don't ever delete it via the: </p>
+<p>   delete this;</p>
+<p>   </p>
+<p> idiom. This will sooner or later cause your application/library to crash because a method on that object might be invoked from the Qt event loop via slots/signals after you deleted it. Always use </p>
+<p>   deleteLater();</p>
+<p>   </p>
+<p> method from QObject which tries to do the same thing as delete this in a safer way.</p>
+</body></html>
+
+\NewEntry 1 patch2
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>http://developer.kde.org/documentation/misc/sendingpatches.php<br /><br />Abstract</p>
+<p></p>
+<p></p>
+<p>This tutorial is about how to send modifications of code by the way of patches.</p>
+<p></p>
+<p></p>
+<p>Notation</p>
+<p></p>
+<p></p>
+<p>The word developer is used here for someone having a KDE CVS account.</p>
+<p></p>
+<p></p>
+<p>Preliminaries</p>
+<p></p>
+<p></p>
+<p>We suppose that you have modified some code in KOffice (or elsewhere in KDE) and that you are ready to share it.</p>
+<p></p>
+<p></p>
+<p>First a few important points:</p>
+<p></p>
+<p>You must allow that the modification will have the license of the file where the modification is/was made.</p>
+<p>Please make sure that the code compiles correctly on a fairly recent version of the software.</p>
+<p></p>
+<p>What Is A Patch?</p>
+<p></p>
+<p></p>
+<p>Now you have the modification as a source file. Sending the source file will not be helpful, as probably someone else has done other modifications to the original file in the meantime. So your modified file could not replace it.</p>
+<p></p>
+<p></p>
+<p>That is why patches exist. Patches list the modifications, the line numbers and a few other useful information to be able to put that patch back into code (which is called &quot;patching&quot; or also &quot;applying a patch.&quot;)</p>
+<p></p>
+<p></p>
+<p>The main tool for creating patches is a tool called diff, which makes the difference between two files. This tool has a mode called &quot;unified diff&quot;, which KDE uses. Unified diffs have not just the difference between the file but also the &quot;neighborhood&quot; around the differences. That allows to patch even if the line numbers are not the same anymore.</p>
+<p></p>
+<p></p>
+<p>Creating A Simple File Patch</p>
+<p></p>
+<p></p>
+<p>The most simple patch is created between the modified file (here called source.cpp) and the non-modified version of the file (here called source.cpp.orig.)</p>
+<p></p>
+<p></p>
+<p>diff -u -p source.cpp.orig source.cpp</p>
+<p></p>
+<p></p>
+<p>That lists the difference between the two files in the unified diff format (and with function name information if possible.) However it only displays it to screen, which is of course not the goal. So you need to redirect the output.</p>
+<p></p>
+<p></p>
+<p>diff -u -p source.cpp.orig source.cpp &gt; ~/patch.diff</p>
+<p></p>
+<p></p>
+<p>~/patch.diff is here an example and you can create the file where you prefer with the name that you prefer. (You will soon find out that it is probably not a good idea to create it where the source is.)</p>
+<p></p>
+<p></p>
+<p>Now you have the patch in a file (in the example in the file ~/patch.diff.) That is important when you will have to send the patch.</p>
+<p></p>
+<p></p>
+<p>The More Common Case</p>
+<p></p>
+<p></p>
+<p>But normally, you do not just change one file and you do not keep the original version around to be able to make the difference later. But here too, there is a solution.</p>
+<p></p>
+<p></p>
+<p>The program cvs, which is used on the command line interact with the CVS, has a diff function too: cvs diff.</p>
+<p></p>
+<p></p>
+<p>You can run it like this and it will give you the difference of the current directory and all sub-directories below it. Of course, here too, you want to redirect the output.</p>
+<p></p>
+<p></p>
+<p>cvs diff -u -p &gt; ~/patch.diff</p>
+<p></p>
+<p></p>
+<p>There are useful variants too (shown here without redirection)</p>
+<p></p>
+<p>For just one file: cvs diff -u -p source.cpp</p>
+<p>For the current directory only: cvs diff -l -u -p</p>
+<p></p>
+<p>Please note: even if cvs can make the difference of a directory (cvs diff -u -p mydirectory), it is not recommended to do it for a patch that should be applied again. (The problem is that the person that will apply the patch will have to be more careful about how he applies it.)</p>
+<p></p>
+<p></p>
+<p>Non-Text Files</p>
+<p></p>
+<p></p>
+<p>TODO (In short: non-text files are not covered by diff or by cvs diff, so they need to be attached separately to the email.)</p>
+<p></p>
+<p></p>
+<p>New Files</p>
+<p></p>
+<p></p>
+<p>TODO (In short: cvs diff cannot take care of new file if you do not have a write access on the CVS. So those files need to be attached separately to the email.)</p>
+<p></p>
+<p></p>
+<p>How To Share the Patch?</p>
+<p></p>
+<p></p>
+<p>TODO (In short: patch bigger than a few 10KB should not be sent to the mailing list. If there is a bug registered at KDE Bugs, the patch should be attached there. If not, you should make them public on a Web server where you have access. If you have not, ask in the mailing list who would be interested by such a patch and send it to people that answer that they want your patch.)</p>
+<p></p>
+<p></p>
+<p>Preparing The Email</p>
+<p></p>
+<p></p>
+<p>Now you have a patch redirected into a file (for this example called patch.diff), you are ready to send it by email. But the first question: where?</p>
+<p></p>
+<p></p>
+<p>The best destination for patches is the corresponding developer mailing list (so for KOffice, the koffice-devel mailing list.)</p>
+<p></p>
+<p></p>
+<p>Please note that for KOffice, you can send patches to the koffice mailing list too. In case of doubt, you can send any patch for KDE to the kde-devel mailing list. (However with an increased risk that you would miss the right developer.) Of course, if you know exactly which developer will process the patch and that you know or that you suppose that he currently has time, then you can send it to him directly.</p>
+<p></p>
+<p></p>
+<p>Now that you have entered an email address, a good practice is to attach the patch to your file before writing anything else in the email. So you will not forget to attach it.</p>
+<p></p>
+<p></p>
+<p>A little note here: yes, in KOffice (and in KDE too and unlike Linux for example), we prefer to have the patches sent as attachments.</p>
+<p></p>
+<p></p>
+<p>Now you are ready to write the rest of the email. Please think of a title that matches your patch. (Think of having to find it again in the archives in a few months.) A good habit is to precede the title by [PATCH]. So for example a title could be [PATCH] Fix backup files.</p>
+<p></p>
+<p></p>
+<p>As for the body of the email, please tell to which file or directory your patch applies. For example for a file: The attached patch applies to the file koffice/kword/kwdoc.cc or for a directory: The attached patch applies to the directory koffice/kword. This help the developers to have an overview of which code has been modified.</p>
+<p></p>
+<p></p>
+<p>Then tell what your patch does. If it fixes a bug, then please give the bug number too. If the bug was not registered in KDE Bugs, then please describe instead the bug that is fixed.</p>
+<p></p>
+<p></p>
+<p>Tell also what could be useful to the developers, for examples: if you could not test completely the patch (and why) or if you need help to finish fixing the code.</p>
+<p></p>
+<p></p>
+<p>Now check the email again to see if you have not forgotten anything (especially to attach the patch) and you can send the email.</p>
+<p></p>
+<p></p>
+<p>And Now?</p>
+<p></p>
+<p></p>
+<p>Now you have to wait that a developer reacts on your patch. (If you are not subscribed to the mailing lists where you have sent the patch, then monitor the mailing list archives for such a message.)</p>
+<p></p>
+<p></p>
+<p>The reaction is normally one of the following:</p>
+<p></p>
+<p>No developer answers. (That is unfortunately happening from time to time.)</p>
+<p>The developer does not want your patch, as he is working on the same code.</p>
+<p>The developer does not like your patch.</p>
+<p>The developer finds that you should change a few things.</p>
+<p>The developer finds the patch good and tells that he will work on it.</p>
+<p>The developer accepts your patch as it is.</p>
+<p></p>
+<p>The first case is when nobody has answered. That perhaps means that you have chosen the wrong mailing list. Perhaps you have not explained correctly what the patch fixes or you have given a title that is not precise enough. If this happens, the developer might have overseen the patch. Perhaps the developer that should have answered has not any time currently. (That too happens unfortunately.) The best is to try to work a little more on the patch, make a better description and try again a second time, perhaps to another mailing list.</p>
+<p></p>
+<p></p>
+<p>If the developer tells that your patch conflicts with changes that he is currently doing, you could probably not do much against it. May be you can discuss with him how you can effectively work with him on this piece of code.</p>
+<p></p>
+<p></p>
+<p>If your patch was not accepted, you could work further on it. May be you could discuss the problem on the mailing list.</p>
+<p></p>
+<p></p>
+<p>If a developer wants a few changes, then work on the code to make the changes according to the critic. If you need help because you do not understand how to do the needed change, then ask it on the mailing list.</p>
+<p></p>
+<p></p>
+<p>If your patch was accepted, congratulation!</p>
+<p></p>
+<p></p>
+<p>Patches for KDE Bugs</p>
+<p></p>
+<p></p>
+<p>Another way of sharing your patch is to attach it to a bug report on KDE Bugs. Most of what was written in this tutorial applies here too, in an adapted form of course. Please note that you cannot attach a patch directly when reporting a new bug. However when the new bug is created, you can then attach files, therefore also patches.</p>
+</body></html>
+
+\NewEntry 0 hacking dbg-cli
+
+\NewEntry 1 notes about the pack send/receive
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>cmd list:<br />(set mode 1 //sets HTTP mode)</p>
+<p></p>
+<p>set mode on<br />set mapurlroot http://localhost/<br />set mapremoteroot /usr/local/apache/htdocs/<br />set maplocalroot /usr/local/apache/htdocs/<br />file /usr/local/apache/htdocs/texto.php<br />run</p>
+<p></p>
+<p><br />set mode on<br />set mapurlroot http://localhost/<br />set mapremoteroot /usr/local/apache/htdocs/<br />set maplocalroot /usr/local/apache/htdocs/<br />file /usr/local/apache/htdocs/bp/bp.php<br />run<br /></p>
+<p>============================</p>
+<p>First pack:<br />check header.cmd == DBGC_STARTUP<br /><br />#define DBGC_STARTUP = 1<br /><br />SOF_FLAGS = 3 <br />	-initialized on comamnd.cpp:<br />	sessionreq.SOF_flags = SOF_BREAKONLOAD | SOF_BREAKONFINISH;</p>
+<p>flags = 0<br />header.cmd = 1 (DBGC_STARTUP)</p>
+<p></p>
+<p>if (cmd == DBGC_STARTUP) { //first dbg pack? yes<br />  if (flags &amp; DBGF_STARTED)  //nop, flsgs == 0<br />	return -1; /* already started */</p>
+<p>    setsessionoptions(SOF_flags);  //setting SOF_BREAKONLOAD | SOF_BREAKONFINISH;</p>
+<p>}</p>
+<p></p>
+<p></p>
+<p></p>
+</body></html>
+
+\NewEntry 1 pcre changes
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>http://support.nusphere.com/viewtopic.php?t=1074&amp;highlight=pcre <br /><br /> Posted: Fri Oct 08, 2004 3:17 pm</p>
+<p>I use debian, and decided to install dbg-cli to see if I could use it's profiler. It turns out the profiler's not accessible from the CLI from what I can tell. </p>
+<p> </p>
+<p> Anyway, was successful in getting it to build with the pcre on my system, and gcc 3.x which has been in debian for a while now. </p>
+<p> </p>
+<p> Steps: </p>
+<p> </p>
+<p> 1. apt-get install php4-dev libpcre-dev </p>
+<p> 2. uncompress the dbg-cli source </p>
+<p> 3. modify the deferphpize script to find phpize in /usr/bin instead of /usr/local/bin. </p>
+<p> 4. run ./configure </p>
+<p> 5. modify dbgbase/UrlParse.cpp - put extern &quot;C&quot; around the pcre includes ... this part perhaps unnecessary </p>
+<p> 6. modify Makefile.in </p>
+<p> - remove &quot;pcre&quot; from SUBDIRS line </p>
+<p> 7. rm -rf pcre </p>
+<p> 8. modify dbg/Makefile </p>
+<p> 9. change -lpcre to -lpcreposix </p>
+<p> 10. sudo make install </p>
+<p> </p>
+<p> It works fine with remote debugging, but I had to set localroot and re</p>
+</body></html>
+
+\NewEntry 1 dbg-cli help
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>dbg&gt;help</p>
+<p>break        Set breakpoint at specified line.<br />If line number is specified, break at start of code for that line. With no arg, uses current execution address. Multiple breakpoints at one place are permitted, and useful if conditional.<br /></p>
+<p>bt Print backtrace of all stack frames, or innermost COUNT frames. With a negative argument, print outermost -COUNT frames.<br />Use of the 'full' qualifier also prints the values of the local variables.</p>
+<p><br />condition       Set a condition for breakpoint.<br /></p>
+<p>cont      Continue program being debugged, after error or breakpoint. If proceeding from breakpoint, a number N may be used as an argument, which means to set the ignore count of that breakpoint to N - 1 (so that the breakpoint won't break until the Nth time it is reached).<br /></p>
+<p>delete          Delete breakpoint.</p>
+<p>disable         Disable breakpoint.</p>
+<p>display         Print value of expression each time the program stops.</p>
+<p>down            Select and print stack frame called by this one. An argument says how many frames down to go.</p>
+<p>enable          Enable breakpoint.</p>
+<p>file            Use FILE as program (script) to be debugged. It is the program executed when you use the `run' command.If FILE cannot be found as specified, your execution directory path ($PATH) is searched for a command of that name.</p>
+<p>finish          Execute until selected stack frame returns. Upon return, the value returned is printed and put in the value history.</p>
+<p>frame           Select and print a stack frame. With no argument, print the selected stack frame.  (See also &quot;info frame&quot;). An argument specifies the frame to select. It can be a stack frame number or the address of the frame. With argument, nothing is printed if input is coming from a command file or a user-defined command.</p>
+<p>help            Print list of commands.</p>
+<p>info            Generic command for showing things about the program being debugged.</p>
+<p>kill            Kill execution of program being debugged.</p>
+<p>list            List specified function or line.</p>
+<p>next            Step program, proceeding through subroutine calls. Like the &quot;step&quot; command as long as subroutine calls do not happen; when they do, the call is treated as one instruction.</p>
+<p>print           Print value of expression.</p>
+<p>pwd             Print working directory.  This is used for your program as well.</p>
+<p>q               Exit dbg.</p>
+<p>quit            Exit dbg.</p>
+<p>run             Start debugged program (script). An URL or a path to the script has to be provided.</p>
+<p>set             set port -- Set TCP/IP port number.</p>
+<p>set mode -- Set HTTP mode of debugging.</p>
+<p>set cgiexec -- Set CGI executable.</p>
+<p>set mapurlroot -- Set URL root for mapping.</p>
+<p>set maplocalroot -- Set local root for mapping.</p>
+<p>set mapremoteroot -- Set remote root for mapping.</p>
+<p></p>
+<p>show            Common command for showing settings.</p>
+<p>show port -- Show TCP/IP port number.</p>
+<p>show mode -- Show mode of debugging.</p>
+<p>show cgiexec -- Show CGI executable to be used in local debugging mode.</p>
+<p>show mapurlroot -- Show URL root for mapping.</p>
+<p>show maplocalroot -- Show local root for mapping.</p>
+<p>show mapremoteroot -- Show remote root for mapping.</p>
+<p></p>
+<p>step            Step program until it reaches a different source line.</p>
+<p>tbreak          Set a temporary breakpoint.  Args like &quot;break&quot; command.</p>
+<p>Like &quot;break&quot; except the breakpoint is only temporary,</p>
+<p>so it will be deleted when hit.</p>
+<p>undisplay       Stop printing value(s) each time the program stops.</p>
+<p>up              Select and print stack frame that called this one.</p>
+<p>An argument says how many frames up to go.</p>
+<p></p>
+<p>where           Print backtrace of all stack frames, or innermost COUNT frames.</p>
+<p>With a negative argument, print outermost -COUNT frames.</p>
+<p>Use of the 'full' qualifier also prints the values of the local variables.</p>
+<p></p>
+</body></html>
+
+\NewEntry 1 conclusions
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>Seems that if I send a SETP_INTO and set the header.flags with only STARTED (w/o WAITACK), dbg doesnt send data like stack, etc....test this...<br /><br />Checking the sniffed packets , doesnt seem that the flags are that relevant.<br /><br />This is what I found out:<br />When the first pack arrives (SID pack), dbg sends the flag STARTED. Then, the client send a setopt with flag WAITACK (w/o STARTED)....only after receiving ACK on setopt, the client sends flag = 5(STARTED | WAITACK) with the packs. But, the flag 5 is only used when the client makes info requests. For commands like step, cont, etc...the flag is 1 (STARTED).<br /><br />#define DBGC_REPLY      0x0000    /* reply to previous DBGA_REQUEST request */</p>
+<p>#define DBGC_STARTUP    0x0001    /* script startup */</p>
+<p>#define DBGC_END      0x0002    /* script done */</p>
+<p>#define DBGC_BREAKPOINT   0x0003    /* user definded breakpoint occured */</p>
+<p>#define DBGC_STEPINTO_DONE  0x0004    /* step to the next statement is completed */</p>
+<p>#define DBGC_STEPOVER_DONE  0x0005    /* step to the next statement is completed */</p>
+<p>#define DBGC_STEPOUT_DONE 0x0006    /* step to the next statement is completed */</p>
+<p>#define DBGC_EMBEDDED_BREAK 0x0007    /* breakpoint caused by DebugBreak() function */</p>
+<p>#define DBGC_ERROR      0x0010    /* error occured */</p>
+<p>#define DBGC_LOG      0x0011    /* logging support */</p>
+<p>#define DBGC_SID      0x0012    /* send SID */</p>
+<p>#define DBGC_PAUSE      0x0013    /* pause current session as soon as possible */</p>
+<p></p>
+</body></html>
+
+\NewEntry 1 profile
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>After client send<br />TAG:  name:  CLIENT_tag_dbg_prof_c_request, <br />    test_loops: 1000, <br /><br />DBG (won windows) responded with :<br /><br />TAG:  name:  DBG_tag_dbg_prof_c_body, <br />     tm_freq_lo: 3579545, <br />     tm_freq_hi: 0, <br />     tm_diff_min: 2, <br />     tm_diff_max: 52, <br />     tm_diff_m: 2</p>
+<p><br />Looking at the source code:<br /><br />---request:<br /><br />test_loops: how many loops to do to calculate the diffs and med.<br /><br />----response<br /><br />tm_freq_lo/hi:<br /><br />is the frequency (cycles per second).<br />&quot;This value is our measurement of how many &quot;ticks&quot; or &quot;cycles&quot; per second this machine can do. The value returned isn't a relative value, so don't expect it to return 100 000 000, if the CPU its being run on is 100mhz. Its just a value we will use to base our calculations on. &quot;<br /><br />Diffs:<br /><br />From the given code looped &lt;test_llops&gt; times:<br /><br />	llong t = dbgTimeTicks();<br />	a = dbgTimeTicks() - t;<br /><br />tm_diff_min: is the smaller &quot;a&quot; value found.<br /><br />tm_diff_max: is the bigger &quot;a&quot; value found<br /><br />tm_diff_m: some kind of med value.<br /><br />----------------------------------------------------------------------------<br />code snaps:<br /><br />inline llong dbgTimeTicks() {<br />	struct timeval tv;<br />	gettimeofday(&amp;tv, NULL);<br />	return tv.tv_usec + ((llong)tv.tv_sec) * 1000000;<br />}</p>
+<p>inline llong dbgTimeFreq() {<br />	return 1000000;<br />}<br /></p>
+</body></html>
+
