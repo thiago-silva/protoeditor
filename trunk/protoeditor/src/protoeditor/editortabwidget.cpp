@@ -84,6 +84,7 @@ void EditorTabWidget::closeCurrentDocument()
   if((count() == 0) && !m_terminating)
   {
     m_window->actionStateChanged("has_nofileopened");
+    m_window->setCaption(QString::null);
   }
 
 //   m_closeGuard = false;
@@ -287,6 +288,8 @@ void EditorTabWidget::slotCurrentChanged(QWidget*)
 {
   if(m_terminating) return;
 
+  m_window->setCaption(currentDocumentPath());
+  
   if(m_currentView)
   {
     m_window->guiFactory()->removeClient(m_currentView);
