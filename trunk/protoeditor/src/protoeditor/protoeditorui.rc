@@ -36,7 +36,7 @@
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
       <Separator />
-      <Action name="profile"/>
+      <Action name="script_profile"/>
       <Separator />
       <Action name="debug_toggle_bp"/>
     </Menu>
@@ -83,17 +83,18 @@
 
   <State name="init">
     <enable>
+      <Action name="debug_start"/>
       <Action name="script_run"/>
+      <Action name="script_profile"/>
     </enable>
     <disable>
+      <Action name="file_close"/>
+      <Action name="file_close_all"/>
       <Action name="debug_stop"/>
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
-      <Action name="file_close"/>
-      <Action name="file_close_all"/>
       <Action name="debug_toggle_bp"/>
-      <Action name="profile"/>
     </disable>
   </State>
   
@@ -101,14 +102,13 @@
   <State name="debug_stopped">
     <enable>
       <Action name="debug_start"/>
-      <Action name="debug_toggle_bp"/>
+      <Action name="script_profile"/>
     </enable>
     <disable>
       <Action name="debug_stop"/>
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
-      <Action name="profile"/>      
     </disable>
   </State>
 
@@ -119,8 +119,10 @@
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
-      <Action name="profile"/>
     </enable>
+    <disable>
+      <Action name="script_profile"/>
+    </disable>
   </State>
   
   <State name="has_nofileopened">

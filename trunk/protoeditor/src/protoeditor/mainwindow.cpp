@@ -196,8 +196,8 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-  (void)new KToggleAction(i18n("Show Profile Dialog"), "", "Alt+P", m_debugger_manager,
-                          SLOT(slotProfile()), actionCollection(), "profile");
+  (void)new KAction(i18n("Profile"), "", "Alt+P", m_debugger_manager,
+  SLOT(slotProfile()), actionCollection(), "script_profile");
 
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
