@@ -46,7 +46,7 @@
 #include <kdebug.h>
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
-    : QObject(parent, name), m_debugger(0), m_window(window)
+  : QObject(parent, name), m_debugger(0), m_window(window), m_showProfileDialog(false)
 {}
 
 /******************************* internal functions ******************************************/
@@ -437,16 +437,10 @@ void DebuggerManager::slotNewDocument()
 
 void DebuggerManager::slotProfile()
 {
+  m_showProfileDialog = !m_showProfileDialog;
   if(m_debugger)
   {
-    KDialog* d = m_debugger->profileDialog();
-    if(d)
-    {
-      d->show();
-
-      m_window->setDebugStatusMsg("Profiling...");
-      m_debugger->profile();
-    }
+    m_debugger->enableProfile(m_showProfileDialog);
   }
 }
 
@@ -614,6 +608,12 @@ void DebuggerManager::slotBreakpointReached()
 void DebuggerManager::slotInternalError(const QString& message)
 {
   m_window->showError(message);
+}
+
+void DebuggerManager::slotProfileDialogClosed()
+{
+  m_showProfileDialog = false;
+  dynamic_cast<KToggleAction*>(m_window->actionCollection()->action("profile"))->setChecked(false);
 }
 
 #include "debuggermanager.moc"

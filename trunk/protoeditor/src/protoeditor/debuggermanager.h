@@ -91,7 +91,7 @@ private slots:
   //Debugger internal error (conection, listen port, etc)
   void slotInternalError(const QString&);
 
-
+  void slotProfileDialogClosed();
 private:
   void debugActiveScript();
   void debugCurrentSiteScript();
@@ -101,8 +101,9 @@ private:
   void loadDebugger();
   void clearDebugger();
 
-  AbstractDebugger* m_debugger;
-  MainWindow* m_window;
+  AbstractDebugger *m_debugger;
+  MainWindow       *m_window;
+  bool             m_showProfileDialog;
 };
 
 #endif
