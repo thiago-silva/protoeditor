@@ -100,13 +100,15 @@ signals:
   void sigDBGStarted();
   void sigDBGClosed();
   void sigStepDone();
-
+  void sigBreakpoint();
+  
 private slots:
   void slotIncomingConnection(QSocket*);
   void slotDBGClosed();
   void slotError(const QString&);
 
 private:
+  void processStepData();
   void requestProfileData();
   bool processHeader(DBGHeader* header);
   void shipStack();
@@ -125,6 +127,7 @@ private:
   DBGStack          *m_dbgStack;
   DBGFileInfo       *m_dbgFileInfo;
   QValueList<dbgint> m_varScopeRequestList; //so we know wich context the vars belong
+  bool              m_firsStep;
 
 };
 

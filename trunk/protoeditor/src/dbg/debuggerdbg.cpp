@@ -57,6 +57,7 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
   connect(m_net, SIGNAL(sigDBGClosed()), this, SLOT(slotDBGClosed()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
+  connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
 }
 
 DebuggerDBG::~DebuggerDBG()
@@ -526,27 +527,24 @@ void DebuggerDBG::slotDBGClosed()
   emit sigDebugEnded();
 }
 
-void DebuggerDBG::slotStepDone()
+void DebuggerDBG::processStepData()
 {
-  static bool firstStep = true;
-    
   m_currentExecutionPointID = CURLOC_SCOPE_ID;
   m_net->requestVariables(m_currentExecutionPointID, false);
   m_net->requestVariables(m_globalExecutionPointID, true);
   requestWatches(m_currentExecutionPointID);
+}
 
-  //DBGNet requests a Step when the connection is made.
-  //Than, after the user starts the debugger, he will see a "step done"
-  //on the statusbar. We don't want to notificate that first step
-  if(firstStep)
-  {
-    firstStep = false;
-  }
-  else
-  {
-    emit sigStepDone();
-  }
-  
+void DebuggerDBG::slotBreakpoint()
+{
+  processStepData();
+  emit sigBreakpointReached();
+}
+
+void DebuggerDBG::slotStepDone()
+{
+  processStepData();
+  emit sigStepDone();
 }
 
 #include "debuggerdbg.moc"

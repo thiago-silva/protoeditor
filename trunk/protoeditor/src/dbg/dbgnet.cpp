@@ -214,6 +214,9 @@ bool DBGNet::processHeader(DBGHeader* header)
     case DBGC_PAUSE:
       break;
     case DBGC_STARTUP:
+      
+      m_firsStep = true;
+      
       //so lets start too...
       m_requestor->addHeaderFlags(DBGF_STARTED);
 
@@ -244,21 +247,35 @@ bool DBGNet::processHeader(DBGHeader* header)
       }
       break;
     case DBGC_BREAKPOINT:
+      processStepData();
+      emit sigBreakpoint();
+      break;      
     case DBGC_STEPINTO_DONE:
     case DBGC_STEPOVER_DONE:
     case DBGC_STEPOUT_DONE:
-      m_dbgStack->clear();
-      m_requestor->requestSrcTree();
-      emit sigStepDone();
-      
-      if(m_profiling)
-      {
-        requestProfileData();
+      processStepData();
+
+      //We don't want to notify the first step. So lets hide it from the public.
+      //(The first step is forced on DBGC_STARTUP above)
+      if(!m_firsStep) {
+        emit sigStepDone();
+      } else {
+        m_firsStep = false;
       }
-      
       break;
   }
   return true;
+}
+
+void DBGNet::processStepData()
+{
+  m_dbgStack->clear();
+  m_requestor->requestSrcTree();
+
+  if(m_profiling)
+  {
+    requestProfileData();
+  }
 }
 
 void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack)

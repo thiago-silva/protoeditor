@@ -88,11 +88,13 @@ public slots:
 
 private slots:
   void slotStepDone();
+  void slotBreakpoint();
 private:
   bool startJIT();
   void stopJIT();
   void requestWatches(int scopeid);
   int getDBGOptions();
+  void processStepData();
 
   QString                 m_name;
   bool                    m_isJITActive;
