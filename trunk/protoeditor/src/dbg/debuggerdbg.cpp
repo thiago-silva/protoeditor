@@ -184,6 +184,7 @@ void DebuggerDBG::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoin
     //reload variables to get the new value
     m_net->requestGlobalVariables();
     m_net->requestLocalVariables(execPoint->id());
+    requestWatches(execPoint);
   }
 }
 
@@ -243,6 +244,7 @@ void DebuggerDBG::updateVar(const QString& result, const QString& str, const QSt
       manager()->updateLocalVars(array);
     }
   } else {
+    //TODO: assert-me
     kdDebug() << "Buggy!! Shouldn't pass here...\n";
   }
 
