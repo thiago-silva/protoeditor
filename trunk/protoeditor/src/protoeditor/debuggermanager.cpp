@@ -45,6 +45,8 @@ DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char
 {
 }
 
+/******************************* internal functions ******************************************/
+
 void DebuggerManager::init()
 {
   //-----WATCH UI
@@ -63,8 +65,8 @@ void DebuggerManager::init()
 
   //-------STACK UI
   connect(m_window->stackCombo(),
-          SIGNAL(changed(DebuggerExecutionLine*, DebuggerExecutionLine*)), this,
-          SLOT(slotComboStackChanged(DebuggerExecutionLine*, DebuggerExecutionLine*)));
+          SIGNAL(changed(DebuggerExecutionPoint*, DebuggerExecutionPoint*)), this,
+          SLOT(slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));
 
   //-----VARS UI
   connect(m_window->globalVarList(), SIGNAL(sigVarModified(Variable*)),
@@ -100,10 +102,9 @@ void DebuggerManager::init()
   */
 
   disableAllDebugActions();
-
   slotConfigurationChanged();
-  loadDebugger();
 }
+
 
 void DebuggerManager::disableAllDebugActions()
 {
@@ -131,12 +132,6 @@ void DebuggerManager::clearDebugger()
   m_debugger = NULL;
 }
 
-void DebuggerManager::slotConfigurationChanged()
-{
-  if(m_debugger) {
-    m_debugger->loadConfiguration();
-  }
-}
 
 void DebuggerManager::loadDebugger()
 {
@@ -148,7 +143,7 @@ void DebuggerManager::loadDebugger()
   if(m_debugger && (m_debugger->id() == DebuggerSettings::client())) {
     //is the same current debugger, just load its settings again
     m_debugger->endSession();
-    m_debugger->loadConfiguration();
+    m_debugger->reloadConfiguration();
   } else {
     if(m_debugger) clearDebugger();
 
@@ -158,7 +153,7 @@ void DebuggerManager::loadDebugger()
       return;
     }
 
-    m_debugger->loadConfiguration();
+    m_debugger->reloadConfiguration();
     connectDebugger();
   }
 
@@ -180,113 +175,27 @@ void DebuggerManager::connectDebugger()
   connect(m_debugger, SIGNAL(sigDebugEnded()),
           this, SLOT(slotDebugEnded()));
 
-  connect(m_debugger, SIGNAL(sigVariablesChanged(VariablesList_t*, bool)),
-          this, SLOT(slotVariablesChanged(VariablesList_t*, bool)));
 
-  connect(m_debugger, SIGNAL(sigStackChanged(DebuggerStack*)),
-          this, SLOT(slotStackChanged(DebuggerStack*)));
-
-  connect(m_debugger, SIGNAL(sigDebugMessage(int, QString, int, QString)),
-          this, SLOT(slotDebugMessage(int, QString, int, QString)));
-
-  connect(m_debugger, SIGNAL(sigDebugOutput(QString)),
-          this, SLOT(slotDebugOutput(QString)));
-
-  connect(m_debugger, SIGNAL(sigDebugError(QString)),
-          this, SLOT(slotDebugError(QString)));
-
-  connect(m_debugger, SIGNAL(sigInternalError(QString)),
-          this, SLOT(slotInternalError(QString)));
-
-  connect(m_debugger, SIGNAL(sigWatchChanged(Variable*)),
-          this, SLOT(slotWatchChanged(Variable*)));
-
-  connect(m_debugger, SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
-          this, SLOT(slotDebugBreakpointChanged(DebuggerBreakpoint*)));
+  connect(m_debugger, SIGNAL(sigInternalError(const QString&)),
+          this, SLOT(slotInternalError(const QString&)));
 }
 
-void DebuggerManager::slotVariablesChanged(VariablesList_t* list, bool isglobalContext)
+/******************************* Application interface ******************************************/
+
+void DebuggerManager::slotConfigurationChanged()
 {
-  if(isglobalContext) {
-    m_window->globalVarList()->setVariables(list);
-  } else {
-    m_window->localVarList()->setVariables(list);
-  }
+  loadDebugger();
+  //if(m_debugger) {
+  //  m_debugger->reloadConfiguration();
+  //}
 }
-
-void DebuggerManager::slotWatchChanged(Variable* var)
-{
-  m_window->watchList()->addWatch(var);
-}
-
-void DebuggerManager::slotStackChanged(DebuggerStack* stack)
-{
-  //**** dealing with the current stackCombo (MARKS stuff)
-  //-if stackCombo isn't empty, unmark the previously marked ExecutionMark
-  // (wich is the top context of the comboStack)
-  //-if stackCombo is not pointed to the top context, unmark the previously
-  // marked PreExecutionLine and request the vars for this context
-
-  DebuggerExecutionLine* execLine;
-  EditorTabWidget* ed = m_window->tabEditor();
-
-
-  if(m_window->stackCombo()->count() > 0) {
-    execLine =
-      m_window->stackCombo()->stack()->topExecutionLine();
-
-    ed->unmarkExecutionLine(execLine->filePath(), execLine->line());
-  }
-
-  if(m_window->stackCombo()->currentItem() != 0) {
-    execLine =
-      m_window->stackCombo()->selectedDebuggerExecutionLine();
-
-    ed->unmarkPreExecutionLine(execLine->filePath(), execLine->line());
-  }
-
-  //**** dealing with the new Stack (the argument)
-  //-set the current document/line according to the top context of the stack
-  //-mark the new ExecutionLine
-  //-sets the stack to the comboStack
-
-  execLine = stack->topExecutionLine();
-  ed->setCurrentDocument(execLine->filePath(), true);
-  ed->gotoLineAtFile(execLine->filePath(), execLine->line()-1);
-
-  ed->markExecutionLine(execLine->filePath(), execLine->line());
-
-  m_window->stackCombo()->setStack(stack);
-
-  //----updating data relative to the current stack context
-
-  //--request the local vars
-
-  execLine =
-    m_window->stackCombo()->selectedDebuggerExecutionLine();
-
-  if(m_debugger) {
-    m_debugger->requestLocalVariables(execLine);
-    //---requesting watches
-    m_debugger->requestWatches(execLine);
-  }
-}
-
-void DebuggerManager::slotDebugBreakpointChanged(DebuggerBreakpoint* bp)
-{
-  m_window->breakpointListView()->updateBreakpoint(bp);
-}
-
-/*** Application - DebuggerManager
- */
-
 
 void DebuggerManager::slotDebugStartSession()
 {
   if(m_debugger) {
     m_debugger->startSession();
   } else {
-    m_window->showError("No debugger selected");
+    m_window->showSorry("No debugger selected");
   }
 }
 
@@ -348,16 +257,17 @@ void DebuggerManager::slotAddWatch()
 
   if(!expression.isEmpty()) {
     if(m_debugger) {
-      m_debugger->addWatch(expression);
+      m_debugger->addWatch(expression,
+        m_window->stackCombo()->stack()->topExecutionPoint());
     }
   }
 }
 
-void DebuggerManager::slotComboStackChanged(DebuggerExecutionLine* old, DebuggerExecutionLine* nw)
+void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, DebuggerExecutionPoint* nw)
 {
   //-set the current document/line according to the new stack context
-  //-unmark the (possibly) previously PreExecutionLine according to the old stack context
-  //-mark the PreExecutionLine of the new stack context
+  //-unmark the (possibly) previously PreExecutionPoint according to the old stack context
+  //-mark the PreExecutionPoint of the new stack context
   //-request the variables for this context
 
   EditorTabWidget* ed = m_window->tabEditor();
@@ -365,10 +275,10 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionLine* old, Debugger
   m_window->tabEditor()->setCurrentDocument(nw->filePath(), true);
   ed->gotoLineAtFile(nw->filePath(), nw->line()-1);
 
-  ed->unmarkPreExecutionLine(old->filePath(), old->line());
+  ed->unmarkPreExecutionPoint(old->filePath(), old->line());
 
-  if(nw != m_window->stackCombo()->stack()->topExecutionLine()) {
-    ed->markPreExecutionLine(nw->filePath(), nw->line());
+  if(nw != m_window->stackCombo()->stack()->topExecutionPoint()) {
+    ed->markPreExecutionPoint(nw->filePath(), nw->line());
   }
 
   if(m_debugger) {
@@ -381,20 +291,8 @@ void DebuggerManager::slotVarModified(Variable* var)
   if(!m_debugger) return;
 
   m_debugger->modifyVariable(var,
-                             m_window->stackCombo()->selectedDebuggerExecutionLine());
+                             m_window->stackCombo()->selectedDebuggerExecutionPoint());
 }
-
-/*
-void DebuggerManager::slotBreakpointMarked(QString filePath, int line) {
-  m_debugger->addBreakpoint(filePath, line);
-  //m_window->breakpointListView()->addBreakpoint(filePath, line);
-}
-
-void DebuggerManager::slotBreakpointUnmark(QString filePath, int line) {
-  //m_debugger->removeBreakpoint(filePath, line);
-  //m_window->breakpointListView()->removeBreakpoint(filePath, line);
-}
-*/
 
 void DebuggerManager::slotBreakpointCreated(DebuggerBreakpoint* bp)
 {
@@ -418,19 +316,6 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   }
 }
 
-/*
-void DebuggerManager::slotBreakpointDeleted(DebuggerBreakpoint* bp)
-{
-  m_window->tabEditor()->unmarkActiveBreakpoint(
-    bp->filePath(), bp->line());
-
-  if(m_debugger)
-  {
-    m_debugger->removeBreakpoint(bp);
-  }
-}
-*/
-
 void DebuggerManager::slotWatchRemoved(Variable* var)
 {
   if(!m_debugger) return;
@@ -438,8 +323,81 @@ void DebuggerManager::slotWatchRemoved(Variable* var)
   m_debugger->removeWatch(var->name());
 }
 
-/*** DebuggerClient - DebuggerManager
- */
+/******************************* Debugger interface ******************************************/
+
+void DebuggerManager::updateStack(DebuggerStack* stack)
+{
+  //**** dealing with the current stackCombo (MARKS stuff)
+  //-if stackCombo isn't empty, unmark the previously marked ExecutionMark
+  // (wich is the top context of the comboStack)
+  //-if stackCombo is not pointed to the top context, unmark the previously
+  // marked PreExecutionPoint and request the vars for this context
+
+  DebuggerExecutionPoint* execPoint;
+  EditorTabWidget* ed = m_window->tabEditor();
+
+
+  if(m_window->stackCombo()->count() > 0) {
+    execPoint =
+      m_window->stackCombo()->stack()->topExecutionPoint();
+
+    ed->unmarkExecutionPoint(execPoint->filePath(), execPoint->line());
+  }
+
+  if(m_window->stackCombo()->currentItem() != 0) {
+    execPoint =
+      m_window->stackCombo()->selectedDebuggerExecutionPoint();
+
+    ed->unmarkPreExecutionPoint(execPoint->filePath(), execPoint->line());
+  }
+
+  //**** dealing with the new Stack (the argument)
+  //-set the current document/line according to the top context of the stack
+  //-mark the new ExecutionPoint
+  //-sets the stack to the comboStack
+
+  execPoint = stack->topExecutionPoint();
+  ed->setCurrentDocument(execPoint->filePath(), true);
+  ed->gotoLineAtFile(execPoint->filePath(), execPoint->line()-1);
+
+  ed->markExecutionPoint(execPoint->filePath(), execPoint->line());
+
+  m_window->stackCombo()->setStack(stack);
+
+  //----updating data relative to the current stack context
+
+  //--request the local vars
+
+  execPoint =
+    m_window->stackCombo()->selectedDebuggerExecutionPoint();
+
+  if(m_debugger) {
+    m_debugger->requestLocalVariables(execPoint);
+    //---requesting watches
+    m_debugger->requestWatches(execPoint);
+  }
+}
+
+void DebuggerManager::updateGlobalVars(VariablesList_t* vars) {
+  m_window->globalVarList()->setVariables(vars);
+}
+
+void DebuggerManager::updateLocalVars(VariablesList_t* vars)
+{
+  m_window->localVarList()->setVariables(vars);
+}
+
+void DebuggerManager::updateWatch(Variable* var)
+{
+  m_window->watchList()->addWatch(var);
+}
+
+//TODO: add error to logview
+void DebuggerManager::debugError(const QString& message /*line, file*/)
+{
+  m_window->showError(message);
+  //m_window->logListView()->add(ErrorMsg, message, line, file);
+}
 
 void DebuggerManager::slotSessionStarted()
 {
@@ -485,16 +443,16 @@ void DebuggerManager::slotDebugEnded()
 
   if(stack) {
     //remove the execution line mark
-    DebuggerExecutionLine* execLine;
-    execLine = stack->topExecutionLine();
+    DebuggerExecutionPoint* execPoint;
+    execPoint = stack->topExecutionPoint();
 
-    ed->unmarkExecutionLine(execLine->filePath(), execLine->line());
+    ed->unmarkExecutionPoint(execPoint->filePath(), execPoint->line());
 
     //remove the pre execution line mark if any
-    execLine =
-      m_window->stackCombo()->selectedDebuggerExecutionLine();
+    execPoint =
+      m_window->stackCombo()->selectedDebuggerExecutionPoint();
 
-    ed->unmarkPreExecutionLine(execLine->filePath(), execLine->line());
+    ed->unmarkPreExecutionPoint(execPoint->filePath(), execPoint->line());
   }
 
   m_window->actionCollection()->action("debug_stop")->setEnabled(false);
@@ -504,27 +462,9 @@ void DebuggerManager::slotDebugEnded()
 
 }
 
-void DebuggerManager::slotDebugError(QString message)
+void DebuggerManager::slotInternalError(const QString& message)
 {
   m_window->showError(message);
-}
-
-void DebuggerManager::slotInternalError(QString message)
-{
-  m_window->showError(message);
-}
-
-
-void DebuggerManager::slotDebugMessage(int type, QString message,
-                                       int line, QString file)
-{
-
-  m_window->logListView()->add(type, message, line, file);
-}
-
-void DebuggerManager::slotDebugOutput(QString str)
-{
-  m_window->edOutput()->setText(str);
 }
 
 #include "debuggermanager.moc"
