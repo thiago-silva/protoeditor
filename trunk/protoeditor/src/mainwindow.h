@@ -1,4 +1,4 @@
-/***************************************************************************
+                           /***************************************************************************
  *   Copyright (C) 2004 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
@@ -18,37 +18,92 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOWBASE_H
+#define MAINWINDOWBASE_H
 
-#include "mainwindowbase.h"
+#include <kmainwindow.h>
+#include <qstring.h>
 
+class EditorTabWidget;
+class DebuggerComboStack;
+class VariablesListView;
+class KLineEdit;
+class KPushButton;
+class WatchListView;
+class BreakpointListView;
+class LogListView;
+class KTextEdit;
+class KPushButton;
+class KStatusBar;
+class DebuggerManager;
 
-#include <qurloperator.h>
-#include <qnetworkprotocol.h>
-
-
-//class ProtoEditor;
-class QUrl;
-
-class MainWindow : public MainWindowBase {
-    Q_OBJECT
+class MainWindow : public KMainWindow
+{
+  Q_OBJECT
 
 public:
-    MainWindow(/*ProtoEditor*,*/ QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
-    virtual ~MainWindow();
+  MainWindow(QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
+  virtual ~MainWindow();
 
-  //void addDocumentToEditor(const QUrl&);
-  //void removeDocumentFromEditor(QString filePath);
+  EditorTabWidget*    tabEditor();
+  DebuggerComboStack* stackCombo();
+  VariablesListView*  globalVarList();
+  VariablesListView*  localVarList();
 
-  void showError(QString error);
-  QString openFile(QString path);
+  KLineEdit*          edAddWatch();
+  KPushButton*        btAddWatch();
+  WatchListView*      watchList();
+  BreakpointListView* breakpointListView();
+  LogListView*        logListView();
+  KTextEdit*          edOutput();
 
 
-protected:
-  virtual void closeEvent(QCloseEvent * e);
+  void showError(const QString&) const;
+  void showSorry(const QString&) const;
+
+private slots:
+  void slotOpenFile();
+  void slotCloseFile();
+  void slotSaveFile();
+  void slotSaveFileAs();
+  void slotQuit();
+  void slotShowSettings();
+  void slotEditKeys();
+  void slotEditToolbars();
+
+  void slotHasNoFiles();
+  void slotHasFiles();
+
+  void slotHasNoUndo();
+  void slotHasUndo();
+  void slotHasNoRedo();
+  void slotHasRedo();
+
 private:
-//  ProtoEditor* m_protoEditor;
+  void setupConfiguration();
+  void setupStatusBar();
+  void setupActions();
+  void createWidgets();
+
+  void saveCurrentPath();
+  //void saveGeometry();
+
+  EditorTabWidget* m_tabEditor;
+  DebuggerComboStack* m_stackCombo;
+  VariablesListView* m_globaVarList;
+  VariablesListView* m_localVarList;
+  KLineEdit* m_edAddWatch;
+  KPushButton* m_btAddWatch;
+  WatchListView* m_watchList;
+  BreakpointListView* m_breakpointList;
+  LogListView* m_logListView;
+  KTextEdit* m_edOutput;
+
+  KStatusBar* m_statusBar;
+
+  DebuggerManager* m_debugger_manager;
+  QString m_currentOpenPath;
+
 };
 
 #endif

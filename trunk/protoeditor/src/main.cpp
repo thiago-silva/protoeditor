@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "protoeditor.h"
+//#include "protoeditor.h"
 #include "mainwindow.h"
 #include <kapplication.h>
 #include <kaboutdata.h>
@@ -26,53 +26,53 @@
 #include <klocale.h>
 
 static const char description[] =
-    I18N_NOOP("A KDE KPart Application");
+  I18N_NOOP("A little KDE PHP Debugger client");
 
 static const char version[] = "0.5";
 
 static KCmdLineOptions options[] =
-{
+  {
     { "+[URL]", I18N_NOOP( "Document to open" ), 0 },
     KCmdLineLastOption
-};
+  };
 
 
 int main(int argc, char **argv)
 {
+  KAboutData about("protoeditor", I18N_NOOP("Protoeditor"), version, description,
+                   KAboutData::License_GPL, "(C) 2004 Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
+  about.addAuthor( "Thiago Silva", 0, "thiago.silva@kdemail.com" );
+  KCmdLineArgs::init(argc, argv, &about);
+  KCmdLineArgs::addCmdLineOptions( options );
 
 
-    KAboutData about("protoeditor", I18N_NOOP("Protoeditor"), version, description,
-         KAboutData::License_GPL, "(C) %{YEAR} Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
-    about.addAuthor( "Thiago Silva", 0, "thiago.silva@kdemail.com" );
-    KCmdLineArgs::init(argc, argv, &about);
-    KCmdLineArgs::addCmdLineOptions( options );
+  KApplication app;
+  //ProtoEditor *protoeditor = 0;
+  //ProtoEditor protoeditor;
+  MainWindow window;
 
 
-    KApplication app;
-    //ProtoEditor *protoeditor = 0;
-    ProtoEditor protoeditor;
+  if (app.isRestored())
+  {
+    RESTORE(MainWindow);
+  }
+  else
+  {
+    // no session.. just start up normally
 
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    //if (app.isRestored())
-    //{
-        //RESTORE(MainWindow);
-    //}
-    //else
-    //{
-        // no session.. just start up normally
-        KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    //protoeditor = new ProtoEditor();
+    //QWidget* mainWin = protoeditor.mainWindow();
+    app.setMainWidget(&window);
+    window.show();
 
-        //protoeditor = new ProtoEditor();
-        QWidget* mainWin = protoeditor.mainWindow();
-        app.setMainWidget( mainWin );
-        mainWin->show();
+    args->clear();
+  }
 
-        args->clear();
-    //}
+  // mainWin has WDestructiveClose flag by default, so it will delete itself.
+  return app.exec();
 
-    // mainWin has WDestructiveClose flag by default, so it will delete itself.
-    return app.exec();
-
-    //delete protoeditor;
+  //delete protoeditor;
 }
 

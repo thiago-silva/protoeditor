@@ -19,97 +19,106 @@
  ***************************************************************************/
 
 #include "debuggermanager.h"
+#include "mainwindow.h"
 #include "debuggerconfigurations.h"
 #include "debuggerstack.h"
 #include "dbugrconfigform.h"
 #include "editortabwidget.h"
 #include "abstractdebugger.h"
 #include "debuggerfactory.h"
-#include "protoeditor.h"
-#include "mainwindow.h"
 #include "debuggercombostack.h"
 #include "variableslistview.h"
 #include "watchlistview.h"
 #include "loglistview.h"
-#include <kapplication.h>
-#include <qcombobox.h>
-#include <qstatusbar.h>
-#include <qaction.h>
-#include <qlineedit.h>
-#include <ktextedit.h>
-#include <qpushbutton.h>
 #include "debuggerbreakpoint.h"
 #include "breakpointlistview.h"
 
-DebuggerManager::DebuggerManager(ProtoEditor* protoEditor, QObject *parent, const char* name)
+#include <kapplication.h>
+#include <kcombobox.h>
+#include <kstatusbar.h>
+#include <kaction.h>
+#include <klineedit.h>
+#include <ktextedit.h>
+#include <kpushbutton.h>
+
+
+DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
     : QObject(parent, name), m_debugger(0), m_debuggerConfigurations(0),
-    m_protoEditor(protoEditor)
+    m_window(window)
 {
   //---------MENU
-  connect(m_protoEditor->mainWindow()->debuggerStartSessionAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStartSession()));
-  connect(m_protoEditor->mainWindow()->debuggerEndSessionAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerEndSession()));
-  connect(m_protoEditor->mainWindow()->debuggerOptionsAction(), SIGNAL(activated()) , this, SLOT(slotShowDebuggerOptions()));
-  connect(m_protoEditor->mainWindow()->debuggerRunAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerRun()));
-  connect(m_protoEditor->mainWindow()->debuggerStopAction(), SIGNAL(activated()), this, SLOT(slotDebuggerStop()));
-  connect(m_protoEditor->mainWindow()->debuggerStepIntoAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStepInto()));
-  connect(m_protoEditor->mainWindow()->debuggerStepOverAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStepOver()));
-  connect(m_protoEditor->mainWindow()->debuggerStepOutAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStepOut()));
+  /*
+  connect(m_window->debuggerStartSessionAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStartSession()));
+  connect(m_window->debuggerEndSessionAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerEndSession()));
+  connect(m_window->debuggerOptionsAction(), SIGNAL(activated()) , this, SLOT(slotShowDebuggerOptions()));
+  connect(m_window->debuggerRunAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerRun()));
+  connect(m_window->debuggerStopAction(), SIGNAL(activated()), this, SLOT(slotDebuggerStop()));
+  connect(m_window->debuggerStepIntoAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStepInto()));
+  connect(m_window->debuggerStepOverAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStepOver()));
+  connect(m_window->debuggerStepOutAction(), SIGNAL(activated()) , this, SLOT(slotDebuggerStepOut()));
+  */
 
   //-----WATCH UI
-  connect(m_protoEditor->mainWindow()->btAddWatch(), SIGNAL(clicked()),
+  connect(m_window->btAddWatch(), SIGNAL(clicked()),
           this, SLOT(slotAddWatch()));
-  connect(m_protoEditor->mainWindow()->edAddWatch(), SIGNAL(returnPressed()),
+  connect(m_window->edAddWatch(), SIGNAL(returnPressed()),
           this, SLOT(slotAddWatch()));
 
-  connect(m_protoEditor->mainWindow()->watchList(), SIGNAL(sigWatchRemoved(Variable*)),
+  connect(m_window->watchList(), SIGNAL(sigWatchRemoved(Variable*)),
           this, SLOT(slotWatchRemoved(Variable*)));
 
+  /*
+  connect(m_window->watchList(), SIGNAL(sigVarModified(Variable*)),
+          this, SLOT(slotVarModified(Variable*)));
+  */
+
   //-------STACK UI
-  connect(m_protoEditor->mainWindow()->stackCombo(),
+  connect(m_window->stackCombo(),
           SIGNAL(changed(DebuggerExecutionLine*, DebuggerExecutionLine*)), this,
           SLOT(slotComboStackChanged(DebuggerExecutionLine*, DebuggerExecutionLine*)));
 
   //-----VARS UI
-  connect(m_protoEditor->mainWindow()->globalVarList(), SIGNAL(sigVarModified(Variable*)),
+  connect(m_window->globalVarList(), SIGNAL(sigVarModified(Variable*)),
           this, SLOT(slotVarModified(Variable*)));
 
-  connect(m_protoEditor->mainWindow()->localVarList(), SIGNAL(sigVarModified(Variable*)),
+  connect(m_window->localVarList(), SIGNAL(sigVarModified(Variable*)),
           this, SLOT(slotVarModified(Variable*)));
 
   //---BREAKPOINT UI -- TextEditor * BreakpointListview
-  connect(m_protoEditor->mainWindow()->tabEditor(),
+  connect(m_window->tabEditor(),
           SIGNAL(sigBreakpointMarked(QString, int )),
-          m_protoEditor->mainWindow()->breakpointListView(),
+          m_window->breakpointListView(),
           SLOT(slotBreakpointMarked(QString, int)));
 
-  connect(m_protoEditor->mainWindow()->tabEditor(),
+  connect(m_window->tabEditor(),
           SIGNAL(sigBreakpointUnmarked(QString, int )),
-          m_protoEditor->mainWindow()->breakpointListView(),
+          m_window->breakpointListView(),
           SLOT(slotBreakpointUnmarked(QString, int)));
 
   //------BREAKPOINT UI (from listview)
-  connect(m_protoEditor->mainWindow()->breakpointListView(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
+  connect(m_window->breakpointListView(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
           this, SLOT(slotBreakpointCreated(DebuggerBreakpoint*)));
 
-  connect(m_protoEditor->mainWindow()->breakpointListView(), SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
+  connect(m_window->breakpointListView(), SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
           this, SLOT(slotBreakpointChanged(DebuggerBreakpoint*)));
 
-  connect(m_protoEditor->mainWindow()->breakpointListView(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
+  connect(m_window->breakpointListView(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
           this, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
 
   /*
-  connect(m_protoEditor->mainWindow()->breakpointListView(), SIGNAL(sigBrekpointDeleted(DebuggerBreakpoint*)),
+  connect(m_window->breakpointListView(), SIGNAL(sigBrekpointDeleted(DebuggerBreakpoint*)),
           this, SLOT(slotBrekpointDeleted(DebuggerBreakpoint*)));
   */
-
-  m_protoEditor->mainWindow()->debuggerEndSessionAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerOptionsAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerRunAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStartSessionAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStepIntoAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStepOutAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStepOverAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStopAction()->setEnabled(false);
+/*
+  m_window->debuggerEndSessionAction()->setEnabled(false);
+  m_window->debuggerOptionsAction()->setEnabled(false);
+  m_window->debuggerRunAction()->setEnabled(false);
+  m_window->debuggerStartSessionAction()->setEnabled(false);
+  m_window->debuggerStepIntoAction()->setEnabled(false);
+  m_window->debuggerStepOutAction()->setEnabled(false);
+  m_window->debuggerStepOverAction()->setEnabled(false);
+  m_window->debuggerStopAction()->setEnabled(false);
+  */
 
   m_debuggerConfigurations = new DebuggerConfigurations();
 
@@ -119,7 +128,7 @@ DebuggerManager::DebuggerManager(ProtoEditor* protoEditor, QObject *parent, cons
   {
     loadDebugger();
   }
-  m_protoEditor->mainWindow()->debuggerOptionsAction()->setEnabled(true);
+  //m_window->debuggerOptionsAction()->setEnabled(true);
 }
 
 DebuggerManager::~DebuggerManager()
@@ -160,7 +169,7 @@ void DebuggerManager::loadDebugger()
   if(!m_debugger)
     return;
 
-  m_protoEditor->mainWindow()->debuggerStartSessionAction()->setEnabled(true);
+  //m_window->debuggerStartSessionAction()->setEnabled(true);
 }
 
 void DebuggerManager::connectDebugger()
@@ -207,17 +216,17 @@ void DebuggerManager::slotVariablesChanged(VariablesList_t* list, bool isglobalC
 {
   if(isglobalContext)
   {
-    m_protoEditor->mainWindow()->globalVarList()->setVariables(list);
+    m_window->globalVarList()->setVariables(list);
   }
   else
   {
-    m_protoEditor->mainWindow()->localVarList()->setVariables(list);
+    m_window->localVarList()->setVariables(list);
   }
 }
 
 void DebuggerManager::slotWatchChanged(Variable* var)
 {
-  m_protoEditor->mainWindow()->watchList()->addWatch(var);
+  m_window->watchList()->addWatch(var);
 }
 
 void DebuggerManager::slotStackChanged(DebuggerStack* stack)
@@ -229,21 +238,21 @@ void DebuggerManager::slotStackChanged(DebuggerStack* stack)
   // marked PreExecutionLine and request the vars for this context
 
   DebuggerExecutionLine* execLine;
-  EditorTabWidget* ed = m_protoEditor->mainWindow()->tabEditor();
+  EditorTabWidget* ed = m_window->tabEditor();
 
 
-  if(m_protoEditor->mainWindow()->stackCombo()->count() > 0)
+  if(m_window->stackCombo()->count() > 0)
   {
     execLine =
-      m_protoEditor->mainWindow()->stackCombo()->stack()->topExecutionLine();
+      m_window->stackCombo()->stack()->topExecutionLine();
 
     ed->unmarkExecutionLine(execLine->filePath(), execLine->line());
   }
 
-  if(m_protoEditor->mainWindow()->stackCombo()->currentItem() != 0)
+  if(m_window->stackCombo()->currentItem() != 0)
   {
     execLine =
-      m_protoEditor->mainWindow()->stackCombo()->selectedDebuggerExecutionLine();
+      m_window->stackCombo()->selectedDebuggerExecutionLine();
 
     ed->unmarkPreExecutionLine(execLine->filePath(), execLine->line());
   }
@@ -259,14 +268,14 @@ void DebuggerManager::slotStackChanged(DebuggerStack* stack)
 
   ed->markExecutionLine(execLine->filePath(), execLine->line());
 
-  m_protoEditor->mainWindow()->stackCombo()->setStack(stack);
+  m_window->stackCombo()->setStack(stack);
 
   //----updating data relative to the current stack context
 
   //--request the local vars
 
   execLine =
-    m_protoEditor->mainWindow()->stackCombo()->selectedDebuggerExecutionLine();
+    m_window->stackCombo()->selectedDebuggerExecutionLine();
 
   if(m_debugger)
   {
@@ -278,7 +287,7 @@ void DebuggerManager::slotStackChanged(DebuggerStack* stack)
 
 void DebuggerManager::slotDebugBreakpointChanged(DebuggerBreakpoint* bp)
 {
-  m_protoEditor->mainWindow()->breakpointListView()->updateBreakpoint(bp);
+  m_window->breakpointListView()->updateBreakpoint(bp);
 }
 
 /*** Application - DebuggerManager
@@ -286,7 +295,7 @@ void DebuggerManager::slotDebugBreakpointChanged(DebuggerBreakpoint* bp)
 void DebuggerManager::slotShowDebuggerOptions()
 {
   DebuggerConfigForm* configForm = new DebuggerConfigForm(
-                                     m_protoEditor->mainWindow());
+                                     m_window);
 
   configForm->setConfigurations(m_debuggerConfigurations);
 
@@ -312,7 +321,7 @@ void DebuggerManager::slotDebuggerStartSession()
   }
   else
   {
-    m_protoEditor->mainWindow()->showError("No debugger selected");
+    m_window->showError("No debugger selected");
   }
 }
 
@@ -327,12 +336,12 @@ void DebuggerManager::slotDebuggerRun()
 {
   if(!m_debugger) return;
 
-  if(m_protoEditor->mainWindow()->tabEditor()->count() != 0) {
-    QString filepath = m_protoEditor->mainWindow()->tabEditor()->documentPath(
-                       m_protoEditor->mainWindow()->tabEditor()->currentPageIndex());
+  if(m_window->tabEditor()->count() != 0) {
+    QString filepath = m_window->tabEditor()->documentPath(
+                       m_window->tabEditor()->currentPageIndex());
     m_debugger->run(filepath);
   } else {
-    m_protoEditor->mainWindow()->showError("Select a file first");
+    m_window->showError("Select a file first");
   }
 }
 
@@ -362,8 +371,8 @@ void DebuggerManager::slotDebuggerStepOut()
 
 void DebuggerManager::slotAddWatch()
 {
-  QString expression = m_protoEditor->mainWindow()->edAddWatch()->text();
-  m_protoEditor->mainWindow()->edAddWatch()->clear();
+  QString expression = m_window->edAddWatch()->text();
+  m_window->edAddWatch()->clear();
 
   if(!expression.isEmpty())
   {
@@ -381,14 +390,14 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionLine* old, Debugger
   //-mark the PreExecutionLine of the new stack context
   //-request the variables for this context
 
-  EditorTabWidget* ed = m_protoEditor->mainWindow()->tabEditor();
+  EditorTabWidget* ed = m_window->tabEditor();
 
-  m_protoEditor->mainWindow()->tabEditor()->setCurrentDocument(nw->filePath(), true);
+  m_window->tabEditor()->setCurrentDocument(nw->filePath(), true);
   ed->gotoLineAtFile(nw->filePath(), nw->line()-1);
 
   ed->unmarkPreExecutionLine(old->filePath(), old->line());
 
-  if(nw != m_protoEditor->mainWindow()->stackCombo()->stack()->topExecutionLine())
+  if(nw != m_window->stackCombo()->stack()->topExecutionLine())
   {
     ed->markPreExecutionLine(nw->filePath(), nw->line());
   }
@@ -404,18 +413,18 @@ void DebuggerManager::slotVarModified(Variable* var)
   if(!m_debugger) return;
 
   m_debugger->modifyVariable(var,
-                             m_protoEditor->mainWindow()->stackCombo()->selectedDebuggerExecutionLine());
+                             m_window->stackCombo()->selectedDebuggerExecutionLine());
 }
 
 /*
 void DebuggerManager::slotBreakpointMarked(QString filePath, int line) {
   m_debugger->addBreakpoint(filePath, line);
-  //m_protoEditor->mainWindow()->breakpointListView()->addBreakpoint(filePath, line);
+  //m_window->breakpointListView()->addBreakpoint(filePath, line);
 }
 
 void DebuggerManager::slotBreakpointUnmark(QString filePath, int line) {
   //m_debugger->removeBreakpoint(filePath, line);
-  //m_protoEditor->mainWindow()->breakpointListView()->removeBreakpoint(filePath, line);
+  //m_window->breakpointListView()->removeBreakpoint(filePath, line);
 }
 */
 
@@ -433,7 +442,7 @@ void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
 {
-  m_protoEditor->mainWindow()->tabEditor()->unmarkActiveBreakpoint(
+  m_window->tabEditor()->unmarkActiveBreakpoint(
     bp->filePath(), bp->line());
 
   if(m_debugger)
@@ -445,7 +454,7 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
 /*
 void DebuggerManager::slotBreakpointDeleted(DebuggerBreakpoint* bp)
 {
-  m_protoEditor->mainWindow()->tabEditor()->unmarkActiveBreakpoint(
+  m_window->tabEditor()->unmarkActiveBreakpoint(
     bp->filePath(), bp->line());
 
   if(m_debugger)
@@ -467,45 +476,45 @@ void DebuggerManager::slotWatchRemoved(Variable* var)
 
 void DebuggerManager::slotSessionStarted()
 {
-  m_protoEditor->mainWindow()->debuggerEndSessionAction()->setEnabled(true);
-  m_protoEditor->mainWindow()->debuggerStartSessionAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerRunAction()->setEnabled(true);
+//  m_window->debuggerEndSessionAction()->setEnabled(true);
+//   m_window->debuggerStartSessionAction()->setEnabled(false);
+//   m_window->debuggerRunAction()->setEnabled(true);
 }
 
 void DebuggerManager::slotSessionEnded()
 {
-  m_protoEditor->mainWindow()->debuggerEndSessionAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStartSessionAction()->setEnabled(true);
-  m_protoEditor->mainWindow()->debuggerRunAction()->setEnabled(false);
+//   m_window->debuggerEndSessionAction()->setEnabled(false);
+//   m_window->debuggerStartSessionAction()->setEnabled(true);
+//   m_window->debuggerRunAction()->setEnabled(false);
 }
 
 void DebuggerManager::slotDebugStarted()
 {
   m_debugger->addBreakpoints(
-    m_protoEditor->mainWindow()->breakpointListView()->breakpoints());
+    m_window->breakpointListView()->breakpoints());
 
 
-  m_protoEditor->mainWindow()->statusBar()->message("Debug started");
+  m_window->statusBar()->message("Debug started");
 
-  m_protoEditor->mainWindow()->debuggerStepIntoAction()->setEnabled(true);
-  m_protoEditor->mainWindow()->debuggerStepOutAction()->setEnabled(true);
-  m_protoEditor->mainWindow()->debuggerStepOverAction()->setEnabled(true);
-  m_protoEditor->mainWindow()->debuggerStopAction()->setEnabled(true);
+//   m_window->debuggerStepIntoAction()->setEnabled(true);
+//   m_window->debuggerStepOutAction()->setEnabled(true);
+//   m_window->debuggerStepOverAction()->setEnabled(true);
+//   m_window->debuggerStopAction()->setEnabled(true);
 }
 
 void DebuggerManager::slotDebugEnded()
 {
-  m_protoEditor->mainWindow()->breakpointListView()->resetBreakpointItems();
+  m_window->breakpointListView()->resetBreakpointItems();
 
-  m_protoEditor->mainWindow()->statusBar()->message("Debug ended");
+  m_window->statusBar()->message("Debug ended");
 
-  //m_protoEditor->mainWindow()->varList()->clear();
+  //m_window->varList()->clear();
 
-  //m_protoEditor->mainWindow()->logListView()->clear();
+  //m_window->logListView()->clear();
 
-  EditorTabWidget* ed = m_protoEditor->mainWindow()->tabEditor();
+  EditorTabWidget* ed = m_window->tabEditor();
 
-  DebuggerStack* stack = m_protoEditor->mainWindow()->stackCombo()->stack();
+  DebuggerStack* stack = m_window->stackCombo()->stack();
 
   if(stack)
   {
@@ -517,27 +526,27 @@ void DebuggerManager::slotDebugEnded()
 
     //remove the pre execution line mark if any
     execLine =
-      m_protoEditor->mainWindow()->stackCombo()->selectedDebuggerExecutionLine();
+      m_window->stackCombo()->selectedDebuggerExecutionLine();
 
     ed->unmarkPreExecutionLine(execLine->filePath(), execLine->line());
   }
 
-  //m_protoEditor->mainWindow()->stackCombo()->clear();
+  //m_window->stackCombo()->clear();
 
-  m_protoEditor->mainWindow()->debuggerStepIntoAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStepOutAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStepOverAction()->setEnabled(false);
-  m_protoEditor->mainWindow()->debuggerStopAction()->setEnabled(false);
+//   m_window->debuggerStepIntoAction()->setEnabled(false);
+//   m_window->debuggerStepOutAction()->setEnabled(false);
+//   m_window->debuggerStepOverAction()->setEnabled(false);
+//   m_window->debuggerStopAction()->setEnabled(false);
 }
 
 void DebuggerManager::slotDebugError(QString message)
 {
-  m_protoEditor->showError(message);
+  m_window->showError(message);
 }
 
 void DebuggerManager::slotInternalError(QString message)
 {
-  m_protoEditor->showError(message);
+  m_window->showError(message);
 }
 
 
@@ -545,12 +554,12 @@ void DebuggerManager::slotDebugMessage(int type, QString message,
                                        int line, QString file)
 {
 
-  m_protoEditor->mainWindow()->logListView()->add(type, message, line, file);
+  m_window->logListView()->add(type, message, line, file);
 }
 
 void DebuggerManager::slotDebugOutput(QString str)
 {
-  m_protoEditor->mainWindow()->edOutput()->setText(str);
+  m_window->edOutput()->setText(str);
 }
 
 #include "debuggermanager.moc"

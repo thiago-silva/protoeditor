@@ -21,7 +21,7 @@
 #ifndef EDITORTABWIDGET_H
 #define EDITORTABWIDGET_H
 
-#include <qtabwidget.h>
+#include <ktabwidget.h>
 #include <qurl.h>
 #include <qvaluelist.h>
 #include <ktexteditor/markinterface.h>
@@ -36,14 +36,14 @@ namespace KTextEditor {
 
 class DebuggerStack;
 
-class EditorTabWidget : public QTabWidget
+class EditorTabWidget : public KTabWidget
 {
 Q_OBJECT
 public:
   EditorTabWidget(QWidget *parent = 0, const char *name = 0);
   ~EditorTabWidget();
 
-  void setMainWindow(MainWindowBase*);
+  //void setMainWindow(MainWindow*);
 
   void addDocument(QUrl url);
   void closeCurrentDocument();
@@ -65,32 +65,59 @@ public:
   void markPreExecutionLine(QString, int line);
   void unmarkPreExecutionLine(QString, int line);
 
+
+  KTextEditor::View* anyView();
+
   void terminate();
 
 signals:
   void sigBreakpointMarked(QString, int);
   void sigBreakpointUnmarked(QString, int);
+  void sigHasNoFiles();
+  void sigHasFiles();
 
-private slots:
+  void sigHasNoUndo();
+  void sigHasUndo();
+
+  void sigHasNoRedo();
+  void sigHasRedo();
+
+  //void sigTabChanged(int);
+
+public slots:
     void slotUndo();
     void slotRedo();
     void slotCut();
     void slotCopy();
     void slotPaste();
+    void slotSelectAll();
+    /*
+    void slotSearch();
+    void slotSearchAgain();
+    void slotReplace();
+    void slotGotoLine();
+    */
     void slotConfigEditor();
+
+private slots:
     void slotMarkChanged();
+    void slotUndoChanged();
+
+    void slotCurrentChanged(QWidget*);
 
 private:
-  void disableEditMenu();
-  void enableEditMenu();
+//  void disableEditMenu();
+//  void enableEditMenu();
 
-  void disableConfigEditor();
-  void enableConfigEditor();
+//  void disableConfigEditor();
+//  void enableConfigEditor();
 
   typedef  struct {
       QString path;
       KTextEditor::View* view;
       QValueList<KTextEditor::Mark> marks;
+      bool hasUndo;
+      bool hasRedo;
   } Document_t;
 
   enum {

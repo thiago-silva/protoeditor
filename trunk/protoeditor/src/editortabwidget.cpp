@@ -20,7 +20,6 @@
 
 #include "editortabwidget.h"
 #include <qlayout.h>
-#include "mainwindowbase.h"
 #include "debuggerstack.h"
 #include <ktexteditor/document.h>
 #include <ktexteditor/editorchooser.h>
@@ -30,6 +29,7 @@
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
+#include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/undointerface.h>
 #include <kiconloader.h>
 #include <kdebug.h>
@@ -43,11 +43,14 @@
 #include "debuggerstack.h"
 
 EditorTabWidget::EditorTabWidget(QWidget *parent, const char *name)
-    : QTabWidget(parent, name), m_terminating(false), m_markGuard(false), m_window(0)
+    : KTabWidget(parent, name), m_terminating(false), m_markGuard(false), m_window(0)
 {
+  connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
 }
 
+/*
 void EditorTabWidget::setMainWindow(MainWindowBase* window) {
+
   connect(window->editUndoAction(), SIGNAL(activated()),
           this, SLOT(slotUndo()));
 
@@ -65,10 +68,12 @@ void EditorTabWidget::setMainWindow(MainWindowBase* window) {
 
   connect(window->configureEditorAction(), SIGNAL(activated()),
           this, SLOT(slotConfigEditor()));
+
   m_window = window;
   disableEditMenu();
   disableConfigEditor();
 }
+*/
 
 EditorTabWidget::~EditorTabWidget()
 {
@@ -95,8 +100,9 @@ void EditorTabWidget::addDocument(QUrl url)
     createDocument(url);
   }
 
-  enableEditMenu();
-  enableConfigEditor();
+  emit sigHasFiles();
+  //enableEditMenu();
+  //enableConfigEditor();
 }
 
 void EditorTabWidget::closeCurrentDocument()
@@ -119,8 +125,9 @@ void EditorTabWidget::closeCurrentDocument()
 
   if(count() == 0)
   {
-    disableEditMenu();
-    disableConfigEditor();
+    emit sigHasNoFiles();
+    //disableEditMenu();
+    //disableConfigEditor();
   }
 }
 
@@ -147,8 +154,9 @@ void EditorTabWidget::closeAllDocuments()
   }
 
   m_docList.clear();
-  disableEditMenu();
-  disableConfigEditor();
+  emit sigHasNoFiles();
+  //disableEditMenu();
+  //disableConfigEditor();
 }
 
 void EditorTabWidget::setCurrentDocument(QString filePath, bool forceOpen)
@@ -269,6 +277,11 @@ void EditorTabWidget::unmarkPreExecutionLine(QString filepath, int line)
 
 void EditorTabWidget::createDocument(QUrl url/*, QString text*/)
 {
+/*
+  KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view());
+  if (popupIf)
+     popupIf->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
+*/
 
   KTextEditor::View *view = openKDocument(url);
 
@@ -298,10 +311,14 @@ void EditorTabWidget::createDocument(QUrl url/*, QString text*/)
 
   connect(view->document(), SIGNAL(marksChanged()), this, SLOT(slotMarkChanged()));
 
+  connect(view->document(), SIGNAL(undoChanged()), this, SLOT(slotUndoChanged()));
 
   Document_t d;
   d.path = url.path();
   d.view = view;
+  d.hasUndo = false;
+  d.hasRedo = false;
+
   //d.marks = imark->marks();
   m_docList.append(d);
 }
@@ -324,7 +341,7 @@ int EditorTabWidget::documentIndex(QString filepath)
 KTextEditor::View* EditorTabWidget::openKDocument(QUrl url)
 {
   QWidget* tab = new QWidget(this);
-  QVBoxLayout *lay = new QVBoxLayout(tab, 11, 6);
+  QVBoxLayout *lay = new QVBoxLayout(tab, 1, 1);
 
   KTextEditor::Document *doc =
     KTextEditor::EditorChooser::createDocument(
@@ -359,7 +376,9 @@ void EditorTabWidget::slotUndo()
 
   KTextEditor::UndoInterface* undoif =
     dynamic_cast<KTextEditor::UndoInterface*>(doc);
-  if(undoif) undoif->undo();
+  if(undoif) {
+    undoif->undo();
+  }
 }
 
 void EditorTabWidget::slotRedo()
@@ -368,7 +387,10 @@ void EditorTabWidget::slotRedo()
 
   KTextEditor::UndoInterface* undoif =
     dynamic_cast<KTextEditor::UndoInterface*>(doc);
-  if(undoif) undoif->redo();
+  if(undoif) {
+    (*(m_docList.at(currentPageIndex()))).hasRedo = false;
+    undoif->redo();
+  }
 }
 
 void EditorTabWidget::slotCut()
@@ -386,11 +408,11 @@ void EditorTabWidget::slotCopy()
 {
   KTextEditor::View *v = (*(m_docList.at(currentPageIndex()))).view;
 
-  KTextEditor::ClipboardInterface* clip =
+  KTextEditor::ClipboardInterface* clipif =
     dynamic_cast<KTextEditor::ClipboardInterface*>(v);
-  if(clip)
+  if(clipif)
   {
-    clip->copy();
+    clipif->copy();
   }
 }
 
@@ -398,13 +420,50 @@ void EditorTabWidget::slotPaste()
 {
   KTextEditor::View *v = (*(m_docList.at(currentPageIndex()))).view;
 
-  KTextEditor::ClipboardInterface* clip =
+  KTextEditor::ClipboardInterface* clipif =
     dynamic_cast<KTextEditor::ClipboardInterface*>(v);
-  if(clip)
+  if(clipif)
   {
-    clip->paste();
+    clipif->paste();
   }
 }
+
+void EditorTabWidget::slotSelectAll() {
+  KTextEditor::Document *doc = (*(m_docList.at(currentPageIndex()))).view->document();
+
+  KTextEditor::SelectionInterface* selif =
+    dynamic_cast<KTextEditor::SelectionInterface*>(doc);
+  if(selif)
+  {
+    selif->selectAll();
+  }
+}
+/*
+void EditorTabWidget::slotSearch() {
+
+  KTextEditor::View *v = (*(m_docList.at(currentPageIndex()))).view;
+
+  KTextEditor::SearchInterface* searchif =
+    dynamic_cast<KTextEditor::ClipboardInterface*>(v);
+  if(searchif)
+  {
+    searchif->
+  }
+
+}
+
+void EditorTabWidget::slotSearchAgain() {
+  //
+}
+
+void EditorTabWidget::slotReplace() {
+  //
+}
+
+void EditorTabWidget::slotGotoLine() {
+
+}
+*/
 
 void EditorTabWidget::slotConfigEditor()
 {
@@ -578,33 +637,53 @@ void EditorTabWidget::loadMarks(Document_t& d, KTextEditor::Document* doc)
 }
 
 
-void EditorTabWidget::disableEditMenu()
-{
-  m_window->editCopyAction()->setEnabled(false);
-  m_window->editCutAction()->setEnabled(false);
-  m_window->editPasteAction()->setEnabled(false);
-  m_window->editRedoAction()->setEnabled(false);
-  m_window->editUndoAction()->setEnabled(false);
+void EditorTabWidget::slotCurrentChanged(QWidget* w) {
+  if((*(m_docList.at(indexOf(w)))).hasUndo) {
+    emit sigHasUndo();
+  } else {
+    emit sigHasNoUndo();
+  }
+
+  if((*(m_docList.at(indexOf(w)))).hasRedo) {
+    emit sigHasRedo();
+  } else {
+    emit sigHasNoRedo();
+  }
 }
 
-void EditorTabWidget::enableEditMenu()
-{
-  m_window->editCopyAction()->setEnabled(true);
-  m_window->editCutAction()->setEnabled(true);
-  m_window->editPasteAction()->setEnabled(true);
-  m_window->editRedoAction()->setEnabled(true);
-  m_window->editUndoAction()->setEnabled(true);
+
+KTextEditor::View* EditorTabWidget::anyView() {
+  if(count() == 0) return 0;
+
+  return m_docList.first().view;
 }
 
-void EditorTabWidget::disableConfigEditor()
-{
-  m_window->configureEditorAction()->setEnabled(false);
-}
 
-void EditorTabWidget::enableConfigEditor()
-{
-  m_window->configureEditorAction()->setEnabled(true);
-}
+void EditorTabWidget::slotUndoChanged() {
+  if(m_terminating) return;
 
+  KTextEditor::Document *doc = (*(m_docList.at(currentPageIndex()))).view->document();
+
+  KTextEditor::UndoInterface* undoif =
+    dynamic_cast<KTextEditor::UndoInterface*>(doc);
+  if(undoif) {
+    if(undoif->undoCount() == 0) {
+      (*(m_docList.at(currentPageIndex()))).hasUndo = false;
+      emit sigHasNoUndo();
+    } else if(undoif->undoCount() == 1) {
+      (*(m_docList.at(currentPageIndex()))).hasUndo = true;
+      emit sigHasUndo();
+    }
+
+    if(undoif->redoCount() == 0) {
+      (*(m_docList.at(currentPageIndex()))).hasRedo = false;
+      emit sigHasNoRedo();
+    } else if(undoif->redoCount() == 1) {
+      (*(m_docList.at(currentPageIndex()))).hasRedo = true;
+      emit sigHasRedo();
+    }
+
+  }
+}
 
 #include "editortabwidget.moc"

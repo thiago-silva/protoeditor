@@ -28,7 +28,8 @@ class DebuggerConfigurations;
 class DebuggerStack;
 class AbstractDebugger;
 class DebuggerBreakpoint;
-class ProtoEditor;
+//class ProtoEditor;
+class MainWindow;
 class DebuggerExecutionLine;
 
 class Tester;
@@ -39,7 +40,7 @@ public:
 
   enum { InfoMsg, WarningMsg, ErrorMsg, }; //Debugger session message types (non-internal)
 
-  DebuggerManager(ProtoEditor* protoEditor, QObject *parent = 0, const char* name = 0);
+  DebuggerManager(MainWindow* window, QObject *parent = 0, const char* name = 0);
 
   ~DebuggerManager();
 
@@ -92,7 +93,7 @@ private:
 
   AbstractDebugger* m_debugger;
   DebuggerConfigurations* m_debuggerConfigurations;
-  ProtoEditor* m_protoEditor;
+  MainWindow* m_window;
 };
 
 #endif
