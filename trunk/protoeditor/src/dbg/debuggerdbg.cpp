@@ -312,7 +312,7 @@ void DebuggerDBG::profile()
       m_profileDialog->clear();
     }
 
-    m_net->requestProfileData();
+    m_net->profile();
   }
 }
 
@@ -500,6 +500,11 @@ void DebuggerDBG::slotInternalError(const QString& msg)
 
 void DebuggerDBG::slotDBGStarted()
 {
+  if(m_profileDialog)
+  {
+    m_profileDialog->clear();
+  }
+
   m_isRunning = true;
   emit sigDebugStarted();
 }
@@ -521,7 +526,6 @@ void DebuggerDBG::slotDBGClosed()
 
 void DebuggerDBG::slotStepDone()
 {
-
   m_currentExecutionPointID = CURLOC_SCOPE_ID;
   m_net->requestVariables(m_currentExecutionPointID, false);
   m_net->requestVariables(m_globalExecutionPointID, true);
