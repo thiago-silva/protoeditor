@@ -40,6 +40,7 @@ class DebuggerSettingsWidget;
 class BrowserSettingsWidget;
 class KRecentFilesAction;
 class KURL;
+class KSelectAction;
 
 /*
 
@@ -72,6 +73,7 @@ public:
   void showError(const QString&) const;
   void showSorry(const QString&) const;
 
+  void actionStateChanged(const QString&);
 private slots:
   void slotOpenFile();
   void slotCloseFile();
@@ -96,14 +98,16 @@ private slots:
   void slotFileRecent(const KURL&);
 
   void slotClose();
+
+  void slotSettingsChanged();
 private:
   //void setupConfiguration();
   void setupStatusBar();
   void setupActions();
   void createWidgets();
+  void loadSites();
 
   //void saveCurrentPath();
-  void initSettings();
   void openFile(const KURL& url);
 
   EditorTabWidget* m_tabEditor;
@@ -118,6 +122,7 @@ private:
   KTextEdit* m_edOutput;
   //KTextEditor::EditInterface *m_edOutput;
 
+  KSelectAction      *m_siteAction;
   KStatusBar         *m_statusBar;
   KRecentFilesAction *m_actionRecent;
 

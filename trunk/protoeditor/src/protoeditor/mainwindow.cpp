@@ -25,8 +25,10 @@
 #include "loglistview.h"
 #include "debuggercombostack.h"
 #include "breakpointlistview.h"
-
+#include "sitesettings.h"
 #include "debuggermanager.h"
+#include "configdlg.h"
+#include "protoeditorsettings.h"
 
 #include <kapplication.h>
 #include <kstatusbar.h>
@@ -42,10 +44,12 @@
 #include <ktexteditor/view.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
+#include <qvaluelist.h>
+
 
 #include <ktextedit.h>
 //#include <kconfigdialog.h>
-#include "configdlg.h"
+
 
 /*
 #include <ktexteditor/document.h>
@@ -79,11 +83,44 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
   resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
   clearWState(WState_Polished);
 
-  m_tabEditor->init();
-
   m_debugger_manager->init();
 
   connect(kapp, SIGNAL(aboutToQuit()), this, SLOT(slotClose()));
+
+  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
+    this, SLOT(slotSettingsChanged()));
+
+  connect(m_siteAction, SIGNAL(activated(const QString&)),
+    ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+
+  loadSites();
+
+  stateChanged("has_nofileopened");
+  stateChanged("debug_disabled");
+}
+
+void MainWindow::loadSites()
+{
+  QStringList strsites;
+
+  QValueList<SiteSettings*> sitesList = ProtoeditorSettings::self()->siteSettingsList();
+  QValueList<SiteSettings*>::iterator it;
+
+  for(it = sitesList.begin(); it != sitesList.end(); ++it) {
+    strsites << (*it)->name();
+  }
+  m_siteAction->setItems(strsites);
+
+  if(strsites.count()) {
+
+    m_siteAction->setCurrentItem(0);
+    //note 1: KSelectAction doesn't emit activated() when calling setCurrentItem()
+
+    ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());
+  }
+
+  //note 2: KSelectAction doesn't updates its combo width, so we have to call this
+  m_siteAction->setComboWidth(150);
 }
 
 
@@ -136,17 +173,14 @@ void MainWindow::setupActions()
 
   (void)new KAction(i18n("Configure &Editor..."), 0, m_tabEditor, SLOT(slotConfigEditor()), actionCollection(), "settings_editor");
 
-  // DEBUGGER Actions
-  (void)new KAction(i18n("&Start Session"), "connect_creating", "F9", m_debugger_manager,
-                    SLOT(slotDebugStartSession()), actionCollection(), "debug_start_session");
+  m_siteAction = new KSelectAction("Site", 0, actionCollection(), "site");
+//   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
+//                     SLOT(slotDebugRun()), actionCollection(), "script_run");
 
-  (void)new KAction(i18n("&End Session"), "connect_no", "F10", m_debugger_manager,
-                    SLOT(slotDebugEndSession()), actionCollection(), "debug_end_session");
+  (void)new KAction(i18n("&Start"), "dbgrun", "F5", m_debugger_manager,
+                    SLOT(slotDebugRun()), actionCollection(), "debug_start");
 
-  (void)new KAction(i18n("&Run"), "dbgrun", "F5", m_debugger_manager,
-                    SLOT(slotDebugRun()), actionCollection(), "debug_run");
-
-  (void)new KAction(i18n("&Stop"), "stop", "ESC", m_debugger_manager,
+  (void)new KAction(i18n("Sto&p"), "stop", "ESC", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
   (void)new KAction(i18n("Step &Over"), "dbgnext", "F6", m_debugger_manager,
@@ -160,6 +194,7 @@ void MainWindow::setupActions()
 
   (void)new KAction(i18n("&Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
+
 }
 
 void MainWindow::createWidgets()
@@ -174,14 +209,10 @@ void MainWindow::createWidgets()
   m_tabEditor = new EditorTabWidget(splitter, this);
   splitter->setCollapsible(m_tabEditor, false);
   splitter->setOpaqueResize(true);
-  //mainFormBaseLayout->addWidget(m_tabEditor);
 
-  //QTabWidget* tabDebug = new QTabWidget(centralWidget());
   QTabWidget* tabDebug = new QTabWidget(splitter);
   splitter->setCollapsible(tabDebug, false);
-  //tabDebug->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, tabDebug->sizePolicy().hasHeightForWidth()));
   tabDebug->setGeometry(0,0,0,height()/15);
-  //mainFormBaseLayout->addWidget(tabDebug);
 
   QWidget* globalVarTab = new QWidget(tabDebug);
   QVBoxLayout* globalVarTabLayout = new QVBoxLayout(globalVarTab, 1, 1);
@@ -275,12 +306,17 @@ MainWindow::~MainWindow()
   delete m_debugger_manager;
 }
 
+void MainWindow::slotSettingsChanged()
+{
+  loadSites();
+}
+
 void MainWindow::slotOpenFile()
 {
 
   QStringList strList =
     KFileDialog::getOpenFileNames(
-      ":protoeditor_openphp", "*.php", this);
+      ":protoeditor", "*.php", this);
 
   if(strList.count()) {
     for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it ) {
@@ -297,10 +333,6 @@ void MainWindow::openFile(const KURL& url)
     m_tabEditor->addDocument(url);
     m_actionRecent->addURL(url);
 
-    //the active tab will be a brand new file with no history, so clear the
-    //undo/redo
-    //slotHasNoRedo();
-    //slotHasNoUndo();
   } else {
     m_actionRecent->removeURL(url);
     showSorry(url.prettyURL() + " is unreadable.");
@@ -327,7 +359,7 @@ void MainWindow::slotSaveFile()
 
 void MainWindow::slotSaveFileAs()
 {
-  KURL url = KFileDialog::getSaveURL(":protoeditor_openphp", "*.php", this);
+  KURL url = KFileDialog::getSaveURL(":protoeditor", "*.php", this);
 
   if(!url.isEmpty()) {
     if(!m_tabEditor->saveCurrentFileAs(url)) {
@@ -365,6 +397,11 @@ void MainWindow::slotEditKeys()
   dlg.configure();
 }
 
+void MainWindow::actionStateChanged(const QString& str)
+{
+  stateChanged(str);
+}
+
 void MainWindow::slotEditToolbars()
 {
   KEditToolbar dlg(actionCollection());
@@ -372,95 +409,9 @@ void MainWindow::slotEditToolbars()
     createGUI();
 }
 
-/*
-void MainWindow::slotHasNoFiles()
-{
-  actionCollection()->action("file_close")->setEnabled(false);
-  actionCollection()->action("file_save")->setEnabled(false);
-  actionCollection()->action("file_save_as")->setEnabled(false);
-
-  actionCollection()->action("edit_undo")->setEnabled(false);
-  actionCollection()->action("edit_redo")->setEnabled(false);
-  actionCollection()->action("edit_cut")->setEnabled(false);
-  actionCollection()->action("edit_copy")->setEnabled(false);
-  actionCollection()->action("edit_paste")->setEnabled(false);
-  actionCollection()->action("edit_select_all")->setEnabled(false);
-
-  actionCollection()->action("settings_editor")->setEnabled(false);
-}
-
-
-void MainWindow::slotHasFiles()
-{
-  actionCollection()->action("file_close")->setEnabled(true);
-  actionCollection()->action("file_save")->setEnabled(true);
-  actionCollection()->action("file_save_as")->setEnabled(true);
-
-  actionCollection()->action("edit_undo")->setEnabled(true);
-  actionCollection()->action("edit_redo")->setEnabled(true);
-  actionCollection()->action("edit_cut")->setEnabled(true);
-  actionCollection()->action("edit_copy")->setEnabled(true);
-  actionCollection()->action("edit_paste")->setEnabled(true);
-  actionCollection()->action("edit_select_all")->setEnabled(true);
-
-  actionCollection()->action("settings_editor")->setEnabled(true);
-}
-*/
-
-/*
-void MainWindow::slotHasNoUndo()
-{
-  actionCollection()->action("edit_undo")->setEnabled(false);
-}
-
-void MainWindow::slotHasUndo()
-{
-  actionCollection()->action("edit_undo")->setEnabled(true);
-}
-
-void MainWindow::slotHasNoRedo()
-{
-  actionCollection()->action("edit_redo")->setEnabled(false);
-}
-
-void MainWindow::slotHasRedo()
-{
-  actionCollection()->action("edit_redo")->setEnabled(true);
-}
-*/
 void MainWindow::slotShowSettings()
 {
   ConfigDlg::showDialog();
-/*
-  if(KConfigDialog::showDialog("settings"))
-    return;
-
-  //note: yeah, I couldn't find a simple solution to handle 2+ KConfigSkeleton's
-  //at the same time. KConfigDialog ctor forces us to inform a KConfigSkeleton.
-  KConfigDialog* dialog = new KConfigDialog(this, "settings", Settings::self());
-
-  initSettings();
-  dialog->addPage(m_debuggerSettings, i18n("Debugger"), "debugger");
-  dialog->addPage(m_browserSettings, i18n("Browser"), "network");
-
-  connect( dialog, SIGNAL(settingsChanged()),
-           m_debugger_manager, SLOT(slotConfigurationChanged()) );
-
-  dialog->show();
-  */
-}
-
-void MainWindow::initSettings()
-{
-/*
-  if(!m_debuggerSettings) {
-    m_debuggerSettings = new DebuggerSettingsWidget(0, "Debugger");
-  }
-
-  if(!m_browserSettings) {
-    m_browserSettings = new BrowserSettingsWidget(0, "Browser");
-  }
-*/
 }
 
 void MainWindow::showSorry(const QString& msg) const
@@ -513,7 +464,6 @@ LogListView* MainWindow::logListView()
   return m_logListView;
 }
 
-//KTextEditor::EditInterface* MainWindow::edOutput()
 KTextEdit* MainWindow::edOutput()
 {
   return m_edOutput;
