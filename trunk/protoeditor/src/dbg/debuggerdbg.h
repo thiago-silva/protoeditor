@@ -57,7 +57,6 @@ public:
 
   virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
   virtual void addBreakpoint(DebuggerBreakpoint*);
-  virtual void addBreakpoint(const QString&, int);
   virtual void changeBreakpoint(DebuggerBreakpoint*);
   virtual void removeBreakpoint(DebuggerBreakpoint*);
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint* execPoint);
@@ -69,22 +68,33 @@ public:
 
   /* Internal use (provided for DBGNet use) */
   void updateStack(DebuggerStack*);
-  void updateVar(const QString& result, const QString& str, const QString& error, long scope);
-  void updateWatch(const QString& result, const QString& str, const QString& error);
+  void updateVar(const QString& result, const QString& str, long scope);
+  void updateWatch(const QString& result, const QString& str);
+  void updateBreakpoint(int id, const QString& filePath, int line, int state, int hitcount, int skiphits,
+                               const QString& condition);
+  void debugError(const QString& msg);
+  void debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo);
+  void checkDBGVersion(int, int, const QString&);
+
+  DBGConfiguration* configuration();
 
 public slots:
   void slotInternalError(const QString&);
   void slotDBGStarted();
   void slotDBGClosed(); //end of debug
 
+private slots:
+  void slotStepDone();
 private:
-  bool                m_isSessionActive;
-  bool                m_isRunning;
+  bool                    m_isSessionActive;
+  bool                    m_isRunning;
 
-  DBGConfiguration   *m_configuration;
+  DBGConfiguration       *m_configuration;
 
-  DBGNet             *m_net;
-  QValueList<QString> m_wathcesList;
+  DBGNet                 *m_net;
+  DebuggerExecutionPoint *m_currentExecutionPoint;
+  QString                 m_output;
+  QValueList<QString>     m_wathcesList;
 };
 
 
