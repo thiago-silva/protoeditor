@@ -36,10 +36,10 @@ DebuggerSettingsWidget::DebuggerSettingsWidget(QWidget *parent, const char *name
  : QWidget(parent, name)
 {
 
-  m_vlayout = new QVBoxLayout(this, 3, 5);
+  m_vlayout = new QVBoxLayout(this, 3, 20);
 
   m_buttonGroup = new QButtonGroup(this, "kcfg_Client");
-  m_buttonGroup->setMinimumHeight(m_buttonGroup->height());
+  m_buttonGroup->setMinimumHeight(m_buttonGroup->height()+10);
 
   QHBoxLayout* groupLayout = new QHBoxLayout(m_buttonGroup, 10, 10);
 
