@@ -46,22 +46,23 @@ public:
   void addDocument(KURL url);
   void closeCurrentDocument();
   void closeAllDocuments();
-  void setCurrentDocument(QString, bool forceOpen = false);
+  void setCurrentDocument(const QString&, bool forceOpen = false);
 
   bool saveCurrentFile();
+  bool saveCurrentFileAs(const KURL & url);
 
-  void gotoLineAtFile(QString file, int line);
+  void gotoLineAtFile(const QString& file, int line);
 
-  QString documentPath(int index);
+  const QString& documentPath(int index);
 
-  void markActiveBreakpoint(QString, int);
-  void unmarkActiveBreakpoint(QString, int);
-  void markDisabledBreakpoint(QString, int);
-  void unmarkDisabledBreakpoint(QString, int);
-  void markExecutionPoint(QString, int);
-  void unmarkExecutionPoint(QString, int);
-  void markPreExecutionPoint(QString, int);
-  void unmarkPreExecutionPoint(QString, int);
+  void markActiveBreakpoint(const QString&, int);
+  void unmarkActiveBreakpoint(const QString&, int);
+  void markDisabledBreakpoint(const QString&, int);
+  void unmarkDisabledBreakpoint(const QString&, int);
+  void markExecutionPoint(const QString&, int);
+  void unmarkExecutionPoint(const QString&, int);
+  void markPreExecutionPoint(const QString&, int);
+  void unmarkPreExecutionPoint(const QString&, int);
 
 
   KTextEditor::View* anyView();
@@ -71,8 +72,9 @@ public:
   void terminate();
 
 signals:
-  void sigBreakpointMarked(QString, int);
-  void sigBreakpointUnmarked(QString, int);
+  void sigBreakpointMarked(const QString&, int);
+  void sigBreakpointUnmarked(const QString&, int);
+  void sigNewDocument();
 
 /*
   void sigHasNoFiles();
@@ -107,19 +109,6 @@ private slots:
     void slotCurrentChanged(QWidget*);
 
 private:
-  void enableEditorActions();
-  void disableEditorActions();
-  void enableUndoAction();
-  void disableUndoAction();
-  void enableRedoAction();
-  void disableRedoAction();
-
-
-//  void disableEditMenu();
-//  void enableEditMenu();
-
-//  void disableConfigEditor();
-//  void enableConfigEditor();
 
   typedef  struct {
       QString path;
@@ -129,22 +118,30 @@ private:
       bool hasRedo;
   } Document_t;
 
-  void createDocument(KURL url);
 
-  int documentIndex(QString filepath);
-
+  void                        createDocument(KURL url);
+  int                         documentIndex(const QString& filepath);
   KTextEditor::View*          openKDocument(KURL);
+  KTextEditor::MarkInterface* documentMarkIf(const QString&);
+  void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
+  void                        loadMarks(Document_t&, KTextEditor::Document*);
 
-  KTextEditor::MarkInterface* documentMarkIf(QString);
+  void enableEditorActions();
+  void disableEditorActions();
+  void enableUndoAction();
+  void disableUndoAction();
+  void enableRedoAction();
+  void disableRedoAction();
 
-  void dispatchMark(KTextEditor::Mark& mark, bool adding);
-
-  void loadMarks(Document_t&, KTextEditor::Document*);
 
   bool m_terminating;
   QValueList<Document_t> m_docList;
 
+  //
   bool m_markGuard;
+  //we don't want sigBreakpointUnmarked() to be emited when the document close.
+  bool m_closeGuard;
+
   MainWindow* m_window;
 };
 
