@@ -44,8 +44,7 @@
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
     : QObject(parent, name), m_debugger(0), m_window(window)
-{
-}
+{}
 
 /******************************* internal functions ******************************************/
 
@@ -89,7 +88,7 @@ void DebuggerManager::init()
           SLOT(slotBreakpointUnmarked(const QString&, int)));
 
   connect(m_window->tabEditor(), SIGNAL(sigNewDocument()),
-    this, SLOT(slotNewDocument()));
+          this, SLOT(slotNewDocument()));
 
   //------BREAKPOINT UI (from listview)
   connect(m_window->breakpointListView(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
@@ -102,11 +101,11 @@ void DebuggerManager::init()
           this, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
 
   connect(m_window->breakpointListView(), SIGNAL(sigDoubleClick(const QString&, int)),
-    this, SLOT(slotGotoLineAtFile(const QString&, int)));
+          this, SLOT(slotGotoLineAtFile(const QString&, int)));
 
   //-------- LOG
   connect(m_window->logListView(), SIGNAL(sigDoubleClick(const QString&, int)),
-    this, SLOT(slotGotoLineAtFile(const QString&, int)));
+          this, SLOT(slotGotoLineAtFile(const QString&, int)));
 
   /*
   connect(m_window->breakpointListView(), SIGNAL(sigBrekpointDeleted(DebuggerBreakpoint*)),
@@ -132,32 +131,35 @@ void DebuggerManager::clearDebugger()
 
 void DebuggerManager::loadDebugger()
 {
-/*
-  if(Settings::client() == -1) {
-    clearDebugger();
-    return;
-  }
-
-  if(m_debugger && (m_debugger->id() == Settings::client())) {
-    //is the same current debugger, just load its settings again
-    //m_debugger->reloadConfiguration();
-  } else {
-    if(m_debugger) clearDebugger();
-
-    if((m_debugger = DebuggerFactory::buildDebugger(this)) == NULL) {
-      m_window->showError("Error loading debugger client");
-      disableAllDebugActions();
+  /*
+    if(Settings::client() == -1) {
+      clearDebugger();
       return;
     }
+   
+    if(m_debugger && (m_debugger->id() == Settings::client())) {
+      //is the same current debugger, just load its settings again
+      //m_debugger->reloadConfiguration();
+    } else {
+      if(m_debugger) clearDebugger();
+   
+      if((m_debugger = DebuggerFactory::buildDebugger(this)) == NULL) {
+        m_window->showError("Error loading debugger client");
+        disableAllDebugActions();
+        return;
+      }
+   
+      //m_debugger->reloadConfiguration();
+      connectDebugger();
+    }
+    */
 
-    //m_debugger->reloadConfiguration();
-    connectDebugger();
-  }
-  */
-
-  if((m_debugger = DebuggerFactory::buildDebugger("DBG", this)) == NULL) {
+  if((m_debugger = DebuggerFactory::buildDebugger("DBG", this)) == NULL)
+  {
     m_window->showError("Error loading debugger client");
-  } else {
+  }
+  else
+  {
     connectDebugger();
   }
 }
@@ -187,17 +189,27 @@ void DebuggerManager::slotDebugRun()
 {
   if(!m_debugger) return;
 
-  if(m_window->tabEditor()->count() == 0) {
-    m_window->openFile();
-    if(m_window->tabEditor()->count() == 0) {
-      return;
-    }
+  if(m_debugger->isRunning())
+  {
+    m_debugger->continueExecution();
   }
-  
-  QString filepath = m_window->tabEditor()->currentDocumentPath();
+  else
+  {
 
-  m_debugger->run(filepath,
-    ProtoeditorSettings::self()->currentSiteSettings());
+    if(m_window->tabEditor()->count() == 0)
+    {
+      m_window->openFile();
+      if(m_window->tabEditor()->count() == 0)
+      {
+        return;
+      }
+    }
+
+    QString filepath = m_window->tabEditor()->currentDocumentPath();
+
+    m_debugger->run(filepath,
+                    ProtoeditorSettings::self()->currentSiteSettings());
+  }
 }
 
 void DebuggerManager::slotDebugStop()
@@ -229,9 +241,12 @@ void DebuggerManager::slotDebugToggleBp()
   QString filePath = m_window->tabEditor()->currentDocumentPath();
   int line = m_window->tabEditor()->currentDocumentLine();
 
-  if(!m_window->tabEditor()->hasBreakpointAt(filePath, line)) {
+  if(!m_window->tabEditor()->hasBreakpointAt(filePath, line))
+  {
     m_window->tabEditor()->markActiveBreakpoint(filePath, line);
-  } else {
+  }
+  else
+  {
     m_window->tabEditor()->unmarkActiveBreakpoint(filePath, line);
   }
 
@@ -243,7 +258,8 @@ void DebuggerManager::slotAddWatch()
   QString expression = m_window->edAddWatch()->text();
   m_window->edAddWatch()->clear();
 
-  if(m_debugger) {
+  if(m_debugger)
+  {
     m_debugger->addWatch(expression);
   }
 }
@@ -262,11 +278,13 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, Debugge
 
   ed->unmarkPreExecutionPoint(old->filePath(), old->line());
 
-  if(nw != m_window->stackCombo()->stack()->topExecutionPoint()) {
+  if(nw != m_window->stackCombo()->stack()->topExecutionPoint())
+  {
     ed->markPreExecutionPoint(nw->filePath(), nw->line());
   }
 
-  if(m_debugger) {
+  if(m_debugger)
+  {
     m_debugger->changeCurrentExecutionPoint(nw);
   }
 }
@@ -295,11 +313,13 @@ void DebuggerManager::slotBreakpointCreated(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 {
-  if(m_debugger) {
+  if(m_debugger)
+  {
     m_debugger->changeBreakpoint(bp);
   }
 
-  switch(bp->status()) {
+  switch(bp->status())
+  {
     case DebuggerBreakpoint::ENABLED:
       m_window->tabEditor()->unmarkDisabledBreakpoint(bp->filePath(), bp->line());
       m_window->tabEditor()->markActiveBreakpoint(bp->filePath(), bp->line());
@@ -317,7 +337,8 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   m_window->tabEditor()->unmarkActiveBreakpoint(
     bp->filePath(), bp->line());
 
-  if(m_debugger) {
+  if(m_debugger)
+  {
     m_debugger->removeBreakpoint(bp);
   }
 }
@@ -343,7 +364,8 @@ void DebuggerManager::slotNewDocument()
       m_window->tabEditor()->currentDocumentPath());
 
   QValueList<DebuggerBreakpoint*>::iterator it;
-  for(it = bplist.begin(); it != bplist.end(); ++it) {
+  for(it = bplist.begin(); it != bplist.end(); ++it)
+  {
     m_window->tabEditor()->markActiveBreakpoint((*it)->filePath(), (*it)->line());
   }
 }
@@ -363,14 +385,16 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   EditorTabWidget* ed = m_window->tabEditor();
 
 
-  if(m_window->stackCombo()->count() > 0) {
+  if(m_window->stackCombo()->count() > 0)
+  {
     execPoint =
       m_window->stackCombo()->stack()->topExecutionPoint();
 
     ed->unmarkExecutionPoint(execPoint->filePath(), execPoint->line());
   }
 
-  if(m_window->stackCombo()->currentItem() != 0) {
+  if(m_window->stackCombo()->currentItem() != 0)
+  {
     execPoint =
       m_window->stackCombo()->selectedDebuggerExecutionPoint();
 
@@ -392,7 +416,8 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   ed->markExecutionPoint(execPoint->filePath(), execPoint->line());
 }
 
-void DebuggerManager::updateGlobalVars(VariablesList_t* vars) {
+void DebuggerManager::updateGlobalVars(VariablesList_t* vars)
+{
   m_window->globalVarList()->setVariables(vars);
 }
 
@@ -421,7 +446,8 @@ void DebuggerManager::debugError(const QString& msg)
   m_window->showError(msg);
 }
 
-void DebuggerManager::updateOutput(const QString& output) {
+void DebuggerManager::updateOutput(const QString& output)
+{
   m_window->edOutput()->setText(output);
 }
 
@@ -469,7 +495,8 @@ void DebuggerManager::slotDebugEnded()
 
   DebuggerStack* stack = m_window->stackCombo()->stack();
 
-  if(stack) {
+  if(stack)
+  {
     //remove the execution line mark
     DebuggerExecutionPoint* execPoint;
     execPoint = stack->topExecutionPoint();
