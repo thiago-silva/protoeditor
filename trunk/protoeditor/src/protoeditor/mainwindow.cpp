@@ -150,7 +150,7 @@ void MainWindow::setupActions()
   KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
 
   m_actionRecent = KStdAction::openRecent(this, SLOT(slotFileRecent(const KURL&)), actionCollection());
-  m_actionRecent->loadEntries(kapp->config(),"Recent Files");
+  m_actionRecent->loadEntries(kapp->config());//,"Recent Files");
 
   KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
   KStdAction::save(this, SLOT(slotSaveFile()), actionCollection());
@@ -370,8 +370,8 @@ void MainWindow::slotSaveFileAs()
 
 void MainWindow::slotClose()
 {
-  //tabEditor()->terminate();
-  m_actionRecent->saveEntries(kapp->config(), "Recent Files");
+  m_actionRecent->saveEntries(kapp->config());
+  kapp->config()->sync();
 }
 
 void MainWindow::slotQuit()
