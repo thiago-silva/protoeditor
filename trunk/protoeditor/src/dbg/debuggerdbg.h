@@ -61,13 +61,13 @@ public:
   virtual void removeBreakpoint(DebuggerBreakpoint*);
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint* execPoint);
 
-  virtual void requestLocalVariables(DebuggerExecutionPoint*);
+  virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
   /* Internal use (provided for DBGNet use) */
   void updateStack(DebuggerStack*);
-  void updateVar(const QString& result, const QString& str, long scope);
+  void updateVar(const QString& result, const QString& str, bool isGlobal);
   void updateWatch(const QString& result, const QString& str);
   void updateBreakpoint(int id, const QString& filePath, int line, int state, int hitcount, int skiphits,
                                const QString& condition);
@@ -85,7 +85,7 @@ public slots:
 private slots:
   void slotStepDone();
 private:
-  void requestWatches(DebuggerExecutionPoint*);
+  void requestWatches(int scopeid);
 
   bool                    m_isSessionActive;
   bool                    m_isRunning;
@@ -93,7 +93,10 @@ private:
   DBGConfiguration       *m_configuration;
 
   DBGNet                 *m_net;
-  DebuggerExecutionPoint *m_currentExecutionPoint;
+  int                     m_currentExecutionPointID;
+  int                     m_globalExecutionPointID;
+  //DebuggerExecutionPoint *m_currentExecutionPoint; //aways the top of the stack
+  //DebuggerExecutionPoint *m_globalExecutionPoint;  //aways the bottom of the stack
   QString                 m_output;
   QValueList<QString>     m_wathcesList;
 };

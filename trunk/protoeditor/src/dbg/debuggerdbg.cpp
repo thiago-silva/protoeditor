@@ -38,8 +38,8 @@
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     : AbstractDebugger(parent), m_isSessionActive(false), m_isRunning(false),
-    m_configuration(0), m_net(0), m_currentExecutionPoint(0)
-
+    m_configuration(0), m_net(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
+    m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
   m_configuration = new DBGConfiguration(
                       Settings::localBaseDir(),
@@ -200,33 +200,35 @@ void DebuggerDBG::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoin
 {
   if(isRunning()) {
     QString name  =  var->compositeName();
-    QString value = var->value()->toString();
+    QString value =  var->value()->toString();
 
     if(value.isEmpty()) value = "null";
 
     m_net->requestWatch(name + "=" + value, execPoint->id());
 
-    //reload variables to get the new value
-    m_net->requestGlobalVariables();
-    m_net->requestLocalVariables(execPoint->id());
-    requestWatches(execPoint);
+    //reload variables (global/local/watches) to get the new value.
+
+    m_net->requestVariables(m_globalExecutionPointID, true);
+    m_net->requestVariables(m_currentExecutionPointID, false);
+    requestWatches(m_currentExecutionPointID);
   }
 }
 
-void DebuggerDBG::requestLocalVariables(DebuggerExecutionPoint* execPoint)
+void DebuggerDBG::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint)
 {
+  m_currentExecutionPointID = execPoint->id();
   if(isRunning()) {
-    m_net->requestLocalVariables(execPoint->id());
+    m_net->requestVariables(execPoint->id(), false);
   }
 }
+
 
 void DebuggerDBG::addWatch(const QString& expression)
 {
   m_wathcesList.append(expression);
 
   if(isRunning()) {
-    m_net->requestWatch(expression,
-      m_currentExecutionPoint?m_currentExecutionPoint->id():GLOBAL_SCOPE_ID);
+    m_net->requestWatch(expression, m_currentExecutionPointID);
   } else {
     updateWatch(QString::null, expression);
   }
@@ -241,12 +243,12 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::requestWatches(DebuggerExecutionPoint* execPoint)
+void DebuggerDBG::requestWatches(int scopeid)
 {
   if(isRunning()) {
     QValueList<QString>::iterator it;
     for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it) {
-      m_net->requestWatch(*it, execPoint->id());
+      m_net->requestWatch(*it, scopeid);
     }
   }
 }
@@ -255,11 +257,12 @@ void DebuggerDBG::requestWatches(DebuggerExecutionPoint* execPoint)
 
 void DebuggerDBG::updateStack(DebuggerStack* stack)
 {
-  m_currentExecutionPoint = stack->topExecutionPoint();
+  m_currentExecutionPointID = stack->topExecutionPoint()->id();
+  m_globalExecutionPointID  = stack->bottomExecutionPoint()->id();
   manager()->updateStack(stack);
 }
 
-void DebuggerDBG::updateVar(const QString& result, const QString& str, long scope)
+void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGlobal)
 {
   if(str.isEmpty()) {
     //global vars
@@ -267,7 +270,7 @@ void DebuggerDBG::updateVar(const QString& result, const QString& str, long scop
 
     VariablesList_t* array = p.parseAnonymousArray();
 
-    if(scope == GLOBAL_SCOPE_ID) {
+    if(isGlobal) {
       manager()->updateGlobalVars(array);
     } else {
       manager()->updateLocalVars(array);
@@ -417,11 +420,11 @@ void DebuggerDBG::slotDBGClosed()
 }
 
 void DebuggerDBG::slotStepDone() {
-  //assert m_currentExecutionPoint
 
-  m_net->requestGlobalVariables();
-  m_net->requestLocalVariables(m_currentExecutionPoint->id());
-  requestWatches(m_currentExecutionPoint);
+  m_currentExecutionPointID = CURLOC_SCOPE_ID;
+  m_net->requestVariables(m_currentExecutionPointID, false);
+  m_net->requestVariables(m_globalExecutionPointID, true);
+  requestWatches(m_currentExecutionPointID);
 }
 
 DBGConfiguration* DebuggerDBG::configuration()
