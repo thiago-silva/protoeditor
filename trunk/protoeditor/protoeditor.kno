@@ -56,7 +56,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -85,7 +84,7 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO Now
+\CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <li>Run</li>
@@ -108,7 +107,8 @@
 <li>with arguments</li>
 <li>[ ]run on console<br /><br /></li></ul></ul>
 <li>Add the other KTextEdit Actions</li>
-<li>Add &quot;New&quot; from KstdAction<br /></li>
+<li>Add &quot;New&quot; from KstdAction<br /><br /></li>
+<li>Implement binary execution / debug (and terminal output)<br /></li>
 <li>Add icons that Protoeditor uses on the distribution<br /></li>
 <li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags<br /></li>
 <li>Create context menus for the listviews</li>
@@ -119,6 +119,7 @@
 <li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget<br /></li>
 <li>Try to get default kate settings from the user's katerc</li></ul>
 </body></html>
+
 
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -132,7 +133,6 @@
 <li>Debugger &lt;combobox&gt; [DBG|...]<br /></li></ul>
 <p>	Site s = retrieveSite(remoteHost,debuggerName);<br />	useSite(s);<br /><br />If a debugger is triggered on a JIT, and no Site is found for it, a message should inform the user, showing the remote host/file called to be debuged.<br /><br />-----------------------------------------<br /><br /><br />Settings Dialog modules:<br /><br />[Debugger]<br />   |--[PHP]<br />   |--[Other]<br />[Site]<br />[Browser]<br />[Editor]<br /><br /><br />------------------------------------------------<br /><br />PHP Debugger<br />=========<br /><br />Default : &lt;combobox&gt; //if no site is selected, run in CGI/bin mode using this debugger<br /><br />[DBG] [Other]<br />           -----------------------------<br />                                              |<br />Listen on port: &lt;lineedit&gt;      |<br />other options....                     |<br />                                              |<br />-------------------------------------|<br /><br />-----------------------------------------------------------<br />Site configuration<br />===========<br /><br />Site name | Host | port | Remote base dir | Local base dir<br />Somesite   | host | 80   | /foo                    | /bar                <br /><br /><br />&lt;button add&gt;<br />&lt;button modify&gt;<br />&lt;buttom remove&gt;<br /><br /><br />*See KMAil identify configuration.<br />** If no site is selected to debug, run using local binary w/o directory mapping.<br /><br /><br />-------------------------------------------------------------------------------------------------------------------------------------------------------<br />MainWindow:<br /><br />use a combobox on toolbar with the list of sites to use (KSelectAction or something like that)<br /><br />*Local                 //use local binary application (ie. php, python...)<br />*&lt;separator&gt;<br />*Site1<br />*Site2<br /><br /><br />&quot;Run/Debug/Start session&quot; buttom has a dropdown menu with the debuggers associated with the current file's language (if no extension, show all debuggers on a multilevel menu with &quot;language&quot; as top level items) so the user can quickly change the debugger instead of changing default values on the settings.<br />	*<span style="color:#ff0000">This might not be good. Since we'll end up with 2+ toolbar buttons with the same dropdown menu. Maybe is better having another combobox on toolbar to hold the debuggers. Or, maybe, no combobox: just 2 menus, one for the site, other for the debugger (the last, I think would be a sub menu of the current 'Debug' menu)</span><br /></p>
 </body></html>
-
 
 \NewEntry 1 Bug reminder
 
@@ -447,7 +447,7 @@
 <p> method from QObject which tries to do the same thing as delete this in a safer way.</p>
 </body></html>
 
-\CurrentEntry 1 patch2
+\NewEntry 1 patch2
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>http://developer.kde.org/documentation/misc/sendingpatches.php<br /><br />Abstract</p>
 <p></p>

@@ -1,7 +1,231 @@
+2005-02-25 21:19  thiago_silva
+
+	* src/commonphp/variableparser.cpp (1.3):
+	  -removed old debug code
+
+2005-02-25 20:32  thiago_silva
+
+	* src/protoeditor/: variableslistview.cpp (1.5),
+	  variableslistview.h (1.3):
+	  * New Feature:
+	  -Copy variables to clipboard
+
+2005-02-25 20:31  thiago_silva
+
+	* src/: common/variable.cpp (1.2), common/variable.h (1.2),
+	  commonphp/phpvariable.cpp (1.3), commonphp/phpvariable.h (1.2):
+	  -Improved toString()
+
+2005-02-25 20:30  thiago_silva
+
+	* data/icons/: hi22-action-dbgrun.png (1.2),
+	  hi22-action-dbgstart.png (1.1):
+	  renamed icons
+
+2005-02-25 18:41  thiago_silva
+
+	* src/common/abstractdebugger.h (1.8):
+	  -Removed DebuggerSession related functions
+	  -Removed Settings related functions
+
+2005-02-25 18:40  thiago_silva
+
+	* src/dbg/: dbgnet.cpp (1.10), dbgnet.h (1.5):
+	  -Workarounds for SOF_BREAKONLOAD
+
+2005-02-25 18:36  thiago_silva
+
+	* src/dbg/: dbgsettingswidget.cpp (1.2), dbgsettingswidget.h (1.2),
+	  dbgsettings.cpp (1.2), dbgsettings.h (1.2):
+	  -PHPSettingsWidget must have a way to signal the debugger widgets
+	  (the tabs) to populate themselves, so new interface (DebuggerTab)
+	  added to be implemented by those debugger widgets.
+
+2005-02-25 18:35  thiago_silva
+
+	* src/dbg/: debuggerdbg.cpp (1.12), debuggerdbg.h (1.8):
+	  -Removed DebuggerSession related functions
+	  -Implemented JIT handler (old DebuggerSession)
+	  -Complete Settings aware (DBG Options)
+
+2005-02-25 18:33  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.12), debuggermanager.h
+	  (1.7):
+	  -Using KXMLGUIClient::stateChange()
+	  -Removed DebuggerSession related functions
+
+2005-02-25 18:31  thiago_silva
+
+	* src/protoeditor/: editortabwidget.cpp (1.10), editortabwidget.h
+	  (1.5):
+	  -Using KXMLGUIClient::stateChange()
+
+2005-02-25 18:31  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.8), mainwindow.h (1.4):
+	  -Added site combobox to toolbar ("site" action)
+	  -Set communication between MainWindow and ProtoeditorSettings so
+	  it know when the user selects a Site.
+	  -Using KXMLGUIClient::stateChange()
+
+2005-02-25 18:28  thiago_silva
+
+	* src/protoeditor/protoeditorui.rc (1.3):
+	  -Added State tags
+	  -Added "site" action
+	  -Added "script_run" action
+
+2005-02-25 18:27  thiago_silva
+
+	* src/settings/widgets/: configdlg.cpp (1.2), configdlg.h (1.2):
+	  -update the widgets with the current settings everytime the
+	  dialog is about to be shown
+
+2005-02-25 18:24  thiago_silva
+
+	* src/settings/widgets/: phpsettingswidget.cpp (1.2),
+	  phpsettingswidget.h (1.2), extoutputsettingswidget.cpp (1.2),
+	  extoutputsettingswidget.h (1.2):
+	  -populate() added
+
+2005-02-25 18:23  thiago_silva
+
+	* src/settings/widgets/: sitesettingswidget.cpp (1.2),
+	  sitesettingswidget.h (1.2):
+	  -Added convenience Site class to be used internally.
+	  * Bug Fixes:
+	  -Clear the site map and listbox before populating, so we don't
+	  get replicates.
+
+2005-02-25 18:21  thiago_silva
+
+	* src/settings/debuggersettingsinterface.h (1.2):
+	  -PHPSettingsWidget must have a way to signal the debugger widgets
+	  (the tabs) to populate themselves, so new interface (DebuggerTab)
+	  added to be implemented by those debugger widgets.
+
+2005-02-25 18:17  thiago_silva
+
+	* src/settings/: phpsettings.cpp (1.2), extoutputsettings.cpp
+	  (1.2):
+	  -read config on load
+
+2005-02-25 18:17  thiago_silva
+
+	* src/settings/: protoeditorsettings.cpp (1.2),
+	  protoeditorsettings.h (1.2):
+	  -Improved Site query.
+	  -Set communication between MainWindow and ProtoeditorSettings so
+	  it know when the user selects a Site.
+	  -inform everyone when settings change.
+	  * Bug Fixes:
+	  When clearSites(), remove it from the protoeditorrc.
+
+2005-02-25 01:55  thiago_silva
+
+	* configure.in (1.9), protoeditor.kdevelop (1.11),
+	  src/common/abstractdebugger.h (1.7), src/dbg/Makefile.am (1.5),
+	  src/dbg/dbgconfiguration.cpp (1.4), src/dbg/dbgconfiguration.h
+	  (1.4), src/dbg/dbgfileinfo.cpp (1.6), src/dbg/dbgfileinfo.h
+	  (1.5), src/dbg/dbgnet.cpp (1.9), src/dbg/dbgnet.h (1.4),
+	  src/dbg/dbgrequestor.cpp (1.8), src/dbg/dbgrequestor.h (1.6),
+	  src/dbg/dbgsettings.cpp (1.1), src/dbg/dbgsettings.h (1.1),
+	  src/dbg/dbgsettingswidget.cpp (1.1), src/dbg/dbgsettingswidget.h
+	  (1.1), src/dbg/debuggerdbg.cpp (1.11), src/dbg/debuggerdbg.h
+	  (1.7), src/protoeditor/Makefile.am (1.2),
+	  src/protoeditor/debuggerfactory.cpp (1.3),
+	  src/protoeditor/debuggerfactory.h (1.2),
+	  src/protoeditor/debuggermanager.cpp (1.11),
+	  src/protoeditor/debuggermanager.h (1.6),
+	  src/protoeditor/mainwindow.cpp (1.7), src/settings/Makefile.am
+	  (1.6), src/settings/browsersettingswidget.cpp (1.4),
+	  src/settings/browsersettingswidget.h (1.3),
+	  src/settings/debuggersettingsinterface.h (1.1),
+	  src/settings/debuggersettingswidget.cpp (1.5),
+	  src/settings/debuggersettingswidget.h (1.3),
+	  src/settings/extoutputsettings.cpp (1.1),
+	  src/settings/extoutputsettings.h (1.1),
+	  src/settings/phpsettings.cpp (1.1), src/settings/phpsettings.h
+	  (1.1), src/settings/protoeditorsettings.cpp (1.1),
+	  src/settings/protoeditorsettings.h (1.1),
+	  src/settings/settings.kcfg (1.3), src/settings/settings.kcfgc
+	  (1.2), src/settings/sitesettings.cpp (1.1),
+	  src/settings/sitesettings.h (1.1),
+	  src/settings/widgets/Makefile.am (1.1),
+	  src/settings/widgets/configdlg.cpp (1.1),
+	  src/settings/widgets/configdlg.h (1.1),
+	  src/settings/widgets/extoutputsettingswidget.cpp (1.1),
+	  src/settings/widgets/extoutputsettingswidget.h (1.1),
+	  src/settings/widgets/phpsettingswidget.cpp (1.1),
+	  src/settings/widgets/phpsettingswidget.h (1.1),
+	  src/settings/widgets/sitesettingsdialog.cpp (1.1),
+	  src/settings/widgets/sitesettingsdialog.h (1.1),
+	  src/settings/widgets/sitesettingswidget.cpp (1.1),
+	  src/settings/widgets/sitesettingswidget.h (1.1):
+	  -Major changes on the way settings are handled.
+	  -Using manual KConfigSkeleton files all the way (removed kcfg
+	  files to have a uniform settings impl).
+	  -Beginning of sites implementation.
+	  -Debugger are responsable to register their own settings on the
+	  global application settings and provide a QWidget that represent
+	  those settings.
+
+2005-02-23 23:11  thiago_silva
+
+	* src/dbg/: dbgnet.cpp (1.8), dbgnet.h (1.3):
+	  * Bug Fixes:
+	  Workaround to get the actual global variables (on nested
+	  functions, using GLOBAL_SCOPE_ID to request global vars wasn't
+	  sufficient)
+
+2005-02-23 23:10  thiago_silva
+
+	* src/dbg/: debuggerdbg.cpp (1.10), debuggerdbg.h (1.6):
+	  -Outsiders cannot request variables anymore.
+	  -Added function to inform the debugger that the user changed the
+	  current execution point
+	  * Bug Fixes:
+	  Workaround to get the actual global variables (on nested
+	  functions, using GLOBAL_SCOPE_ID to request global vars wasn't
+	  sufficient)
+
+2005-02-23 23:06  thiago_silva
+
+	* src/common/abstractdebugger.h (1.6):
+	  -Outsiders cannot request variables anymore.
+	  -Added function to inform the debugger that the user changed the
+	  current execution point
+
+2005-02-23 23:05  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.10), debuggermanager.h
+	  (1.5):
+	  -Spliting slotModifyVar functions so we know wich execution point
+	  to use (current or global) on the request.
+	  -Manager cannot request variables anymore. All it can do is tell
+	  the debugger that the user changed the current executuion point.
+
+2005-02-21 19:17  thiago_silva
+
+	* src/dbg/dbgrequestor.cpp (1.7):
+	  * Bug Fixes:
+	  When closing protoeditor and debugger is running, an error
+	  message appears about aborted Http conection.
+
+2005-02-21 19:15  thiago_silva
+
+	* src/: common/abstractdebugger.h (1.5), dbg/debuggerdbg.cpp (1.9),
+	  dbg/debuggerdbg.h (1.5), protoeditor/debuggermanager.cpp (1.9):
+	  * Bug Fixes:
+	  #1145284
+
+2005-02-15 19:47  tag BETA_0_5_3_2
+
 2005-02-15 19:47  thiago_silva
 
 	* src/dbg/: dbgconnection.cpp (1.4), dbgconnection.h (1.3),
-	  dbgnet.cpp (1.7):
+	  dbgnet.cpp (1.7) (utags: BETA_0_5_3_2):
 	  -DBGConnection was poorly implemented to handle stop listening to
 	  port.
 
@@ -9,7 +233,8 @@
 
 	* src/: settings/browsersettingswidget.cpp (1.3),
 	  settings/browsersettingswidget.h (1.2), settings/settings.kcfg
-	  (1.2), dbg/dbgrequestor.cpp (1.6), dbg/dbgrequestor.h (1.5):
+	  (1.2), dbg/dbgrequestor.cpp (1.6), dbg/dbgrequestor.h (1.5)
+	  (utags: BETA_0_5_3_2):
 	  * New Feature:
 	  -Improved support for Konqueror
 	  -Added support for Mozilla
@@ -19,7 +244,8 @@
 2005-02-14 17:39  thiago_silva
 
 	* src/protoeditor/: variableslistview.cpp (1.4),
-	  variableslistviewitem.cpp (1.3), variableslistviewitem.h (1.3):
+	  variableslistviewitem.cpp (1.3), variableslistviewitem.h (1.3)
+	  (utags: BETA_0_5_3_2):
 	  * Bug Fixes:
 	  #1122521
 
@@ -39,23 +265,25 @@
 
 	* src/: dbg/dbgrequestor.cpp (1.5, BETA_0_5_3_1),
 	  dbg/debuggerdbg.cpp (1.7, BETA_0_5_3_1),
-	  protoeditor/debuggerfactory.cpp (1.2, BETA_0_5_3_1),
-	  protoeditor/debuggermanager.cpp (1.7, BETA_0_5_3_1),
-	  protoeditor/mainwindow.cpp (1.6, BETA_0_5_3_1),
-	  protoeditor/variableslistview.cpp (1.3, BETA_0_5_3_1),
-	  settings/Makefile.am (1.5, BETA_0_5_3_1), settings/browser.kcfg
-	  (1.2), settings/browsersettings.kcfgc (1.2),
+	  protoeditor/debuggerfactory.cpp (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1), protoeditor/debuggermanager.cpp (1.7,
+	  BETA_0_5_3_1), protoeditor/mainwindow.cpp (1.6, BETA_0_5_3_2,
+	  BETA_0_5_3_1), protoeditor/variableslistview.cpp (1.3,
+	  BETA_0_5_3_1), settings/Makefile.am (1.5, BETA_0_5_3_2,
+	  BETA_0_5_3_1), settings/browser.kcfg (1.2),
+	  settings/browsersettings.kcfgc (1.2),
 	  settings/browsersettingswidget.cpp (1.2, BETA_0_5_3_1),
 	  settings/debugger.kcfg (1.2), settings/debuggersettings.kcfgc
-	  (1.3), settings/debuggersettingswidget.cpp (1.4, BETA_0_5_3_1),
-	  settings/settings.kcfg (1.1, BETA_0_5_3_1),
-	  settings/settings.kcfgc (1.1, BETA_0_5_3_1):
+	  (1.3), settings/debuggersettingswidget.cpp (1.4, BETA_0_5_3_2,
+	  BETA_0_5_3_1), settings/settings.kcfg (1.1, BETA_0_5_3_1),
+	  settings/settings.kcfgc (1.1, BETA_0_5_3_2, BETA_0_5_3_1):
 	  -using central settings once again. Seems that previous versions
 	  of KConfigDialog don't support multiple KConfigSkeletons
 
 2005-02-14 13:01  thiago_silva
 
-	* src/protoeditor/editortabwidget.cpp (1.9, BETA_0_5_3_1):
+	* src/protoeditor/editortabwidget.cpp (1.9, BETA_0_5_3_2,
+	  BETA_0_5_3_1):
 	  -forgot the version check in a place.
 
 2005-02-14 06:30  tag BETA_0_5_3
@@ -63,7 +291,7 @@
 2005-02-14 06:30  thiago_silva
 
 	* src/dbg/: dbgfileinfo.cpp (1.5), dbgfileinfo.h (1.4) (utags:
-	  BETA_0_5_3, BETA_0_5_3_1):
+	  BETA_0_5_3, BETA_0_5_3_1, BETA_0_5_3_2):
 	  -Using DBGFileInfo to handle module number, path conversions, etc
 
 2005-02-14 05:58  thiago_silva
@@ -93,7 +321,7 @@
 2005-02-14 05:51  thiago_silva
 
 	* src/protoeditor/: mainwindow.cpp (1.5), mainwindow.h (1.3,
-	  BETA_0_5_3_1) (utags: BETA_0_5_3):
+	  BETA_0_5_3_2, BETA_0_5_3_1) (utags: BETA_0_5_3):
 	  -Added browser settings to be displayed
 
 2005-02-14 05:50  thiago_silva
@@ -129,7 +357,7 @@
 2005-02-13 14:44  thiago_silva
 
 	* src/protoeditor/: editortabwidget.cpp (1.7), editortabwidget.h
-	  (1.4, BETA_0_5_3_1, BETA_0_5_3):
+	  (1.4, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3):
 	  -Added convenience currentDocumentPath()
 	  * New Feature:
 	  -Implemented Toggle Breakpoint Menu/Shortcut
@@ -137,14 +365,15 @@
 2005-02-13 14:43  thiago_silva
 
 	* src/protoeditor/: debuggermanager.cpp (1.4), debuggermanager.h
-	  (1.4, BETA_0_5_3_1, BETA_0_5_3):
+	  (1.4, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3):
 	  * New Feature:
 	  -Implemented Toggle Breakpoint Menu/Shortcut
 
 2005-02-13 14:42  thiago_silva
 
 	* src/protoeditor/: breakpointlistview.cpp (1.4),
-	  breakpointlistview.h (1.4) (utags: BETA_0_5_3, BETA_0_5_3_1):
+	  breakpointlistview.h (1.4) (utags: BETA_0_5_3, BETA_0_5_3_1,
+	  BETA_0_5_3_2):
 	  -Add/Remove of breakpoint reestructured
 	  * New Feature:
 	  -Implemented Toggle Breakpoint Menu/Shortcut
@@ -152,7 +381,7 @@
 2005-02-13 02:14  thiago_silva
 
 	* src/dbg/: debuggerdbg.cpp (1.5), debuggerdbg.h (1.4,
-	  BETA_0_5_3_1, BETA_0_5_3):
+	  BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3):
 	  -Now, responsable for requesting setp data
 	  -Fix path conversion on run()
 	  -Implemented Breakpoint code
@@ -164,25 +393,27 @@
 2005-02-13 02:10  thiago_silva
 
 	* src/dbg/: dbgstack.cpp (1.3), dbgstack.h (1.3) (utags:
-	  BETA_0_5_3, BETA_0_5_3_1):
+	  BETA_0_5_3, BETA_0_5_3_1, BETA_0_5_3_2):
 	  -Improved to cooperate with DBGFileInfo
 
 2005-02-13 02:07  thiago_silva
 
 	* src/dbg/: dbgrequestor.cpp (1.3), dbgrequestor.h (1.3),
-	  dbgrequestpackbuilder.cpp (1.3, BETA_0_5_3_1, BETA_0_5_3),
-	  dbgrequestpackbuilder.h (1.3, BETA_0_5_3_1, BETA_0_5_3):
+	  dbgrequestpackbuilder.cpp (1.3, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3), dbgrequestpackbuilder.h (1.3, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3):
 	  -Improved Breakpoint code
 
 2005-02-13 02:06  thiago_silva
 
-	* src/dbg/dbgnetdata.cpp (1.2, BETA_0_5_3_1, BETA_0_5_3):
+	* src/dbg/dbgnetdata.cpp (1.2, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3):
 	  -Improved process design
 
 2005-02-13 02:05  thiago_silva
 
-	* src/dbg/: dbgnet.cpp (1.4), dbgnet.h (1.2, BETA_0_5_3_1,
-	  BETA_0_5_3):
+	* src/dbg/: dbgnet.cpp (1.4), dbgnet.h (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3):
 	  -Using DBGFileInfo to handle module number, path conversions, etc
 	  -Improved error handling
 	  -Added Breakpoint code
@@ -194,7 +425,8 @@
 
 2005-02-13 01:59  thiago_silva
 
-	* src/commonphp/phpvariable.cpp (1.2, BETA_0_5_3_1, BETA_0_5_3):
+	* src/commonphp/phpvariable.cpp (1.2, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3):
 	  * Bug Fixes:
 	  -Changing value of objects need different name composition from
 	  arrays
@@ -202,7 +434,7 @@
 2005-02-13 01:58  thiago_silva
 
 	* src/common/: debuggerstack.cpp (1.3), debuggerstack.h (1.3)
-	  (utags: BETA_0_5_3, BETA_0_5_3_1):
+	  (utags: BETA_0_5_3, BETA_0_5_3_1, BETA_0_5_3_2):
 	  -Added convenience function to access bottom context
 
 2005-02-13 01:56  thiago_silva
@@ -216,7 +448,8 @@
 2005-02-13 01:55  thiago_silva
 
 	* src/protoeditor/: variableslistview.cpp (1.2),
-	  variableslistview.h (1.2, BETA_0_5_3_1) (utags: BETA_0_5_3):
+	  variableslistview.h (1.2, BETA_0_5_3_2, BETA_0_5_3_1) (utags:
+	  BETA_0_5_3):
 	  * New Feature:
 	  -When debugger is not running, variables list and watches are set
 	  to readonly
@@ -233,7 +466,7 @@
 2005-02-13 01:52  thiago_silva
 
 	* src/protoeditor/: loglistview.cpp (1.2), loglistview.h (1.2)
-	  (utags: BETA_0_5_3, BETA_0_5_3_1):
+	  (utags: BETA_0_5_3, BETA_0_5_3_1, BETA_0_5_3_2):
 	  * New Feature:
 	  -Items are appended to the end of the list
 	  -DblClick on item makes document/line visible
@@ -272,16 +505,16 @@
 
 2005-02-13 01:33  thiago_silva
 
-	* src/protoeditor/debuggercombostack.cpp (1.3, BETA_0_5_3_1,
-	  BETA_0_5_3):
+	* src/protoeditor/debuggercombostack.cpp (1.3, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3):
 	  -Remove the ability to remember the stack context selected
 	  between steps
 
 2005-02-13 01:32  thiago_silva
 
 	* src/protoeditor/: breakpointlistviewitem.cpp (1.2),
-	  breakpointlistviewitem.h (1.2) (utags: BETA_0_5_3, BETA_0_5_3_1):
-
+	  breakpointlistviewitem.h (1.2) (utags: BETA_0_5_3, BETA_0_5_3_1,
+	  BETA_0_5_3_2):
 	  -Load icons when constructing the object
 	  * New Feature:
 	  -Remember the status of the bp the user selected
@@ -300,8 +533,8 @@
 
 2005-02-11 23:58  thiago_silva
 
-	* src/commonphp/variableparser.cpp (1.2, BETA_0_5_3_1, BETA_0_5_3):
-
+	* src/commonphp/variableparser.cpp (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3):
 	  * Bug Fixes:
 	  crash when parsing negative integers. Thanks and sorry again,
 	  nikotto ;)
@@ -347,7 +580,7 @@
 2005-02-09 00:55  thiago_silva
 
 	* src/dbg/: dbgnet.cpp (1.1), dbgnet.h (1.1), dbgnetdata.cpp (1.1),
-	  dbgnetdata.h (1.1, BETA_0_5_3_1, BETA_0_5_3):
+	  dbgnetdata.h (1.1, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3):
 	  -changed ExecutionLine to ExecutionPoint
 	  -new implementation of DBG client / AbstractDebugger.
 	  -New implementation of data transmission using Tags to process
@@ -362,36 +595,37 @@
 2005-02-09 00:52  thiago_silva
 
 	* data/icons/: hi16-action-executionline.png (1.2),
-	  hi16-action-executionpoint.png (1.1, BETA_0_5_3_1, BETA_0_5_3),
-	  hi16-action-preexecutionline.png (1.2),
-	  hi16-action-preexecutionpoint.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3):
+	  hi16-action-executionpoint.png (1.1, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3), hi16-action-preexecutionline.png (1.2),
+	  hi16-action-preexecutionpoint.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3):
 	  -changed ExecutionLine to ExecutionPoint
 
 2005-02-09 00:52  thiago_silva
 
-	* src/: common/abstractdebugger.cpp (1.2, BETA_0_5_3_1,
-	  BETA_0_5_3), common/abstractdebugger.h (1.3),
+	* src/: common/abstractdebugger.cpp (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3), common/abstractdebugger.h (1.3),
 	  common/debuggerstack.cpp (1.2), common/debuggerstack.h (1.2),
 	  dbg/Makefile.am (1.3), dbg/dbg_defs.h (1.2),
 	  dbg/dbgabstractdatarequest.cpp (1.2),
 	  dbg/dbgabstractdatarequest.h (1.2), dbg/dbgconfiguration.cpp
-	  (1.3, BETA_0_5_3_1, BETA_0_5_3), dbg/dbgconfiguration.h (1.3,
-	  BETA_0_5_3_1, BETA_0_5_3), dbg/dbgconnection.cpp (1.2),
-	  dbg/dbgconnection.h (1.2, BETA_0_5_3_1, BETA_0_5_3),
-	  dbg/dbgfileinfo.cpp (1.3), dbg/dbgfileinfo.h (1.2),
-	  dbg/dbgframe.cpp (1.2), dbg/dbgframe.h (1.2), dbg/dbgheader.cpp
-	  (1.2), dbg/dbgheader.h (1.2), dbg/dbgnethelper.cpp (1.2),
-	  dbg/dbgnethelper.h (1.2), dbg/dbgreceiver.cpp (1.2),
-	  dbg/dbgreceiver.h (1.2), dbg/dbgrequestor.cpp (1.2),
-	  dbg/dbgrequestor.h (1.2), dbg/dbgrequestpack.cpp (1.2,
-	  BETA_0_5_3_1, BETA_0_5_3), dbg/dbgrequestpack.h (1.2,
+	  (1.3, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3),
+	  dbg/dbgconfiguration.h (1.3, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3), dbg/dbgconnection.cpp (1.2), dbg/dbgconnection.h
+	  (1.2, BETA_0_5_3_1, BETA_0_5_3), dbg/dbgfileinfo.cpp (1.3),
+	  dbg/dbgfileinfo.h (1.2), dbg/dbgframe.cpp (1.2), dbg/dbgframe.h
+	  (1.2), dbg/dbgheader.cpp (1.2), dbg/dbgheader.h (1.2),
+	  dbg/dbgnethelper.cpp (1.2), dbg/dbgnethelper.h (1.2),
+	  dbg/dbgreceiver.cpp (1.2), dbg/dbgreceiver.h (1.2),
+	  dbg/dbgrequestor.cpp (1.2), dbg/dbgrequestor.h (1.2),
+	  dbg/dbgrequestpack.cpp (1.2, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3), dbg/dbgrequestpack.h (1.2, BETA_0_5_3_2,
 	  BETA_0_5_3_1, BETA_0_5_3), dbg/dbgrequestpackbuilder.cpp (1.2),
 	  dbg/dbgrequestpackbuilder.h (1.2), dbg/dbgresponsepack.cpp (1.2,
-	  BETA_0_5_3_1, BETA_0_5_3), dbg/dbgresponsepack.h (1.2),
-	  dbg/dbgstack.cpp (1.2), dbg/dbgstack.h (1.2), dbg/dbgtags.cpp
-	  (1.2), dbg/dbgtags.h (1.2), dbg/debuggerdbg.cpp (1.3),
-	  dbg/debuggerdbg.h (1.3):
+	  BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3), dbg/dbgresponsepack.h
+	  (1.2), dbg/dbgstack.cpp (1.2), dbg/dbgstack.h (1.2),
+	  dbg/dbgtags.cpp (1.2), dbg/dbgtags.h (1.2), dbg/debuggerdbg.cpp
+	  (1.3), dbg/debuggerdbg.h (1.3):
 	  -changed ExecutionLine to ExecutionPoint
 	  -new implementation of DBG client / AbstractDebugger.
 	  -New implementation of data transmission using Tags to process
@@ -411,8 +645,8 @@
 
 2005-02-09 00:43  thiago_silva
 
-	* src/protoeditor/: debuggercombostack.h (1.2, BETA_0_5_3_1,
-	  BETA_0_5_3), debuggercombostack.cpp (1.2):
+	* src/protoeditor/: debuggercombostack.h (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3), debuggercombostack.cpp (1.2):
 	  -changed ExecutionLine to ExecutionPoint
 
 2005-02-09 00:43  thiago_silva
@@ -438,8 +672,8 @@
 
 2005-02-09 00:35  thiago_silva
 
-	* src/protoeditor/protoeditorui.rc (1.2, BETA_0_5_3_1, BETA_0_5_3):
-
+	* src/protoeditor/protoeditorui.rc (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3):
 	  switched the order of stepinto entry
 
 2005-02-08 23:16  thiago_silva
@@ -449,12 +683,14 @@
 
 2005-02-08 02:48  thiago_silva
 
-	* data/icons/Makefile.am (1.3, BETA_0_5_3_1, BETA_0_5_3):
+	* data/icons/Makefile.am (1.3, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3):
 	  Added app icons
 
 2005-02-08 02:48  thiago_silva
 
-	* images/protoeditor.xcf (1.1, BETA_0_5_3_1, BETA_0_5_3):
+	* images/protoeditor.xcf (1.1, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3):
 	  * News:
 	  Added GIMP image of the app icon.
 
@@ -462,8 +698,8 @@
 
 	* data/icons/: hi16-app-protoeditor.png (1.1),
 	  hi22-app-protoeditor.png (1.1), hi32-app-protoeditor.png (1.1),
-	  hi48-app-protoeditor.png (1.1) (utags: BETA_0_5_3, BETA_0_5_3_1):
-
+	  hi48-app-protoeditor.png (1.1) (utags: BETA_0_5_3, BETA_0_5_3_1,
+	  BETA_0_5_3_2):
 	  * News:
 	  Finally added the app icons.
 
@@ -545,42 +781,44 @@
 2005-02-06 21:11  thiago_silva
 
 	* data/icons/Makefile.am (1.2, BETA_0_5_2_1),
-	  data/icons/hi16-action-activebreakpoint.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1), data/icons/hi16-action-checkboxoff.png
-	  (1.1, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
-	  data/icons/hi16-action-checkboxon.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1),
-	  data/icons/hi16-action-disabledbreakpoint.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1),
+	  data/icons/hi16-action-activebreakpoint.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  data/icons/hi16-action-checkboxoff.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  data/icons/hi16-action-checkboxon.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  data/icons/hi16-action-disabledbreakpoint.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
 	  data/icons/hi16-action-executionline.png (1.1, BETA_0_5_2_1),
 	  data/icons/hi16-action-preexecutionline.png (1.1, BETA_0_5_2_1),
-	  data/icons/hi22-action-dbgnext.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1), data/icons/hi22-action-dbgrun.png
-	  (1.1, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
-	  data/icons/hi22-action-dbgstep.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1), protoeditor.kdevelop (1.4),
-	  data/Makefile.am (1.2, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
-	  data/icons/hi22-action-dbgstepout.png (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1), src/common/Makefile.am (1.2,
+	  data/icons/hi22-action-dbgnext.png (1.1, BETA_0_5_3_2,
 	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
-	  src/common/abstractdebugger.h (1.2, BETA_0_5_2_1),
-	  src/commonphp/Makefile.am (1.2, BETA_0_5_3_1, BETA_0_5_3,
-	  BETA_0_5_2_1), src/dbg/Makefile.am (1.2, BETA_0_5_2_1),
-	  src/dbg/dbgconfiguration.cpp (1.2, BETA_0_5_2_1),
-	  src/dbg/dbgconfiguration.h (1.2, BETA_0_5_2_1),
+	  data/icons/hi22-action-dbgrun.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  data/icons/hi22-action-dbgstep.png (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1), protoeditor.kdevelop
+	  (1.4), data/Makefile.am (1.2, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3, BETA_0_5_2_1), data/icons/hi22-action-dbgstepout.png
+	  (1.1, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  src/common/Makefile.am (1.2, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3, BETA_0_5_2_1), src/common/abstractdebugger.h (1.2,
+	  BETA_0_5_2_1), src/commonphp/Makefile.am (1.2, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1), src/dbg/Makefile.am
+	  (1.2, BETA_0_5_2_1), src/dbg/dbgconfiguration.cpp (1.2,
+	  BETA_0_5_2_1), src/dbg/dbgconfiguration.h (1.2, BETA_0_5_2_1),
 	  src/dbg/dbgfileinfo.cpp (1.2, BETA_0_5_2_1),
 	  src/dbg/debuggerdbg.cpp (1.2, BETA_0_5_2_1),
 	  src/dbg/debuggerdbg.h (1.2, BETA_0_5_2_1),
-	  src/protoeditor/Makefile.am (1.1, BETA_0_5_3_1, BETA_0_5_3,
-	  BETA_0_5_2_1), src/protoeditor/breakpointlistview.cpp (1.1,
-	  BETA_0_5_2_1), src/protoeditor/breakpointlistview.h (1.1,
+	  src/protoeditor/Makefile.am (1.1, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3, BETA_0_5_2_1), src/protoeditor/breakpointlistview.cpp
+	  (1.1, BETA_0_5_2_1), src/protoeditor/breakpointlistview.h (1.1,
 	  BETA_0_5_2_1), src/protoeditor/breakpointlistviewitem.cpp (1.1,
 	  BETA_0_5_2_1), src/protoeditor/breakpointlistviewitem.h (1.1,
 	  BETA_0_5_2_1), src/protoeditor/debuggercombostack.cpp (1.1,
 	  BETA_0_5_2_1), src/protoeditor/debuggercombostack.h (1.1,
 	  BETA_0_5_2_1), src/protoeditor/debuggerfactory.cpp (1.1,
 	  BETA_0_5_3, BETA_0_5_2_1), src/protoeditor/debuggerfactory.h
-	  (1.1, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  (1.1, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
 	  src/protoeditor/debuggermanager.cpp (1.1, BETA_0_5_2_1),
 	  src/protoeditor/debuggermanager.h (1.1, BETA_0_5_2_1),
 	  src/protoeditor/editortabwidget.cpp (1.1),
@@ -590,15 +828,16 @@
 	  src/protoeditor/mainwindow.cpp (1.1, BETA_0_5_2_1),
 	  src/protoeditor/mainwindow.h (1.1, BETA_0_5_2_1),
 	  src/protoeditor/protoeditor.cpp (1.1),
-	  src/protoeditor/protoeditor.desktop (1.1, BETA_0_5_3_1,
-	  BETA_0_5_3, BETA_0_5_2_1), src/protoeditor/protoeditorui.rc (1.1,
-	  BETA_0_5_2_1), src/protoeditor/variableslistview.cpp (1.1,
-	  BETA_0_5_2_1), src/protoeditor/variableslistview.h (1.1,
-	  BETA_0_5_2_1), src/protoeditor/variableslistviewitem.cpp (1.1,
-	  BETA_0_5_2_1), src/protoeditor/variableslistviewitem.h (1.1,
-	  BETA_0_5_2_1), src/protoeditor/watchlistview.cpp (1.1,
-	  BETA_0_5_2_1), src/protoeditor/watchlistview.h (1.1,
-	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1) (utags: BETA_0_5_2):
+	  src/protoeditor/protoeditor.desktop (1.1, BETA_0_5_3_2,
+	  BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1),
+	  src/protoeditor/protoeditorui.rc (1.1, BETA_0_5_2_1),
+	  src/protoeditor/variableslistview.cpp (1.1, BETA_0_5_2_1),
+	  src/protoeditor/variableslistview.h (1.1, BETA_0_5_2_1),
+	  src/protoeditor/variableslistviewitem.cpp (1.1, BETA_0_5_2_1),
+	  src/protoeditor/variableslistviewitem.h (1.1, BETA_0_5_2_1),
+	  src/protoeditor/watchlistview.cpp (1.1, BETA_0_5_2_1),
+	  src/protoeditor/watchlistview.h (1.1, BETA_0_5_3_2, BETA_0_5_3_1,
+	  BETA_0_5_3, BETA_0_5_2_1) (utags: BETA_0_5_2):
 	  project tree modification:
 	  -src/* goes to src/protoeditor except settings files. They go to
 	  src/settings
@@ -615,8 +854,9 @@
 
 2005-02-06 20:52  thiago_silva
 
-	* src/Makefile.am (1.3, BETA_0_5_3_1, BETA_0_5_3, BETA_0_5_2_1,
-	  BETA_0_5_2), configure.in (1.3), src/settings/Makefile.am (1.1),
+	* src/Makefile.am (1.3, BETA_0_5_3_2, BETA_0_5_3_1, BETA_0_5_3,
+	  BETA_0_5_2_1, BETA_0_5_2), configure.in (1.3),
+	  src/settings/Makefile.am (1.1),
 	  src/settings/debuggersettings.kcfgc (1.1, BETA_0_5_2_1,
 	  BETA_0_5_2), src/settings/debuggersettingswidget.cpp (1.1,
 	  BETA_0_5_2), src/settings/debuggersettingswidget.h (1.1,
