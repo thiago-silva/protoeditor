@@ -47,8 +47,8 @@ MainWindow::~MainWindow()
 
 }
 
-QString MainWindow::openFile() {
-  QString filepath = QFileDialog::getOpenFileName( "/home", "PHP (*.php)",
+QString MainWindow::openFile(QString path) {
+  QString filepath = QFileDialog::getOpenFileName(path, "PHP (*.php)",
     this, "open file dialog", "Choose a file" );
 
   return filepath;

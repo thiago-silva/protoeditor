@@ -49,7 +49,8 @@ int main(int argc, char **argv)
 
 
     KApplication app;
-    ProtoEditor *protoeditor = 0;
+    //ProtoEditor *protoeditor = 0;
+    ProtoEditor protoeditor;
 
 
     //if (app.isRestored())
@@ -61,8 +62,8 @@ int main(int argc, char **argv)
         // no session.. just start up normally
         KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-        protoeditor = new ProtoEditor();
-        QWidget* mainWin = protoeditor->mainWindow();
+        //protoeditor = new ProtoEditor();
+        QWidget* mainWin = protoeditor.mainWindow();
         app.setMainWidget( mainWin );
         mainWin->show();
 
@@ -71,5 +72,7 @@ int main(int argc, char **argv)
 
     // mainWin has WDestructiveClose flag by default, so it will delete itself.
     return app.exec();
+
+    //delete protoeditor;
 }
 

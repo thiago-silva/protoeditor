@@ -55,10 +55,18 @@
 ProtoEditor::ProtoEditor(QObject *parent, const char* name)
   : QObject(parent, name)
 {
-  setupResource();
+  //setupResource();
 
   m_mainWindow       = new MainWindow();
   m_debugger_manager = new DebuggerManager(this);
+
+  KConfig* config = KApplication::kApplication()->config();
+  config->setGroup("Protoeditor");
+  m_currentOpenPath = config->readEntry("CurrentFilePath");
+
+  if(m_currentOpenPath.isEmpty()) {
+    m_currentOpenPath = '/';
+  }
 
     //connect(m_mainWindow->edAddWatch(), SIGNAL(()) , this, SLOT(slotAddWatch()));
     connect(m_mainWindow->fileOpenAction(), SIGNAL(activated()), this, SLOT(slotOpenFile()));
@@ -71,9 +79,19 @@ ProtoEditor::ProtoEditor(QObject *parent, const char* name)
 
 ProtoEditor::~ProtoEditor()
 {
+  saveState();
 }
 
+void ProtoEditor::saveState() {
+  KConfig* config = KApplication::kApplication()->config();
+  config->setGroup("Protoeditor");
+  config->writeEntry("CurrentFilePath", m_currentOpenPath);
+  config->sync();
+}
+
+/*
 void ProtoEditor::setupResource() {
+
   KConfig* config = KApplication::kApplication()->config();
 
   config->setGroup("Kate View Default");
@@ -82,6 +100,7 @@ void ProtoEditor::setupResource() {
   config->writeEntry("Line Numbers", "true");
   config->sync();
 }
+*/
 
 MainWindow* ProtoEditor::mainWindow()
 {
@@ -89,8 +108,9 @@ MainWindow* ProtoEditor::mainWindow()
 }
 
 void ProtoEditor::slotOpenFile() {
-  QString filepath = m_mainWindow->openFile();
+  QString filepath = m_mainWindow->openFile(m_currentOpenPath);
   if(!filepath.isEmpty()) {
+    m_currentOpenPath = filepath.mid(0, filepath.findRev('/', -1));
     openDocument(filepath);
   }
 }

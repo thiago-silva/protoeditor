@@ -51,10 +51,12 @@ public slots:
 
 private:
   void openDocument(const QString& filepath);
-  void setupResource();
+  void saveState();
+  //void setupResource();
 
   MainWindow* m_mainWindow;
   DebuggerManager* m_debugger_manager;
+  QString m_currentOpenPath;
 };
 
 #endif

@@ -42,7 +42,7 @@ public:
   //void removeDocumentFromEditor(QString filePath);
 
   void showError(QString error);
-  QString openFile();
+  QString openFile(QString path);
 
 
 protected:
