@@ -226,6 +226,7 @@ void DebuggerManager::slotDebugStart()
     default:
       kdDebug() << "+++ Bug: undefined preferredScript" << endl;
       m_window->showError("Undefined preferred script");
+      return;
   }
 }
 
@@ -463,6 +464,25 @@ void DebuggerManager::slotNewDocument()
 
 void DebuggerManager::slotProfile()
 {
+  if(!m_debugger) return;
+
+  switch(m_window->preferredScript())
+  {
+    case MainWindow::ActiveScript:
+      profileActiveScript();
+      break;
+    case MainWindow::SiteScript:
+      profileCurrentSiteScript();
+      break;
+    default:
+      kdDebug() << "+++ Bug: undefined preferredScript" << endl;
+      m_window->showError("Undefined preferred script");
+      return;
+  }
+}
+
+void DebuggerManager::profileCurrentSiteScript()
+{
   SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
   if(!currentSite)
   {
@@ -489,6 +509,25 @@ void DebuggerManager::slotProfile()
 
   m_window->setDebugStatusMsg("Profiling...");
   m_debugger->profile(filepath);
+}
+
+void DebuggerManager::profileActiveScript()
+{
+  if(m_window->tabEditor()->count() == 0)
+  {
+    m_window->openFile();
+    if(m_window->tabEditor()->count() == 0)
+    {
+      //couldn't open the file for some reason
+      return;
+    }
+  }
+
+  QString filepath = m_window->tabEditor()->currentDocumentPath();
+
+  m_window->setDebugStatusMsg("Profiling...");
+  m_debugger->profile(filepath);
+  
 }
 
 /******************************* Debugger interface ******************************************/
@@ -610,7 +649,7 @@ void DebuggerManager::slotDebugEnded()
   m_window->watchList()->setReadOnly(true);
 
 
-  m_window->setDebugStatusMsg("Debug stopped");
+  m_window->setDebugStatusMsg("Stopped");
   m_window->setLedEnabled(false);
 
   EditorTabWidget* ed = m_window->tabEditor();

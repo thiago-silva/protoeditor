@@ -97,7 +97,9 @@ private slots:
 private:
   void debugActiveScript();
   void debugCurrentSiteScript();
-
+  void profileActiveScript();
+  void profileCurrentSiteScript();
+    
   void connectDebugger();
 
   void loadDebugger();
