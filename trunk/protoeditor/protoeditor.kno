@@ -1,4 +1,4 @@
-\CurrentEntry 0 Mental Notes / Random ideas
+\NewEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look at http://www.enginsite.com/php-editor.htm<br /></li>
@@ -81,7 +81,7 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO Now
+\CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <ul type="disc"><li>Run (gear.png) / Start debug</li>
@@ -89,16 +89,17 @@
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
 <li>Features / Usability:</li>
-<ul type="disc"><li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags</li>
-<li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings</li>
+<ul type="disc"><li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings</li>
 <li>Add terminal output</li>
 <li>CGI</li></ul>
 <li>Implementation:</li>
 <ul type="disc"><li>set static objects to be deleted<br /><br /></li></ul>
+<li>Improve Profile / Start Gubed support<br /></li>
+<li>-------------------------------------------------------------------<br /></li>
 <li>Create classes MessageWidget, WatchWidget, BreakpointWidget, etc. holding the listviews, than, make them responsable for buttons such as btAddWatch.</li>
 <ul type="disc"><li>Create context menus for the listviews (breakpoints/messages, etc)</li>
-<li>Add Breakpoint/Watches buttons (add, clear, disable..). <br /><br /></li></ul>
-<li>Improve Profile / Start Gubed support</li></ul>
+<li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
+<li>Change output widget to KTExtEdit, so it can highlight HTML tags (create a wrapper class for it)</li></ul></ul>
 </body></html>
 
 
