@@ -9,6 +9,7 @@
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /><br /></li>
+<li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
 <ul type="disc"><li>All it should do is request a setep. The client should be responsable for feeding the manager with all the info.<br /><br /></li></ul>
 <li>Add context Menu for the editor<br /></li>
@@ -53,18 +54,20 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
 <li>Create a logo for the site</li>
 <li>Create Doxygen documentation</li>
-<li>Create user documentation</li></ul>
+<li>Create user documentation</li>
+<li>Backup sourceforge contents.<br /></li>
+<li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
 </body></html>
 
-\NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\CurrentEntry 0 Implementation
+
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Test new dbg backend (debug protoeditor and run steps, add watches/breakpoints, etc to remember what is missing)<br /></li>
 <li>Test Watches!!!<br /></li>
@@ -86,10 +89,69 @@
 <li>Test output/html output</li></ul>
 </body></html>
 
-
 \NewEntry 1 Bug reminder
 
 \NewEntry 0 Quanta
+
+\NewEntry 1 quanta HACKING
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p> Quanta's coding style is a real mess as it was written by many persons, and</p>
+<p>some had changed their style on-the-fly. ;-) From now on, if you add new code</p>
+<p>to Quanta please follow the below rules:</p>
+<p></p>
+<p>1. Use spaces instead of tabs.</p>
+<p>2. Indent with 2 spaces.</p>
+<p>3. Do not put spaces around parentheses, except in one case (grouping multiple</p>
+<p>   expressions): if ( (A || B) &amp;&amp; (C || D) )</p>
+<p>4. Do not put spaces around &quot;-&gt;&quot;, use: object-&gt;methodname().</p>
+<p>5. No extra spaces between parameters/arguments, just after commas: method(arg1, arg2, ...)</p>
+<p>6. Put spaces around =, &gt;, &lt;, !=, +, -, /, *: a = b * c / d</p>
+<p>7. Name the member variables as m_variablename if they are not public. See #8.</p>
+<p>8. Try to avoid public member variables. Write instead set/get methods. See #9.</p>
+<p>9. Don't put the &quot;get&quot; prefix ahead of the get method. Example:</p>
+<p>   Variable: m_foo</p>
+<p>   Get method: foo()</p>
+<p>   Set method: setFoo()</p>
+<p>10. Mention the argument names also in header files. Signals may be an exception.</p>
+<p>11. Use 0L when setting a pointer to NULL.</p>
+<p>12. I prefer to put the opening { in a new line, but I'm not strongly against putting</p>
+<p>    it in the same line as the expression, like: if (a) {</p>
+<p>13. Avoid inclusions in header files. Use forward declarations instead, like:</p>
+<p>   Header file:</p>
+<p>     class Foo;</p>
+<p>     class Foo2{</p>
+<p>       Foo* m_foo;</p>
+<p>     }</p>
+<p>   Implementation file:</p>
+<p>     #include &quot;foo.h&quot;</p>
+<p>14. Use .h and .cpp for file extension.</p>
+<p>15. Use layouts when creating UI files, otherwise the UI components are not resized when you</p>
+<p>      resize the main widget, translated interfaces or when you use another widget style the</p>
+<p>      dialog might look bad. The simple way to do this is in Qt Designer: click on an empty space</p>
+<p>      and Ctrl-G. Do it first for every container style widget (boxes, frames, tabwidget tabs, etc.)</p>
+<p>      Try to resize the dialog after you preview it.</p>
+<p>16. Make the tab order in widgets logical. Preview it and press tabs to see in which order are the</p>
+<p>      components focused.</p>
+<p>17. 15 and 16 is valid for Kommander scripts as well.</p>
+<p>18. Include the moc files in the .cpp files: use</p>
+<p>        #include &quot;qobject_derivated_class_file.moc&quot;</p>
+<p>      at the end of the cpp files.</p>
+<p>19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule</p>
+<p>    are:</p>
+<p>	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the</p>
+<p>	  file won't be recompiled if you modify it. Aside of being annoying can lead to unexpected</p>
+<p>	  runtime and linking errors.</p>
+<p>	- it's nicer to edit the sources in KDevelop. ;-)</p>
+<p>    So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can</p>
+<p>    still create and connect slots in Designer.</p>
+<p>20. Create a new file for each (non-trivial) class.</p>
+<p>21. Use forward declarations.</p>
+<p>22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.</p>
+<p></p>
+<p></p>
+<p>Last, but not least read the howto's and faq's on http://developer.kde.org</p>
+<p></p>
+</body></html>
 
 \NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -97,6 +159,13 @@
 <ul type="disc"><li>Patches</li>
 <ul type="disc"><li>Implement the toggle breakpoint on the editor margin</li>
 <li> <br /><br /></li></ul></ul>
+</body></html>
+
+\NewEntry 0 sourceforge
+
+\NewEntry 1 backup
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<p>Remind your developers to backup their data. <br />Backup your file release data. <br />Backup your project web space. <br />Backup the contents of your MySQL database. <br />Backup your CVS repository content regularly.</p>
 </body></html>
 
 \NewEntry 0 KDE faqs, howtos, standards
@@ -498,66 +567,6 @@
 <p></p>
 <p></p>
 <p>Another way of sharing your patch is to attach it to a bug report on KDE Bugs. Most of what was written in this tutorial applies here too, in an adapted form of course. Please note that you cannot attach a patch directly when reporting a new bug. However when the new bug is created, you can then attach files, therefore also patches.</p>
-</body></html>
-
-\NewEntry 0 quanta HACKING
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p> Quanta's coding style is a real mess as it was written by many persons, and</p>
-<p>some had changed their style on-the-fly. ;-) From now on, if you add new code</p>
-<p>to Quanta please follow the below rules:</p>
-<p></p>
-<p>1. Use spaces instead of tabs.</p>
-<p>2. Indent with 2 spaces.</p>
-<p>3. Do not put spaces around parentheses, except in one case (grouping multiple</p>
-<p>   expressions): if ( (A || B) &amp;&amp; (C || D) )</p>
-<p>4. Do not put spaces around &quot;-&gt;&quot;, use: object-&gt;methodname().</p>
-<p>5. No extra spaces between parameters/arguments, just after commas: method(arg1, arg2, ...)</p>
-<p>6. Put spaces around =, &gt;, &lt;, !=, +, -, /, *: a = b * c / d</p>
-<p>7. Name the member variables as m_variablename if they are not public. See #8.</p>
-<p>8. Try to avoid public member variables. Write instead set/get methods. See #9.</p>
-<p>9. Don't put the &quot;get&quot; prefix ahead of the get method. Example:</p>
-<p>   Variable: m_foo</p>
-<p>   Get method: foo()</p>
-<p>   Set method: setFoo()</p>
-<p>10. Mention the argument names also in header files. Signals may be an exception.</p>
-<p>11. Use 0L when setting a pointer to NULL.</p>
-<p>12. I prefer to put the opening { in a new line, but I'm not strongly against putting</p>
-<p>    it in the same line as the expression, like: if (a) {</p>
-<p>13. Avoid inclusions in header files. Use forward declarations instead, like:</p>
-<p>   Header file:</p>
-<p>     class Foo;</p>
-<p>     class Foo2{</p>
-<p>       Foo* m_foo;</p>
-<p>     }</p>
-<p>   Implementation file:</p>
-<p>     #include &quot;foo.h&quot;</p>
-<p>14. Use .h and .cpp for file extension.</p>
-<p>15. Use layouts when creating UI files, otherwise the UI components are not resized when you</p>
-<p>      resize the main widget, translated interfaces or when you use another widget style the</p>
-<p>      dialog might look bad. The simple way to do this is in Qt Designer: click on an empty space</p>
-<p>      and Ctrl-G. Do it first for every container style widget (boxes, frames, tabwidget tabs, etc.)</p>
-<p>      Try to resize the dialog after you preview it.</p>
-<p>16. Make the tab order in widgets logical. Preview it and press tabs to see in which order are the</p>
-<p>      components focused.</p>
-<p>17. 15 and 16 is valid for Kommander scripts as well.</p>
-<p>18. Include the moc files in the .cpp files: use</p>
-<p>        #include &quot;qobject_derivated_class_file.moc&quot;</p>
-<p>      at the end of the cpp files.</p>
-<p>19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule</p>
-<p>    are:</p>
-<p>	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the</p>
-<p>	  file won't be recompiled if you modify it. Aside of being annoying can lead to unexpected</p>
-<p>	  runtime and linking errors.</p>
-<p>	- it's nicer to edit the sources in KDevelop. ;-)</p>
-<p>    So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can</p>
-<p>    still create and connect slots in Designer.</p>
-<p>20. Create a new file for each (non-trivial) class.</p>
-<p>21. Use forward declarations.</p>
-<p>22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.</p>
-<p></p>
-<p></p>
-<p>Last, but not least read the howto's and faq's on http://developer.kde.org</p>
-<p></p>
 </body></html>
 
 \NewEntry 0 hacking dbg-cli
