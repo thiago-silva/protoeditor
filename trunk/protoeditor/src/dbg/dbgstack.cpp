@@ -19,16 +19,20 @@
  ***************************************************************************/
 #include "dbgstack.h"
 #include "debuggerstack.h"
+#include "dbgnetdata.h"
+#include "dbgfileinfo.h"
 
 DBGStack::DBGStack()
-  : m_ready(false)
+    : /*m_stack(NULL), */ m_frozen(false)
 {}
 
 DBGStack::~DBGStack()
 {}
 
-void DBGStack::add(dbgint modno, QString descr, dbgint lineno, dbgint scopeid)
+void DBGStack::add(dbgint modno, const QString& descr, dbgint lineno, dbgint scopeid)
 {
+  if(m_frozen) return;
+
   StackInfo info;
   info.line = lineno;
   info.function = descr;
@@ -37,46 +41,45 @@ void DBGStack::add(dbgint modno, QString descr, dbgint lineno, dbgint scopeid)
   m_stackInfoList.push_front(info);
 }
 
-void DBGStack::setModulePath(dbgint modno, QString filePath)
-{
-  QValueList<StackInfo>::iterator it;
-  for(it = m_stackInfoList.begin(); it != m_stackInfoList.end(); ++it)
-  {
-    if((*it).modNo == modno)
-    {
-      (*it).filePath = filePath;
-      //break; do not break. We may have many execpoints on a single file
-    }
-  }
-
-  //now that we are setting the filepaths correctly (from the srctree request),
-  //we can build the stack
-  m_ready = true;
-}
-
 void DBGStack::clear()
 {
-  m_ready = false;
+  m_frozen = false;
   m_stackInfoList.clear();
+  //m_stack = NULL;
 }
 
-bool DBGStack::ready()
+bool DBGStack::isEmpty()
 {
-  return m_ready;
+  return m_stackInfoList.isEmpty();
 }
 
-DebuggerStack* DBGStack::debuggerStack()
+DebuggerStack* DBGStack::debuggerStack(DBGFileInfo* dbgFileInfo)
 {
   DebuggerStack* stack = new DebuggerStack();
 
+  QString function;
+
   QValueList<StackInfo>::iterator it;
-  for(it = m_stackInfoList.begin(); it != m_stackInfoList.end(); ++it)
-  {
-    stack->push((*it).scopeId, (*it).filePath, (*it).line, (*it).function);
+
+  for(it = m_stackInfoList.begin(); it != m_stackInfoList.end(); ++it) {
+    if(((*it).function).find("::") == -1) {
+      function = (*it).function;
+    } else {
+      function = dbgFileInfo->moduleName((*it).modNo) + "::main()";
+      //function = "main()";
+    }
+    stack->push((*it).scopeId, dbgFileInfo->moduleName((*it).modNo), (*it).line, function);
   }
 
-  //be ready for the next
-  clear();
-
   return stack;
+}
+
+void DBGStack::freeze()
+{
+  m_frozen = true;
+}
+
+bool DBGStack::isFrozen()
+{
+  return m_frozen;
 }

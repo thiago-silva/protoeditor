@@ -19,36 +19,40 @@
  ***************************************************************************/
 #ifndef DBGSTACK_H
 #define DBGSTACK_H
-#include "dbg_defs.h"
 #include <qvaluelist.h>
+#include "dbg_defs.h"
 
 class DebuggerStack;
+class DBGFileInfo;
 
 class DBGStack {
 public:
   DBGStack();
   ~DBGStack();
 
-  void add(dbgint modno, QString descr, dbgint lineno, dbgint scopeid);
+  void add(dbgint modno, const QString& descr, dbgint lineno, dbgint scopeid);
 
-  void setModulePath(dbgint modno, QString filePath);
+  DebuggerStack* debuggerStack(DBGFileInfo*);
 
   void clear();
 
-  bool ready();
+  bool isEmpty();
+  void freeze();
+  bool isFrozen();
 
-  DebuggerStack* debuggerStack();
 private:
+  //void buildStack(DBGFileInfo*);
 
   typedef struct {
     QString filePath;
     QString function;
-    dbgint line;
-    dbgint modNo;
-    dbgint scopeId;
+    int line;
+    int modNo;
+    int scopeId;
   } StackInfo;
 
-  bool m_ready;
+  //DebuggerStack* m_stack;
+  bool m_frozen;
   QValueList<StackInfo> m_stackInfoList; //temp used to get the filepaths
 };
 
