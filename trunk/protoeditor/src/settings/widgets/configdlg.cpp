@@ -94,7 +94,15 @@ void ConfigDlg::showDialog()
     m_self = new ConfigDlg();
   }
 
+  m_self->populateWidgets();
   m_self->exec();
+}
+
+void ConfigDlg::populateWidgets()
+{
+  m_extOutputSettingsWidget->populate();
+  m_phpSettingsWidget->populate();
+  m_siteSettingsWidget->populate();
 }
 
 void ConfigDlg::slotOk()

@@ -40,6 +40,7 @@ signals:
 protected slots:
   void slotOk();
 private:
+  void populateWidgets();
   static ConfigDlg* m_self;
 
   PHPSettingsWidget     *m_phpSettingsWidget;
