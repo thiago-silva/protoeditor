@@ -59,7 +59,8 @@ public:
   void push(int id, QString filePath, int line, QString function);
   void push(DebuggerExecutionPoint*);
 
-  DebuggerExecutionPoint* topExecutionPoint();
+  DebuggerExecutionPoint*     bottomExecutionPoint();
+  DebuggerExecutionPoint*     topExecutionPoint();
   DebuggerExecutionPointList_t DebuggerExecutionPointList();
 private:
   DebuggerExecutionPointList_t m_execPointList;

@@ -101,6 +101,11 @@ void DebuggerStack::push(DebuggerExecutionPoint* execPoint)
   m_execPointList.prepend(execPoint);
 }
 
+DebuggerExecutionPoint* DebuggerStack::bottomExecutionPoint()
+{
+  return m_execPointList.getLast();
+}
+
 DebuggerExecutionPoint* DebuggerStack::topExecutionPoint()
 {
   return m_execPointList.getFirst();
