@@ -170,7 +170,7 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", m_debugger_manager,
                     SLOT(slotDebugRun()), actionCollection(), "debug_start");
 
-  (void)new KAction(i18n("Stop Debug"), "stop", "ESC", m_debugger_manager,
+  (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
   (void)new KAction(i18n("Step Over"), "dbgnext", "F6", m_debugger_manager,
