@@ -92,11 +92,11 @@ QListViewItem* VariablesListViewItem::lastItem()
 {
   QListViewItem* current;
   QListViewItem* last = 0;
-  VariablesListViewItem* i;
+//   VariablesListViewItem* i;
   current = this;
 
   while((current = current->nextSibling()) != 0) {
-    i = dynamic_cast<VariablesListViewItem*>(current);
+//     i = dynamic_cast<VariablesListViewItem*>(current);
     last = current;
   }
   return last;
