@@ -33,7 +33,10 @@ public:
   void add(int type, QString message, int line, QString file);
 
 signals:
-  void sigChanged();
+  void sigDoubleClick(const QString&, int);
+
+private slots:
+  void slotDoubleClick(QListViewItem *, const QPoint &, int);
 
 private:
   enum { TypeCol = 0, MessageCol, LineCol, FileCol };

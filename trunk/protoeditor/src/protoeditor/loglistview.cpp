@@ -26,6 +26,7 @@
 LogListView::LogListView(QWidget *parent, const char *name)
  : KListView(parent, name)
 {
+  setSorting(-1);
   setAllColumnsShowFocus(true);
 
   addColumn("*");
@@ -41,6 +42,13 @@ LogListView::LogListView(QWidget *parent, const char *name)
   setColumnWidthMode (2, QListView::Manual);
   setColumnWidthMode (3, QListView::Manual);
 
+  connect(this, SIGNAL(doubleClicked(QListViewItem*, const QPoint &, int )),
+    this, SLOT(slotDoubleClick(QListViewItem *, const QPoint &, int )));
+
+}
+
+LogListView::~LogListView()
+{
 }
 
 void LogListView::add(int type, QString message, int line, QString file) {
@@ -49,10 +57,10 @@ void LogListView::add(int type, QString message, int line, QString file) {
 
   switch(type) {
     case DebuggerManager::InfoMsg:
-      item->setPixmap(LogListView::TypeCol, SmallIcon("idea"));
+      item->setPixmap(LogListView::TypeCol, SmallIcon("info"));
       break;
     case DebuggerManager::WarningMsg:
-      item->setPixmap(LogListView::TypeCol, SmallIcon("info"));
+      item->setPixmap(LogListView::TypeCol, SmallIcon("messagebox_warning"));
       break;
     case DebuggerManager::ErrorMsg:
       item->setPixmap(LogListView::TypeCol, SmallIcon("cancel"));
@@ -62,10 +70,15 @@ void LogListView::add(int type, QString message, int line, QString file) {
   item->setText(LogListView::MessageCol, message);
   item->setText(LogListView::LineCol, QString::number(line));
   item->setText(LogListView::FileCol, file);
+
+  //add new item to the bottom of the list
+  item->moveItem(lastItem());
 }
 
-LogListView::~LogListView()
+void LogListView::slotDoubleClick(QListViewItem * item, const QPoint &, int)
 {
+  emit sigDoubleClick(item->text(LogListView::FileCol)
+                    , item->text(LogListView::LineCol).toLong());
 }
 
 
