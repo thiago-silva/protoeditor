@@ -42,11 +42,9 @@ public:
   QString stringPath();
   Variable* variable();
 
-  //void setRenameable(bool);
-  //bool isRenameable();
+  virtual void setRenameEnabled( int col, bool b );
 
 private:
-  //void deleteVar();
   void loadVariable();
   Variable* m_variable;
   bool m_isRenameable;

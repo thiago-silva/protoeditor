@@ -88,12 +88,24 @@ Variable* VariablesListViewItem::variable() {
   return m_variable;
 }
 
+void VariablesListViewItem::setRenameEnabled( int col, bool b ) {
+  QListViewItem::setRenameEnabled(col, b);
+
+  QListViewItem* item = firstChild();
+  while(item) {
+    item->setRenameEnabled(col, b);
+    item = item->nextSibling();
+  }
+}
+
 void VariablesListViewItem::loadVariable() {
   setText(VariablesListView::NameCol, m_variable->name());
 
+  VariablesListView* lv = dynamic_cast<VariablesListView*>(listView());
+
   if(m_variable->value()->isScalar()) {
     setText(VariablesListView::ValueCol, m_variable->value()->toString());
-    setRenameEnabled(VariablesListView::ValueCol, true);
+    setRenameEnabled(VariablesListView::ValueCol, !lv->isReadOnly());
   } else {
     //setText(VariablesListView::Value, m_variable->value()->typeName());
     setExpandable(true);
