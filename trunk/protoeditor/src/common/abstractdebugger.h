@@ -76,6 +76,7 @@ protected:
 signals:
   void sigDebugStarted();
   void sigDebugEnded();
+  void sigStepDone();
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);

@@ -528,10 +528,25 @@ void DebuggerDBG::slotDBGClosed()
 
 void DebuggerDBG::slotStepDone()
 {
+  static bool firstStep = true;
+    
   m_currentExecutionPointID = CURLOC_SCOPE_ID;
   m_net->requestVariables(m_currentExecutionPointID, false);
   m_net->requestVariables(m_globalExecutionPointID, true);
   requestWatches(m_currentExecutionPointID);
+
+  //DBGNet requests a Step when the connection is made.
+  //Than, after the user starts the debugger, he will see a "step done"
+  //on the statusbar. We don't want to notificate that first step
+  if(firstStep)
+  {
+    firstStep = false;
+  }
+  else
+  {
+    emit sigStepDone();
+  }
+  
 }
 
 #include "debuggerdbg.moc"
