@@ -27,7 +27,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>src/protoeditor</activetarget>
+      <activetarget>src/commonphp/libcommonphp.la</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -39,7 +39,7 @@
       <autocompile>true</autocompile>
       <envvars/>
       <runarguments>
-        <protoeditor></protoeditor>
+        <protoeditor/>
       </runarguments>
     </run>
     <configurations>
@@ -49,6 +49,7 @@
         <cxxcompiler>GppOptions</cxxcompiler>
         <f77compiler>G77Options</f77compiler>
         <cxxflags>-O2 -g0</cxxflags>
+        <envvars/>
       </optimized>
       <debug>
         <configargs>--enable-debug=full</configargs>
@@ -92,6 +93,7 @@
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
+      <showvcsfields>false</showvcsfields>
     </tree>
   </kdevfileview>
   <kdevdoctreeview>
@@ -219,4 +221,11 @@
     <appskde>false</appskde>
     <url/>
   </dist>
+  <kdevcvsservice>
+    <recursivewhenupdate>true</recursivewhenupdate>
+    <prunedirswhenupdate>true</prunedirswhenupdate>
+    <createdirswhenupdate>true</createdirswhenupdate>
+    <recursivewhencommitremove>true</recursivewhencommitremove>
+    <revertoptions>-C</revertoptions>
+  </kdevcvsservice>
 </kdevelop>

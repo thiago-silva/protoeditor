@@ -28,10 +28,9 @@ Project site:
   2.1 Kate
 
   The first time you execute Protoeditor, its configuration won't exist so,
-  kate will load its default settings, wich might not include Icon Border.
+  kate will load the default settings for the editor, wich might not include Icon Border.
   Just open a file, goto "Editor" -> "Configure" and, on "View defaults",
   mark "Show Icon Border", so you can see the execution point and breakpoints.
-
 
   2.2 Debugger Configuration
 
@@ -43,7 +42,7 @@ Project site:
     On "Server basedir", the remote location of the root folder
     (ie. /usr/apache/htdocs/helloworld). For "Listen port", you can choose the
     default: 7869. This is the port on wich your computer waits for DBG connection.
-    Finally, set the "Host" to the remote host address (ie. 192.168.0.30).
+    Finally, set the "Host" to the http server address (ie. 192.168.0.30).
 
     If you are debugging everything locally, just setup to something like:
 
@@ -59,7 +58,7 @@ Project site:
 
   2.3 Main window
 
-    Now, some stuff I implemented (at least, I remember doing it...).
+    Now, some tricks and notes:
 
       -On the variables list, you can expand the array/object childs and
       on the next stepin/stepout/break, the item remains expanded (I haven't seen this
@@ -68,11 +67,12 @@ Project site:
       -Again, on the variables list and watches, you can change the value
       of some variable on the fly: just double click on the value and change it.
 
+      -Multiple breakpoints on the same file/line currently is not supported.
+
 3.0 Future plans
 
   DBG is good. Very good. But there are some catches for the free version. So, when I finish
   the DBG client, I might start working on XDebug (http://www.xdebug.org/) support.
-  Again, not for the Protoeditor itself, but for Quanta+ (if they accept it, of course :-).
 
 4.0 Extra info
 
@@ -102,7 +102,7 @@ Project site:
 
       "protoeditor: Requesting "/home/me/test/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
 
-    Your typed something wrong for the paths.
+    You probably typed something wrong for the paths.
 
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>
