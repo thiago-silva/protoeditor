@@ -53,6 +53,7 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
 
 DBGNet::~DBGNet()
 {
+  stopListener();
   delete m_receiver;
   delete m_requestor;
   delete m_dbgStack;
