@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jesterman                                       *
- *   jesterman@brturbo.com                                                 *
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,39 +17,41 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DBGFILEINFO_H
-#define DBGFILEINFO_H
-#include <qmap.h>
+#ifndef DBGSETTINGSWIDGET_H
+#define DBGSETTINGSWIDGET_H
 
-class SiteSettings;
+#include <qwidget.h>
 
-class DBGFileInfo {
+class QCheckBox;
+class QSpinBox;
+
+class DBGSettings;
+
+class DBGSettingsWidget : public QWidget {
+  Q_OBJECT
 public:
-  DBGFileInfo();
-  ~DBGFileInfo();
+  DBGSettingsWidget(DBGSettings*, QWidget *parent = 0, const char *name = 0);
+  ~DBGSettingsWidget();
 
-  void setSite(SiteSettings*);
-
-  QString toURI(const QString&);
-
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
-
-  const QString& moduleName(int modno);
-  int moduleNumber(const QString&);
-
-  void setModulePath(int, const QString&);
-
-  bool updated();
-
-  void clear();
-  void clearStatus();
+  bool breakOnLoad();
+  bool sendErrors();
+  bool sendLogs();
+  bool sendOutput();
+  bool sendDetailedOutput();
+  int  listenPort();
+  bool enableJIT();
 
 private:
+  void loadValues(DBGSettings*);
 
-  SiteSettings*      m_site;
-  bool               m_statusUpdated;
-  QMap<int, QString> m_fileMap;
+  QCheckBox *m_ckBreakOnLoad;
+  QCheckBox *m_ckSendErrors;
+  QCheckBox *m_ckSendLogs;
+  QCheckBox *m_ckSendOutput;
+  QCheckBox *m_ckSendDetailedOutput;
+
+  QSpinBox  *m_spListenPort;
+  QCheckBox *m_ckEnableJIT;
 };
 
 #endif

@@ -18,35 +18,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "dbgfileinfo.h"
-#include "dbgconfiguration.h"
+#include "sitesettings.h"
 
-DBGFileInfo::DBGFileInfo(DBGConfiguration* conf)
-    : m_dbgConfiguration(conf), m_statusUpdated(false)
+DBGFileInfo::DBGFileInfo()
+    : m_site(0), m_statusUpdated(false)
 {}
 
 
 DBGFileInfo::~DBGFileInfo()
 {}
 
+void DBGFileInfo::setSite(SiteSettings* site)
+{
+  m_site = site;
+}
+
 QString DBGFileInfo::toURI(const QString& filePath)
 {
+  if(!m_site) return filePath;
+
   QString uri = filePath;
-  return uri.remove(0, m_dbgConfiguration->localBaseDir().length());
+  return uri.remove(0, m_site->localBaseDir().length());
 }
 
 QString DBGFileInfo::toRemoteFilePath(const QString& localFilePath)
 {
+  if(!m_site) return localFilePath;
+
   QString localFile  = localFilePath;
-  QString serverPath = m_dbgConfiguration->serverBaseDir();
-  QString localPath  = m_dbgConfiguration->localBaseDir();
+  QString serverPath = m_site->remoteBaseDir();
+  QString localPath  = m_site->localBaseDir();
   return serverPath + localFile.remove(0, localPath.length());
 }
 
 QString DBGFileInfo::toLocalFilePath(const QString& remoteFilePath)
 {
+  if(!m_site) return remoteFilePath;
+
   QString remoteFile  = remoteFilePath;
-  QString serverPath  = m_dbgConfiguration->serverBaseDir();
-  QString localPath   = m_dbgConfiguration->localBaseDir();
+  QString serverPath  = m_site->remoteBaseDir();
+  QString localPath   = m_site->localBaseDir();
   return localPath + remoteFile.remove(0, serverPath.length());
 }
 

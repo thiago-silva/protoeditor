@@ -32,6 +32,8 @@ class DebuggerExecutionPoint;
 class DebuggerStack;
 class Variable;
 
+class SiteSettings;
+
 class AbstractDebugger : public QObject {
 Q_OBJECT
 public:
@@ -39,16 +41,14 @@ public:
   virtual ~AbstractDebugger();
 
   virtual QString name()   const = 0;
-  virtual int     id() const = 0;
+  //virtual int     id() const = 0;
 
   virtual bool isSessionActive() const = 0;
   virtual bool isRunning()       const = 0;
 
-  virtual void reloadConfiguration() = 0;
-
   virtual void startSession()      = 0;
   virtual void endSession()        = 0;
-  virtual void run(const QString&) = 0;
+  virtual void run(const QString&, SiteSettings*) = 0;
   virtual void stop()              = 0;
   virtual void stepInto()          = 0;
   virtual void stepOver()          = 0;
@@ -66,6 +66,9 @@ public:
 
   virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
+
+public slots:
+  virtual void slotSettingsChanged() = 0;
 
 protected:
   virtual DebuggerManager* manager();

@@ -21,12 +21,14 @@
 #ifndef DEBUGGERFACTORY_H
 #define DEBUGGERFACTORY_H
 
+#include <qstring.h>
+
 class AbstractDebugger;
 class DebuggerManager;
 
 class DebuggerFactory{
 public:
-  static AbstractDebugger* buildDebugger(DebuggerManager* manager);
+  static AbstractDebugger* buildDebugger(const QString& name, DebuggerManager* manager);
 private:
   DebuggerFactory() {};
 };

@@ -26,7 +26,9 @@
 #include "dbgnetdata.h"
 #include "dbgrequestpack.h"
 #include "dbgrequestpackbuilder.h"
-#include "settings.h"
+
+#include "protoeditorsettings.h"
+#include "extoutputsettings.h"
 
 #include <qsocket.h>
 #include <qhttp.h>
@@ -163,9 +165,10 @@ void DBGRequestor::requestOptions(int op)
   delete requestPack;
 }
 
-void DBGRequestor::makeHttpRequest(const QString& host, const QString& path, int listenPort, int sessionId)
+void DBGRequestor::makeHttpRequest(const QString& host, int port, const QString& path, int listenPort, int sessionId)
 {
-  QString reqUrl = QString("http://") + host + path + "?DBGSESSID="
+  QString reqUrl = QString("http://") + host + ":" + QString::number(port)
+                   + path + "?DBGSESSID="
                    + QString::number(sessionId)
                    + "@clienthost:"
                    + QString::number(listenPort);
@@ -202,7 +205,7 @@ Browser::~Browser()
 
 void Browser::request(const QString& url)
 {
-  if(Settings::useExternalBrowser()) {
+  if(ProtoeditorSettings::self()->extOutputSettings()->useExternalBrowser()) {
     doBrowserRequest(url);
   } else {
     doHTTPRequest(KURL(url));
@@ -236,7 +239,8 @@ void Browser::slotHttpDone(bool error)
 
 void Browser::doBrowserRequest(const QString& url)
 {
-  m_browserRequestor = BrowserRequestor::retrieveBrowser(Settings::browser(), this);
+  m_browserRequestor = BrowserRequestor::retrieveBrowser(
+    ProtoeditorSettings::self()->extOutputSettings()->browser(), this);
   //TODO: assert-me
   m_browserRequestor->doRequest(url);
 }
@@ -258,8 +262,8 @@ BrowserRequestor::~BrowserRequestor()
 BrowserRequestor* BrowserRequestor::retrieveBrowser(int browser, Browser* br)
 {
   switch(browser) {
-    case Settings::EnumBrowser::Konqueror:
-      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Konqueror)) {
+    case ExtOutputSettings::EnumBrowser::Konqueror:
+      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Konqueror)) {
         return m_browserRequestor;
       }
       delete m_browserRequestor;
@@ -267,8 +271,8 @@ BrowserRequestor* BrowserRequestor::retrieveBrowser(int browser, Browser* br)
       connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
         SIGNAL(sigError(const QString&)));
       break;
-    case Settings::EnumBrowser::Mozilla:
-      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Mozilla)) {
+    case ExtOutputSettings::EnumBrowser::Mozilla:
+      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Mozilla)) {
         return m_browserRequestor;
       }
       delete m_browserRequestor;
@@ -276,8 +280,8 @@ BrowserRequestor* BrowserRequestor::retrieveBrowser(int browser, Browser* br)
       connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
         SIGNAL(sigError(const QString&)));
       break;
-    case Settings::EnumBrowser::Firefox:
-      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Firefox)) {
+    case ExtOutputSettings::EnumBrowser::Firefox:
+      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Firefox)) {
         return m_browserRequestor;
       }
       delete m_browserRequestor;
@@ -285,8 +289,8 @@ BrowserRequestor* BrowserRequestor::retrieveBrowser(int browser, Browser* br)
       connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
         SIGNAL(sigError(const QString&)));
       break;
-    case Settings::EnumBrowser::Opera:
-      if(m_browserRequestor && (m_browserRequestor->id() == Settings::EnumBrowser::Opera)) {
+    case ExtOutputSettings::EnumBrowser::Opera:
+      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Opera)) {
         return m_browserRequestor;
       }
       delete m_browserRequestor;
@@ -374,7 +378,7 @@ void KonquerorRequestor::openNewKonqueror(const QString& url)
 
 int KonquerorRequestor::id()
 {
-  return Settings::EnumBrowser::Konqueror;
+  return ExtOutputSettings::EnumBrowser::Konqueror;
 }
 
 void KonquerorRequestor::init()
@@ -435,7 +439,7 @@ void MozillaRequestor::doRequest(const QString& url)
 
 int MozillaRequestor::id()
 {
-  return Settings::EnumBrowser::Mozilla;
+  return ExtOutputSettings::EnumBrowser::Mozilla;
 }
 
 
@@ -483,7 +487,7 @@ void FirefoxRequestor::doRequest(const QString& url)
 
 int FirefoxRequestor::id()
 {
-  return Settings::EnumBrowser::Firefox;
+  return ExtOutputSettings::EnumBrowser::Firefox;
 }
 
 
@@ -522,7 +526,7 @@ void OperaRequestor::doRequest(const QString& url)
 
 int OperaRequestor::id()
 {
-  return Settings::EnumBrowser::Opera;
+  return ExtOutputSettings::EnumBrowser::Opera;
 }
 
 #include "dbgrequestor.moc"

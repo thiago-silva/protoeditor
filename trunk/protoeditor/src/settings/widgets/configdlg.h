@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jesterman                                       *
- *   jesterman@brturbo.com                                                 *
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,39 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DBGFILEINFO_H
-#define DBGFILEINFO_H
-#include <qmap.h>
+#ifndef CONFIGDLG_H
+#define CONFIGDLG_H
 
-class SiteSettings;
+#include <kdialogbase.h>
 
-class DBGFileInfo {
+class PHPSettingsWidget;
+class SiteSettingsWidget;
+class ExtOutputSettingsWidget;
+
+class ConfigDlg : public KDialogBase
+{
+  Q_OBJECT
 public:
-  DBGFileInfo();
-  ~DBGFileInfo();
+  ConfigDlg(QWidget *parent = 0, const char *name = 0);
+  ~ConfigDlg();
 
-  void setSite(SiteSettings*);
+  static void showDialog();
+signals:
+  void settingsChanged();
 
-  QString toURI(const QString&);
-
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
-
-  const QString& moduleName(int modno);
-  int moduleNumber(const QString&);
-
-  void setModulePath(int, const QString&);
-
-  bool updated();
-
-  void clear();
-  void clearStatus();
-
+protected slots:
+  void slotOk();
 private:
+  static ConfigDlg* m_self;
 
-  SiteSettings*      m_site;
-  bool               m_statusUpdated;
-  QMap<int, QString> m_fileMap;
+  PHPSettingsWidget     *m_phpSettingsWidget;
+  SiteSettingsWidget    *m_siteSettingsWidget;
+  ExtOutputSettingsWidget *m_extOutputSettingsWidget;
 };
 
 #endif

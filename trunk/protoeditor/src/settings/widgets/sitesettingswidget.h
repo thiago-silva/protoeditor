@@ -17,31 +17,47 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BROWSERSETTINGSWIDGET_H
-#define BROWSERSETTINGSWIDGET_H
+#ifndef SITESETTINGSWIDGET_H
+#define SITESETTINGSWIDGET_H
 
 #include <qwidget.h>
 
-class QCheckBox;
-class QLabel;
-//class KLineEdit;
-class QComboBox;
+class KPushButton;
+class QListBox;
+class QListBoxItem;
+class SiteSettings;
 
-class BrowserSettingsWidget : public QWidget
+class SiteSettingsWidget : public QWidget
 {
   Q_OBJECT
 public:
-  BrowserSettingsWidget(QWidget *parent = 0, const char *name = 0);
-  ~BrowserSettingsWidget();
+  SiteSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  ~SiteSettingsWidget();
 
-  QCheckBox *m_ckUseExternalBrowser;
+  KPushButton   *m_btAdd;
+  KPushButton   *m_btModify;
+  KPushButton   *m_btRemove;
 
-  QLabel    *m_lbBrowserCmd;
-  //KLineEdit *m_edBrowserCmd;
-  QComboBox *m_cbBrowser;
+  QListBox      *m_sitesListBox;
 
+  void updateSettings();
 private slots:
-  void slotUseBrowser(int);
+  void slotAdd();
+  void slotModify();
+  void slotRemove();
+  void slotListChanged(int);
+  void slotListDoubleClicked(QListBoxItem*);
+
+private:
+  void loadValues();
+
+  void addSite(const QString& name, const QString& host, int port,
+               const QString& remoteBaseDir, const QString& localBaseDir);
+
+  void modifySite(const QString& name, const QString& host, int port,
+               const QString& remoteBaseDir, const QString& localBaseDir);
+
+  QMap<QString, SiteSettings*> m_siteMap;
 };
 
 #endif

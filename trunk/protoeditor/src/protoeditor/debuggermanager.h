@@ -53,6 +53,8 @@ public:
   void debugError(const QString&);
   void updateOutput(const QString&);
 
+signals:
+  void sigSettingsChanged();
 
 public slots:
   void slotConfigurationChanged();

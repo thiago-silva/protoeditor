@@ -31,6 +31,8 @@
 #include "debuggerbreakpoint.h"
 #include "dbgfileinfo.h"
 
+#include "sitesettings.h"
+
 #include <kdebug.h>
 
 
@@ -41,7 +43,7 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
 {
   m_receiver    = new DBGReceiver(this);
   m_requestor   = new DBGRequestor();
-  m_dbgFileInfo = new DBGFileInfo(m_debugger->configuration());
+  m_dbgFileInfo = new DBGFileInfo();
   m_dbgStack    = new DBGStack();
 
   connect(m_receiver, SIGNAL(sigError(const QString&)),
@@ -76,12 +78,16 @@ void DBGNet::stopListener()
   m_con->close();
 }
 
-void DBGNet::requestPage(const QString& host, const QString& filePath, int port, dbgint sessid)
+
+void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
 {
+  m_dbgFileInfo->setSite(site);
+
   m_sessionId = sessid;
-  m_requestor->makeHttpRequest(host
+  m_requestor->makeHttpRequest(site->host()
+                              , site->port()
                               , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
-                              , port
+                              , listenPort
                               , sessid);
 }
 

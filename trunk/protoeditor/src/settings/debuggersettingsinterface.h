@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jesterman                                       *
- *   jesterman@brturbo.com                                                 *
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,39 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DBGFILEINFO_H
-#define DBGFILEINFO_H
-#include <qmap.h>
+#ifndef DEBUGGERSETTINGSINTERFACE_H
+#define DEBUGGERSETTINGSINTERFACE_H
 
-class SiteSettings;
+#include <qstring.h>
+#include <kconfigskeleton.h>
 
-class DBGFileInfo {
+class QWidget;
+
+class DebuggerSettingsInterface : public KConfigSkeleton {
 public:
-  DBGFileInfo();
-  ~DBGFileInfo();
 
-  void setSite(SiteSettings*);
+  DebuggerSettingsInterface()
+    :  KConfigSkeleton(QString::fromLatin1("protoeditorrc")) {}
 
-  QString toURI(const QString&);
+  virtual ~DebuggerSettingsInterface() {}
 
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
-
-  const QString& moduleName(int modno);
-  int moduleNumber(const QString&);
-
-  void setModulePath(int, const QString&);
-
-  bool updated();
-
-  void clear();
-  void clearStatus();
-
-private:
-
-  SiteSettings*      m_site;
-  bool               m_statusUpdated;
-  QMap<int, QString> m_fileMap;
+  virtual QString  name()                 = 0;
+  virtual void     loadValuesFromWidget() = 0;
+  virtual QWidget* widget()               = 0;
 };
 
 #endif

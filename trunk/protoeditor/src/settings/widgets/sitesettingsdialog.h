@@ -17,64 +17,48 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef SITESETTINGSDIALOG_H
+#define SITESETTINGSDIALOG_H
 
-#include "dbgconfiguration.h"
+#include <kdialogbase.h>
 
-DBGConfiguration::DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                                   int listenPort, const QString& serverHost)
-  : m_localBaseDir(localBaseDir), m_serverBaseDir(serverBaseDir),
-    m_listenPort(listenPort), m_serverHost(serverHost)
-{}
+class KLineEdit;
+class QLabel;
+class QSpinBox;
 
-DBGConfiguration::~DBGConfiguration()
-{}
-
-void DBGConfiguration::setLocalBaseDir(const QString& localBaseDir)
+class SiteSettingsDialog : public KDialogBase
 {
-  m_localBaseDir = localBaseDir;
-  if(m_localBaseDir.at(m_localBaseDir.length()-1) == '/') {
-    m_localBaseDir.remove(m_localBaseDir.length()-1, 1);
-  }
-}
+  Q_OBJECT
+public:
+  SiteSettingsDialog(QWidget* parent, const char* name = 0);
+  ~SiteSettingsDialog();
 
-void DBGConfiguration::setServerBaseDir(const QString& serverBaseDir)
-{
-  m_serverBaseDir = serverBaseDir;
-  if(m_serverBaseDir.at(m_serverBaseDir.length()-1) == '/') {
-    m_serverBaseDir.remove(m_serverBaseDir.length()-1, 1);
-  }
-}
+  QString name();
+  QString host();
+  int            port();
+  QString remoteBaseDir();
+  QString localBaseDir();
 
-void DBGConfiguration::setListenPort(int port)
-{
-  m_listenPort = port;
-}
+  void populate(const QString& name, const QString& host, int port,
+                const QString& remoteBaseDir, const QString& localBaseDir);
 
-void DBGConfiguration::setServerHost(const QString& host)
-{
-  m_serverHost = host;
-  if(m_serverHost.at(m_serverHost.length()-1) == '/') {
-    m_serverHost.remove(host.length()-1, 1);
-  }
-}
+  void setUpdate();
+protected slots:
+  void slotOk();
 
-const QString& DBGConfiguration::localBaseDir() const
-{
-  return m_localBaseDir;
-}
+private:
+  KLineEdit *m_edName;
+  KLineEdit *m_edHost;
+  QSpinBox  *m_spPort;
+  KLineEdit *m_edRemoteBaseDir;
+  KLineEdit *m_edLocalBaseDir;
 
-const QString& DBGConfiguration::serverBaseDir() const
-{
-  return m_serverBaseDir;
-}
 
-int DBGConfiguration::listenPort() const
-{
-  return m_listenPort;
-}
+  QLabel* m_lbName;
+  QLabel* m_lbHost;
+  QLabel* m_lbPort;
+  QLabel* m_lbRemoteBaseDir;
+  QLabel* m_lbLocalBaseDir;
+};
 
-const QString& DBGConfiguration::serverHost() const
-{
-  return m_serverHost;
-}
-
+#endif

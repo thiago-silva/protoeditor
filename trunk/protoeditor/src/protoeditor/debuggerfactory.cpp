@@ -20,14 +20,13 @@
 
 #include "debuggerfactory.h"
 #include "debuggerdbg.h"
-#include "settings.h"
 
-AbstractDebugger* DebuggerFactory::buildDebugger(DebuggerManager* manager) {
+AbstractDebugger* DebuggerFactory::buildDebugger(const QString& name, DebuggerManager* manager) {
   AbstractDebugger* debugger = NULL;
-  switch(Settings::client()) {
-    case Settings::EnumClient::DBG:
-      debugger = new DebuggerDBG(manager);
-      break;
+
+  if(name == "DBG") {
+    debugger = new DebuggerDBG(manager);
   }
+
   return debugger;
 }

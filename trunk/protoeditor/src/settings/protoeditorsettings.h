@@ -17,34 +17,51 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef PROTOEDITORSETTINGS_H
+#define PROTOEDITORSETTINGS_H
 
 #include <qstring.h>
 
-class DBGConfiguration{
+#include <qmap.h>
+#include <qvaluelist.h>
+
+class DebuggerSettingsInterface;
+class DebuggerSettings;
+class SiteSettings;
+class PHPSettings;
+class ExtOutputSettings;
+
+class ProtoeditorSettings {
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  ~ProtoeditorSettings();
 
-  ~DBGConfiguration();
+  static ProtoeditorSettings* self();
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  void registerDebuggerSettings(DebuggerSettingsInterface*, const QString& name);
 
-  const QString& localBaseDir() const;
-  const QString& serverBaseDir() const;
-  int   listenPort() const;
-  const QString& serverHost() const;
+  DebuggerSettingsInterface*             debuggerSettings(const QString& name);
+  QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
+  SiteSettings*                          siteSettings(const QString& name);
+  QValueList<SiteSettings*>              siteSettingsList();
+  PHPSettings*                           phpSettings();
+  ExtOutputSettings*                     extOutputSettings();
+
+  void addSite(SiteSettings*);
+  void clearSites();
+  void writeConfig();
 
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int     m_listenPort;
-  QString m_serverHost;
+  ProtoeditorSettings();
+  void loadSites();
+
+  static ProtoeditorSettings *m_self;
+
+  PHPSettings              *m_phpSettings;
+  ExtOutputSettings        *m_extOutputSettings;
+
+
+  QMap<QString, DebuggerSettingsInterface*>  m_debuggerSettingsMap;
+  QMap<QString, SiteSettings*>               m_siteSettingsMap;
 };
 
 #endif

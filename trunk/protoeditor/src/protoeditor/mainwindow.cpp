@@ -28,10 +28,6 @@
 
 #include "debuggermanager.h"
 
-#include "settings.h"
-#include "debuggersettingswidget.h"
-#include "browsersettingswidget.h"
-
 #include <kapplication.h>
 #include <kstatusbar.h>
 #include <kaction.h>
@@ -43,12 +39,14 @@
 #include <klocale.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
-#include <kconfigdialog.h>
 #include <ktexteditor/view.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
 
 #include <ktextedit.h>
+//#include <kconfigdialog.h>
+#include "configdlg.h"
+
 /*
 #include <ktexteditor/document.h>
 #include <ktexteditor/editorchooser.h>
@@ -432,6 +430,8 @@ void MainWindow::slotHasRedo()
 */
 void MainWindow::slotShowSettings()
 {
+  ConfigDlg::showDialog();
+/*
   if(KConfigDialog::showDialog("settings"))
     return;
 
@@ -447,10 +447,12 @@ void MainWindow::slotShowSettings()
            m_debugger_manager, SLOT(slotConfigurationChanged()) );
 
   dialog->show();
+  */
 }
 
 void MainWindow::initSettings()
 {
+/*
   if(!m_debuggerSettings) {
     m_debuggerSettings = new DebuggerSettingsWidget(0, "Debugger");
   }
@@ -458,6 +460,7 @@ void MainWindow::initSettings()
   if(!m_browserSettings) {
     m_browserSettings = new BrowserSettingsWidget(0, "Browser");
   }
+*/
 }
 
 void MainWindow::showSorry(const QString& msg) const

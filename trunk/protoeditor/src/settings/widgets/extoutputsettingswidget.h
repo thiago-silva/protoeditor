@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jesterman                                       *
- *   jesterman@brturbo.com                                                 *
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,39 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DBGFILEINFO_H
-#define DBGFILEINFO_H
-#include <qmap.h>
+#ifndef EXTOUTPUTSETTINGSWIDGET_H
+#define EXTOUTPUTSETTINGSWIDGET_H
 
-class SiteSettings;
+#include <qwidget.h>
 
-class DBGFileInfo {
+class QCheckBox;
+class QComboBox;
+
+class ExtOutputSettingsWidget : public QWidget
+{
+  Q_OBJECT
 public:
-  DBGFileInfo();
-  ~DBGFileInfo();
+  ExtOutputSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  ~ExtOutputSettingsWidget();
 
-  void setSite(SiteSettings*);
+  QCheckBox *m_ckUseExternalBrowser;
 
-  QString toURI(const QString&);
+  QComboBox *m_cbBrowser;
 
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
-
-  const QString& moduleName(int modno);
-  int moduleNumber(const QString&);
-
-  void setModulePath(int, const QString&);
-
-  bool updated();
-
-  void clear();
-  void clearStatus();
-
-private:
-
-  SiteSettings*      m_site;
-  bool               m_statusUpdated;
-  QMap<int, QString> m_fileMap;
+  void updateSettings();
+private slots:
+  void slotUseBrowser(int);
 };
 
 #endif

@@ -17,53 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DEBUGGERSETTINGSWIDGET_H
-#define DEBUGGERSETTINGSWIDGET_H
+#ifndef PHPSETTINGSWIDGET_H
+#define PHPSETTINGSWIDGET_H
 
 #include <qwidget.h>
+#include <qvaluelist.h>
 
-class QCheckBox;
+class QComboBox;
 class KLineEdit;
-class QSpinBox;
-class QGridLayout;
-class QLabel;
+class DebuggerSettingsInterface;
 
-class QTabWidget;
-class QButtonGroup;
-class QRadioButton;
-class QVBoxLayout;
-
-class DebuggerSettingsWidget : public QWidget
+class PHPSettingsWidget : public QWidget
 {
   Q_OBJECT
 public:
-  DebuggerSettingsWidget(QWidget *parent = 0, const char *name = 0);
-  ~DebuggerSettingsWidget();
+  PHPSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  ~PHPSettingsWidget();
 
-  QTabWidget   *m_tabWidget;
-  QButtonGroup *m_buttonGroup;
-  QRadioButton *m_rdDBG;
-  QVBoxLayout  *m_vlayout;
-  QRadioButton *m_rdOther;
-
-
-  KLineEdit    *m_edLocalBaseDir;
-  KLineEdit    *m_edServerBaseDir;
-  QSpinBox     *m_spListenPort;
-  KLineEdit    *m_edServerHost;
-
-  QGridLayout *m_gridLayout;
-  QLabel      *m_lbLocalBaseDir;
-  QLabel      *m_lbServerBaseDir;
-  QLabel      *m_lbListenPort;
-  QLabel      *m_lbServerHost;
-
-private slots:
-  void slotClientChanged(int);
-
+  void updateSettings();
 private:
-  void enableDBG();
-  void disableDBG();
+  KLineEdit         *m_edPHPBinaryPath;
+  QComboBox         *m_cbDefaultDebugger;
+
+  QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;
 };
 
 #endif

@@ -17,36 +17,37 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "browsersettingswidget.h"
+#include "extoutputsettingswidget.h"
+#include "protoeditorsettings.h"
+#include "extoutputsettings.h"
+
 #include <qlayout.h>
-//#include <klineedit.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
 
-BrowserSettingsWidget::BrowserSettingsWidget(QWidget *parent, const char *name)
+
+
+ExtOutputSettingsWidget::ExtOutputSettingsWidget(QWidget *parent, const char *name)
  : QWidget(parent, name)
 {
   QVBoxLayout* vbox = new QVBoxLayout(this, 0, 10);
   QHBoxLayout* hbox = new QHBoxLayout(this, 0, 3);
 
-  m_ckUseExternalBrowser = new QCheckBox(this, "kcfg_UseExternalBrowser");
+  m_ckUseExternalBrowser = new QCheckBox(this);
   m_ckUseExternalBrowser->setText("Use external browser");
 
-  m_lbBrowserCmd = new QLabel(this);
-  //m_lbBrowserCmd->setText("Browser command: ");
-  m_lbBrowserCmd->setText("Browser:");
+  QLabel* lbBrowserCmd = new QLabel(this);
+  lbBrowserCmd->setText("Browser:");
 
-  //m_edBrowserCmd = new KLineEdit(this, "kcfg_BrowserCmd");
-  //m_edBrowserCmd->setEnabled(false);
-  m_cbBrowser = new QComboBox(this, "kcfg_Browser");
+  m_cbBrowser = new QComboBox(this);
   m_cbBrowser->insertItem("Konqueror");
   m_cbBrowser->insertItem("Mozilla");
   m_cbBrowser->insertItem("Firefox");
   m_cbBrowser->insertItem("Opera");
   m_cbBrowser->setEnabled(false);
 
-  hbox->addWidget(m_lbBrowserCmd);
+  hbox->addWidget(lbBrowserCmd);
   hbox->addWidget(m_cbBrowser);
 
   vbox->addWidget(m_ckUseExternalBrowser);
@@ -56,7 +57,7 @@ BrowserSettingsWidget::BrowserSettingsWidget(QWidget *parent, const char *name)
   connect(m_ckUseExternalBrowser, SIGNAL(stateChanged(int)), this, SLOT(slotUseBrowser(int)));
 }
 
-void BrowserSettingsWidget::slotUseBrowser(int value)
+void ExtOutputSettingsWidget::slotUseBrowser(int value)
 {
   if(QButton::On == value) {
     m_cbBrowser->setEnabled(true);
@@ -65,9 +66,16 @@ void BrowserSettingsWidget::slotUseBrowser(int value)
   }
 }
 
-BrowserSettingsWidget::~BrowserSettingsWidget()
+ExtOutputSettingsWidget::~ExtOutputSettingsWidget()
 {
 }
 
 
-#include "browsersettingswidget.moc"
+void ExtOutputSettingsWidget::updateSettings()
+{
+  ProtoeditorSettings::self()->extOutputSettings()->setBrowser(m_cbBrowser->currentItem());
+  ProtoeditorSettings::self()->extOutputSettings()->setUseExternalBrowser(
+    m_ckUseExternalBrowser->isChecked());
+}
+
+#include "extoutputsettingswidget.moc"

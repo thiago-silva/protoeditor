@@ -20,15 +20,16 @@
 
 #include "debuggerdbg.h"
 #include "debuggermanager.h"
-#include "dbgconfiguration.h"
 #include "dbgnet.h"
 #include "dbg_defs.h"
 #include "variableparser.h"
 #include "phpvariable.h"
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
-#include "settings.h"
+#include "dbgsettings.h"
 #include "phpdefs.h"
+
+#include "protoeditorsettings.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -37,15 +38,13 @@
 #include <qregexp.h>
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
-    : AbstractDebugger(parent), m_isSessionActive(false), m_isRunning(false),
-    m_configuration(0), m_net(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
+    : AbstractDebugger(parent), m_name("DBG"), m_isSessionActive(false), m_isRunning(false),
+    m_dbgSettings(0), m_net(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
     m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
-  m_configuration = new DBGConfiguration(
-                      Settings::localBaseDir(),
-                      Settings::serverBaseDir(),
-                      Settings::listenPort(),
-                      Settings::serverHost());
+  m_dbgSettings = new DBGSettings();
+
+  ProtoeditorSettings::self()->registerDebuggerSettings(m_dbgSettings, m_name);
 
   m_net = new DBGNet(this);
 
@@ -58,18 +57,20 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
 DebuggerDBG::~DebuggerDBG()
 {
   delete m_net;
-  delete m_configuration;
+  //delete m_dbgSettings;
 }
 
 QString DebuggerDBG::name() const
 {
-  return QString("DBG");
+  return m_name;
 }
 
+/*
 int DebuggerDBG::id() const
 {
   return Settings::EnumClient::DBG;
 }
+*/
 
 bool DebuggerDBG::isSessionActive() const
 {
@@ -81,26 +82,29 @@ bool DebuggerDBG::isRunning() const
   return m_isRunning;
 }
 
+void DebuggerDBG::slotSettingsChanged()
+{
+  //endSession();
+}
+
+/*
 void DebuggerDBG::reloadConfiguration()
 {
   endSession();
-  m_configuration->setLocalBaseDir(Settings::localBaseDir());
-  m_configuration->setServerBaseDir(Settings::serverBaseDir());
-  m_configuration->setListenPort(Settings::listenPort());
-  m_configuration->setServerHost(Settings::serverHost());
 }
+*/
 
 void DebuggerDBG::startSession()
 {
   if(!m_isSessionActive) {
 
-    if(m_net->startListener(m_configuration->listenPort())) {
+    if(m_net->startListener(m_dbgSettings->listenPort())) {
       m_isSessionActive = true;
-      kdDebug() << "DBG: listening on port " << m_configuration->listenPort() << endl;
+      kdDebug() << "DBG: listening on port " << m_dbgSettings->listenPort() << endl;
       emit sigSessionStarted();
     } else {
       emit sigInternalError(i18n("Unable to listen on port: %1").arg(
-                              m_configuration->listenPort()));
+                              m_dbgSettings->listenPort()));
     }
   }
 }
@@ -117,15 +121,12 @@ void DebuggerDBG::endSession()
   m_isSessionActive = false;
 }
 
-void DebuggerDBG::run(const QString& filepath)
+void DebuggerDBG::run(const QString& filepath, SiteSettings* site)
 {
   if(!isRunning()) {
     dbgint sessionid = kapp->random();
 
-    m_net->requestPage(m_configuration->serverHost(),
-                       filepath,
-                       m_configuration->listenPort(),
-                       sessionid);
+    m_net->requestPage(filepath, site, m_dbgSettings->listenPort(), sessionid);
   } else {
     m_net->requestContinue();
   }
@@ -425,11 +426,6 @@ void DebuggerDBG::slotStepDone() {
   m_net->requestVariables(m_currentExecutionPointID, false);
   m_net->requestVariables(m_globalExecutionPointID, true);
   requestWatches(m_currentExecutionPointID);
-}
-
-DBGConfiguration* DebuggerDBG::configuration()
-{
-  return m_configuration;
 }
 
 #include "debuggerdbg.moc"

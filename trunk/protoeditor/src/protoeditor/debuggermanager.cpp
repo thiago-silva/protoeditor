@@ -30,7 +30,6 @@
 #include "loglistview.h"
 #include "debuggerbreakpoint.h"
 #include "breakpointlistview.h"
-#include "settings.h"
 
 #include <kapplication.h>
 #include <kcombobox.h>
@@ -113,7 +112,7 @@ void DebuggerManager::init()
   */
 
   disableAllDebugActions();
-  slotConfigurationChanged();
+  loadDebugger();
 }
 
 
@@ -146,6 +145,7 @@ void DebuggerManager::clearDebugger()
 
 void DebuggerManager::loadDebugger()
 {
+/*
   if(Settings::client() == -1) {
     clearDebugger();
     return;
@@ -153,7 +153,7 @@ void DebuggerManager::loadDebugger()
 
   if(m_debugger && (m_debugger->id() == Settings::client())) {
     //is the same current debugger, just load its settings again
-    m_debugger->reloadConfiguration();
+    //m_debugger->reloadConfiguration();
   } else {
     if(m_debugger) clearDebugger();
 
@@ -163,8 +163,15 @@ void DebuggerManager::loadDebugger()
       return;
     }
 
-    m_debugger->reloadConfiguration();
+    //m_debugger->reloadConfiguration();
     connectDebugger();
+  }
+  */
+
+  if((m_debugger = DebuggerFactory::buildDebugger("DBG", this)) == NULL) {
+    m_window->showError("Error loading debugger client");
+    disableAllDebugActions();
+    return;
   }
 
   m_window->actionCollection()->action("debug_start_session")->setEnabled(true);
@@ -188,6 +195,9 @@ void DebuggerManager::connectDebugger()
 
   connect(m_debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotInternalError(const QString&)));
+
+  connect(this, SIGNAL(sigSettingsChanged()),
+         m_debugger, SLOT(slotSettingsChanged()));
 }
 
 /******************************* Application interface ******************************************/
@@ -195,9 +205,6 @@ void DebuggerManager::connectDebugger()
 void DebuggerManager::slotConfigurationChanged()
 {
   loadDebugger();
-  //if(m_debugger) {
-  //  m_debugger->reloadConfiguration();
-  //}
 }
 
 void DebuggerManager::slotDebugStartSession()
@@ -222,7 +229,10 @@ void DebuggerManager::slotDebugRun()
 
   if(m_window->tabEditor()->count() != 0) {
     QString filepath = m_window->tabEditor()->currentDocumentPath();
-    m_debugger->run(filepath);
+    /*
+     m_debugger->run(filepath,
+      ProtoeditorSettings::self()->siteSettings(m_window->selectedSite()));
+     */
   } else {
     m_window->showSorry("Open a file to debug");
   }

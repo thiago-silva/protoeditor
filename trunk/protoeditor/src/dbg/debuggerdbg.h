@@ -25,7 +25,7 @@
 #include <qvaluelist.h>
 
 class DebuggerManager;
-class DBGConfiguration;
+class DBGSettings;
 class DBGNet;
 class DebuggerStack;
 class PHPVariable;
@@ -40,16 +40,14 @@ public:
   /* Interface of AbstractDebugger */
 
   virtual QString name()   const;
-  virtual int     id() const;
+  //virtual int     id() const;
 
   virtual bool isSessionActive() const;
   virtual bool isRunning() const;
 
-  virtual void reloadConfiguration();
-
   virtual void startSession();
   virtual void endSession();
-  virtual void run(const QString&);
+  virtual void run(const QString&, SiteSettings*);
   virtual void stop();
   virtual void stepInto();
   virtual void stepOver();
@@ -75,9 +73,11 @@ public:
   void debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo);
   void checkDBGVersion(int, int, const QString&);
 
-  DBGConfiguration* configuration();
+  //DBGSettings* configuration();
 
 public slots:
+  virtual void slotSettingsChanged();
+
   void slotInternalError(const QString&);
   void slotDBGStarted();
   void slotDBGClosed(); //end of debug
@@ -87,10 +87,11 @@ private slots:
 private:
   void requestWatches(int scopeid);
 
+  QString                 m_name;
   bool                    m_isSessionActive;
   bool                    m_isRunning;
 
-  DBGConfiguration       *m_configuration;
+  DBGSettings            *m_dbgSettings;
 
   DBGNet                 *m_net;
   int                     m_currentExecutionPointID;

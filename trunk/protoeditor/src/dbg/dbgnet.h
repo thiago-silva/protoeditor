@@ -45,6 +45,8 @@ class DBGResponseTagLog;
 class DBGResponseTagError;
 class DBGTagBreakpoint;
 
+class SiteSettings;
+
 class DBGNet : public QObject
 {
   Q_OBJECT
@@ -56,7 +58,7 @@ public:
   bool startListener(int port);
   void stopListener();
 
-  void requestPage(const QString& host, const QString& filePath, int port, dbgint sessid);
+  void requestPage(const QString& filePath, SiteSettings* site, int port, dbgint sessid);
   void requestOptions(dbgint options);
 
   void requestContinue();
