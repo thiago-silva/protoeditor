@@ -1,0 +1,484 @@
+2005-04-05 02:55  thiago_silva
+
+	* configure.in.in (1.8):
+	  -version change
+
+2005-04-05 02:54  thiago_silva
+
+	* src/dbg/dbgnetdata.cpp (1.5):
+	  -just to be sure...
+
+2005-04-05 02:03  thiago_silva
+
+	* src/: dbg/debuggerdbg.cpp (1.23),
+	  dbg/profiler/dbgprofilelistview.cpp (1.6),
+	  dbg/profiler/dbgprofilelistview.h (1.4),
+	  protoeditor/debuggermanager.h (1.16):
+	  -Double click on profile listview, goes to file/line
+
+2005-04-05 02:02  thiago_silva
+
+	* src/dbg/profiler/: dbgprofiledialog.cpp (1.5), dbgprofiledialog.h
+	  (1.3):
+	  -added accessor to the listview
+
+2005-04-05 02:02  thiago_silva
+
+	* src/dbg/dbgconnection.cpp (1.7):
+	  -ajusting (again) the sigClientClosed()
+
+2005-04-05 02:01  thiago_silva
+
+	* src/dbg/dbgnet.cpp (1.23):
+	  -fix handling error while profiling the script.
+
+2005-04-04 18:25  thiago_silva
+
+	* data/icons/: h16-action-math_sum.png (1.1),
+	  hi16-action-view_detailed.png (1.1), hi16-action-view_icon.png
+	  (1.1), hi16-action-view_text.png (1.1):
+	  -profile icons
+
+2005-04-04 18:24  thiago_silva
+
+	* src/dbg/profiler/: dbgprofilelistview.cpp (1.5),
+	  dbgprofilelistview.h (1.3):
+	  -Ordering fixed
+
+2005-04-04 18:22  thiago_silva
+
+	* src/dbg/profiler/dbgprofiledialog.cpp (1.4):
+	  -Improved toolbuttons (textlabel and icons)
+
+2005-04-04 18:21  thiago_silva
+
+	* src/dbg/: dbgnet.cpp (1.22), dbgnet.h (1.12):
+	  -fixed the "profile again" problem.
+
+2005-04-04 18:20  thiago_silva
+
+	* src/dbg/dbgrequestor.cpp (1.12):
+	  -I'm not sure if this fixed the "profile again" problem.
+
+2005-04-04 18:19  thiago_silva
+
+	* src/dbg/dbgreceiver.cpp (1.7):
+	  -Use static members to inform header/frame size
+
+2005-04-04 18:19  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.25), debuggermanager.h
+	  (1.15):
+	  -Profile active/Site script according to user option
+
+2005-04-04 18:17  thiago_silva
+
+	* src/protoeditor/mainwindow.cpp (1.22):
+	  -Add profile icon to action
+
+2005-04-01 18:43  thiago_silva
+
+	* src/dbg/profiler/: dbgprofiledialog.cpp (1.3),
+	  dbgprofilelistview.cpp (1.4):
+	  -ModuleView as default
+
+2005-04-01 18:41  thiago_silva
+
+	* src/dbg/profiler/: dbgprofiledialog.cpp (1.2), dbgprofiledialog.h
+	  (1.2):
+	  -View buttons implemented
+
+2005-04-01 18:40  thiago_silva
+
+	* src/dbg/profiler/dbgprofilelistview.cpp (1.3):
+	  * Bug Fixes:
+	  -Deleting data already deleted
+
+2005-04-01 18:40  thiago_silva
+
+	* src/dbg/: dbgfileinfo.cpp (1.8), dbgfileinfo.h (1.7), dbgnet.cpp
+	  (1.21), dbgnet.h (1.11):
+	  -Messing around to make profile work.
+
+2005-04-01 18:38  thiago_silva
+
+	* src/dbg/: dbgrequestpackbuilder.cpp (1.6),
+	  dbgrequestpackbuilder.h (1.6), dbgrequestor.cpp (1.11),
+	  dbgrequestor.h (1.9):
+	  -Add "istemp" field for breakpoint
+
+2005-04-01 18:37  thiago_silva
+
+	* src/dbg/dbgconnection.cpp (1.6):
+	  * Bug Fixes:
+	  -emiting slotClosed twice
+
+2005-04-01 18:36  thiago_silva
+
+	* src/: protoeditor/debuggermanager.cpp (1.24),
+	  protoeditor/debuggermanager.h (1.14), common/abstractdebugger.h
+	  (1.16), dbg/debuggerdbg.cpp (1.22), dbg/debuggerdbg.h (1.16):
+	  -Improving profile feature (acts like a debug request).
+
+2005-04-01 18:35  thiago_silva
+
+	* src/protoeditor/: editortabwidget.cpp (1.23), editortabwidget.h
+	  (1.14):
+	  -let others know when no document is opened
+
+2005-04-01 18:34  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.21), protoeditorui.rc (1.9):
+	  -Profiling menu not togglebutton anymore (like PHPEdit)
+	  -trying to fix some states on .rc
+
+2005-04-01 14:52  thiago_silva
+
+	* src/dbg/profiler/: dbgprofilelistview.cpp (1.2),
+	  dbgprofilelistview.h (1.2):
+	  -fixed creation of the items
+
+2005-04-01 14:51  thiago_silva
+
+	* src/dbg/dbgnet.cpp (1.20):
+	  -if context name is empty, name it "module.php:::main()"
+
+2005-04-01 04:14  thiago_silva
+
+	* src/: dbg/Makefile.am (1.7), dbg/profiler/Makefile.am (1.1),
+	  dbg/profiler/dbgprofiledata.cpp (1.1),
+	  dbg/profiler/dbgprofiledata.h (1.1),
+	  dbg/profiler/dbgprofiledialog.cpp (1.1),
+	  dbg/profiler/dbgprofiledialog.h (1.1),
+	  dbg/profiler/dbgprofilelistview.cpp (1.1),
+	  dbg/profiler/dbgprofilelistview.h (1.1),
+	  dbg/profiler/dbgprofilelocation.cpp (1.1),
+	  dbg/profiler/dbgprofilelocation.h (1.1), dbg/dbg_defs.h (1.5),
+	  dbg/dbgfileinfo.cpp (1.7), dbg/dbgfileinfo.h (1.6),
+	  dbg/dbgnet.cpp (1.19), dbg/dbgnet.h (1.10), dbg/dbgnetdata.cpp
+	  (1.4), dbg/dbgnetdata.h (1.3), dbg/dbgreceiver.cpp (1.6),
+	  dbg/dbgrequestor.cpp (1.10), dbg/dbgrequestor.h (1.8),
+	  dbg/dbgrequestpackbuilder.cpp (1.5), dbg/dbgrequestpackbuilder.h
+	  (1.5), dbg/debuggerdbg.cpp (1.21), dbg/debuggerdbg.h (1.15),
+	  protoeditor/Makefile.am (1.4):
+	  -Improving the DBG profiler to support multiple views of data
+
+2005-04-01 04:11  thiago_silva
+
+	* src/protoeditor/variableslistviewitem.cpp (1.4):
+	  Removing unsused code
+
+2005-03-20 23:05  thiago_silva
+
+	* src/protoeditor/debuggermanager.cpp (1.23):
+	  -wrong label for action "start debug"
+
+2005-03-20 20:06  thiago_silva
+
+	* src/dbg/dbgnet.cpp (1.18):
+	  -setAscii() was adding the trailing \0 to the string. This was
+	  causing inconsistency on string comparations (ie. QString("$a")
+	  != QString("$a\0"). So, no watches were being processed by
+	  DebuggerDBG when it searches the watch on the watchesList.
+
+2005-03-20 20:03  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.22), debuggermanager.h
+	  (1.13):
+	  * News:
+	  -Added "toggle breakpoint" and "add watch" to the editor context
+	  menu.
+
+2005-03-20 20:02  thiago_silva
+
+	* src/protoeditor/: document.cpp (1.5), document.h (1.5),
+	  editortabwidget.cpp (1.22), editortabwidget.h (1.13):
+	  -setFileChangedDialogsActivated code transfered to Document
+	  class.
+	  * News:
+	  -Added "toggle breakpoint" and "add watch" to the editor context
+	  menu.
+
+2005-03-20 20:00  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.20), protoeditorui.rc (1.8):
+	  * News:
+	  -Added "toggle breakpoint" and "add watch" to the editor context
+	  menu.
+
+2005-03-20 17:46  thiago_silva
+
+	* src/protoeditor/editortabwidget.cpp (1.21):
+	  -Enable external file change dialog (reload/ignore). Note: Didn't
+	  found anything on KTextEditor, so its tied to Kate::Document.
+
+2005-03-20 17:44  thiago_silva
+
+	* src/protoeditor/: document.cpp (1.4), document.h (1.4):
+	  -Added copyright
+
+2005-03-20 15:41  thiago_silva
+
+	* src/common/abstractdebugger.h (1.15):
+	  -Debugger hides implementation of profile dialog
+	  -Profile is implemented as a toggle (enable/disable) feature
+
+2005-03-20 15:40  thiago_silva
+
+	* src/dbg/: debuggerdbg.cpp (1.20), debuggerdbg.h (1.14):
+	  -Improved profile related functions
+	  -Added "firstStep" workaround
+
+2005-03-20 15:39  thiago_silva
+
+	* src/dbg/: dbgprofile.cpp (1.4), dbgprofile.h (1.2):
+	  -Added Center Alignment for the colums of the ListView
+	  -Added sigClose signal
+
+2005-03-20 15:38  thiago_silva
+
+	* src/dbg/: dbgnet.cpp (1.17), dbgnet.h (1.9):
+	  -Improved profile related functions
+	  -"firstStep" workaround is not implemented here anymore (see
+	  DebuggerDBG)
+
+2005-03-20 15:36  thiago_silva
+
+	* src/protoeditor/mainwindow.cpp (1.19):
+	  -Using KToggleAction for profile action
+
+2005-03-20 15:35  thiago_silva
+
+	* src/protoeditor/editortabwidget.cpp (1.20):
+	  -Added tooltip on tabs to show the complete URL of the document
+
+2005-03-20 15:34  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.21), debuggermanager.h
+	  (1.12):
+	  -Improved profile related functions
+
+2005-03-20 06:34  thiago_silva
+
+	* src/common/abstractdebugger.h (1.14):
+	  -Added sigBreakpointReached()
+
+2005-03-20 06:32  thiago_silva
+
+	* src/dbg/: debuggerdbg.cpp (1.19), debuggerdbg.h (1.13),
+	  dbgnet.cpp (1.16), dbgnet.h (1.8):
+	  -Notifying breakpoint reached and step done (they were threated
+	  as the same before)
+
+2005-03-20 06:31  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.20), debuggermanager.h
+	  (1.11):
+	  -Connecting to sigBreakpointReached for status bar notification
+
+2005-03-20 06:30  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.18), mainwindow.h (1.11):
+	  -Using QLabel on all status bar fields.
+
+2005-03-20 05:41  thiago_silva
+
+	* data/pics/: Makefile.am (1.1), indicator_off.png (1.1),
+	  indicator_on.png (1.1):
+	  -Leds for the status bar
+
+2005-03-20 05:36  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.17), mainwindow.h (1.10):
+	  -Forcing update of kapp->config() (copied from KWrite)
+	  -Providing functions to access status bar fields
+	  * News:
+	  -Improved status bar
+
+2005-03-20 05:33  thiago_silva
+
+	* src/: common/abstractdebugger.h (1.13), dbg/debuggerdbg.cpp
+	  (1.18):
+	  -Notify when step done.
+
+2005-03-20 05:32  thiago_silva
+
+	* src/protoeditor/: editortabwidget.cpp (1.19), editortabwidget.h
+	  (1.12):
+	  -Using the new MainWindow's StatusBar functions
+	  -Modifying tab icon when text of document changes
+
+2005-03-20 05:31  thiago_silva
+
+	* src/protoeditor/: document.cpp (1.3), document.h (1.3):
+	  -Added signals/slots and functions for status message and text
+	  modification
+
+2005-03-20 05:29  thiago_silva
+
+	* src/protoeditor/: debuggermanager.cpp (1.19), debuggermanager.h
+	  (1.10):
+	  -Using the new MainWindow's StatusBar functions
+	  -Added slotStep to notify about step dones on StatusBar
+
+2005-03-19 22:10  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.16), mainwindow.h (1.9):
+	  -prevent from closing if the user hits "cancel" when prompted to
+	  save a file.
+
+2005-03-19 22:09  thiago_silva
+
+	* src/protoeditor/: editortabwidget.cpp (1.18), editortabwidget.h
+	  (1.11):
+	  -changed close document related functions to return "bool" so if
+	  the user hits "cancel" when prompted for save a modified file, we
+	  don't need to close MainWindow (if the user tried to quit) and we
+	  can stop closing documents (in case of closeAllDocuments() and
+	  related).
+
+2005-03-19 22:06  thiago_silva
+
+	* src/protoeditor/: document.cpp (1.2), document.h (1.2):
+	  -added close()
+
+2005-03-19 21:44  thiago_silva
+
+	* src/protoeditor/: variableslistview.cpp (1.7),
+	  variableslistview.h (1.5):
+	  -popupmenu as class member no more.
+
+2005-03-19 21:43  thiago_silva
+
+	* src/protoeditor/editortabwidget.cpp (1.17):
+	  -KPopupMenu leak
+
+2005-03-19 21:42  thiago_silva
+
+	* src/protoeditor/: editortabwidget.cpp (1.16), editortabwidget.h
+	  (1.10):
+	  -functions related to closing files reviewed.
+	  * News:
+	  -Added mime icon to the tabs of the editor.
+	  -Closing files through the tab icon.
+
+2005-03-19 18:36  thiago_silva
+
+	* src/commonphp/variableparser.cpp (1.5):
+	  -Added "endl" to kdDebug() messages
+
+2005-03-19 18:35  thiago_silva
+
+	* src/: common/abstractdebugger.h (1.12), dbg/debuggerdbg.cpp
+	  (1.17), dbg/debuggerdbg.h (1.12):
+	  -Removed SiteSettings from "run" prototype.
+
+2005-03-19 18:31  thiago_silva
+
+	* src/dbg/dbgnet.cpp (1.15):
+	  * Bug Fixes:
+	  #1156552 (now its for real)
+
+2005-03-19 18:29  thiago_silva
+
+	* src/protoeditor/protoeditorui.rc (1.7):
+	  -Added "Site" selection on the menu.
+	  * News:
+	  -Added "default script" on Site settings.
+	  -Users can select wheter to run the current site's script or the
+	  active script on the editor.
+
+2005-03-19 18:28  thiago_silva
+
+	* src/protoeditor/: mainwindow.cpp (1.15), mainwindow.h (1.8):
+	  -When opening/saving a file, check for the "local base" on the
+	  current site and use it as the URL for KFileDialog.
+	  -Check for the return value of m_tabEditor->openDocument(url).
+	  * News:
+	  -Added "default script" on Site settings.
+	  -Users can select wheter to run the current site's script or the
+	  active script on the editor.
+
+2005-03-19 18:25  thiago_silva
+
+	* src/protoeditor/: editortabwidget.cpp (1.15), editortabwidget.h
+	  (1.9):
+	  -added bool return for openDocument/createDocument
+
+2005-03-19 18:23  thiago_silva
+
+	* src/: settings/protoeditorsettings.cpp (1.3),
+	  settings/protoeditorsettings.h (1.3), settings/sitesettings.cpp
+	  (1.2), settings/sitesettings.h (1.2),
+	  protoeditor/debuggermanager.cpp (1.18),
+	  protoeditor/debuggermanager.h (1.9):
+	  * News:
+	  -Added "default script" on Site settings.
+	  -Users can select wheter to run the current site's script or the
+	  active script on the editor.
+
+2005-03-19 18:22  thiago_silva
+
+	* src/settings/widgets/: sitesettingswidget.cpp (1.3),
+	  sitesettingswidget.h (1.3):
+	  * Bug Fixes:
+	  -When modifying a site config, the settings were not being
+	  commited.
+	  * News:
+	  -Added "default script" on Site settings.
+	  -Users can select wheter to run the current site's script or the
+	  active script on the editor.
+
+2005-03-19 18:21  thiago_silva
+
+	* src/settings/widgets/: sitesettingsdialog.cpp (1.3),
+	  sitesettingsdialog.h (1.2):
+	  -Changed width of the dialog (was too small).
+	  -Using KURLRequester for some fields.
+	  * News:
+	  -Added "default script" on Site settings.
+	  -Users can select wheter to run the current site's script or the
+	  active script on the editor.
+
+2005-03-19 14:15  thiago_silva
+
+	* src/commonphp/variableparser.cpp (1.4):
+	  -added some output if parser breaks
+
+2005-03-19 14:15  thiago_silva
+
+	* src/dbg/dbgnet.cpp (1.14):
+	  * Bug Fixes:
+	  #1156552 (still broken)
+
+2005-03-19 13:59  thiago_silva
+
+	* src/: dbg/debuggerdbg.cpp (1.16), dbg/debuggerdbg.h (1.11),
+	  common/abstractdebugger.h (1.11):
+	  * Bug Fixes:
+	  -JIT is not started when Protoeditor starts
+
+2005-03-16 19:49  thiago_silva
+
+	* src/protoeditor/mainwindow.cpp (1.14):
+	  * Bug Fixes:
+	  -Default shortcut for "Stop Debug"
+
+2005-03-16 19:47  thiago_silva
+
+	* src/protoeditor/debuggermanager.cpp (1.17):
+	  * Bug Fixes:
+	  -JIT is not started when Protoeditor starts
+	  -Toggle breakpoint through action wasn't adding bp properly.
+
+2005-03-15 18:53  thiago_silva
+
+	* src/protoeditor/: variableslistview.cpp (1.6),
+	  variableslistview.h (1.4):
+	  -Added "copy value" on popup menu
+
+2005-03-15 18:52  thiago_silva
+
+	* src/protoeditor/editortabwidget.cpp (1.14):
+	  -Show filePath of the active document on title bar
+
