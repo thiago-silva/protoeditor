@@ -236,6 +236,7 @@ void DebuggerManager::slotDebugStepOut()
   m_debugger->stepOut();
 }
 
+//from the menu action
 void DebuggerManager::slotDebugToggleBp()
 {
   QString filePath = m_window->tabEditor()->currentDocumentPath();
@@ -250,7 +251,7 @@ void DebuggerManager::slotDebugToggleBp()
     m_window->tabEditor()->unmarkActiveBreakpoint(filePath, line);
   }
 
-  m_window->breakpointListView()->toggleBreakpoint(filePath, line);
+  //   m_window->breakpointListView()->toggleBreakpoint(filePath, line);
 }
 
 void DebuggerManager::slotAddWatch()
@@ -276,7 +277,7 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, Debugge
   //m_window->tabEditor()->setCurrentDocument(nw->filePath(), true);
   ed->gotoLineAtFile(nw->filePath(), nw->line()-1);
 
-  ed->unmarkPreExecutionPoint(old->filePath(), old->line());
+  ed->unmarkPreExecutionPoint(old->filePath()/*, old->line()*/);
 
   if(nw != m_window->stackCombo()->stack()->topExecutionPoint())
   {
@@ -313,11 +314,9 @@ void DebuggerManager::slotBreakpointCreated(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 {
-  if(m_debugger)
-  {
-    m_debugger->changeBreakpoint(bp);
-  }
-
+  if(!m_debugger) return;
+  m_debugger->changeBreakpoint(bp);
+  
   switch(bp->status())
   {
     case DebuggerBreakpoint::ENABLED:
@@ -390,7 +389,7 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
     execPoint =
       m_window->stackCombo()->stack()->topExecutionPoint();
 
-    ed->unmarkExecutionPoint(execPoint->filePath(), execPoint->line());
+    ed->unmarkExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
   }
 
   if(m_window->stackCombo()->currentItem() != 0)
@@ -398,7 +397,7 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
     execPoint =
       m_window->stackCombo()->selectedDebuggerExecutionPoint();
 
-    ed->unmarkPreExecutionPoint(execPoint->filePath(), execPoint->line());
+    ed->unmarkPreExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
   }
 
   //**** dealing with the new Stack (the argument)
@@ -410,7 +409,7 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   m_window->stackCombo()->setStack(stack);
 
   execPoint = stack->topExecutionPoint();
-  ed->setCurrentDocument(execPoint->filePath(), true);
+  ed->setCurrentDocumentTab(execPoint->filePath(), true);
   ed->gotoLineAtFile(execPoint->filePath(), execPoint->line()-1);
 
   ed->markExecutionPoint(execPoint->filePath(), execPoint->line());
@@ -501,13 +500,13 @@ void DebuggerManager::slotDebugEnded()
     DebuggerExecutionPoint* execPoint;
     execPoint = stack->topExecutionPoint();
 
-    ed->unmarkExecutionPoint(execPoint->filePath(), execPoint->line());
+    ed->unmarkExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
 
     //remove the pre execution line mark if any
     execPoint =
       m_window->stackCombo()->selectedDebuggerExecutionPoint();
 
-    ed->unmarkPreExecutionPoint(execPoint->filePath(), execPoint->line());
+    ed->unmarkPreExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
   }
 
   m_window->actionStateChanged("debug_stopped");
