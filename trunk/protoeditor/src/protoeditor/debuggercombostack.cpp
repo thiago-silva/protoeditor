@@ -22,7 +22,7 @@
 #include "debuggerstack.h"
 
 DebuggerComboStack::DebuggerComboStack(QWidget* parent, const char* name)
-  : QComboBox(false, parent, name), m_currentExecutionLine(NULL), m_stack(NULL)
+  : QComboBox(false, parent, name), m_currentExecutionPoint(NULL), m_stack(NULL)
 {
   connect(this, SIGNAL(activated(int)), this, SLOT(slotChanged(int)));
 }
@@ -38,27 +38,27 @@ void DebuggerComboStack::setStack(DebuggerStack* stack)
   int newIndex = 0;
 
   if(count() > 0) {
-    selectedId = m_stack->debuggerExecutionLineList().at(currentItem())->id();
+    selectedId = m_stack->DebuggerExecutionPointList().at(currentItem())->id();
   }
 
   clear();
 
-  DebuggerStack::DebuggerExecutionLineList_t execLineList
-    = stack->debuggerExecutionLineList();
+  DebuggerStack::DebuggerExecutionPointList_t execPointList
+    = stack->DebuggerExecutionPointList();
 
-  DebuggerExecutionLine* execLine;
-  for(execLine = execLineList.first(); execLine; execLine = execLineList.next()) {
-    insertItem(execLine->function() + " : " + QString::number(execLine->line()));
-    if(execLine->id() == selectedId) {
+  DebuggerExecutionPoint* execPoint;
+  for(execPoint = execPointList.first(); execPoint; execPoint = execPointList.next()) {
+    insertItem(execPoint->function() + " : " + QString::number(execPoint->line()));
+    if(execPoint->id() == selectedId) {
       newIndex = count()-1;
-      m_currentExecutionLine = execLine;
+      m_currentExecutionPoint = execPoint;
       setCurrentItem(newIndex);
     }
   }
 
   if(newIndex == 0) {
     setCurrentItem(0);
-    m_currentExecutionLine = execLineList.first();
+    m_currentExecutionPoint = execPointList.first();
   }
 
   if(m_stack) delete m_stack;
@@ -69,18 +69,18 @@ DebuggerStack* DebuggerComboStack::stack() {
   return m_stack;
 }
 
-DebuggerExecutionLine* DebuggerComboStack::selectedDebuggerExecutionLine() {
-  return m_currentExecutionLine;
+DebuggerExecutionPoint* DebuggerComboStack::selectedDebuggerExecutionPoint() {
+  return m_currentExecutionPoint;
 }
 
 void DebuggerComboStack::slotChanged(int index)
 {
-  DebuggerExecutionLine* execLine
-    = m_stack->debuggerExecutionLineList().at(index);
+  DebuggerExecutionPoint* execPoint
+    = m_stack->DebuggerExecutionPointList().at(index);
 
-  emit changed(m_currentExecutionLine, execLine);
+  emit changed(m_currentExecutionPoint, execPoint);
 
-  m_currentExecutionLine = execLine;
+  m_currentExecutionPoint = execPoint;
 }
 
 

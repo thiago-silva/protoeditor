@@ -24,7 +24,7 @@
 #include <qcombobox.h>
 
 class DebuggerStack;
-class DebuggerExecutionLine;
+class DebuggerExecutionPoint;
 
 class DebuggerComboStack : public QComboBox
 {
@@ -36,15 +36,15 @@ public:
   void setStack(DebuggerStack*);
   DebuggerStack* stack();
 
-  DebuggerExecutionLine* selectedDebuggerExecutionLine();
+  DebuggerExecutionPoint* selectedDebuggerExecutionPoint();
 signals:
-  void changed(DebuggerExecutionLine*, DebuggerExecutionLine*); //old,new
+  void changed(DebuggerExecutionPoint*, DebuggerExecutionPoint*); //old,new
 
 public slots:
     virtual void slotChanged(int);
 private:
-  DebuggerExecutionLine* m_currentExecutionLine;
-  DebuggerStack* m_stack;
+  DebuggerExecutionPoint *m_currentExecutionPoint;
+  DebuggerStack          *m_stack;
 };
 
 
