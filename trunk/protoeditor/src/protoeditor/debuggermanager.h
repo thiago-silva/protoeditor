@@ -69,7 +69,8 @@ private slots:
   void slotDebugStepOut();
   void slotDebugToggleBp();
 
-  void slotAddWatch();
+  void slotAddWatch(); //from WatchList
+  void slotAddWatch(const QString& expression); //from editor ctx menu
   void slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
   void slotGlobalVarModified(Variable* var);
   void slotLocalVarModified(Variable* var);

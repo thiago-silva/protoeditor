@@ -54,6 +54,9 @@
 
   <Menu name="ktexteditor_popup" noMerge="1">
     <DefineGroup name="popup_operations" />
+    <Action name="editor_add_watch"/>
+    <Separator/>    
+    <Action name="debug_toggle_bp"/>    
   </Menu>
 
   <ToolBar name="mainToolBar" noMerge="1">

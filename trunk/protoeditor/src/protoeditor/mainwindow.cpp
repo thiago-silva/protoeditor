@@ -72,10 +72,10 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   m_debugger_manager = new DebuggerManager(this);
 
-  setupActions();
-
   createWidgets();
 
+  setupActions();
+  
   createGUI(0);
 
   resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
@@ -197,10 +197,14 @@ void MainWindow::setupActions()
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
   (void)new KToggleAction(i18n("Show Profile Dialog"), "", "Alt+P", m_debugger_manager,
-                    SLOT(slotProfile()), actionCollection(), "profile");
+                          SLOT(slotProfile()), actionCollection(), "profile");
 
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
+
+  (void)new KAction("", "math_brace", 0, m_tabEditor,
+                    SLOT(slotAddWatch()), actionCollection(), "editor_add_watch");
+
 
   setStandardToolBarMenuEnabled(true);
 }

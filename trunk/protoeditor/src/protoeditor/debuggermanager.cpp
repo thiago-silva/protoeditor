@@ -56,12 +56,15 @@ void DebuggerManager::init()
   //-----WATCH UI
   connect(m_window->btAddWatch(), SIGNAL(clicked()),
           this, SLOT(slotAddWatch()));
+  
   connect(m_window->edAddWatch(), SIGNAL(returnPressed()),
           this, SLOT(slotAddWatch()));
 
+  connect(m_window->tabEditor(), SIGNAL(sigAddWatch(const QString&)),
+          this, SLOT(slotAddWatch(const QString&)));
+
   connect(m_window->watchList(), SIGNAL(sigWatchRemoved(Variable*)),
           this, SLOT(slotWatchRemoved(Variable*)));
-
 
   connect(m_window->watchList(), SIGNAL(sigVarModified(Variable*)),
           this, SLOT(slotLocalVarModified(Variable*)));
@@ -323,6 +326,16 @@ void DebuggerManager::slotDebugToggleBp()
 void DebuggerManager::slotAddWatch()
 {
   QString expression = m_window->edAddWatch()->text();
+  m_window->edAddWatch()->clear();
+
+  if(m_debugger)
+  {
+    m_debugger->addWatch(expression);
+  }
+}
+
+void DebuggerManager::slotAddWatch(const QString& expression)
+{
   m_window->edAddWatch()->clear();
 
   if(m_debugger)
