@@ -437,7 +437,18 @@ void MainWindow::slotClose()
 
 void MainWindow::slotQuit()
 {
-  close();
+  if(m_tabEditor->closeAllDocuments())
+  {
+    close();
+  }
+}
+
+void MainWindow::closeEvent(QCloseEvent * e)
+{
+  if(m_tabEditor->closeAllDocuments())
+  {
+    KMainWindow::closeEvent(e);
+  }
 }
 
 void MainWindow::showError(const QString& msg) const
