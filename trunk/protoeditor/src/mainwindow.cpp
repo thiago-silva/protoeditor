@@ -31,7 +31,7 @@
 #include "debuggersettings.h"
 #include "debuggersettingswidget.h"
 
-//#include <kapplication.h>
+#include <kapplication.h>
 //#include <kconfig.h>
 #include <kstatusbar.h>
 #include <kaction.h>
@@ -46,6 +46,7 @@
 #include <kconfigdialog.h>
 #include <ktexteditor/view.h>
 #include <kfiledialog.h>
+#include <kfileitem.h>
 
 #include <qlayout.h>
 //#include <qfiledialog.h>
@@ -93,6 +94,8 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
   clearWState(WState_Polished);
 
   slotHasNoFiles();
+
+  connect(kapp, SIGNAL(aboutToQuit()), this, SLOT(slotClose()));
 }
 
 
@@ -132,6 +135,10 @@ void MainWindow::setupActions()
 
   //file menu
   KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
+
+  m_actionRecent = KStdAction::openRecent(this, SLOT(slotFileRecent(const KURL&)), actionCollection());
+  m_actionRecent->loadEntries(kapp->config(),"Recent Files");
+
   KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
   KStdAction::save(this, SLOT(slotSaveFile()), actionCollection());
   KStdAction::saveAs(this, SLOT(slotSaveFileAs()), actionCollection());
@@ -294,33 +301,39 @@ void MainWindow::saveCurrentPath()
 
 void MainWindow::slotOpenFile()
 {
+
   QStringList strList =
     KFileDialog::getOpenFileNames(
       ":protoeditor_openphp", "*.php", this);
 
   if(strList.count()) {
     for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it ) {
-      m_tabEditor->addDocument(*it);
+      openFile(*it);
     }
+  }
+}
+
+
+void MainWindow::openFile(const KURL& url) {
+  KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
+  if(file.isReadable()) {
+    m_tabEditor->addDocument(url);
+    m_actionRecent->addURL(url);
 
     //the active tab will be a brand new file with no history, so clear the
     //undo/redo
     slotHasNoRedo();
     slotHasNoUndo();
+  } else {
+    m_actionRecent->removeURL(url);
+    showSorry(url.prettyURL() + " is unreadable.");
   }
-/*
-  QString filePath = QFileDialog::getOpenFileName(m_currentOpenPath, "PHP (*.php)",
-                                                  this, "open file dialog", "Choose a file" );
-
-  if(!filePath.isEmpty()) {
-    m_currentOpenPath = filePath.mid(0, filePath.findRev('/', -1));
-    m_tabEditor->addDocument(filePath);
-    slotHasNoRedo();
-    slotHasNoUndo();
-  }
-*/
 }
 
+
+void MainWindow::slotFileRecent(const KURL& url) {
+  openFile(url);
+}
 
 void MainWindow::slotCloseFile()
 {
@@ -337,9 +350,13 @@ void MainWindow::slotSaveFile()
 void MainWindow::slotSaveFileAs()
 {}
 
+void MainWindow::slotClose() {
+  //tabEditor()->terminate();
+  m_actionRecent->saveEntries(kapp->config(), "Recent Files");
+}
+
 void MainWindow::slotQuit()
 {
-  //tabEditor()->terminate();
   close();
 }
 
@@ -365,22 +382,20 @@ void MainWindow::slotEditKeys()
 
 void MainWindow::slotEditToolbars()
 {
-  KEditToolbar *dlg = new KEditToolbar(actionCollection());
+  KEditToolbar dlg(actionCollection());
+  if (dlg.exec())
+    createGUI();
+  /*
+      saveMainWindowSettings( KGlobal::config(), QString::fromLatin1("MainWindow") );
+      KEditToolbar dlg( factory(), this );
+      connect(&dlg, SIGNAL( newToolbarConfig() ), this, SLOT( slotNewToolbarConfig() ));
+      dlg.exec();
 
-  if (dlg->exec()) {
-    /*
-    KParts::GUIActivateEvent ev1( false );
-    QApplication::sendEvent( m_view, &ev1 );
-    guiFactory()->removeClient( m_view );
-    createShellGUI( false );
-    createShellGUI( true );
-    guiFactory()->addClient( m_view );
-    KParts::GUIActivateEvent ev2( true );
-    QApplication::sendEvent( m_view, &ev2 );
-    */
-  }
-
-  delete dlg;
+    saveMainWindowSettings( KGlobal::config(), autoSaveGroup() );
+    KEditToolbar dlg( factory() );
+    connect(&dlg,SIGNAL(newToolbarConfig()),this,SLOT(slotNewToolbarConfig()));
+    dlg.exec();
+  */
 }
 
 void MainWindow::slotHasNoFiles()
@@ -435,7 +450,8 @@ void MainWindow::slotHasRedo()
   actionCollection()->action("edit_redo")->setEnabled(true);
 }
 
-void MainWindow::slotShowSettings() {
+void MainWindow::slotShowSettings()
+{
   if(KConfigDialog::showDialog("settings"))
     return;
 
@@ -445,11 +461,12 @@ void MainWindow::slotShowSettings() {
   dialog->addPage( m_debuggerSettings, i18n("Debugger"), "debugger" );
 
   connect( dialog, SIGNAL(settingsChanged()),
-         m_debugger_manager, SLOT(updateConfiguration()) );
+           m_debugger_manager, SLOT(updateConfiguration()) );
 
   dialog->show();
 }
-void MainWindow::initDebuggerSettings() {
+void MainWindow::initDebuggerSettings()
+{
   if(!m_debuggerSettings) {
     m_debuggerSettings = new DebuggerSettingsWidget(0, "Debugger");
   }

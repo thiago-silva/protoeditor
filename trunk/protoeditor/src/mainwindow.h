@@ -37,6 +37,8 @@ class KPushButton;
 class KStatusBar;
 class DebuggerManager;
 class DebuggerSettingsWidget;
+class KRecentFilesAction;
+class KURL;
 
 class MainWindow : public KMainWindow
 {
@@ -81,6 +83,9 @@ private slots:
   void slotHasRedo();
 
   void slotShowSettings();
+  void slotFileRecent(const KURL&);
+
+  void slotClose();
 private:
   //void setupConfiguration();
   void setupStatusBar();
@@ -89,6 +94,7 @@ private:
 
   //void saveCurrentPath();
   void initDebuggerSettings();
+  void openFile(const KURL& url);
 
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;
@@ -101,7 +107,8 @@ private:
   LogListView* m_logListView;
   KTextEdit* m_edOutput;
 
-  KStatusBar* m_statusBar;
+  KStatusBar         *m_statusBar;
+  KRecentFilesAction *m_actionRecent;
 
   DebuggerSettingsWidget* m_debuggerSettings;
 
