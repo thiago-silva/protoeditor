@@ -1,11 +1,13 @@
+2005-04-05 02:55  tag BETA_0_6_3
+
 2005-04-05 02:55  thiago_silva
 
-	* configure.in.in (1.8):
+	* configure.in.in (1.8, BETA_0_6_3):
 	  -version change
 
 2005-04-05 02:54  thiago_silva
 
-	* src/dbg/dbgnetdata.cpp (1.5):
+	* src/dbg/dbgnetdata.cpp (1.5, BETA_0_6_3):
 	  -just to be sure...
 
 2005-04-05 02:03  thiago_silva
@@ -13,30 +15,30 @@
 	* src/: dbg/debuggerdbg.cpp (1.23),
 	  dbg/profiler/dbgprofilelistview.cpp (1.6),
 	  dbg/profiler/dbgprofilelistview.h (1.4),
-	  protoeditor/debuggermanager.h (1.16):
+	  protoeditor/debuggermanager.h (1.16) (utags: BETA_0_6_3):
 	  -Double click on profile listview, goes to file/line
 
 2005-04-05 02:02  thiago_silva
 
 	* src/dbg/profiler/: dbgprofiledialog.cpp (1.5), dbgprofiledialog.h
-	  (1.3):
+	  (1.3) (utags: BETA_0_6_3):
 	  -added accessor to the listview
 
 2005-04-05 02:02  thiago_silva
 
-	* src/dbg/dbgconnection.cpp (1.7):
+	* src/dbg/dbgconnection.cpp (1.7, BETA_0_6_3):
 	  -ajusting (again) the sigClientClosed()
 
 2005-04-05 02:01  thiago_silva
 
-	* src/dbg/dbgnet.cpp (1.23):
+	* src/dbg/dbgnet.cpp (1.23, BETA_0_6_3):
 	  -fix handling error while profiling the script.
 
 2005-04-04 18:25  thiago_silva
 
 	* data/icons/: h16-action-math_sum.png (1.1),
 	  hi16-action-view_detailed.png (1.1), hi16-action-view_icon.png
-	  (1.1), hi16-action-view_text.png (1.1):
+	  (1.1), hi16-action-view_text.png (1.1) (utags: BETA_0_6_3):
 	  -profile icons
 
 2005-04-04 18:24  thiago_silva
@@ -52,28 +54,28 @@
 
 2005-04-04 18:21  thiago_silva
 
-	* src/dbg/: dbgnet.cpp (1.22), dbgnet.h (1.12):
+	* src/dbg/: dbgnet.cpp (1.22), dbgnet.h (1.12, BETA_0_6_3):
 	  -fixed the "profile again" problem.
 
 2005-04-04 18:20  thiago_silva
 
-	* src/dbg/dbgrequestor.cpp (1.12):
+	* src/dbg/dbgrequestor.cpp (1.12, BETA_0_6_3):
 	  -I'm not sure if this fixed the "profile again" problem.
 
 2005-04-04 18:19  thiago_silva
 
-	* src/dbg/dbgreceiver.cpp (1.7):
+	* src/dbg/dbgreceiver.cpp (1.7, BETA_0_6_3):
 	  -Use static members to inform header/frame size
 
 2005-04-04 18:19  thiago_silva
 
-	* src/protoeditor/: debuggermanager.cpp (1.25), debuggermanager.h
-	  (1.15):
+	* src/protoeditor/: debuggermanager.cpp (1.25, BETA_0_6_3),
+	  debuggermanager.h (1.15):
 	  -Profile active/Site script according to user option
 
 2005-04-04 18:17  thiago_silva
 
-	* src/protoeditor/mainwindow.cpp (1.22):
+	* src/protoeditor/mainwindow.cpp (1.22, BETA_0_6_3):
 	  -Add profile icon to action
 
 2005-04-01 18:43  thiago_silva
@@ -96,15 +98,15 @@
 
 2005-04-01 18:40  thiago_silva
 
-	* src/dbg/: dbgfileinfo.cpp (1.8), dbgfileinfo.h (1.7), dbgnet.cpp
-	  (1.21), dbgnet.h (1.11):
+	* src/dbg/: dbgfileinfo.cpp (1.8, BETA_0_6_3), dbgfileinfo.h (1.7,
+	  BETA_0_6_3), dbgnet.cpp (1.21), dbgnet.h (1.11):
 	  -Messing around to make profile work.
 
 2005-04-01 18:38  thiago_silva
 
-	* src/dbg/: dbgrequestpackbuilder.cpp (1.6),
-	  dbgrequestpackbuilder.h (1.6), dbgrequestor.cpp (1.11),
-	  dbgrequestor.h (1.9):
+	* src/dbg/: dbgrequestpackbuilder.cpp (1.6, BETA_0_6_3),
+	  dbgrequestpackbuilder.h (1.6, BETA_0_6_3), dbgrequestor.cpp
+	  (1.11), dbgrequestor.h (1.9, BETA_0_6_3):
 	  -Add "istemp" field for breakpoint
 
 2005-04-01 18:37  thiago_silva
@@ -117,18 +119,20 @@
 
 	* src/: protoeditor/debuggermanager.cpp (1.24),
 	  protoeditor/debuggermanager.h (1.14), common/abstractdebugger.h
-	  (1.16), dbg/debuggerdbg.cpp (1.22), dbg/debuggerdbg.h (1.16):
+	  (1.16, BETA_0_6_3), dbg/debuggerdbg.cpp (1.22), dbg/debuggerdbg.h
+	  (1.16, BETA_0_6_3):
 	  -Improving profile feature (acts like a debug request).
 
 2005-04-01 18:35  thiago_silva
 
 	* src/protoeditor/: editortabwidget.cpp (1.23), editortabwidget.h
-	  (1.14):
+	  (1.14) (utags: BETA_0_6_3):
 	  -let others know when no document is opened
 
 2005-04-01 18:34  thiago_silva
 
-	* src/protoeditor/: mainwindow.cpp (1.21), protoeditorui.rc (1.9):
+	* src/protoeditor/: mainwindow.cpp (1.21), protoeditorui.rc (1.9,
+	  BETA_0_6_3):
 	  -Profiling menu not togglebutton anymore (like PHPEdit)
 	  -trying to fix some states on .rc
 
@@ -145,27 +149,28 @@
 
 2005-04-01 04:14  thiago_silva
 
-	* src/: dbg/Makefile.am (1.7), dbg/profiler/Makefile.am (1.1),
-	  dbg/profiler/dbgprofiledata.cpp (1.1),
-	  dbg/profiler/dbgprofiledata.h (1.1),
+	* src/: dbg/Makefile.am (1.7, BETA_0_6_3), dbg/profiler/Makefile.am
+	  (1.1, BETA_0_6_3), dbg/profiler/dbgprofiledata.cpp (1.1,
+	  BETA_0_6_3), dbg/profiler/dbgprofiledata.h (1.1, BETA_0_6_3),
 	  dbg/profiler/dbgprofiledialog.cpp (1.1),
 	  dbg/profiler/dbgprofiledialog.h (1.1),
 	  dbg/profiler/dbgprofilelistview.cpp (1.1),
 	  dbg/profiler/dbgprofilelistview.h (1.1),
-	  dbg/profiler/dbgprofilelocation.cpp (1.1),
-	  dbg/profiler/dbgprofilelocation.h (1.1), dbg/dbg_defs.h (1.5),
-	  dbg/dbgfileinfo.cpp (1.7), dbg/dbgfileinfo.h (1.6),
-	  dbg/dbgnet.cpp (1.19), dbg/dbgnet.h (1.10), dbg/dbgnetdata.cpp
-	  (1.4), dbg/dbgnetdata.h (1.3), dbg/dbgreceiver.cpp (1.6),
-	  dbg/dbgrequestor.cpp (1.10), dbg/dbgrequestor.h (1.8),
-	  dbg/dbgrequestpackbuilder.cpp (1.5), dbg/dbgrequestpackbuilder.h
-	  (1.5), dbg/debuggerdbg.cpp (1.21), dbg/debuggerdbg.h (1.15),
-	  protoeditor/Makefile.am (1.4):
+	  dbg/profiler/dbgprofilelocation.cpp (1.1, BETA_0_6_3),
+	  dbg/profiler/dbgprofilelocation.h (1.1, BETA_0_6_3),
+	  dbg/dbg_defs.h (1.5, BETA_0_6_3), dbg/dbgfileinfo.cpp (1.7),
+	  dbg/dbgfileinfo.h (1.6), dbg/dbgnet.cpp (1.19), dbg/dbgnet.h
+	  (1.10), dbg/dbgnetdata.cpp (1.4), dbg/dbgnetdata.h (1.3,
+	  BETA_0_6_3), dbg/dbgreceiver.cpp (1.6), dbg/dbgrequestor.cpp
+	  (1.10), dbg/dbgrequestor.h (1.8), dbg/dbgrequestpackbuilder.cpp
+	  (1.5), dbg/dbgrequestpackbuilder.h (1.5), dbg/debuggerdbg.cpp
+	  (1.21), dbg/debuggerdbg.h (1.15), protoeditor/Makefile.am (1.4,
+	  BETA_0_6_3):
 	  -Improving the DBG profiler to support multiple views of data
 
 2005-04-01 04:11  thiago_silva
 
-	* src/protoeditor/variableslistviewitem.cpp (1.4):
+	* src/protoeditor/variableslistviewitem.cpp (1.4, BETA_0_6_3):
 	  Removing unsused code
 
 2005-03-20 23:05  thiago_silva
@@ -191,8 +196,9 @@
 
 2005-03-20 20:02  thiago_silva
 
-	* src/protoeditor/: document.cpp (1.5), document.h (1.5),
-	  editortabwidget.cpp (1.22), editortabwidget.h (1.13):
+	* src/protoeditor/: document.cpp (1.5, BETA_0_6_3), document.h
+	  (1.5, BETA_0_6_3), editortabwidget.cpp (1.22), editortabwidget.h
+	  (1.13):
 	  -setFileChangedDialogsActivated code transfered to Document
 	  class.
 	  * News:
@@ -231,7 +237,8 @@
 
 2005-03-20 15:39  thiago_silva
 
-	* src/dbg/: dbgprofile.cpp (1.4), dbgprofile.h (1.2):
+	* src/dbg/: dbgprofile.cpp (1.4), dbgprofile.h (1.2) (utags:
+	  BETA_0_6_3):
 	  -Added Center Alignment for the colums of the ListView
 	  -Added sigClose signal
 
@@ -278,13 +285,14 @@
 
 2005-03-20 06:30  thiago_silva
 
-	* src/protoeditor/: mainwindow.cpp (1.18), mainwindow.h (1.11):
+	* src/protoeditor/: mainwindow.cpp (1.18), mainwindow.h (1.11,
+	  BETA_0_6_3):
 	  -Using QLabel on all status bar fields.
 
 2005-03-20 05:41  thiago_silva
 
 	* data/pics/: Makefile.am (1.1), indicator_off.png (1.1),
-	  indicator_on.png (1.1):
+	  indicator_on.png (1.1) (utags: BETA_0_6_3):
 	  -Leds for the status bar
 
 2005-03-20 05:36  thiago_silva
@@ -345,7 +353,7 @@
 2005-03-19 21:44  thiago_silva
 
 	* src/protoeditor/: variableslistview.cpp (1.7),
-	  variableslistview.h (1.5):
+	  variableslistview.h (1.5) (utags: BETA_0_6_3):
 	  -popupmenu as class member no more.
 
 2005-03-19 21:43  thiago_silva
@@ -364,7 +372,7 @@
 
 2005-03-19 18:36  thiago_silva
 
-	* src/commonphp/variableparser.cpp (1.5):
+	* src/commonphp/variableparser.cpp (1.5, BETA_0_6_3):
 	  -Added "endl" to kdDebug() messages
 
 2005-03-19 18:35  thiago_silva
@@ -407,9 +415,10 @@
 
 2005-03-19 18:23  thiago_silva
 
-	* src/: settings/protoeditorsettings.cpp (1.3),
-	  settings/protoeditorsettings.h (1.3), settings/sitesettings.cpp
-	  (1.2), settings/sitesettings.h (1.2),
+	* src/: settings/protoeditorsettings.cpp (1.3, BETA_0_6_3),
+	  settings/protoeditorsettings.h (1.3, BETA_0_6_3),
+	  settings/sitesettings.cpp (1.2, BETA_0_6_3),
+	  settings/sitesettings.h (1.2, BETA_0_6_3),
 	  protoeditor/debuggermanager.cpp (1.18),
 	  protoeditor/debuggermanager.h (1.9):
 	  * News:
@@ -420,7 +429,7 @@
 2005-03-19 18:22  thiago_silva
 
 	* src/settings/widgets/: sitesettingswidget.cpp (1.3),
-	  sitesettingswidget.h (1.3):
+	  sitesettingswidget.h (1.3) (utags: BETA_0_6_3):
 	  * Bug Fixes:
 	  -When modifying a site config, the settings were not being
 	  commited.
@@ -432,7 +441,7 @@
 2005-03-19 18:21  thiago_silva
 
 	* src/settings/widgets/: sitesettingsdialog.cpp (1.3),
-	  sitesettingsdialog.h (1.2):
+	  sitesettingsdialog.h (1.2) (utags: BETA_0_6_3):
 	  -Changed width of the dialog (was too small).
 	  -Using KURLRequester for some fields.
 	  * News:

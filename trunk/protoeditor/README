@@ -6,28 +6,32 @@ Project site:
 
 1.0 About:
 
-  Protoeditor is a small KDE text editor developed for PHP debugging with the
-  free version of DBG debugger (http://dd.cron.ru/dbg), version 2.11.*.
-  It was first implemented as a test application while doing a plugin for
-  Quanta+ (http://www.kdewebdev.org) and now it became quite usable.
-
+  Protoeditor is a small KDE text editor developed for debugging scripts interactively.
+  The goal is to provide a simple editor supporting a variety of debuggers for different languages.
+  Currently (beta 0.6), it only supports PHP with the DBG debugger (free version 2.11).
+  For version 1.0, a profiler front-end and other PHP debuggers like Gubed (http://gubed.sourceforge.net/)
+  and Xdebug (http://www.xdebug.org) might be supported.
+  
   Protoeditor uses katepart as the text editor, so all the functionalities of a
   _good_ editor are present (highlights, folding marks, etc, etc, etc).
   This makes the debug experience more pratical.
 
   Besides the editor and appearence, Protoeditor supports the main DBG features:
   steps, watches, stack/backtrace, breakpoints, conditional breakpoints...
-  There are little things missing (and crashing) here and there, but with those,
-  we can do what we actually need. Remember: this is a client for the *free* version
-  of DBG. Don't try to use it with the commercial version. Won't work!
 
-2.0 Requirements:
+1.0 Requirements:
 
-  * KDE 3.2 + should be fine.
+  * I hope KDE 3.2 + should be fine (if not, let me know :)
 
-3.0 Notes
+1.2 Upgrades:
 
-  3.1 Kate
+  I suggest being carefull when upgrading Protoeditor beta versions. Since it still has many things
+  that changes over the releases, the settings (default on ~/.kde/share/config/protoeditorrc) might not be valid
+  for a newer version and, eventually, can crash the application.
+
+2.0 Notes
+
+  2.1 Kate
 
   The first time you execute Protoeditor, its configuration won't exist so,
   kate will load the default settings for the editor, wich might not include Icon Border.
@@ -35,7 +39,7 @@ Project site:
   and, on "View defaults", mark "Show Icon Border". Then you will be able to see
   the execution points and breakpoints.
 
-  3.2 Debugger Configuration
+  2.2 Debugger Configuration
 
   First, configure your php DBG module. Make sure it is active with phpinfo().
   For details about DBG installation, check the DBG site: http://dd.cron.ru
@@ -79,13 +83,13 @@ Project site:
     Local base dir  : /usr/apache/htdocs/phpsite
     Default file    : /usr/apache/htdocs/phpsite/index.php
 
-  3.3 Profiler
+  2.3 Profiler
 
     Currently, DBG Profiler is supported. Be sure to have it enabled on php.ini settings.
-    It still very basic, but matches the same basic features of other IDE's that uses DBG profiler.
+    It still very basic, but matches the main features of other IDE's that uses DBG profiler.
     Also, there are plans to go further on profile analysis and statistics.
     
-  3.4 Main window
+  2.4 Main window
 
     Now, some tricks, notes and not-so-obvious-features:
 
@@ -108,14 +112,14 @@ Project site:
         -When using Konqueror, Protoeditor keeps talking to the same window. This is
         not possible on the other browsers (Protoeditor uses the topmost instance).
 
-4.0 Future plans
+3.0 Future plans
 
   DBG is good. Very good. But there are some catches for the free version. So, when I finish
   the DBG client, I might start working on XDebug (http://www.xdebug.org/) and Gubed
   (http://gubed.sourceforge.net) support. Also, other debuggers for languages such as python
   and perl would be nice.
 
-5.0 Extra info
+4.0 Extra info
 
   I started working on this a year ago because, at the time, I needed for my job
   (working with php applications on GNU/Linux). We didn't want to spend money on
