@@ -61,9 +61,10 @@ public:
 
   void addData(DBGProfileData*);
 private:
-
+  DBGProfileListViewItem* getRootItem(DBGProfileData* data);
   DBGProfileListViewItem* getModuleRootItem(int modid);
   DBGProfileListViewItem* getContextRootItem(int ctxid);
+  DBGProfileListViewItem* lastRootItem();
   
   void addToList(DBGProfileData* data);
   void reloadList();

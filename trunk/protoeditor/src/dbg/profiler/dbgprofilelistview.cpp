@@ -23,13 +23,13 @@
 #include "dbgprofilelocation.h"
 
 DBGProfileListViewItem::DBGProfileListViewItem(KListView* parent, DBGProfileData* data, int view)
-  : KListViewItem(parent), m_data(data)
+    : KListViewItem(parent), m_data(data)
 {
   loadData(view);
 }
 
 DBGProfileListViewItem::DBGProfileListViewItem(KListViewItem *parent, DBGProfileData* data, int view)
-  : KListViewItem(parent), m_data(data)
+    : KListViewItem(parent), m_data(data)
 {
   loadData(view);
 }
@@ -51,8 +51,10 @@ void DBGProfileListViewItem::loadData(int view)
     switch(view)
     {
       case DBGProfileListView::ModuleView:
-      case DBGProfileListView::ContextView:
         setText(DBGProfileListView::LocationCol, m_data->location()->moduleName().section('/',-1));
+        break;
+      case DBGProfileListView::ContextView:
+        setText(DBGProfileListView::LocationCol, m_data->location()->contextName());
         break;
       case DBGProfileListView::DetailedView:
         setText(DBGProfileListView::LocationCol, m_data->location()->moduleName().section('/',-1));
@@ -64,7 +66,7 @@ void DBGProfileListViewItem::loadData(int view)
         setText(DBGProfileListView::MaxCol, QString().sprintf("%.3f", m_data->maxTime()));
         break;
     }
-//     this->moveItem(lastItem());
+    //     this->moveItem(lastItem());
   }
   else
   {
@@ -81,8 +83,8 @@ void DBGProfileListViewItem::loadData(int view)
 
 void DBGProfileListViewItem::calculateTotalTime()
 {
-  
-  QListViewItem* item = firstChild();
+
+  QListViewItem* item = parent()->firstChild();
 
   double totalTime = 0;
   while(item)
@@ -91,20 +93,34 @@ void DBGProfileListViewItem::calculateTotalTime()
     item = item->nextSibling();
   }
 
-  setText(DBGProfileListView::TotalCol, QString().sprintf("%.3f", totalTime));
+  parent()->setText(DBGProfileListView::TotalCol, QString().sprintf("%.3f", totalTime));
 }
 
 DBGProfileListViewItem* DBGProfileListViewItem::lastItem()
 {
-  QListViewItem* current = this;
-  QListViewItem* last = 0;
-
-  while((current = current->nextSibling()) != 0)
+  QListViewItem* current;
+  QListViewItem* last = firstChild();
+  
+  while((current = last->nextSibling()) != 0)
   {
     last = current;
   }
+  
   return dynamic_cast<DBGProfileListViewItem*>(last);
 }
+
+//   QListViewItem* p = parent();
+//   QListViewItem* current = 0;  
+//   QListViewItem* last = 0;
+// 
+//   if(!p) return 0;
+//   
+//   while((current = p->nextSibling()) != 0)
+//   {
+//     last = current;
+//   }
+//   return dynamic_cast<DBGProfileListViewItem*>(last);
+// }
 
 
 DBGProfileData* DBGProfileListViewItem::data()
@@ -112,15 +128,12 @@ DBGProfileData* DBGProfileListViewItem::data()
   return m_data;
 }
 
-    
+
 //--------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------
-
-
-
 
 DBGProfileListView::DBGProfileListView(QWidget *parent, const char *name)
-  : KListView(parent, name), m_view(DetailedView)
+    : KListView(parent, name), m_view(ContextView)
 {
   setSorting(-1);
   setAllColumnsShowFocus(true);
@@ -145,9 +158,7 @@ DBGProfileListView::DBGProfileListView(QWidget *parent, const char *name)
 
 
 DBGProfileListView::~DBGProfileListView()
-{
-
-}
+{}
 
 void DBGProfileListView::setView(int view)
 {
@@ -166,72 +177,101 @@ void DBGProfileListView::addData(DBGProfileData* data)
   addToList(data);
 }
 
+
+DBGProfileListViewItem* DBGProfileListView::getRootItem(DBGProfileData* data)
+{
+  switch(m_view)
+  {
+    case ModuleView:
+      return getModuleRootItem(data->location()->moduleId());
+    case ContextView:
+      return getContextRootItem(data->location()->contextId());
+    case DetailedView:
+      break;
+  }
+  return 0;
+}
+
+DBGProfileListViewItem* DBGProfileListView::lastRootItem()
+{
+  int count = childCount();
+  QListViewItem* item = firstChild();
+  QListViewItem* current = 0;
+
+  for(int i = 0; i < count; i++)
+  {
+    current = item->nextSibling();
+  }
+
+  return dynamic_cast<DBGProfileListViewItem*>(current);
+}
+
 void DBGProfileListView::addToList(DBGProfileData* data)
 {
-   DBGProfileListViewItem* item;
-   DBGProfileListViewItem* parent;
+  DBGProfileListViewItem* item;
+  DBGProfileListViewItem* parentItem;
 
   switch(m_view)
   {
     case ModuleView:
-      parent = getModuleRootItem(data->location()->moduleId());
-      break;
     case ContextView:
-      parent = getContextRootItem(data->location()->contextId());
+      parentItem = getRootItem(data);
+      if(parentItem == 0)
+      {
+        item = new DBGProfileListViewItem(this, data, m_view);
+        item->moveItem(lastRootItem());
+        parentItem = item;
+        item = new DBGProfileListViewItem(parentItem, data, m_view);
+      }
+      else
+      {
+        item = new DBGProfileListViewItem(parentItem, data, m_view);
+        item->moveItem(parentItem->lastItem());
+      }
       break;
     case DetailedView:
-      parent = 0;
-      break;//return;
-  }
-      
-  if(parent == 0)
-  {
-    item = new DBGProfileListViewItem(this, data, m_view);
-    item->moveItem(lastItem());
-  }
-  else
-  {
-    item = new DBGProfileListViewItem(parent, data, m_view);
-    item->moveItem(parent->lastItem());
+      item = new DBGProfileListViewItem(this, data, m_view);
+      item->moveItem(lastItem());
+      break;
   }
 }
 
 DBGProfileListViewItem* DBGProfileListView::getModuleRootItem(int modid)
 {
   DBGProfileListViewItem* item =
-      dynamic_cast<DBGProfileListViewItem*>(firstChild());
-  
+    dynamic_cast<DBGProfileListViewItem*>(firstChild());
+
   while(item)
   {
     if(item->data()->location()->moduleId() == modid)
     {
-      break;
+      return item;
     }
 
     item =
-        dynamic_cast<DBGProfileListViewItem*>(item->nextSibling());
+      dynamic_cast<DBGProfileListViewItem*>(item->nextSibling());
   }
 
-  return item;
+  return 0;
 }
 
 DBGProfileListViewItem* DBGProfileListView::getContextRootItem(int ctxid)
 {
   DBGProfileListViewItem* item =
-      dynamic_cast<DBGProfileListViewItem*>(firstChild());
-  
+    dynamic_cast<DBGProfileListViewItem*>(firstChild());
+
   while(item)
   {
     if(item->data()->location()->contextId() == ctxid)
     {
-      break;
+      return item;
     }
 
     item =
-        dynamic_cast<DBGProfileListViewItem*>(item->nextSibling());
+      dynamic_cast<DBGProfileListViewItem*>(item->nextSibling());
   }
 
-  return item;
+  return 0;
 }
 
 void DBGProfileListView::reloadList()
