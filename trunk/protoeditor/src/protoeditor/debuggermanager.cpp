@@ -157,10 +157,9 @@ void DebuggerManager::loadDebugger()
 
   if((m_debugger = DebuggerFactory::buildDebugger("DBG", this)) == NULL) {
     m_window->showError("Error loading debugger client");
-    return;
+  } else {
+    connectDebugger();
   }
-
-  connectDebugger();
 }
 
 void DebuggerManager::connectDebugger()
@@ -188,14 +187,17 @@ void DebuggerManager::slotDebugRun()
 {
   if(!m_debugger) return;
 
-  if(m_window->tabEditor()->count() != 0) {
-    QString filepath = m_window->tabEditor()->currentDocumentPath();
-
-     m_debugger->run(filepath,
-      ProtoeditorSettings::self()->currentSiteSettings());
-  } else {
-    m_window->showSorry("Open a file to debug");
+  if(m_window->tabEditor()->count() == 0) {
+    m_window->openFile();
+    if(m_window->tabEditor()->count() == 0) {
+      return;
+    }
   }
+  
+  QString filepath = m_window->tabEditor()->currentDocumentPath();
+
+  m_debugger->run(filepath,
+    ProtoeditorSettings::self()->currentSiteSettings());
 }
 
 void DebuggerManager::slotDebugStop()
