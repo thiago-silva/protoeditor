@@ -47,21 +47,19 @@ public:
   QRadioButton *m_rdOther;
 
 
-  //QCheckBox    *m_ckDBGnabled;
   KLineEdit    *m_edLocalBaseDir;
   KLineEdit    *m_edServerBaseDir;
   QSpinBox     *m_spListenPort;
   KLineEdit    *m_edServerHost;
 
   QGridLayout *m_gridLayout;
-  //QLabel      *m_lbDBGEnabled;
   QLabel      *m_lbLocalBaseDir;
   QLabel      *m_lbServerBaseDir;
   QLabel      *m_lbListenPort;
   QLabel      *m_lbServerHost;
 
 private slots:
-  void clientChanged(int);
+  void slotClientChanged(int);
 
 private:
   void enableDBG();

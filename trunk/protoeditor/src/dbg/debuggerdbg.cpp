@@ -319,7 +319,7 @@ void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, in
 }
 
 
-void DebuggerDBG::debugError(/*int type,*/ const QString& msg)
+void DebuggerDBG::debugError(/*int type,*/ const QString&)
 {
   //NOTE: When a PHP error ocurr, I'm not sure why DBG some times
   //sends a TagError and some times not. So, we are sending errors through the Log

@@ -38,6 +38,7 @@ DebuggerSettingsWidget::DebuggerSettingsWidget(QWidget *parent, const char *name
 
   m_vlayout = new QVBoxLayout(this, 3, 20);
 
+  /* Debugger choice */
   m_buttonGroup = new QButtonGroup(this, "kcfg_Client");
   m_buttonGroup->setMinimumHeight(m_buttonGroup->height()+10);
 
@@ -53,6 +54,7 @@ DebuggerSettingsWidget::DebuggerSettingsWidget(QWidget *parent, const char *name
   m_buttonGroup->insert(m_rdOther);
   groupLayout->addWidget(m_rdOther);
 
+  /* Specific debugger settings */
 
   m_tabWidget = new QTabWidget(this);
   QWidget* dbgTab = new QWidget(m_tabWidget);
@@ -83,16 +85,18 @@ DebuggerSettingsWidget::DebuggerSettingsWidget(QWidget *parent, const char *name
   m_gridLayout->addWidget(m_lbServerHost, 3, 0);
   m_gridLayout->addWidget(m_edServerHost, 3, 1);
 
+  /* Final layout code */
+
+  m_gridLayout->addItem(new QSpacerItem(0,0));
   m_vlayout->addWidget(m_buttonGroup);
-  //m_vlayout->addLayout(groupLayout);
   m_vlayout->addWidget(m_tabWidget);
+
 
   m_tabWidget->insertTab(dbgTab, "DBG");
 
   disableDBG();
 
-  connect(m_rdDBG, SIGNAL(stateChanged(int)), this, SLOT(clientChanged(int)));
-  //connect(m_rdOther, SIGNAL(stateChanged(int)), this, SLOT(clientChanged(int)));
+  connect(m_rdDBG, SIGNAL(stateChanged(int)), this, SLOT(slotClientChanged(int)));
 }
 
 
@@ -100,7 +104,7 @@ DebuggerSettingsWidget::~DebuggerSettingsWidget()
 {
 }
 
-void DebuggerSettingsWidget::clientChanged(int)
+void DebuggerSettingsWidget::slotClientChanged(int)
 {
   switch(m_buttonGroup->selectedId()) {
     case DebuggerSettings::EnumClient::DBG:
