@@ -43,10 +43,6 @@ EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
 }
 
-void EditorTabWidget::init() {
-  disableEditorActions();
-}
-
 EditorTabWidget::~EditorTabWidget()
 {
   terminate();
@@ -75,6 +71,8 @@ void EditorTabWidget::addDocument(KURL url)
 
 void EditorTabWidget::enableEditorActions()
 {
+  m_window->actionStateChanged("has_fileopened");
+  /*
   m_window->actionCollection()->action("file_close")->setEnabled(true);
   m_window->actionCollection()->action("file_save")->setEnabled(true);
   m_window->actionCollection()->action("file_save_as")->setEnabled(true);
@@ -89,6 +87,7 @@ void EditorTabWidget::enableEditorActions()
   m_window->actionCollection()->action("settings_editor")->setEnabled(true);
 
   m_window->actionCollection()->action("debug_toggle_bp")->setEnabled(true);
+  */
 
 }
 
@@ -123,6 +122,8 @@ void EditorTabWidget::disableEditorActions()
 {
   if(m_terminating) return;
 
+  m_window->actionStateChanged("has_nofileopened");
+  /*
   m_window->actionCollection()->action("file_close")->setEnabled(false);
   m_window->actionCollection()->action("file_save")->setEnabled(false);
   m_window->actionCollection()->action("file_save_as")->setEnabled(false);
@@ -137,6 +138,7 @@ void EditorTabWidget::disableEditorActions()
   m_window->actionCollection()->action("settings_editor")->setEnabled(false);
 
   m_window->actionCollection()->action("debug_toggle_bp")->setEnabled(false);
+  */
 }
 
 void EditorTabWidget::closeAllDocuments()

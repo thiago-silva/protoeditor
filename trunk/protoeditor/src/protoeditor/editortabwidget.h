@@ -71,8 +71,6 @@ public:
 
   KTextEditor::View* anyView();
 
-  void init();
-
   void terminate();
 
 signals:
