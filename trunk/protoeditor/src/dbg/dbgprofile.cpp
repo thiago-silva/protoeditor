@@ -168,13 +168,25 @@ void DBGProfileDialog::reloadData()
   KListViewItem* item= new KListViewItem(m_listView);
   item->setText(FilePathCol, m_profileData->filePath());
   item->setText(LineCol, QString::number(m_profileData->line()));
-//   item->setText(ContextCol, m_profileData->context());
+  //item->setText(ContextCol, m_profileData->context());
+  item->setText(HitsCol, QString::number(m_profileData->hitCount()));
+  item->setText(AvgCol, QString().sprintf("%.3f", m_profileData->timeAvgHit()));
+  item->setText(TotalCol, QString().sprintf("%.3f", m_profileData->totalTime()));
+  item->setText(MinCol, QString().sprintf("%.3f", m_profileData->minTime()));
+  item->setText(MaxCol, QString().sprintf("%.3f", m_profileData->maxTime()));
+  
+  /*  
+  KListViewItem* item= new KListViewItem(m_listView);
+  item->setText(FilePathCol, m_profileData->filePath());
+  item->setText(LineCol, QString::number(m_profileData->line()));
+  //item->setText(ContextCol, m_profileData->context());
   item->setText(HitsCol, QString::number(m_profileData->hitCount()));
   item->setText(AvgCol, QString("%1").arg(m_profileData->timeAvgHit(), 0, 'f'));
   item->setText(TotalCol, QString("%1").arg(m_profileData->totalTime(), 0, 'f'));
   item->setText(MinCol, QString("%1").arg(m_profileData->minTime(), 0, 'f'));
   item->setText(MaxCol, QString("%1").arg(m_profileData->maxTime(), 0, 'f'));
-
+  */
+  
   //add item to the bottom
   item->moveItem(m_listView->lastItem());
 }
