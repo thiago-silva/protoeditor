@@ -1,27 +1,24 @@
 \NewEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --leak-check=yes ./protoeditor<br /></li>
+<ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look on PHP Designer 2005.<br /></li>
 <li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /></li>
-<li>Make taskbar app button blink on JIT<br /></li>
+<li>Make taskbar app button blink on JIT (like KMail notification)<br /></li>
 <li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
 <li>Include other StdActions/Kate actions (like &quot;goto line&quot;)<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
 <li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
-<li>Have a look at KMainWindow and XMLGUI stuff<br /><br /></li>
-<li>Settings: add &quot;browser&quot; button on path fields so the user don't need to type all the path.<br /></li>
-<li>Reimplement EditorTabWidget::slotMarkChanged().</li>
-<ul type="disc"><li>Make it simple. Walk trough the old/new marks. If some line differs on Breakpoint marks, remove/add it<br /></li></ul>
-<li>Open file buttom on toolbar with pulldown menu that shows recent files.<br /></li>
+<li>Have a look at KMainWindow and XMLGUI stuff<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
 <li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
-<ul type="disc"><li>All it should do is request a setep. The client should be responsable for feeding the manager with all the info.<br /></li></ul>
-<li><br /><br /><br />Add context Menu for the editor<br /></li>
+<ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info.<br /></li></ul>
+<li>Add context Menu for the editor<br /></li>
 <li>Context menu for VariableListView:</li>
-<ul type="disc"><li>for scalars:</li>
+<ul type="disc"><li>Copy (copy variable to clipboard)</li>
+<li>for scalars:</li>
 <ul type="disc"><li>&quot;Modify Value&quot; (same as double click)</li>
 <li>&quot;Modify trough dialog&quot;...(for big texts)</li>
 <li>&quot;Set value to null&quot;</li></ul>
@@ -30,9 +27,9 @@
 <li>-&quot;Modify object...&quot; (show dialog to modify the values of the members)<br /><br /></li></ul></ul>
 <li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;, &quot;run default file&quot; (like PHPEd)</li>
 <ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)<br /></li></ul>
-<li>When the state of the tabs change, set an icon or something so the user know there are more info (usefull for the Message tab)<br /></li>
+<li>When the state of the tabs change, set an icon or something so the user know there are more info (usefull for the Message tab)<br /><br /></li>
+<li>Use QTabWidget like konqueror/kdevelop (close button, icons, etc)<br /></li>
 <li>Implement the profiling features.<br /></li>
-<li>Implement the full options for DBG (halt on error, break on load, etc) see FRAME_SET_OPT<br /></li>
 <li>Refactor, test, refactor, test...</li>
 <ul type="disc"><li>change it++ to ++it</li>
 <li>create namespaces (DBG, PHP, etc)?</li>
@@ -88,7 +85,7 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <li>Run</li>
@@ -120,15 +117,10 @@
 <li>set static objects to be deleted<br /></li>
 <li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on dbg settings<br /></li>
 <li>Use KURLRequester for &lt;lineedit&gt;&lt;browsebutton&gt; on SiteSettingsWidget<br /></li>
-<li>Try to get default kate settings from the user's katerc<br /></li>
-<li>Remove &quot;Start Session/End Session&quot; from &quot;Debug&quot; menu. Put it on a new Menu &quot;JIT&quot;.</li>
-<ul type="disc"><li>Motive: When supporting other languages, &quot;Start session&quot; shouldn't load all debuggers. </li>
-<li>rename &quot;Start session/End Session&quot; from &quot;Abstract debugger&quot; to &quot;Start/End JIT&quot;. This way:</li>
-<ul type="disc"><li>DBG RUN: start listening, send request...debug end, it checks it checks if startJIT was called, if no, it closes the listener.</li></ul></ul></ul>
+<li>Try to get default kate settings from the user's katerc</li></ul>
 </body></html>
 
-
-\NewEntry 1 new Settings
+\NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>Each debugger has its own QWidget to be used on the settings dialog (it will be a child of QTabWidget). Maybe they should have its own KConfigSkeleton, registered on a hipotetical ConfigManager. ConfigManager would be responsable to inform all registered KConfigSkeleton subclasses registered to read/write its configuration.<br /><br />Besides the specific options of each debugger on the QWidget, they shall have a &quot;enable JIT&quot;. When its &quot;on&quot;, it will inform the debugger client to listen for incoming connections permanently. Otherwise, listening on port is temporary, ie, when a debugger is actually running. <br /><br />When a new connection arises for some debugger, they must know wich folder mapping to use. So they inform DebuggerManager about the incoming connection, and the manager is responsable for chose the apropriate registered Site according to the debugger triggered and the remote host (<span style="color:#ff0000">can't solve the remote port to help on this</span>) connected to the client. Also it's possible for a site to have many script languages. If there are 2 Sites registered for a given host (maybe the user's Site has different folder mapping for different languages), we wouldn't know wich one to use. So maybe, one more entry (Debugger) should be added.<br /><br />Each Site has the following entries:<br /></p>
 <ul type="disc"><li>name</li>
@@ -138,9 +130,9 @@
 <li>LocalDir</li>
 <li>Match file path in lower case (for win32 servers)</li>
 <li>Debugger &lt;combobox&gt; [DBG|...]<br /></li></ul>
-<p>	Site s = retrieveSite(remoteHost,debuggerName);<br />	useSite(s);<br /><br />If a debugger is triggered on a JIT, and no Site is found for it, a message should inform the user, showing the remote host/file called to be debuged.<br /><br />-----------------------------------------<br /><br /><br />Settings Dialog modules:<br /><br />[Debugger]<br />   |--[PHP]<br />   |--[Other]<br />[Site]<br />[Browser]<br />[Editor]<br /><br /><br />------------------------------------------------<br /><br />PHP Debugger<br />=========<br /><br />Default : &lt;combobox&gt; //if no site is selected, run in CGI/bin mode using this debugger<br /><br />[DBG] [Other]<br />           -----------------------------<br />                                              |<br />Listen on port: &lt;lineedit&gt;      |<br />other options....                     |<br />                                              |<br />-------------------------------------|<br /><br />-----------------------------------------------------------<br />Site configuration<br />===========<br /><br />Site name | Host | port | Remote base dir | Local base dir<br />Somesite   | host | 80   | /foo                    | /bar                <br /><br /><br />&lt;button add&gt;<br />&lt;button modify&gt;<br />&lt;buttom remove&gt;<br /><br /><br />*See KMAil identify configuration.<br />** If no site is selected to debug, run using local binary w/o directory mapping.<br /><br /><br />-------------------------------------------------------------------------------------------------------------------------------------------------------<br />MainWindow:<br /><br />use a combobox on toolbar with the list of sites to use (KSelectToolBar or something like that)<br /><br />*Local                 //use local binary application (ie. php, python...)<br />*&lt;separator&gt;<br />*Site1<br />*Site2<br /><br /><br />&quot;Run/Debug/Start session&quot; buttom has a dropdown menu with the debuggers associated with the current file's language (if no extension, show all debuggers on a multilevel menu with &quot;language&quot; as top level items) so the user can quickly change the debugger instead of changing default values on the settings.<br />	*<span style="color:#ff0000">This might not be good. Since we'll end up with 2+ toolbar buttons with the same dropdown menu. Maybe is better having another combobox on toolbar to hold the debuggers. Or, maybe, no combobox: just 2 menus, one for the site, other for the debugger (the last, I think would be a sub menu of the current 'Debug' menu)</span><br /><br />----------------------------------------------------------------<br />/src/debuggerXX<br /><br />DebuggerXX() {<br /> ...<br />  m_settings = new DebuggerXXSettings();<br />  ProtoeditorSetttings::self()-&gt;registerDebuggerSettings(m_settings);<br />}<br /><br />DebuggerXXSettings::DebuggerXXSettings() {<br />  m_widget = new DebuggerXXSettingsWidget();<br />}<br /><br />/src/protoeditor:<br /><br />class ProtoEditorSettings {</p>
-<p>	self();<br />	void registerDebuggerSettings(DebuggerSettingsInterface*);<br />};<br /><br />MainWindow::showPreferences() {<br />   ProtoeditorConfigDialog* dialog = new ProtoeditorConfigDialog();<br />}<br /><br />class DebuggerSettingsInterface {<br />   virtual QWidget* widget() = 0;<br />}<br /><br />class ProtoEditorConfigDialog {<br /><br />    ProtoEditorConfigDialog() {<br /><br />     QFrame* frame = addPage( PHP );<br /><br />     QTabWidget* tabWidget;<br /><br />    //QValueList&lt;DebuggerSettingsInterface*&gt; m_settingsList;<br />     m_settingsList= ProtoeditorSettings::self()-&gt;debuggerSettingsList();<br />    foreach(settings as setting) {       <br />       tabWidget-&gt;insertTab(setting-&gt;widget());<br />       //tab-&gt;reparent(tabWidget);<br />   }<br />}<br /><br />void slotOk() {<br />    foreach(settings as setting) {<br />       settings-&gt;commit();<br />    }   <br />}<br /><br /></p>
+<p>	Site s = retrieveSite(remoteHost,debuggerName);<br />	useSite(s);<br /><br />If a debugger is triggered on a JIT, and no Site is found for it, a message should inform the user, showing the remote host/file called to be debuged.<br /><br />-----------------------------------------<br /><br /><br />Settings Dialog modules:<br /><br />[Debugger]<br />   |--[PHP]<br />   |--[Other]<br />[Site]<br />[Browser]<br />[Editor]<br /><br /><br />------------------------------------------------<br /><br />PHP Debugger<br />=========<br /><br />Default : &lt;combobox&gt; //if no site is selected, run in CGI/bin mode using this debugger<br /><br />[DBG] [Other]<br />           -----------------------------<br />                                              |<br />Listen on port: &lt;lineedit&gt;      |<br />other options....                     |<br />                                              |<br />-------------------------------------|<br /><br />-----------------------------------------------------------<br />Site configuration<br />===========<br /><br />Site name | Host | port | Remote base dir | Local base dir<br />Somesite   | host | 80   | /foo                    | /bar                <br /><br /><br />&lt;button add&gt;<br />&lt;button modify&gt;<br />&lt;buttom remove&gt;<br /><br /><br />*See KMAil identify configuration.<br />** If no site is selected to debug, run using local binary w/o directory mapping.<br /><br /><br />-------------------------------------------------------------------------------------------------------------------------------------------------------<br />MainWindow:<br /><br />use a combobox on toolbar with the list of sites to use (KSelectAction or something like that)<br /><br />*Local                 //use local binary application (ie. php, python...)<br />*&lt;separator&gt;<br />*Site1<br />*Site2<br /><br /><br />&quot;Run/Debug/Start session&quot; buttom has a dropdown menu with the debuggers associated with the current file's language (if no extension, show all debuggers on a multilevel menu with &quot;language&quot; as top level items) so the user can quickly change the debugger instead of changing default values on the settings.<br />	*<span style="color:#ff0000">This might not be good. Since we'll end up with 2+ toolbar buttons with the same dropdown menu. Maybe is better having another combobox on toolbar to hold the debuggers. Or, maybe, no combobox: just 2 menus, one for the site, other for the debugger (the last, I think would be a sub menu of the current 'Debug' menu)</span><br /></p>
 </body></html>
+
 
 \NewEntry 1 Bug reminder
 
@@ -455,7 +447,7 @@
 <p> method from QObject which tries to do the same thing as delete this in a safer way.</p>
 </body></html>
 
-\NewEntry 1 patch2
+\CurrentEntry 1 patch2
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>http://developer.kde.org/documentation/misc/sendingpatches.php<br /><br />Abstract</p>
 <p></p>
