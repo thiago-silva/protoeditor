@@ -26,10 +26,14 @@
 #include <ktexteditor/view.h>
 #include <ktexteditor/markinterfaceextension.h>
 #include <ktexteditor/viewcursorinterface.h>
+// #include <ktexteditor/texthintinterface.h>
 
 #include <kiconloader.h>
 #include <kdeversion.h>
 
+//Tied to Kate
+#include <kate/document.h>
+#include <kate/view.h>
 
 #include <qwidget.h>
 #include <qlayout.h>
@@ -108,6 +112,11 @@ bool Document::open(const KURL& url)
     return false;
   }
 
+  //activate the reload dialog when external changes happen to the text
+  Kate::Document* kdoc = dynamic_cast<Kate::Document*>(doc);
+  if(kdoc)
+    kdoc->setFileChangedDialogsActivated(true);
+
   m_tab = new QWidget(dynamic_cast<QWidget*>(parent()));
   QVBoxLayout *lay = new QVBoxLayout(m_tab, 1, 1);
 
@@ -123,9 +132,21 @@ bool Document::open(const KURL& url)
 //   connect(m_view->document(), SIGNAL(textChanged()), this, SLOT(slotTextChanged()));
   connect(m_view, SIGNAL(newStatus()), this, SIGNAL(sigTextChanged()));
   connect(m_view, SIGNAL(viewStatusMsg(const QString&)), this, SIGNAL(sigStatusMsg(const QString&)));
+
+  //enable hints (kate didn't implemented this properly yet)
+/*  KTextEditor::TextHintInterface *hint = textHintInterface(m_view);
+  hint->enableTextHints(1000);
+
+  connect(m_view, SIGNAL(needTextHint(int, int, QString&)), this, SLOT(slotNeedTextHint(int, int, QString&)));*/
   
   return true;
 }
+/*
+void Document::slotNeedTextHint(int line, int col, QString&)
+{
+  int a;
+  a = 2;
+}*/
 
 bool Document::close()
 {
@@ -341,6 +362,30 @@ bool Document::hasBreakpointAt(int line)
 #endif
 }
 
+QString Document::wordUnderCursor()
+{
+
+/*  KTextEditor::SelectionInterface* selif =
+      dynamic_cast<KTextEditor::SelectionInterface*>(m_view->document());
+
+  if(selif)
+  {
+    if(!selif->selection().isEmpty())
+    {
+      return selif->selection();
+    }
+  }
+  */
+  Kate::View* v = dynamic_cast<Kate::View*>(m_view);
+  if(v)
+  {
+    return v->currentWord();
+  }
+  else
+  {
+    return QString::null;
+  }
+}
 
 void Document::slotMarkChanged()
 {

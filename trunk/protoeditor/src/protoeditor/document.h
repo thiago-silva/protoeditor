@@ -67,6 +67,7 @@ public:
   void unmarkPreExecutionPoint();
   bool hasBreakpointAt(int line);
 
+  QString wordUnderCursor();
 signals:
   void sigBreakpointUnmarked(Document*, int);
   void sigBreakpointMarked(Document*, int);
@@ -75,6 +76,7 @@ signals:
   
 private slots:
   void slotMarkChanged();
+//   void slotNeedTextHint(int, int, QString&);
 private:
  
   void setupMarks();

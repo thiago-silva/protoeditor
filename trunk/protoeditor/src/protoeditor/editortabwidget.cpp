@@ -30,9 +30,6 @@
 #include <kmimetype.h>
 #include <kpopupmenu.h>
 
-//Tied to Kate
-#include <kate/document.h>
-
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
     : KTabWidget(parent, name), m_terminating(false),
     m_window(window), m_currentView(0)
@@ -298,15 +295,10 @@ bool EditorTabWidget::createDocument(const KURL& url)
 
   connect(doc, SIGNAL(sigTextChanged()), this,
           SLOT(slotTextChanged()));
-  
-  connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
-          SLOT(sigStatusMsg(const QString&)));
 
-  //activate the reload dialog when external changes happen to the text
-  Kate::Document* kdoc = dynamic_cast<Kate::Document*>(doc);
-  if(kdoc)
-    kdoc->setFileChangedDialogsActivated(true);
-    
+  connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
+          SLOT(slotStatusMsg(const QString&)));
+
   QIconSet mimeIcon (KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
   if (mimeIcon.isNull())
   {
@@ -315,10 +307,14 @@ bool EditorTabWidget::createDocument(const KURL& url)
 
   addTab(doc->tab(), mimeIcon, url.fileName());
   setTabToolTip(doc->tab(), doc->path());
-  
+
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(doc->view());
   if (popupIf)
-    popupIf->installPopup((QPopupMenu *)m_window->factory()->container("ktexteditor_popup", m_window));
+  {
+    QPopupMenu *popup = (QPopupMenu*) m_window->factory()->container("ktexteditor_popup", m_window);
+    popupIf->installPopup(popup);
+    connect(popup, SIGNAL(aboutToShow()), this, SLOT(slotMenuAboutToShow()));
+  }
 
   m_docList.append(doc);
 
@@ -382,7 +378,7 @@ void EditorTabWidget::slotTextChanged()
 
   int index = currentPageIndex();
   Document* doc = document(index);
-  
+
   if(doc->isModified())
   {
     setTabIconSet(page(index), QIconSet(SmallIcon("filesave")));
@@ -398,11 +394,11 @@ void EditorTabWidget::slotTextChanged()
   }
 }
 
-void EditorTabWidget::sigStatusMsg(const QString& msg)
+void EditorTabWidget::slotStatusMsg(const QString& msg)
 {
   m_window->setEditorStatusMsg(msg);
 }
-  
+
 void EditorTabWidget::contextMenu(int index, const QPoint & p)
 {
   enum { Close, CloseOthers, CloseAll };
@@ -479,5 +475,28 @@ Document* EditorTabWidget::currentDocument()
   return document(currentPageIndex());
 }
 
+void EditorTabWidget::slotMenuAboutToShow()
+{
+  KAction* ac = m_window->actionCollection()->action("editor_add_watch");
+  if(ac)
+  {
+    QString watch = currentDocument()->wordUnderCursor();
+    if(watch.isEmpty())
+    {
+      ac->setText(QString("Add Watch"));
+      ac->setEnabled(false);
+    }
+    else
+    {
+      ac->setEnabled(true);
+      ac->setText(QString("Add Watch: ") + watch);
+    }
+  }
+}
+
+void EditorTabWidget::slotAddWatch()
+{
+  emit sigAddWatch(currentDocument()->wordUnderCursor());
+}
 
 #include "editortabwidget.moc"
