@@ -52,7 +52,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -88,6 +87,8 @@
 <ul type="disc"><li>Run with args</li>
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
+<li>Better handling of Site settings (see problem posted on forum)</li>
+<div></div>
 <li>Features / Usability:</li>
 <ul type="disc"><li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings</li>
 <li>Add terminal output</li>
@@ -96,7 +97,7 @@
 <ul type="disc"><li>set static objects to be deleted<br /><br /></li></ul>
 <li>Improve Profile / Start Gubed support<br /></li>
 <li>-------------------------------------------------------------------<br /></li>
-<li>Create classes MessageWidget, WatchWidget, BreakpointWidget, etc. holding the listviews, than, make them responsable for buttons such as btAddWatch.</li>
+<li>Create classes MessageWidget, WatchWidget, BreakpointWidget, etc. holding the listviews, then, make them responsable for buttons such as btAddWatch.</li>
 <ul type="disc"><li>Create context menus for the listviews (breakpoints/messages, etc)</li>
 <li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
 <li>Change output widget to KTExtEdit, so it can highlight HTML tags (create a wrapper class for it)</li></ul></ul>
