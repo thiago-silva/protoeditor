@@ -121,4 +121,9 @@ void DBGProfileDialog::addData(DBGProfileData* data)
   m_listView->addData(data);
 }
 
+DBGProfileListView* DBGProfileDialog::listview()
+{
+  return m_listView;
+}
+  
 #include "dbgprofiledialog.moc"

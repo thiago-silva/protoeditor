@@ -38,6 +38,8 @@ public:
   void clear();
   void addData(DBGProfileData*);
 
+  DBGProfileListView* listview();
+  
 signals:
   void sigClose();
 
