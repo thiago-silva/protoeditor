@@ -26,7 +26,7 @@
 #include "dbgnetdata.h"
 #include "dbgrequestpack.h"
 #include "dbgrequestpackbuilder.h"
-#include "browsersettings.h"
+#include "settings.h"
 
 #include <qsocket.h>
 #include <qhttp.h>
@@ -204,7 +204,7 @@ Browser::~Browser()
 
 void Browser::request(const QString& url)
 {
-  if(BrowserSettings::useExternalBrowser()) {
+  if(Settings::useExternalBrowser()) {
     doBrowserRequest(url);
   } else {
     doHTTPRequest(KURL(url));
@@ -220,7 +220,7 @@ void Browser::doBrowserRequest(const QString& url)
     return;
   }
 
-  QString cmd = BrowserSettings::browserCmd();
+  QString cmd = Settings::browserCmd();
 
   QByteArray data;
   QDataStream arg(data, IO_WriteOnly);
@@ -264,7 +264,7 @@ void Browser::initBrowserCommunication()
 
 void Browser::openURLOnBrowser(const QString& url)
 {
-  QString cmd = BrowserSettings::browserCmd();
+  QString cmd = Settings::browserCmd();
 
   *m_browserProcess << cmd;
   *m_browserProcess << url;

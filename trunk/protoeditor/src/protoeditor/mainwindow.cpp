@@ -28,9 +28,8 @@
 
 #include "debuggermanager.h"
 
-#include "debuggersettings.h"
+#include "settings.h"
 #include "debuggersettingswidget.h"
-#include "browsersettings.h"
 #include "browsersettingswidget.h"
 
 #include <kapplication.h>
@@ -438,11 +437,11 @@ void MainWindow::slotShowSettings()
 
   //note: yeah, I couldn't find a simple solution to handle 2+ KConfigSkeleton's
   //at the same time. KConfigDialog ctor forces us to inform a KConfigSkeleton.
-  KConfigDialog* dialog = new KConfigDialog(this, "settings", DebuggerSettings::self());
+  KConfigDialog* dialog = new KConfigDialog(this, "settings", Settings::self());
 
   initSettings();
-  dialog->addPage(m_debuggerSettings, DebuggerSettings::self(), i18n("Debugger"), "debugger");
-  dialog->addPage(m_browserSettings, BrowserSettings::self(), i18n("Browser"), "network");
+  dialog->addPage(m_debuggerSettings, i18n("Debugger"), "debugger");
+  dialog->addPage(m_browserSettings, i18n("Browser"), "network");
 
   connect( dialog, SIGNAL(settingsChanged()),
            m_debugger_manager, SLOT(slotConfigurationChanged()) );

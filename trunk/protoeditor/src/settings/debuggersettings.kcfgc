@@ -1,4 +1,0 @@
-# Code generation options for kconfig_compiler
-File=debugger.kcfg
-ClassName=DebuggerSettings
-Singleton=true

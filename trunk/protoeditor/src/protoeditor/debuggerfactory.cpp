@@ -20,12 +20,12 @@
 
 #include "debuggerfactory.h"
 #include "debuggerdbg.h"
-#include "debuggersettings.h"
+#include "settings.h"
 
 AbstractDebugger* DebuggerFactory::buildDebugger(DebuggerManager* manager) {
   AbstractDebugger* debugger = NULL;
-  switch(DebuggerSettings::client()) {
-    case DebuggerSettings::EnumClient::DBG:
+  switch(Settings::client()) {
+    case Settings::EnumClient::DBG:
       debugger = new DebuggerDBG(manager);
       break;
   }

@@ -30,7 +30,7 @@
 #include "loglistview.h"
 #include "debuggerbreakpoint.h"
 #include "breakpointlistview.h"
-#include "debuggersettings.h"
+#include "settings.h"
 
 #include <kapplication.h>
 #include <kcombobox.h>
@@ -146,12 +146,12 @@ void DebuggerManager::clearDebugger()
 
 void DebuggerManager::loadDebugger()
 {
-  if(DebuggerSettings::client() == -1) {
+  if(Settings::client() == -1) {
     clearDebugger();
     return;
   }
 
-  if(m_debugger && (m_debugger->id() == DebuggerSettings::client())) {
+  if(m_debugger && (m_debugger->id() == Settings::client())) {
     //is the same current debugger, just load its settings again
     m_debugger->endSession();
     m_debugger->reloadConfiguration();

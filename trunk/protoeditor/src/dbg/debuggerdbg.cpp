@@ -27,7 +27,7 @@
 #include "phpvariable.h"
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
-#include "debuggersettings.h"
+#include "settings.h"
 #include "phpdefs.h"
 
 #include <kdebug.h>
@@ -42,10 +42,10 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
 
 {
   m_configuration = new DBGConfiguration(
-                      DebuggerSettings::localBaseDir(),
-                      DebuggerSettings::serverBaseDir(),
-                      DebuggerSettings::listenPort(),
-                      DebuggerSettings::serverHost());
+                      Settings::localBaseDir(),
+                      Settings::serverBaseDir(),
+                      Settings::listenPort(),
+                      Settings::serverHost());
 
   m_net = new DBGNet(this);
 
@@ -68,7 +68,7 @@ QString DebuggerDBG::name() const
 
 int DebuggerDBG::id() const
 {
-  return DebuggerSettings::EnumClient::DBG;
+  return Settings::EnumClient::DBG;
 }
 
 bool DebuggerDBG::isSessionActive() const
@@ -83,10 +83,10 @@ bool DebuggerDBG::isRunning() const
 
 void DebuggerDBG::reloadConfiguration()
 {
-  m_configuration->setLocalBaseDir(DebuggerSettings::localBaseDir());
-  m_configuration->setServerBaseDir(DebuggerSettings::serverBaseDir());
-  m_configuration->setListenPort(DebuggerSettings::listenPort());
-  m_configuration->setServerHost(DebuggerSettings::serverHost());
+  m_configuration->setLocalBaseDir(Settings::localBaseDir());
+  m_configuration->setServerBaseDir(Settings::serverBaseDir());
+  m_configuration->setListenPort(Settings::listenPort());
+  m_configuration->setServerHost(Settings::serverHost());
 }
 
 void DebuggerDBG::startSession()

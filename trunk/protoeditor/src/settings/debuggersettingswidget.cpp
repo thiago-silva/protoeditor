@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "debuggersettingswidget.h"
-#include "debuggersettings.h"
+#include "settings.h"
 
 #include <qlayout.h>
 #include <klineedit.h>
@@ -107,7 +107,7 @@ DebuggerSettingsWidget::~DebuggerSettingsWidget()
 void DebuggerSettingsWidget::slotClientChanged(int)
 {
   switch(m_buttonGroup->selectedId()) {
-    case DebuggerSettings::EnumClient::DBG:
+    case Settings::EnumClient::DBG:
       enableDBG();
       break;
     default:

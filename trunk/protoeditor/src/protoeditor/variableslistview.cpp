@@ -85,7 +85,7 @@ VariablesListView::~VariablesListView()
   //clear();
 }
 
-void VariablesListView::slotItemRenamed(QListViewItem * item, int col, const QString & text) {
+void VariablesListView::slotItemRenamed(QListViewItem * item, int, const QString & text) {
 
   VariablesListViewItem* vitem =
     dynamic_cast<VariablesListViewItem*>(item);

@@ -30,7 +30,7 @@ BrowserSettingsWidget::BrowserSettingsWidget(QWidget *parent, const char *name)
   QHBoxLayout* hbox = new QHBoxLayout(this, 0, 3);
 
   m_ckUseExternalBrowser = new QCheckBox(this, "kcfg_UseExternalBrowser");
-  m_ckUseExternalBrowser->setText("Use external browser");
+  m_ckUseExternalBrowser->setText("Use external browser (EXPERIMENTAL)");
 
   m_lbBrowserCmd = new QLabel(this);
   m_lbBrowserCmd->setText("Browser command: ");

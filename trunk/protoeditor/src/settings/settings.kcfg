@@ -30,4 +30,14 @@
     </entry>
   </group>
 
+  <group name="Browser">
+    <entry name="UseExternalBrowser" type="Bool">
+      <label>Use external browser</label>
+      <default>false</default>
+    </entry>
+    <entry name="BrowserCmd" type="String">
+      <label>Browser command</label>
+      <default>konqueror</default>
+    </entry>
+  </group>
 </kcfg>
