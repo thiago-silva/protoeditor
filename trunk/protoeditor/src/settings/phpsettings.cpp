@@ -12,6 +12,7 @@ PHPSettings::PHPSettings(  )
   itemDefaultDebugger = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DefaultDebugger" ), mDefaultDebugger );
   addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
 
+  readConfig();
 }
 
 PHPSettings::~PHPSettings()

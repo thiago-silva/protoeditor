@@ -35,6 +35,8 @@ ExtOutputSettings::ExtOutputSettings(  )
   KConfigSkeleton::ItemEnum  *itemBrowser;
   itemBrowser = new KConfigSkeleton::ItemEnum( currentGroup(), QString::fromLatin1( "Browser" ), mBrowser, valuesBrowser, EnumBrowser::Konqueror );
   addItem( itemBrowser, QString::fromLatin1( "Browser" ) );
+
+  readConfig();
 }
 
 ExtOutputSettings::~ExtOutputSettings()
