@@ -148,6 +148,8 @@ public:
   void requestWatch(const QString& expression, int scope_id);
   void requestVariables(int scope_id);
   void requestSrcTree();
+  void requestSrcLinesInfo(int modno);
+  void requestSrcCtxInfo(int modno);
   //void requestBreakpoint(int modno, DebuggerBreakpoint*);
   void requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
 
@@ -156,6 +158,7 @@ public:
   void requestOptions(int op);
 
   void requestProfileData(int modno);
+  void requestProfileFreqData(int testLoops);
   
   void makeHttpRequest(const QString& host, int port, const QString& path, int listenPort, int sessionId);
 

@@ -194,6 +194,15 @@ DBGResponseTag* DBGReceiver::buildTag(int frameName, char* buffer)
     case FRAME_PROF:
       tag = new DBGResponseTagProf(buffer);
       break;
+    case FRAME_PROF_C:
+      tag = new DBGResponseTagProfC(buffer);
+      break;
+    case FRAME_SRCLINESINFO:
+      tag = new DBGResponseTagSrcLinesInfo(buffer);
+      break;
+    case FRAME_SRCCTXINFO:
+      tag = new DBGResponseTagSrcCtxInfo(buffer);
+      break;
     default:
       emit sigError("Error receiving network data.");
       break;

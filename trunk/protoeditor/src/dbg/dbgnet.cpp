@@ -21,6 +21,7 @@
 
 #include "debuggerdbg.h"
 #include "dbgnet.h"
+#include "dbg_defs.h"
 #include "dbgresponsepack.h"
 #include "dbgconnection.h"
 #include "dbgreceiver.h"
@@ -37,7 +38,7 @@
 #include <knotifyclient.h>
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0),
+  : QObject(parent, name), m_opts(0), m_sessionId(0), m_headerFlags(0), m_profFreq(-1),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
     m_dbgStack(0), m_dbgFileInfo(0)
 {
@@ -161,6 +162,10 @@ void DBGNet::requestBreakpointRemoval(int bpid)
 
 void DBGNet::profile()
 {
+  m_dbgFileInfo->clearContextData();
+  m_requestor->requestProfileFreqData(TEST_LOOPS);
+  m_requestor->requestSrcLinesInfo(1);
+  m_requestor->requestSrcCtxInfo(1);
   m_requestor->requestProfileData(1); //the main module is aways 1
 }
 
@@ -288,8 +293,25 @@ void DBGNet::processDBGVersion(const DBGResponseTagVersion* version, DBGResponse
 
 void DBGNet::processSrcTree(const DBGResponseTagSrcTree* src, DBGResponsePack* pack)
 {
-  m_dbgFileInfo->setModulePath(src->modNo(),
+  m_dbgFileInfo->addModuleInfo(src->modNo(),
                                pack->retrieveRawdata(src->imodName())->data());
+}
+
+void DBGNet::processSrcLinesInfo(const DBGResponseTagSrcLinesInfo* src, DBGResponsePack*)
+{
+  int total = src->startLineNo() + src->linesCount();
+  for(int i = src->startLineNo(); i < total; i++)
+  {
+    m_dbgFileInfo->addContextInfo(src->ctxId(), src->modNo(), i);
+  }
+}
+
+void DBGNet::processSrcCtxInfo(const DBGResponseTagSrcCtxInfo* ctx, DBGResponsePack* pack)
+{
+  if(ctx->ifunctionName())
+  {
+    m_dbgFileInfo->setContextname(ctx->ctxid(), pack->retrieveRawdata(ctx->ifunctionName())->data());
+  }
 }
 
 void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
@@ -398,14 +420,25 @@ void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack
 void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
 {
   //NOTE: I'm not very confident about those bit << conversions
-  //TODO: recover 1000000 from prof_c
 
-  m_debugger->addProfileData(m_dbgFileInfo->moduleName(proftag->modNo()),
+  ASSERT(m_profFreq != -1);
+
+  int ctxid = m_dbgFileInfo->contextId(proftag->modNo(), proftag->lineNo());
+  m_debugger->addProfileData(proftag->modNo(),
+                             m_dbgFileInfo->moduleName(proftag->modNo()),
+                             ctxid,
+                             m_dbgFileInfo->contextName(ctxid),
                              proftag->lineNo(),
-                             proftag->hitCoun(),
-                             (((double)(proftag->minLo() | (proftag->minHi() << 32)) / 1000000) * 1000),
-                             (((double)(proftag->maxLo() | (proftag->maxHi() << 32)) / 1000000) * 1000),
-                             (((double)(proftag->sumLo() | (proftag->sumHi() << 32)) / 1000000) * 1000));
+                             proftag->hitCount(),
+                             (((double)(proftag->minLo() | (proftag->minHi() << 32)) / m_profFreq) * 1000),
+                             (((double)(proftag->maxLo() | (proftag->maxHi() << 32)) / m_profFreq) * 1000),
+                             (((double)(proftag->sumLo() | (proftag->sumHi() << 32)) / m_profFreq) * 1000));
+}
+
+void DBGNet::processProfC(const DBGResponseTagProfC* prof, DBGResponsePack*)
+{
+  //NOTE: I'm not very confident about those bit << conversions
+  m_profFreq = prof->freqlo() | (prof->freqhi() << 32);
 }
 
 void DBGNet::shipStack()
@@ -437,7 +470,7 @@ void DBGNet::slotDBGClosed()
   m_requestor->clear();
 
   m_dbgStack->clear();
-  m_dbgFileInfo->clear();
+  m_dbgFileInfo->clearModuleData();
   m_varScopeRequestList.clear();
 }
 

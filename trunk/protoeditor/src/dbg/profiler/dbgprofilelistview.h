@@ -18,31 +18,58 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGREQUESTPACKBUILDER_H
-#define DBGREQUESTPACKBUILDER_H
-#include <qstring.h>
-#include "dbgrequestpack.h"
+#ifndef DBGProfileListView_H
+#define DBGProfileListView_H
 
-class DBGPack;
-class DebuggerBreakpoint;
+#include <klistview.h>
 
-class DBGRequestPackBuilder
+class DBGProfileData;
+
+class DBGProfileListViewItem : public KListViewItem
 {
-public:
-  static DBGRequestPack* buildCommand(int cmd);
-  static DBGRequestPack* buildWatch(const QString expression, int scope_id);
-  //static DBGRequestPack* buildBreakpoint(int modno, DebuggerBreakpoint* breakpoint);
-  static DBGRequestPack* buildBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
-  //static DBGRequestPack* buildBreakpointList(int bpno);
-  static DBGRequestPack* buildDeletedBreakpoint(int bpid);
-  static DBGRequestPack* buildVars(int mod_no);
-  static DBGRequestPack* buildSrcTree();
-  static DBGRequestPack* buildSrcLinesInfo(int modno);
-  static DBGRequestPack* buildSrcCtxInfo(int modno);
-  static DBGRequestPack* buildOptions(int op);
-  static DBGRequestPack* buildProfile(int modno);
-  static DBGRequestPack* buildProfileC(int testLoops);
+  public:
+    DBGProfileListViewItem(KListView *parent, DBGProfileData* data, int view);
+    DBGProfileListViewItem(KListViewItem *parent, DBGProfileData* data, int view);
+    ~DBGProfileListViewItem();
+
+    DBGProfileListViewItem* lastItem();
+
+    DBGProfileData* data();
+  private:
+    bool isRoot();
+    void loadData(int view);
+    void calculateTotalTime();
+
+    DBGProfileData* m_data;
 };
 
+//------------------------------------------------------------------------------
+
+class DBGProfileListView : public KListView
+{
+  Q_OBJECT
+public:
+  enum { ModuleView, ContextView, DetailedView };
+
+  enum {LocationCol, LineCol, HitsCol, AvgCol, TotalCol, MinCol, MaxCol, ChartCol};
+
+  DBGProfileListView(QWidget *parent, const char *name = 0);
+  ~DBGProfileListView();
+
+  void setView(int);
+  int view();
+
+  void addData(DBGProfileData*);
+private:
+
+  DBGProfileListViewItem* getModuleRootItem(int modid);
+  DBGProfileListViewItem* getContextRootItem(int ctxid);
+  
+  void addToList(DBGProfileData* data);
+  void reloadList();
+
+  int m_view;
+  QValueList<DBGProfileData*> m_dataList;
+};
 
 #endif

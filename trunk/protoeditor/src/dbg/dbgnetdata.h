@@ -274,6 +274,55 @@ private:
   dbgint m_imod_name;
 };
 
+/* response tag for srclinesinfo */
+class DBGResponseTagSrcLinesInfo : public DBGResponseTag
+{
+public:
+  DBGResponseTagSrcLinesInfo();
+  DBGResponseTagSrcLinesInfo(char* responseBuffer);
+  ~DBGResponseTagSrcLinesInfo();
+
+  void setModNo(dbgint);
+  void setStartLineNo(dbgint);
+  void setLinesCount(dbgint);
+  void setCtxId(dbgint);
+
+  dbgint modNo() const;
+  dbgint startLineNo() const;
+  dbgint linesCount() const;
+  dbgint ctxId() const;
+
+  virtual void process(DBGNet*, DBGResponsePack*) const;
+private:
+  dbgint m_mod_no;
+  dbgint m_start_line_no;
+  dbgint m_lines_count;
+  dbgint m_ctx_id;
+};
+
+/* response tag for context information */
+class DBGResponseTagSrcCtxInfo : public DBGResponseTag
+{
+public:
+  DBGResponseTagSrcCtxInfo();
+  DBGResponseTagSrcCtxInfo(char* responseBuffer);
+  ~DBGResponseTagSrcCtxInfo();
+
+  void setModNo(dbgint);
+  void setCtxId(dbgint);
+  void setIFunctionName(dbgint);
+
+  dbgint modno() const;
+  dbgint ctxid() const;
+  dbgint ifunctionName() const;
+
+  virtual void process(DBGNet*, DBGResponsePack*) const;
+private:
+  dbgint m_modno;
+  dbgint m_ctxid;
+  dbgint m_ifunctionName;
+};
+
 /* response tag for variable information */
 class DBGResponseTagEval : public DBGResponseTag
 {
@@ -356,43 +405,72 @@ private:
 /* response tag for profile data */
 class DBGResponseTagProf : public DBGResponseTag
 {
-  public:
-    DBGResponseTagProf();
-    DBGResponseTagProf(char* responseBuffer);
-    ~DBGResponseTagProf();
+public:
+  DBGResponseTagProf();
+  DBGResponseTagProf(char* responseBuffer);
+  ~DBGResponseTagProf();
 
-    void setModNo(dbgint);
-    void setLineNo(dbgint);
-    void setHitCount(dbgint);
-    void setMinLo(dbgint);
-    void setMinHi(dbgint);
-    void setMaxLo(dbgint);
-    void setMaxHi(dbgint);
-    void setSumLo(dbgint);
-    void setSumHi(dbgint);
+  void setModNo(dbgint);
+  void setLineNo(dbgint);
+  void setHitCount(dbgint);
+  void setMinLo(dbgint);
+  void setMinHi(dbgint);
+  void setMaxLo(dbgint);
+  void setMaxHi(dbgint);
+  void setSumLo(dbgint);
+  void setSumHi(dbgint);
 
-    dbgint modNo() const;
-    dbgint lineNo() const;
-    dbgint hitCoun() const;
-    dbgint minLo() const;
-    dbgint minHi() const;
-    dbgint maxLo() const;
-    dbgint maxHi() const;
-    dbgint sumLo() const;
-    dbgint sumHi() const;
+  dbgint modNo() const;
+  dbgint lineNo() const;
+  dbgint hitCount() const;
+  dbgint minLo() const;
+  dbgint minHi() const;
+  dbgint maxLo() const;
+  dbgint maxHi() const;
+  dbgint sumLo() const;
+  dbgint sumHi() const;
 
-    virtual void process(DBGNet*, DBGResponsePack*) const;
+  virtual void process(DBGNet*, DBGResponsePack*) const;
 
-  private:
-    dbgint m_modNo;
-    dbgint m_lineNo;
-    dbgint m_hitCount;
-    dbgint m_minLo;
-    dbgint m_minHi;
-    dbgint m_maxLo;
-    dbgint m_maxHi;
-    dbgint m_sumLo;
-    dbgint m_sumHi;
+private:
+  dbgint m_modNo;
+  dbgint m_lineNo;
+  dbgint m_hitCount;
+  dbgint m_minLo;
+  dbgint m_minHi;
+  dbgint m_maxLo;
+  dbgint m_maxHi;
+  dbgint m_sumLo;
+  dbgint m_sumHi;
+};
+
+/* response tag for profile req */
+class DBGResponseTagProfC : public DBGResponseTag
+{
+public:
+  DBGResponseTagProfC();
+  DBGResponseTagProfC(char* responseBuffer);
+  ~DBGResponseTagProfC();
+
+  void setFreqLo(dbgint);
+  void setFreqHi(dbgint);
+  void setDiffMin(dbgint);
+  void setDiffMax(dbgint);
+  void setDiffM(dbgint);
+
+  dbgint freqlo() const;
+  dbgint freqhi() const;
+  dbgint diffmin() const;
+  dbgint diffmax() const;
+  dbgint diffm() const;
+
+  virtual void process(DBGNet*, DBGResponsePack*) const;
+private:
+  dbgint m_freqlo;
+  dbgint m_freqhi;
+  dbgint m_diffmin;
+  dbgint m_diffmax;
+  dbgint m_diffm;
 };
 
 
@@ -501,20 +579,69 @@ private:
   dbgint m_opt_flags;
 };
 
+/* request tag for srclines data */
+class DBGRequestTagSrcLinesInfo : public DBGRequestTag
+{
+public:
+  DBGRequestTagSrcLinesInfo();
+  DBGRequestTagSrcLinesInfo(dbgint);
+  ~DBGRequestTagSrcLinesInfo();
+
+  void setModNo(dbgint);
+  dbgint modno() const;
+
+  virtual char* toArray();
+private:
+  dbgint m_modno;
+};
+
+/* request tag for context data */
+class DBGRequestTagSrcCtxInfo : public DBGRequestTag
+{
+public:
+  DBGRequestTagSrcCtxInfo();
+  DBGRequestTagSrcCtxInfo(dbgint);
+  ~DBGRequestTagSrcCtxInfo();
+
+  void setModNo(dbgint);
+  dbgint modno() const;
+
+  virtual char* toArray();
+private:
+  dbgint m_modno;
+};
+
 /* request tag for profile data */
 class DBGRequestTagProf : public DBGRequestTag
 {
-  public:
-    DBGRequestTagProf();
-    DBGRequestTagProf(dbgint);
-    ~DBGRequestTagProf();
+public:
+  DBGRequestTagProf();
+  DBGRequestTagProf(dbgint);
+  ~DBGRequestTagProf();
 
-    void  setModNo(dbgint);
-    dbgint modno();
+  void  setModNo(dbgint);
+  dbgint modno();
 
-    virtual char* toArray();
-  private:
-    dbgint m_modno;
+  virtual char* toArray();
+private:
+  dbgint m_modno;
 };
+
+/* request tag for profile freq data  */
+class DBGRequestTagProfC : public DBGRequestTag
+{
+public:
+  DBGRequestTagProfC();
+  DBGRequestTagProfC(dbgint);
+  ~DBGRequestTagProfC();
+
+  void setTestLoops(dbgint);
+  dbgint testLoops();
+
+  virtual char* toArray();
+private:
+  dbgint m_testLoops;
+};
+
 
 #endif

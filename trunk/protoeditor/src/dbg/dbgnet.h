@@ -45,6 +45,9 @@ class DBGResponseTagLog;
 class DBGResponseTagError;
 class DBGTagBreakpoint;
 class DBGResponseTagProf;
+class DBGResponseTagProfC;
+class DBGResponseTagSrcLinesInfo;
+class DBGResponseTagSrcCtxInfo;
 
 class SiteSettings;
 
@@ -85,6 +88,8 @@ public:
   void processStack(const DBGResponseTagStack* stack, DBGResponsePack* pack);
   void processDBGVersion(const DBGResponseTagVersion* version, DBGResponsePack* pack);
   void processSrcTree(const DBGResponseTagSrcTree* src, DBGResponsePack* pack);
+  void processSrcLinesInfo(const DBGResponseTagSrcLinesInfo* src, DBGResponsePack* pack);
+  void processSrcCtxInfo(const DBGResponseTagSrcCtxInfo*, DBGResponsePack* pack);
   void processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack);
 
   void processLog(const DBGResponseTagLog* log, DBGResponsePack* pack);
@@ -93,6 +98,7 @@ public:
   void processBreakpoint(const DBGTagBreakpoint*, DBGResponsePack* pack);
 
   void processProf(const DBGResponseTagProf*, DBGResponsePack* pack);
+  void processProfC(const DBGResponseTagProfC*, DBGResponsePack* pack);
   
   void setOptions(int);
 signals:
@@ -117,6 +123,7 @@ private:
   dbgint             m_opts;
   dbgint             m_sessionId;
   dbgint             m_headerFlags;
+  dbgint             m_profFreq;
   DebuggerDBG       *m_debugger;
   DBGConnection     *m_con;
   DBGReceiver       *m_receiver;

@@ -155,6 +155,26 @@ void DBGRequestor::requestSrcTree()
   delete requestPack;
 }
 
+void DBGRequestor::requestSrcLinesInfo(int modno)
+{
+  if(!m_socket) return;
+
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildSrcLinesInfo(modno);
+  requestPack->header()->setFlags(m_headerFlags);
+  requestPack->send(m_socket);
+  delete requestPack;
+}
+
+void DBGRequestor::requestSrcCtxInfo(int modno)
+{
+  if(!m_socket) return;
+
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildSrcCtxInfo(modno);
+  requestPack->header()->setFlags(m_headerFlags);
+  requestPack->send(m_socket);
+  delete requestPack;
+}
+  
 void DBGRequestor::requestOptions(int op)
 {
   if(!m_socket) return;
@@ -170,6 +190,16 @@ void DBGRequestor::requestProfileData(int modno)
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildProfile(modno);
+  requestPack->header()->setFlags(m_headerFlags);
+  requestPack->send(m_socket);
+  delete requestPack;
+}
+
+void DBGRequestor::requestProfileFreqData(int testLoops)
+{
+  if(!m_socket) return;
+
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildProfileC(testLoops);
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;

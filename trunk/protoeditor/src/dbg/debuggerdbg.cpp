@@ -28,7 +28,9 @@
 #include "debuggerbreakpoint.h"
 #include "dbgsettings.h"
 #include "phpdefs.h"
-#include "dbgprofile.h"
+// #include "dbgprofile.h"
+#include "dbgprofiledialog.h"
+#include "dbgprofiledata.h"
 
 #include "protoeditorsettings.h"
 
@@ -426,9 +428,10 @@ void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, in
   manager()->updateBreakpoint(bp);
 }
 
-void DebuggerDBG::addProfileData(const QString& filePath, int line, long hitcount, double min, double max, double sum)
+void DebuggerDBG::addProfileData(int modid, const QString& filePath, int ctxid, const QString ctxname, int line, long hitcount, double min, double max, double sum)
 {
-  m_profileDialog->setData(new DBGProfileData(filePath, "null", line, hitcount, sum / hitcount, sum, min, max));
+  m_profileDialog->addData(
+      new DBGProfileData(modid, filePath, ctxid, ctxname, line, hitcount, sum / hitcount, sum, min, max));
 }
 
 void DebuggerDBG::debugError(/*int type,*/ const QString&)

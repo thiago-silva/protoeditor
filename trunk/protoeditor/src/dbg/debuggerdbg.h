@@ -72,7 +72,8 @@ public:
   void updateBreakpoint(int id, const QString& filePath, int line, int state, int hitcount, int skiphits,
                                const QString& condition);
   
-  void addProfileData(const QString& filePath, int line, long hitcount, double min, double max, double sum);
+  void addProfileData(int modid, const QString& filePath, int ctxid, const QString ctxname,
+                      int line, long hitcount, double min, double max, double sum);
   
   void debugError(const QString& msg);
   void debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo);

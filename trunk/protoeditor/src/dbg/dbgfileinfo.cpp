@@ -69,8 +69,10 @@ const QString& DBGFileInfo::moduleName(int modno)
 int DBGFileInfo::moduleNumber(const QString& localFilePath)
 {
   QMap<int, QString>::Iterator it;
-  for( it = m_fileMap.begin(); it != m_fileMap.end(); ++it ) {
-    if(it.data() == localFilePath) {
+  for( it = m_fileMap.begin(); it != m_fileMap.end(); ++it )
+  {
+    if(it.data() == localFilePath)
+    {
       return it.key();
     }
   }
@@ -78,11 +80,56 @@ int DBGFileInfo::moduleNumber(const QString& localFilePath)
   return 0;
 }
 
-void DBGFileInfo::setModulePath(int modno, const QString& remotefilePath)
+void DBGFileInfo::addModuleInfo(int modno, const QString& remotefilePath)
 {
   m_fileMap[modno] = toLocalFilePath(remotefilePath);
 
   m_statusUpdated = true;
+}
+
+void DBGFileInfo::addContextInfo(int ctxid, int modno, int lineno)
+{
+  m_contextList.append(ContextData(ctxid, modno, lineno));
+}
+
+void DBGFileInfo::setContextname(int ctxid, const QString& name)
+{
+  QValueList<ContextData>::iterator it;
+  for(it = m_contextList.begin(); it != m_contextList.end(); ++it)
+  {
+    if((*it).ctxid == ctxid)
+    {
+      (*it).ctxname = name;
+    }
+  }
+}
+
+int DBGFileInfo::contextId(int modno, int lineno)
+{
+  QValueList<ContextData>::iterator it;
+  for(it = m_contextList.begin(); it != m_contextList.end(); ++it)
+  {
+    if(((*it).modno == modno) &&
+        ((*it).lineno == lineno))
+
+    {
+      return (*it).ctxid;
+    }
+  }
+  return -1;
+}
+
+QString DBGFileInfo::contextName(int ctxid)
+{
+  QValueList<ContextData>::iterator it;
+  for(it = m_contextList.begin(); it != m_contextList.end(); ++it)
+  {
+    if((*it).ctxid== ctxid)
+    {
+      return (*it).ctxname;
+    }
+  }
+  return QString::null;
 }
 
 void DBGFileInfo::clearStatus()
@@ -90,10 +137,17 @@ void DBGFileInfo::clearStatus()
   m_statusUpdated = false;
 }
 
-bool  DBGFileInfo::updated() {
+bool  DBGFileInfo::updated()
+{
   return m_statusUpdated;
 }
 
-void DBGFileInfo::clear() {
+void DBGFileInfo::clearModuleData()
+{
   m_fileMap.clear();
+}
+
+void DBGFileInfo::clearContextData()
+{
+  m_contextList.clear();
 }

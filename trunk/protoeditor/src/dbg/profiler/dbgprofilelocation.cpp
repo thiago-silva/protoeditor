@@ -18,31 +18,75 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGREQUESTPACKBUILDER_H
-#define DBGREQUESTPACKBUILDER_H
-#include <qstring.h>
-#include "dbgrequestpack.h"
+#include "dbgprofilelocation.h"
 
-class DBGPack;
-class DebuggerBreakpoint;
+DBGProfileLocation::DBGProfileLocation()
+  : m_modId(0),
+    m_ctxId(0),
+    m_moduleName(""),
+    m_contextName(""),
+    m_line(0)
+{}
 
-class DBGRequestPackBuilder
+DBGProfileLocation::DBGProfileLocation(int modId , const QString& moduleName, int ctxId, const QString& contextName, int line)
+    : m_modId(modId),
+    m_ctxId(ctxId),
+    m_moduleName(moduleName),
+    m_contextName(contextName),
+    m_line(line)
+{}
+
+DBGProfileLocation::~DBGProfileLocation()
+{}
+
+void DBGProfileLocation::setModuleId(int id)
 {
-public:
-  static DBGRequestPack* buildCommand(int cmd);
-  static DBGRequestPack* buildWatch(const QString expression, int scope_id);
-  //static DBGRequestPack* buildBreakpoint(int modno, DebuggerBreakpoint* breakpoint);
-  static DBGRequestPack* buildBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
-  //static DBGRequestPack* buildBreakpointList(int bpno);
-  static DBGRequestPack* buildDeletedBreakpoint(int bpid);
-  static DBGRequestPack* buildVars(int mod_no);
-  static DBGRequestPack* buildSrcTree();
-  static DBGRequestPack* buildSrcLinesInfo(int modno);
-  static DBGRequestPack* buildSrcCtxInfo(int modno);
-  static DBGRequestPack* buildOptions(int op);
-  static DBGRequestPack* buildProfile(int modno);
-  static DBGRequestPack* buildProfileC(int testLoops);
-};
+  m_modId = id;
+}
+
+int DBGProfileLocation::moduleId() const
+{
+  return m_modId;
+}
+
+void DBGProfileLocation::setContextId(int id)
+{
+  m_ctxId = id;
+}
+
+int DBGProfileLocation::contextId() const
+{
+  return m_ctxId;
+}
+
+void DBGProfileLocation::setModuleName(const QString& moduleName)
+{
+  m_moduleName = moduleName;
+}
+
+const QString& DBGProfileLocation::moduleName() const
+{
+  return m_moduleName;
+}
+
+void DBGProfileLocation::setContextName(const QString& contextName)
+{
+  m_contextName = contextName;
+}
+
+const QString DBGProfileLocation::contextName() const
+{
+  return m_contextName;
+}
+
+void DBGProfileLocation::setLine(int line)
+{
+  m_line = line;
+}
+
+int DBGProfileLocation::line() const
+{
+  return m_line;
+}
 
 
-#endif

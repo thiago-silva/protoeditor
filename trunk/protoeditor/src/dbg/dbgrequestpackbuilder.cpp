@@ -162,6 +162,32 @@ DBGRequestPack* DBGRequestPackBuilder::buildSrcTree()
   return p;
 }
 
+DBGRequestPack* DBGRequestPackBuilder::buildSrcLinesInfo(int modno)
+{
+  DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
+
+  DBGRequestTagSrcLinesInfo* srclines
+      = new DBGRequestTagSrcLinesInfo(modno);
+  
+  DBGFrame* frame = new DBGFrame(FRAME_SRCLINESINFO, srclines->tagSize());
+  
+  p->addInfo(frame, srclines);
+  return p;
+}
+
+DBGRequestPack* DBGRequestPackBuilder::buildSrcCtxInfo(int modno)
+{
+  DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
+
+  DBGRequestTagSrcCtxInfo* ctx
+      = new DBGRequestTagSrcCtxInfo(modno);
+  
+  DBGFrame* frame = new DBGFrame(FRAME_SRCCTXINFO, ctx->tagSize());
+  
+  p->addInfo(frame, ctx);
+  return p;
+}
+  
 DBGRequestPack* DBGRequestPackBuilder::buildOptions(int op) {
   DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
 
@@ -178,6 +204,17 @@ DBGRequestPack* DBGRequestPackBuilder::buildProfile(int modno)
 
   DBGRequestTagProf* prof = new DBGRequestTagProf(modno);
   DBGFrame* frame = new DBGFrame(FRAME_PROF, prof->tagSize());
+  
+  p->addInfo(frame, prof);
+  return p;
+}
+
+DBGRequestPack* DBGRequestPackBuilder::buildProfileC(int testLoops)
+{
+  DBGRequestPack *p = new DBGRequestPack(DBGA_REQUEST);
+
+  DBGRequestTagProfC* prof = new DBGRequestTagProfC(testLoops);
+  DBGFrame* frame = new DBGFrame(FRAME_PROF_C, prof->tagSize());
   
   p->addInfo(frame, prof);
   return p;

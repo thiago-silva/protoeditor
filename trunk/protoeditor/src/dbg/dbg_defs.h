@@ -223,4 +223,7 @@ const int TAG_REQ_SET_OPT_SIZE        =  8; //for some reason, "4" here and DBG 
 const int WATCH_SCOPE_ID = -2;
 
 const int FRAME_SIZE = 8;
+
+const int TEST_LOOPS = 1000;
+
 #endif

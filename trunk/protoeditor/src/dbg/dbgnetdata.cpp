@@ -625,6 +625,138 @@ void DBGResponseTagSrcTree::process(DBGNet* net, DBGResponsePack* pack) const
   net->processSrcTree(this, pack);
 }
 
+
+/****************************
+ * DBGResponseTagSrcLinesInfo
+ **************************/
+DBGResponseTagSrcLinesInfo::DBGResponseTagSrcLinesInfo()
+  : DBGBaseTag(FRAME_SRCLINESINFO), DBGResponseTag(FRAME_SRCLINESINFO),
+    m_mod_no(0),
+    m_start_line_no(0),
+    m_lines_count(0),
+    m_ctx_id(0)
+    
+{
+}
+
+DBGResponseTagSrcLinesInfo::DBGResponseTagSrcLinesInfo(char* responseBuffer)
+  : DBGBaseTag(FRAME_SRCLINESINFO), DBGResponseTag(FRAME_SRCLINESINFO)
+{
+  m_mod_no         = fromNetwork(responseBuffer, 0);
+  m_start_line_no = fromNetwork(responseBuffer, 4);
+  m_lines_count   = fromNetwork(responseBuffer, 8);
+  m_ctx_id        = fromNetwork(responseBuffer, 12);
+  
+}
+
+DBGResponseTagSrcLinesInfo::~DBGResponseTagSrcLinesInfo()
+{
+}
+
+void DBGResponseTagSrcLinesInfo::setModNo(dbgint modno)
+{
+  m_mod_no = modno;
+}
+
+void DBGResponseTagSrcLinesInfo::setStartLineNo(dbgint startline)
+{
+  m_start_line_no = startline;
+}
+
+void DBGResponseTagSrcLinesInfo::setLinesCount(dbgint linescount)
+{
+  m_lines_count = linescount;
+}
+
+void DBGResponseTagSrcLinesInfo::setCtxId(dbgint ctxid)
+{
+  m_ctx_id = ctxid;
+}
+
+dbgint DBGResponseTagSrcLinesInfo::modNo() const
+{
+  return m_mod_no;
+}
+
+dbgint DBGResponseTagSrcLinesInfo::startLineNo() const
+{
+  return m_start_line_no;
+}
+
+dbgint DBGResponseTagSrcLinesInfo::linesCount() const
+{
+  return m_lines_count;
+}
+
+dbgint DBGResponseTagSrcLinesInfo::ctxId() const
+{
+  return m_ctx_id;
+}
+  
+void DBGResponseTagSrcLinesInfo::process(DBGNet* net, DBGResponsePack* pack) const
+{
+  net->processSrcLinesInfo(this, pack);
+}
+
+/****************************
+ * DBGResponseTagSrcCtxInfo
+ **************************/
+DBGResponseTagSrcCtxInfo::DBGResponseTagSrcCtxInfo()
+  : DBGBaseTag(FRAME_SRCCTXINFO), DBGResponseTag(FRAME_SRCCTXINFO),
+    m_modno(0),
+    m_ctxid(0),
+    m_ifunctionName(0)
+{
+}
+
+DBGResponseTagSrcCtxInfo::DBGResponseTagSrcCtxInfo(char* responseBuffer)
+  : DBGBaseTag(FRAME_SRCCTXINFO), DBGResponseTag(FRAME_SRCCTXINFO)
+{
+  m_modno         = fromNetwork(responseBuffer, 0);
+  m_ctxid         = fromNetwork(responseBuffer, 4);
+  m_ifunctionName = fromNetwork(responseBuffer, 8);
+}
+
+DBGResponseTagSrcCtxInfo::~DBGResponseTagSrcCtxInfo()
+{
+}
+
+void DBGResponseTagSrcCtxInfo::setModNo(dbgint modno)
+{
+  m_modno = modno;
+}
+
+void DBGResponseTagSrcCtxInfo::setCtxId(dbgint ctxid)
+{
+  m_ctxid = ctxid;
+}
+
+void DBGResponseTagSrcCtxInfo::setIFunctionName(dbgint ifunctionName)
+{
+  m_ifunctionName = ifunctionName;
+}
+
+dbgint DBGResponseTagSrcCtxInfo::modno() const
+{
+  return m_modno;
+}
+
+dbgint DBGResponseTagSrcCtxInfo::ctxid() const
+{
+  return m_ctxid;
+}
+
+dbgint DBGResponseTagSrcCtxInfo::ifunctionName() const
+{
+  return m_ifunctionName;
+}
+
+void DBGResponseTagSrcCtxInfo::process(DBGNet* net, DBGResponsePack* pack) const
+{
+  net->processSrcCtxInfo(this, pack);
+}
+
+
 /****************************
  * DBGResponseTagEval
  **************************/
@@ -882,7 +1014,7 @@ dbgint DBGResponseTagProf::lineNo() const
 {
   return m_lineNo;
 }
-dbgint DBGResponseTagProf::hitCoun() const
+dbgint DBGResponseTagProf::hitCount() const
 {
   return m_hitCount;
 }
@@ -917,7 +1049,88 @@ void DBGResponseTagProf::process(DBGNet* net, DBGResponsePack* pack) const
   net->processProf(this, pack);
 }
 
+/****************************
+ * DBGResponseTagProfC
+ **************************/
+DBGResponseTagProfC::DBGResponseTagProfC()
+  : DBGBaseTag(FRAME_PROF_C), DBGResponseTag(FRAME_PROF_C),
+  m_freqlo(0),
+  m_freqhi(0),
+  m_diffmin(0),
+  m_diffmax(0),
+  m_diffm(0)
+{
+}
 
+DBGResponseTagProfC::DBGResponseTagProfC(char* responseBuffer)
+  : DBGBaseTag(FRAME_PROF_C), DBGResponseTag(FRAME_PROF_C)
+{
+  m_freqlo = fromNetwork(responseBuffer, 0);
+  m_freqhi = fromNetwork(responseBuffer, 4);
+  m_diffmin = fromNetwork(responseBuffer, 8);
+  m_diffmax = fromNetwork(responseBuffer, 12);
+  m_diffm = fromNetwork(responseBuffer, 16);
+}
+
+DBGResponseTagProfC::~DBGResponseTagProfC()
+{
+}
+
+void DBGResponseTagProfC::setFreqLo(dbgint freqlo)
+{
+  m_freqlo = freqlo;
+}
+
+void DBGResponseTagProfC::setFreqHi(dbgint freqhi)
+{
+  m_freqhi = freqhi;
+}
+
+void DBGResponseTagProfC::setDiffMin(dbgint diffmin)
+{
+  m_diffmin = diffmin;
+}
+
+void DBGResponseTagProfC::setDiffMax(dbgint diffmax)
+{
+  m_diffmax = diffmax;
+}
+
+void DBGResponseTagProfC::setDiffM(dbgint diffm)
+{
+  m_diffm = diffm;
+}
+
+dbgint DBGResponseTagProfC::freqlo() const
+{
+  return m_freqlo;
+}
+
+dbgint DBGResponseTagProfC::freqhi() const
+{
+  return m_freqhi;
+}
+
+dbgint DBGResponseTagProfC::diffmin() const
+{
+  return m_diffmin;
+}
+
+dbgint DBGResponseTagProfC::diffmax() const
+{
+  return m_diffmax;
+}
+
+dbgint DBGResponseTagProfC::diffm() const
+{
+  return m_diffm;
+}
+
+void DBGResponseTagProfC::process(DBGNet* net, DBGResponsePack* pack) const
+{
+  net->processProfC(this, pack);
+}
+  
 /****************************
  * DBGRequestTagEval
  **************************/
@@ -1189,6 +1402,80 @@ char* DBGRequestTagOptions::toArray()
 }
 
 /****************************
+ * DBGRequesttagSrcLinesInfo
+ **************************/
+
+DBGRequestTagSrcLinesInfo::DBGRequestTagSrcLinesInfo()
+  : DBGBaseTag(FRAME_SRCLINESINFO), DBGRequestTag(FRAME_SRCLINESINFO), m_modno(0)
+{
+}
+
+DBGRequestTagSrcLinesInfo::DBGRequestTagSrcLinesInfo(dbgint modno)
+  : DBGBaseTag(FRAME_SRCLINESINFO), DBGRequestTag(FRAME_SRCLINESINFO), m_modno(modno)
+{
+}
+
+DBGRequestTagSrcLinesInfo::~DBGRequestTagSrcLinesInfo()
+{
+}
+    
+void DBGRequestTagSrcLinesInfo::setModNo(dbgint modno)
+{
+  m_modno = modno;
+}
+
+dbgint DBGRequestTagSrcLinesInfo::modno() const
+{
+  return m_modno;
+}
+
+char* DBGRequestTagSrcLinesInfo::toArray()
+{
+  m_raw = new char[tagSize()];
+
+  m_raw = toNetwork(m_modno, m_raw , 0);
+  return m_raw;  
+}
+
+/****************************
+ * DBGRequesttagSrcLinesInfo
+ **************************/
+ 
+/* request tag for context data */
+DBGRequestTagSrcCtxInfo::DBGRequestTagSrcCtxInfo()
+  : DBGBaseTag(FRAME_SRCCTXINFO), DBGRequestTag(FRAME_SRCCTXINFO), m_modno(0)
+{
+}
+
+DBGRequestTagSrcCtxInfo::DBGRequestTagSrcCtxInfo(dbgint modno)
+  : DBGBaseTag(FRAME_SRCCTXINFO), DBGRequestTag(FRAME_SRCCTXINFO), m_modno(modno)
+{
+}
+
+DBGRequestTagSrcCtxInfo::~DBGRequestTagSrcCtxInfo()
+{
+}
+    
+void DBGRequestTagSrcCtxInfo::setModNo(dbgint modno)
+{
+  m_modno = modno;
+}
+
+dbgint DBGRequestTagSrcCtxInfo::modno() const
+{
+  return m_modno;
+}
+
+char* DBGRequestTagSrcCtxInfo::toArray()
+{
+  m_raw = new char[tagSize()];
+
+  m_raw = toNetwork(m_modno, m_raw , 0);
+  return m_raw;
+}
+
+
+/****************************
  * DBGRequestTagProf
  **************************/
 
@@ -1218,5 +1505,40 @@ char* DBGRequestTagProf::toArray()
   m_raw = new char[tagSize()];
 
   m_raw = toNetwork(m_modno, m_raw , 0);
+  return m_raw;
+}
+
+/****************************
+ * DBGRequestTagProfC
+ **************************/
+ 
+DBGRequestTagProfC::DBGRequestTagProfC()
+  : DBGBaseTag(FRAME_PROF_C), DBGRequestTag(FRAME_PROF_C), m_testLoops(0)
+{}
+
+DBGRequestTagProfC::DBGRequestTagProfC(dbgint testLoops)
+  : DBGBaseTag(FRAME_PROF_C), DBGRequestTag(FRAME_PROF_C), m_testLoops(testLoops)
+{}
+
+
+DBGRequestTagProfC::~DBGRequestTagProfC()
+{
+}
+
+void DBGRequestTagProfC::setTestLoops(dbgint testLoops)
+{
+  m_testLoops = testLoops;
+}
+
+dbgint DBGRequestTagProfC::testLoops()
+{
+  return m_testLoops;
+}
+
+char* DBGRequestTagProfC::toArray()
+{
+  m_raw = new char[tagSize()];
+
+  m_raw = toNetwork(m_testLoops, m_raw , 0);
   return m_raw;
 }

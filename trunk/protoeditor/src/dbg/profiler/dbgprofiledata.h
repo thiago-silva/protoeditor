@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jesterman                                       *
- *   jesterman@brturbo.com                                                 *
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,63 +17,40 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DBGFILEINFO_H
-#define DBGFILEINFO_H
-#include <qmap.h>
 
-class SiteSettings;
+#ifndef DBGPROFILEDATA_H
+#define DBGPROFILEDATA_H
+#include <qstring.h>
 
-class DBGFileInfo {
+class DBGProfileLocation;
+
+class DBGProfileData
+{
 public:
-  DBGFileInfo();
-  ~DBGFileInfo();
+  DBGProfileData();
+  DBGProfileData(DBGProfileLocation*, int, double, double, double, double);
+  DBGProfileData(int, const QString&, int, const QString&, int, int, double, double, double, double);
+  ~DBGProfileData();
 
-  void setSite(SiteSettings*);
+  void setLocation(DBGProfileLocation*);
+  void setHitCount(int);
+  void setTimeAvgHit(double);
+  void setTotalTime(double);
+  void setMinTime(double);
+  void setMaxTime(double);
 
-  QString toURI(const QString&);
-
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
-
-  const QString& moduleName(int modno);
-  int moduleNumber(const QString&);
-
-  void addModuleInfo(int, const QString&);
-
-  void addContextInfo(int ctxid, int modno, int lineno);
-  void setContextname(int ctxid, const QString&);
-  
-  int contextId(int modno, int lineno);
-  QString contextName(int ctxid);
-  
-  
-  bool updated();
-
-  void clearContextData();
-  void clearModuleData();
-  
-  void clearStatus();
-
+  DBGProfileLocation* location();
+  int hitCount() const;
+  double timeAvgHit() const;
+  double totalTime() const;
+  double minTime() const;
+  double maxTime() const;
 private:
-
-  SiteSettings*      m_site;
-  bool               m_statusUpdated;
-  QMap<int, QString> m_fileMap;
-
-  class ContextData {
-    public:
-    ContextData(int c, int m, int l)
-      : ctxid(c), modno(m), lineno(l) {}
-    ContextData() : ctxid(0), modno(0), lineno(0) {}
-    ~ContextData() {}
-    
-    int     ctxid;
-    int     modno;
-    int     lineno;
-    QString ctxname;
-  };
-    
-  QValueList<ContextData> m_contextList;
+  DBGProfileLocation* m_location;
+  int    m_hitCount;
+  double m_timeAvgHit;
+  double m_totalTime;
+  double m_minTime;
+  double m_maxTime;
 };
-
 #endif

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jesterman                                       *
- *   jesterman@brturbo.com                                                 *
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,63 +17,40 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef DBGFILEINFO_H
-#define DBGFILEINFO_H
-#include <qmap.h>
 
-class SiteSettings;
+#ifndef DBGPROFILEDIALOG_H
+#define DBGPROFILEDIALOG_H
 
-class DBGFileInfo {
+#include <kdialog.h>
+
+class QToolButton;
+
+class DBGProfileListView;
+class DBGProfileData;
+
+class DBGProfileDialog : public KDialog
+{
+  Q_OBJECT
 public:
-  DBGFileInfo();
-  ~DBGFileInfo();
+  DBGProfileDialog(QWidget* parent = 0, const char* name = 0);
+  ~DBGProfileDialog();
 
-  void setSite(SiteSettings*);
+  void clear();
+  void addData(DBGProfileData*);
 
-  QString toURI(const QString&);
+signals:
+  void sigClose();
 
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
-
-  const QString& moduleName(int modno);
-  int moduleNumber(const QString&);
-
-  void addModuleInfo(int, const QString&);
-
-  void addContextInfo(int ctxid, int modno, int lineno);
-  void setContextname(int ctxid, const QString&);
-  
-  int contextId(int modno, int lineno);
-  QString contextName(int ctxid);
-  
-  
-  bool updated();
-
-  void clearContextData();
-  void clearModuleData();
-  
-  void clearStatus();
+protected:
+  virtual void closeEvent(QCloseEvent * e);
 
 private:
+  void addToList(DBGProfileData* data);
 
-  SiteSettings*      m_site;
-  bool               m_statusUpdated;
-  QMap<int, QString> m_fileMap;
-
-  class ContextData {
-    public:
-    ContextData(int c, int m, int l)
-      : ctxid(c), modno(m), lineno(l) {}
-    ContextData() : ctxid(0), modno(0), lineno(0) {}
-    ~ContextData() {}
-    
-    int     ctxid;
-    int     modno;
-    int     lineno;
-    QString ctxname;
-  };
-    
-  QValueList<ContextData> m_contextList;
+  QToolButton* m_btModule;
+  QToolButton* m_btContext;
+  QToolButton* m_btDetail;
+  DBGProfileListView* m_listView;
 };
 
 #endif
