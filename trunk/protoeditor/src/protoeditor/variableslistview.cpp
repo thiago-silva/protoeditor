@@ -60,10 +60,6 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )),
           this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
 
-  m_menu = new KPopupMenu(this);
-  m_menu->insertItem("Copy variable", CopyVarItem);
-  m_menu->insertItem("Copy value", CopyValueItem);
-
   //connect(m_menu, SIGNAL(activated(int)), this, SLOT(slotCopyVarToClipboard(int)));
 
   connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& , int)),
@@ -131,13 +127,22 @@ void VariablesListView::slotItemExpanded(QListViewItem* item)
   markExpanded(converted);
 }
 
-void VariablesListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int col)
+void VariablesListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int)
 {
   //   if(col != NameCol) return;
-
-  int selection = m_menu->exec(p);
-  if(selection == -1) return;
-
+  enum { CopyVarItem, CopyValueItem };
+  
+  KPopupMenu* menu = new KPopupMenu(this);
+  menu->insertItem("Copy variable", CopyVarItem);
+  menu->insertItem("Copy value", CopyValueItem);
+ 
+  int selection = menu->exec(p);
+  if(selection == -1)
+  {
+    delete menu;
+    return;
+  }
+  
   QClipboard* clip = kapp->clipboard();
   VariablesListViewItem* converted =
       dynamic_cast<VariablesListViewItem*>(item);
@@ -151,6 +156,9 @@ void VariablesListView::slotContextMenuRequested(QListViewItem* item, const QPoi
       clip->setText(converted->variable()->value()->toString(), QClipboard::Clipboard);
       break;
   }
+
+  delete menu;
+      
 }
 
 void VariablesListView::markColapsed(VariablesListViewItem* item)
