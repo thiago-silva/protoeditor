@@ -41,6 +41,7 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
   m_btModule = new QToolButton(this);
   m_btModule->setText("Module");
   m_btModule->setToggleButton(true);
+//   m_btModule->setAutoRaise(true);
   hbox->addWidget(m_btModule);
 
   m_btContext = new QToolButton(this);
@@ -62,6 +63,10 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
   vlayout->addWidget(m_listView);
 
   resize(600, 200);
+
+  connect(m_btModule, SIGNAL(clicked()), this, SLOT(slotModule()));
+  connect(m_btContext, SIGNAL(clicked()), this, SLOT(slotContext()));
+  connect(m_btDetail, SIGNAL(clicked()), this, SLOT(slotDetail()));
 }
 
 DBGProfileDialog::~DBGProfileDialog()
@@ -69,6 +74,27 @@ DBGProfileDialog::~DBGProfileDialog()
 
 }
 
+void DBGProfileDialog::slotModule()
+{
+  m_btContext->setOn(false);
+  m_btDetail->setOn(false);
+  m_listView->setView(DBGProfileListView::ModuleView);
+}
+
+void DBGProfileDialog::slotContext()
+{
+  m_btModule->setOn(false);
+  m_btDetail->setOn(false);
+  m_listView->setView(DBGProfileListView::ContextView);
+}
+
+void DBGProfileDialog::slotDetail()
+{
+  m_btModule->setOn(false);
+  m_btContext->setOn(false);
+  m_listView->setView(DBGProfileListView::DetailedView);
+}
+  
 void DBGProfileDialog::closeEvent(QCloseEvent * e)
 {
   emit sigClose();

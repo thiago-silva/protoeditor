@@ -44,6 +44,11 @@ signals:
 protected:
   virtual void closeEvent(QCloseEvent * e);
 
+private slots:
+  void slotModule();
+  void slotContext();
+  void slotDetail();
+  
 private:
   void addToList(DBGProfileData* data);
 
