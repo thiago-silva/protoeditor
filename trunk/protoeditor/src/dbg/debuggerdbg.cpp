@@ -127,8 +127,10 @@ void DebuggerDBG::stopJIT()
   m_isJITActive = false;
 }
 
-void DebuggerDBG::run(const QString& filepath, SiteSettings* site)
+void DebuggerDBG::run(const QString& filepath)
 {
+  SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
+  
   dbgint sessionid = kapp->random();
 
   if(!m_isJITActive && !startJIT())

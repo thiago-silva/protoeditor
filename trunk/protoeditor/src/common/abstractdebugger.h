@@ -32,7 +32,7 @@ class DebuggerExecutionPoint;
 class DebuggerStack;
 class Variable;
 
-class SiteSettings;
+// class SiteSettings;
 
 class AbstractDebugger : public QObject {
 Q_OBJECT
@@ -47,7 +47,7 @@ public:
 
   virtual void init() = 0;
   
-  virtual void run(const QString&, SiteSettings*) = 0;
+  virtual void run(const QString&) = 0;
   virtual void continueExecution() = 0;
   virtual void stop()              = 0;
   virtual void stepInto()          = 0;

@@ -46,7 +46,7 @@ public:
   virtual bool isRunning() const;
 
   virtual void init();
-  virtual void run(const QString&, SiteSettings*);
+  virtual void run(const QString&);
   virtual void continueExecution();
   virtual void stop();
   virtual void stepInto();
