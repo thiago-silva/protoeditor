@@ -18,33 +18,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef BREAKPOINTLISTVIEWITEM_H
+#define BREAKPOINTLISTVIEWITEM_H
 
-#include <qstring.h>
+#include <klistview.h>
 
-class DBGConfiguration{
+class DebuggerBreakpoint;
+
+class BreakpointListViewItem : public KListViewItem
+{
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  BreakpointListViewItem(KListView *parent);
+  BreakpointListViewItem(KListView *parent, DebuggerBreakpoint*);
+  ~BreakpointListViewItem();
 
-  ~DBGConfiguration();
+  void setBreakpoint(DebuggerBreakpoint*);
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  void reset();
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
-
+  void showBreakpoint();
+  DebuggerBreakpoint* breakpoint();
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+  DebuggerBreakpoint* m_breakpoint;
 };
 
 #endif

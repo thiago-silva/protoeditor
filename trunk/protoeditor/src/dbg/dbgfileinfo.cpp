@@ -48,8 +48,9 @@ QString DBGFileInfo::localFilePath(int modno) {
   QString remotefile = m_fileMap[modno];
 
   remotefile.remove(0, m_configuration->serverBaseDir().length());
-  QString ret = m_configuration->localBaseDir().append(remotefile);;
-  return m_configuration->localBaseDir().append(remotefile);
+  QString ret = m_configuration->localBaseDir();
+  ret.append(remotefile);
+  return ret;
 }
 
 int DBGFileInfo::moduleNumber(QString remoteFilePath) {

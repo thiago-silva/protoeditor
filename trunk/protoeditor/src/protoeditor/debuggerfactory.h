@@ -18,33 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef DEBUGGERFACTORY_H
+#define DEBUGGERFACTORY_H
 
-#include <qstring.h>
+class AbstractDebugger;
+class DebuggerManager;
 
-class DBGConfiguration{
+class DebuggerFactory{
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
-
-  ~DBGConfiguration();
-
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
-
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
-
+  static AbstractDebugger* buildDebugger(DebuggerManager* manager);
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+  DebuggerFactory() {};
 };
 
 #endif

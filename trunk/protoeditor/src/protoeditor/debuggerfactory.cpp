@@ -18,33 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#include "debuggerfactory.h"
+#include "debuggerdbg.h"
+#include "debuggersettings.h"
 
-#include <qstring.h>
-
-class DBGConfiguration{
-public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
-
-  ~DBGConfiguration();
-
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
-
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
-
-private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
-};
-
-#endif
+AbstractDebugger* DebuggerFactory::buildDebugger(DebuggerManager* manager) {
+  AbstractDebugger* debugger = NULL;
+  switch(DebuggerSettings::client()) {
+    case DebuggerSettings::EnumClient::DBG:
+      debugger = new DebuggerDBG(manager);
+      break;
+  }
+  return debugger;
+}

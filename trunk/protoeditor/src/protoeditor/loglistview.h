@@ -18,33 +18,26 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef LOGLISTVIEW_H
+#define LOGLISTVIEW_H
 
-#include <qstring.h>
+#include <klistview.h>
 
-class DBGConfiguration{
+class LogListView : public KListView
+{
+Q_OBJECT
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  LogListView(QWidget *parent = 0, const char *name = 0);
+  ~LogListView();
 
-  ~DBGConfiguration();
+  void add(int type, QString message, int line, QString file);
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
-
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+signals:
+  void sigChanged();
 
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+  enum { TypeCol = 0, MessageCol, LineCol, FileCol };
+
 };
 
 #endif

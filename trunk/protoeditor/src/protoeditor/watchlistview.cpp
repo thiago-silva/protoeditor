@@ -18,33 +18,45 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#include "watchlistview.h"
+#include "variableslistviewitem.h"
 
-#include <qstring.h>
+WatchListView::WatchListView(QWidget *parent, const char *name)
+ : VariablesListView(parent, name)
+{
+}
 
-class DBGConfiguration{
-public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
 
-  ~DBGConfiguration();
+WatchListView::~WatchListView()
+{
+}
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+void WatchListView::addWatch(Variable* var) {
+  QListViewItem* item =
+    findItem(var->name(), VariablesListView::NameCol);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+  if(item) {
+    takeItem(item);
+    delete item;
+  }
+  addVariable(var);
+}
 
-private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
-};
+void WatchListView::keyPressEvent(QKeyEvent* e) {
+  if(e->key() == Qt::Key_Delete) {
 
-#endif
+    VariablesListViewItem* item =
+      dynamic_cast<VariablesListViewItem*>(currentItem());
+
+      if(item) {
+        takeItem(item);
+        emit sigWatchRemoved(item->variable());
+        delete item;
+      }
+  } else {
+    VariablesListView::keyPressEvent(e);
+  }
+}
+
+
+#include "watchlistview.moc"

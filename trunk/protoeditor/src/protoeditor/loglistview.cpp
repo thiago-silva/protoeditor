@@ -18,33 +18,55 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#include "loglistview.h"
+#include <klocale.h>
+#include <kiconloader.h>
+#include "debuggermanager.h"
 
-#include <qstring.h>
+LogListView::LogListView(QWidget *parent, const char *name)
+ : KListView(parent, name)
+{
+  setAllColumnsShowFocus(true);
 
-class DBGConfiguration{
-public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  addColumn("*");
+  addColumn(tr2i18n("Message"));
+  addColumn(tr2i18n("Line"));
+  addColumn(tr2i18n("File"));
 
-  ~DBGConfiguration();
+  setColumnWidth(LogListView::MessageCol, 350);
+  setColumnWidth(LogListView::FileCol, 200);
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  setColumnWidthMode (0, QListView::Manual);
+  setColumnWidthMode (1, QListView::Manual);
+  setColumnWidthMode (2, QListView::Manual);
+  setColumnWidthMode (3, QListView::Manual);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+}
 
-private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
-};
+void LogListView::add(int type, QString message, int line, QString file) {
+  QListViewItem* item = new QListViewItem(this);
+  item->setSelectable(true);
 
-#endif
+  switch(type) {
+    case DebuggerManager::InfoMsg:
+      item->setPixmap(LogListView::TypeCol, SmallIcon("idea"));
+      break;
+    case DebuggerManager::WarningMsg:
+      item->setPixmap(LogListView::TypeCol, SmallIcon("info"));
+      break;
+    case DebuggerManager::ErrorMsg:
+      item->setPixmap(LogListView::TypeCol, SmallIcon("cancel"));
+      break;
+  }
+
+  item->setText(LogListView::MessageCol, message);
+  item->setText(LogListView::LineCol, QString::number(line));
+  item->setText(LogListView::FileCol, file);
+}
+
+LogListView::~LogListView()
+{
+}
+
+
+#include "loglistview.moc"

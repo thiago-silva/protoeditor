@@ -18,33 +18,60 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef BREAKPOINTLISTVIEW_H
+#define BREAKPOINTLISTVIEW_H
 
-#include <qstring.h>
+#include <klistview.h>
+//#include <qmap.h>
+#include <qptrlist.h>
 
-class DBGConfiguration{
+
+class DebuggerBreakpoint;
+class BreakpointListViewItem;
+
+class BreakpointListView : public KListView
+{
+Q_OBJECT
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  enum { StatusIconCol = 0, StatusTextCol, FileNameCol
+       , LineCol, ConditionCol, SkipHitsCol, HitCountCol, };
 
-  ~DBGConfiguration();
+  BreakpointListView(QWidget *parent = 0, const char *name = 0);
+  ~BreakpointListView();
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  void updateBreakpoint(DebuggerBreakpoint*);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+  void resetBreakpointItems();
+
+  QPtrList<DebuggerBreakpoint> breakpoints();
+
+signals:
+  //this signals are sent after TextEditor processed the Marks
+  void sigBreakpointCreated(DebuggerBreakpoint*);
+  void sigBreakpointChanged(DebuggerBreakpoint*);
+  void sigBreakpointRemoved(DebuggerBreakpoint*);
+
+  //Breakpoint was deleted here, not from TextEditor Mark
+  //void sigBreakpointDeleted(DebuggerBreakpoint*);
+
+public slots:
+  //connection with KTextEditor
+  void slotBreakpointMarked(QString, int);
+  void slotBreakpointUnmarked(QString, int);
+
+private slots:
+  void slotCicked(QListViewItem*, const QPoint&, int);
+  void slotDoubleClick(QListViewItem *, const QPoint &, int );
+  void slotItemRenamed(QListViewItem *, int col, const QString& );
+
+protected:
+  virtual void keyPressEvent(QKeyEvent* e);
 
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+  //void addBreakpoint(DebuggerBreakpoint*);
+
+  BreakpointListViewItem*  findBreakpoint(DebuggerBreakpoint*);
+  BreakpointListViewItem*  findBreakpoint(QString, int);
 };
 
 #endif

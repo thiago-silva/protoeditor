@@ -31,7 +31,7 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>src/protoeditor</mainprogram>
+      <mainprogram>src/protoeditor/protoeditor</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>

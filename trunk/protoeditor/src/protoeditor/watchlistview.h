@@ -18,33 +18,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef WATCHLISTVIEW_H
+#define WATCHLISTVIEW_H
 
-#include <qstring.h>
+#include "variableslistview.h"
 
-class DBGConfiguration{
+class Variable;
+
+class WatchListView : public VariablesListView
+{
+Q_OBJECT
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  WatchListView(QWidget *parent = 0, const char *name = 0);
+  virtual ~WatchListView();
 
-  ~DBGConfiguration();
+  void addWatch(Variable*);
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+signals:
+  void sigWatchRemoved(Variable*);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+protected:
+  virtual void keyPressEvent(QKeyEvent* e);
 
-private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
 };
 
 #endif

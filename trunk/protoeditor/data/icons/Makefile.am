@@ -1,3 +1,5 @@
-SUBDIRS = 22x22 16x16
+#SUBDIRS = 22x22 16x16
 
-#KDE_ICON = AUTO
+protoeditoricondir = $(kde_datadir)/protoeditor/icons
+protoeditoricon_ICON = AUTO
+

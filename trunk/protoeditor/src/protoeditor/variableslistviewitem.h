@@ -18,33 +18,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef VARIABLESLISTVIEWITEM_H
+#define VARIABLESLISTVIEWITEM_H
 
-#include <qstring.h>
+#include <klistview.h>
 
-class DBGConfiguration{
+class Variable;
+
+class VariablesListViewItem : public KListViewItem {
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  VariablesListViewItem(KListView *parent);
+  VariablesListViewItem(KListViewItem *parent);
 
-  ~DBGConfiguration();
+  VariablesListViewItem(KListView *parent, Variable* variable);
+  VariablesListViewItem(KListViewItem *parent, Variable* variable);
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  virtual ~VariablesListViewItem();
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+  virtual void takeItem(QListViewItem *item);
+  virtual void insertItem(QListViewItem *item);
+  virtual void insertItem(VariablesListViewItem *item);
+
+  QString stringPath();
+  Variable* variable();
+
+  //void setRenameable(bool);
+  //bool isRenameable();
 
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+  //void deleteVar();
+  void loadVariable();
+  Variable* m_variable;
+  bool m_isRenameable;
 };
 
 #endif

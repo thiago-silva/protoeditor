@@ -1,4 +1,5 @@
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/common $(all_includes)
+INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
+	-I$(top_srcdir)/src/protoeditor $(all_includes)
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libcommon.la

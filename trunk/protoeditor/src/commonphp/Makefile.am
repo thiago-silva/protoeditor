@@ -1,5 +1,6 @@
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/commonphp -I$(top_srcdir)/src/dbg $(all_includes)
+	-I$(top_srcdir)/src/commonphp $(all_includes)
+
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libcommonphp.la

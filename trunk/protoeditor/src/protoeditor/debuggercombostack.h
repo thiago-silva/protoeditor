@@ -18,33 +18,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef DEBUGGERCOMBOSTACK_H
+#define DEBUGGERCOMBOSTACK_H
 
-#include <qstring.h>
+#include <qcombobox.h>
 
-class DBGConfiguration{
+class DebuggerStack;
+class DebuggerExecutionLine;
+
+class DebuggerComboStack : public QComboBox
+{
+Q_OBJECT
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  DebuggerComboStack(QWidget* parent = 0, const char* name = 0);
+  ~DebuggerComboStack();
 
-  ~DBGConfiguration();
+  void setStack(DebuggerStack*);
+  DebuggerStack* stack();
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  DebuggerExecutionLine* selectedDebuggerExecutionLine();
+signals:
+  void changed(DebuggerExecutionLine*, DebuggerExecutionLine*); //old,new
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
-
+public slots:
+    virtual void slotChanged(int);
 private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+  DebuggerExecutionLine* m_currentExecutionLine;
+  DebuggerStack* m_stack;
 };
+
 
 #endif

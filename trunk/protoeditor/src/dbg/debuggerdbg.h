@@ -49,12 +49,11 @@ class QSocket;
 class DebuggerBreakpoint;
 class DBGFileInfo;
 
-
 class DebuggerDBG : public AbstractDebugger
 {
 Q_OBJECT
 public:
-  DebuggerDBG(DebuggerManager* manager, DBGConfiguration* conf);
+  DebuggerDBG(DebuggerManager* manager);
   ~DebuggerDBG();
 
   virtual void startSession();
@@ -65,7 +64,7 @@ public:
   virtual void stepOver();
   virtual void stepOut();
   virtual QString name();
-  virtual void loadConfiguration(DebuggerConfigurations*);
+  virtual void loadConfiguration();
 
   virtual void addBreakpoints(QPtrList<DebuggerBreakpoint>);
   virtual void addBreakpoint(DebuggerBreakpoint*);

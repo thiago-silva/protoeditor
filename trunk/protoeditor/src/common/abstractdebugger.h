@@ -27,7 +27,7 @@
 
 class DebuggerManager;
 class DebuggerBreakpoint;
-class DebuggerConfigurations;
+//class DebuggerConfigurations;
 class DebuggerExecutionLine;
 class DebuggerStack;
 
@@ -55,7 +55,7 @@ public:
   virtual void stepOut()      = 0;
 
   virtual QString name()      = 0;
-  virtual void loadConfiguration(DebuggerConfigurations*) = 0;
+  virtual void loadConfiguration() = 0;
 
   virtual void addBreakpoints(QPtrList<DebuggerBreakpoint>) = 0;
   virtual void addBreakpoint(DebuggerBreakpoint*) = 0;

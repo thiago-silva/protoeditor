@@ -21,7 +21,8 @@
 
 #include "debuggerdbg.h"
 #include "debuggermanager.h"
-#include "debuggerconfigurations.h"
+//#include "debuggerconfigurations.h"
+#include "debuggersettings.h"
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
 #include "dbgconfiguration.h"
@@ -39,16 +40,24 @@
 #include <kapplication.h>
 #include <klocale.h>
 
-DebuggerDBG::DebuggerDBG(DebuggerManager* manager, DBGConfiguration* conf)
+DebuggerDBG::DebuggerDBG(DebuggerManager* manager)
  : AbstractDebugger(manager), m_con(0), m_receiver(0), m_requestor(0),
-   m_configuration(conf), m_dbgStack(0),m_dbgFileInfo(0), m_currentSessionId(0), m_initialized(false)
+   m_configuration(0), m_dbgStack(0),m_dbgFileInfo(0), m_currentSessionId(0), m_initialized(false)
 {
-  setId(DBG);
+  setId(DebuggerSettings::EnumClient::DBG);
+
+  m_configuration = new DBGConfiguration(
+    DebuggerSettings::localBaseDir(),
+    DebuggerSettings::serverBaseDir(),
+    DebuggerSettings::listenPort(),
+    DebuggerSettings::serverHost());
 
   m_requestor   = new DBGRequestor();
   m_receiver    = new DBGReceiver(this);
   m_dbgStack    = new DBGStack();
-  m_dbgFileInfo = new DBGFileInfo(conf);
+  m_dbgFileInfo = new DBGFileInfo(m_configuration);
+
+
 
   connect(m_requestor, SIGNAL(requestorError(const QString&)), this, SLOT(slotError(const QString&)));
   connect(m_receiver, SIGNAL(receiverError(const QString&)), this, SLOT(slotError(const QString&)));
@@ -116,8 +125,12 @@ QString DebuggerDBG::name()
   return QString("DBG");
 }
 
-void DebuggerDBG::loadConfiguration(DebuggerConfigurations* conf) {
-  m_configuration = conf->dbgConfiguration();
+void DebuggerDBG::loadConfiguration() {
+  m_configuration->setServerHost(DebuggerSettings::serverHost());
+  m_configuration->setListenPort(DebuggerSettings::listenPort());
+  m_configuration->setLocalBaseDir(DebuggerSettings::localBaseDir());
+  m_configuration->setServerBaseDir(DebuggerSettings::serverBaseDir());
+
   m_dbgFileInfo->setConfiguration(m_configuration);
 }
 
@@ -129,7 +142,7 @@ void DebuggerDBG::run(QString filepath)
     m_currentSessionId = kapp->random();
 
     m_requestor->makeHttpRequest(
-          m_configuration->host(),
+          m_configuration->serverHost(),
           filepath.remove(m_configuration->localBaseDir()),
           m_configuration->listenPort(),
           m_currentSessionId);

@@ -20,7 +20,10 @@
 
 #include "dbgconfiguration.h"
 
-DBGConfiguration::DBGConfiguration()
+DBGConfiguration::DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
+                                   int listenPort, const QString& serverHost)
+  : m_localBaseDir(localBaseDir), m_serverBaseDir(serverBaseDir), m_listenPort(listenPort),
+    m_serverHost(serverHost)
 {
 }
 
@@ -28,45 +31,44 @@ DBGConfiguration::~DBGConfiguration()
 {
 }
 
-void DBGConfiguration::setLocalBaseDir(QString localBaseDir) {
-  if(localBaseDir.at(localBaseDir.length()-1) == '/') {
-    localBaseDir.remove(localBaseDir.length()-1, 1);
-  }
+void DBGConfiguration::setLocalBaseDir(const QString& localBaseDir) {
   m_localBaseDir = localBaseDir;
-
+  if(m_localBaseDir.at(m_localBaseDir.length()-1) == '/') {
+    m_localBaseDir.remove(m_localBaseDir.length()-1, 1);
+  }
 }
 
-void DBGConfiguration::setServerBaseDir(QString serverBaseDir) {
-  if(serverBaseDir.at(serverBaseDir.length()-1) == '/') {
-    serverBaseDir.remove(serverBaseDir.length()-1, 1);
-  }
+void DBGConfiguration::setServerBaseDir(const QString& serverBaseDir) {
   m_serverBaseDir = serverBaseDir;
+  if(m_serverBaseDir.at(m_serverBaseDir.length()-1) == '/') {
+    m_serverBaseDir.remove(m_serverBaseDir.length()-1, 1);
+  }
 }
 
 void DBGConfiguration::setListenPort(int port) {
-  m_port = port;
+  m_listenPort = port;
 }
 
-void DBGConfiguration::setHost(QString host) {
-  if(host.at(host.length()-1) == '/') {
-    host.remove(host.length()-1, 1);
+void DBGConfiguration::setServerHost(const QString& host) {
+  m_serverHost = host;
+  if(m_serverHost.at(m_serverHost.length()-1) == '/') {
+    m_serverHost.remove(m_serverHost.length()-1, 1);
   }
-  m_host = host;
 }
 
-QString DBGConfiguration::localBaseDir() {
+const QString& DBGConfiguration::localBaseDir() {
   return m_localBaseDir;
 }
 
-QString DBGConfiguration::serverBaseDir() {
+const QString& DBGConfiguration::serverBaseDir() {
   return m_serverBaseDir;
 }
 
 int DBGConfiguration::listenPort() {
-  return m_port;
+  return m_listenPort;
 }
 
-QString DBGConfiguration::host() {
-  return m_host;
+const QString& DBGConfiguration::serverHost() {
+  return m_serverHost;
 }
 

@@ -18,33 +18,61 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+//#include "protoeditor.h"
+#include "mainwindow.h"
+#include <kapplication.h>
+#include <kaboutdata.h>
+#include <kcmdlineargs.h>
+#include <klocale.h>
 
-#include <qstring.h>
+static const char description[] =
+  I18N_NOOP("A little KDE PHP Debugger client");
 
-class DBGConfiguration{
-public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+static const char version[] = "0.5";
 
-  ~DBGConfiguration();
+static KCmdLineOptions options[] =
+  {
+    { "+[URL]", I18N_NOOP( "Document to open" ), 0 },
+    KCmdLineLastOption
+  };
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+int main(int argc, char **argv)
+{
+  KAboutData about("protoeditor", I18N_NOOP("Protoeditor"), version, description,
+                   KAboutData::License_GPL, "(C) 2004 Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
+  about.addAuthor( "Thiago Silva", 0, "thiago.silva@kdemail.com" );
+  KCmdLineArgs::init(argc, argv, &about);
+  KCmdLineArgs::addCmdLineOptions( options );
 
-private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
-};
 
-#endif
+  KApplication app;
+  //ProtoEditor *protoeditor = 0;
+  //ProtoEditor protoeditor;
+  MainWindow window;
+
+
+  if (app.isRestored())
+  {
+    RESTORE(MainWindow);
+  }
+  else
+  {
+    // no session.. just start up normally
+
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    //protoeditor = new ProtoEditor();
+    //QWidget* mainWin = protoeditor.mainWindow();
+    app.setMainWidget(&window);
+    window.show();
+
+    args->clear();
+  }
+
+  // mainWin has WDestructiveClose flag by default, so it will delete itself.
+  return app.exec();
+
+  //delete protoeditor;
+}
+

@@ -18,33 +18,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DBGCONFIGURATION_H
-#define DBGCONFIGURATION_H
+#ifndef VARIABLESLISTVIEW_H
+#define VARIABLESLISTVIEW_H
 
-#include <qstring.h>
+#include <klistview.h>
+#include <qvaluelist.h>
+#include "variable.h"
 
-class DBGConfiguration{
+class VariablesListViewItem;
+
+class VariablesListView : public KListView
+{
+Q_OBJECT
 public:
-  DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
-                   int listenPort, const QString& host);
+  enum { NameCol = 0, ValueCol, TypeCol };
 
-  ~DBGConfiguration();
+  VariablesListView(QWidget *parent = 0, const char *name = 0);
+  virtual ~VariablesListView();
 
-  void setLocalBaseDir(const QString&);
-  void setServerBaseDir(const QString&);
-  void setListenPort(int);
-  void setServerHost(const QString&);
+  void setVariables(VariablesList_t* vars);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+signals:
+  void sigVarModified(Variable*);
 
-private:
-  QString m_localBaseDir;
-  QString m_serverBaseDir;
-  int m_listenPort;
-  QString m_serverHost;
+public slots:
+  void slotItemExpanded(QListViewItem * item);
+  void slotItemCollapsed(QListViewItem * item);
+  void slotItemRenamed(QListViewItem * item, int col, const QString & text);
+
+  void slotDoubleClick(QListViewItem *, const QPoint &, int );
+
+protected:
+  void markExpanded(VariablesListViewItem* item);
+  void markColapsed(VariablesListViewItem* item);
+
+  void populateChildren(VariablesListViewItem* item);
+
+  void addVariables(VariablesList_t* vars, VariablesListViewItem* parent = NULL);
+  void addVariable(Variable* variable, VariablesListViewItem* parent = NULL);
+
+  void reexpandItems();
+  VariablesListViewItem* getItemFromPath(QString path);
+  void deleteVars();
+
+  QValueList<QString> m_expanded;
+  VariablesList_t*    m_variables;
+  //bool m_itemsRenameable;
 };
 
 #endif
