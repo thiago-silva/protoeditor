@@ -70,6 +70,8 @@ AC_CONFIG_FILES([ src/Makefile ])
 AC_CONFIG_FILES([ src/common/Makefile ])
 AC_CONFIG_FILES([ src/commonphp/Makefile ])
 AC_CONFIG_FILES([ src/dbg/Makefile ])
+AC_CONFIG_FILES([ src/protoeditor/Makefile ])
+AC_CONFIG_FILES([ src/settings/Makefile ])
 AC_OUTPUT
 if test "$all_tests" = "bad"; then
   if test ! "$cache_file" = "/dev/null"; then
