@@ -68,9 +68,23 @@
 <li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
 </body></html>
 
+\CurrentEntry 0 Releasing notes
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>test current CVS version on other distro/KDE versions</li>
+<li>Create ChangeLog file</li>
+<li>Create NEWS file</li>
+<li>Change version on kdevelop file and configure.in*</li>
+<li>Update README version</li>
+<li>TAG current CVS version</li>
+<li>Update site</li></ul>
+<p></p>
+<p></p>
+</body></html>
+
+
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <li>Run</li>
@@ -88,7 +102,6 @@
 <li>Create context menus for the listviews</li>
 <li>Add Breakpoint/Watches buttons (add, clear, disable..). Add Breakpoint Context Menu<br /></li></ul>
 </body></html>
-
 
 \NewEntry 1 Bug reminder
 
