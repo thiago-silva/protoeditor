@@ -30,6 +30,8 @@
 
 #include "debuggersettings.h"
 #include "debuggersettingswidget.h"
+#include "browsersettings.h"
+#include "browsersettingswidget.h"
 
 #include <kapplication.h>
 #include <kstatusbar.h>
@@ -47,12 +49,21 @@
 #include <kfiledialog.h>
 #include <kfileitem.h>
 
+#include <ktextedit.h>
+/*
+#include <ktexteditor/document.h>
+#include <ktexteditor/editorchooser.h>
+#include <ktexteditor/view.h>
+#include <ktexteditor/editinterface.h>
+*/
+
+
 #include <qlayout.h>
 #include <qsplitter.h>
 
 
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-    : KMainWindow(parent, name, fl),  m_debuggerSettings(0)
+    : KMainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
 {
   if(!name) { setName("MainWindow"); }
 
@@ -248,25 +259,23 @@ void MainWindow::createWidgets()
   m_edOutput->setTextFormat(Qt::PlainText);
   m_edOutput->setPaper( QBrush(QColor("white")));
 
-  //m_edOutput->setTextFormat(Qt::LogText);
+  /*
+  KTextEditor::Document* doc = KTextEditor::EditorChooser::createDocument(
+      0L, "KTextEditor::Document");
+  //doc->setReadWrite(false);
+  m_edOutput = dynamic_cast<KTextEditor::EditInterface*>(doc);
+  m_edOutput->setText("oioi");
+  outputTabLayout->addWidget(doc->createView(outputTab));
+  */
+
   tabDebug->insertTab(outputTab, QString("Output"));
 
-  /*
-  connect(m_tabEditor, SIGNAL(sigHasNoFiles()), this, SLOT(slotHasNoFiles()));
-  connect(m_tabEditor, SIGNAL(sigHasFiles()), this, SLOT(slotHasFiles()));
-  connect(m_tabEditor, SIGNAL(sigHasNoUndo()), this, SLOT(slotHasNoUndo()));
-  connect(m_tabEditor, SIGNAL(sigHasUndo()), this, SLOT(slotHasUndo()));
-  connect(m_tabEditor, SIGNAL(sigHasNoRedo()), this, SLOT(slotHasNoRedo()));
-  connect(m_tabEditor, SIGNAL(sigHasRedo()), this, SLOT(slotHasRedo()));
-  */
 }
 
-/*
-*  Destroys the object and frees any allocated resources
-*/
 MainWindow::~MainWindow()
 {
   /* TODO: delete all widgets? */
+  delete m_debugger_manager;
 }
 
 void MainWindow::slotOpenFile()
@@ -427,12 +436,13 @@ void MainWindow::slotShowSettings()
   if(KConfigDialog::showDialog("settings"))
     return;
 
+  //note: yeah, I couldn't find a simple solution to handle 2+ KConfigSkeleton's
+  //at the same time. KConfigDialog ctor forces us to inform a KConfigSkeleton.
   KConfigDialog* dialog = new KConfigDialog(this, "settings", DebuggerSettings::self());
 
-  initDebuggerSettings();
-  dialog->addPage( m_debuggerSettings, i18n("Debugger"), "debugger" );
-  //dialog->addPage( m_debuggerSettings, i18n("Debugger"), "bug" );
-
+  initSettings();
+  dialog->addPage(m_debuggerSettings, DebuggerSettings::self(), i18n("Debugger"), "debugger");
+  dialog->addPage(m_browserSettings, BrowserSettings::self(), i18n("Browser"), "network");
 
   connect( dialog, SIGNAL(settingsChanged()),
            m_debugger_manager, SLOT(slotConfigurationChanged()) );
@@ -440,10 +450,14 @@ void MainWindow::slotShowSettings()
   dialog->show();
 }
 
-void MainWindow::initDebuggerSettings()
+void MainWindow::initSettings()
 {
   if(!m_debuggerSettings) {
     m_debuggerSettings = new DebuggerSettingsWidget(0, "Debugger");
+  }
+
+  if(!m_browserSettings) {
+    m_browserSettings = new BrowserSettingsWidget(0, "Browser");
   }
 }
 
@@ -497,6 +511,7 @@ LogListView* MainWindow::logListView()
   return m_logListView;
 }
 
+//KTextEditor::EditInterface* MainWindow::edOutput()
 KTextEdit* MainWindow::edOutput()
 {
   return m_edOutput;

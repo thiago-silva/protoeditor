@@ -37,8 +37,16 @@ class KPushButton;
 class KStatusBar;
 class DebuggerManager;
 class DebuggerSettingsWidget;
+class BrowserSettingsWidget;
 class KRecentFilesAction;
 class KURL;
+
+/*
+
+namespace KTextEditor {
+  class EditInterface;
+}
+*/
 
 class MainWindow : public KMainWindow
 {
@@ -59,7 +67,7 @@ public:
   BreakpointListView* breakpointListView();
   LogListView*        logListView();
   KTextEdit*          edOutput();
-
+  //KTextEditor::EditInterface*  edOutput();
 
   void showError(const QString&) const;
   void showSorry(const QString&) const;
@@ -95,7 +103,7 @@ private:
   void createWidgets();
 
   //void saveCurrentPath();
-  void initDebuggerSettings();
+  void initSettings();
   void openFile(const KURL& url);
 
   EditorTabWidget* m_tabEditor;
@@ -108,15 +116,15 @@ private:
   BreakpointListView* m_breakpointList;
   LogListView* m_logListView;
   KTextEdit* m_edOutput;
+  //KTextEditor::EditInterface *m_edOutput;
 
   KStatusBar         *m_statusBar;
   KRecentFilesAction *m_actionRecent;
 
-  DebuggerSettingsWidget* m_debuggerSettings;
+  DebuggerSettingsWidget *m_debuggerSettings;
+  BrowserSettingsWidget  *m_browserSettings;
 
   DebuggerManager* m_debugger_manager;
-  //QString m_currentOpenPath;
-
 };
 
 #endif
