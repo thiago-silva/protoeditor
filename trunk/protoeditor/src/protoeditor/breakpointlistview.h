@@ -22,8 +22,7 @@
 #define BREAKPOINTLISTVIEW_H
 
 #include <klistview.h>
-//#include <qmap.h>
-#include <qptrlist.h>
+#include <qvaluelist.h>
 
 
 class DebuggerBreakpoint;
@@ -43,7 +42,7 @@ public:
 
   void resetBreakpointItems();
 
-  QPtrList<DebuggerBreakpoint> breakpoints();
+  QValueList<DebuggerBreakpoint*> breakpoints();
 
 signals:
   //this signals are sent after TextEditor processed the Marks

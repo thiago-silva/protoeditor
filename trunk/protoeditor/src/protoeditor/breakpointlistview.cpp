@@ -141,9 +141,9 @@ void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp) {
   }
 }
 
-QPtrList<DebuggerBreakpoint> BreakpointListView::breakpoints() {
+QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints() {
 
-  QPtrList<DebuggerBreakpoint> list;
+  QValueList<DebuggerBreakpoint*> list;
 
   BreakpointListViewItem* item =
     dynamic_cast<BreakpointListViewItem*>(firstChild());
