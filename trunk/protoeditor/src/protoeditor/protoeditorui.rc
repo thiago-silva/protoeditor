@@ -8,8 +8,8 @@
      <Separator />
      <Action name="debug_run"/>
      <Action name="debug_stop"/>
-     <Action name="debug_step_into"/>
      <Action name="debug_step_over"/>
+     <Action name="debug_step_into"/>
      <Action name="debug_step_out"/>
      <Separator />
      <Action name="debug_toggle_bp"/>
@@ -27,8 +27,8 @@
      <Separator />
      <Action name="debug_run"/>
      <Action name="debug_stop"/>
-     <Action name="debug_step_into"/>
      <Action name="debug_step_over"/>
+     <Action name="debug_step_into"/>
      <Action name="debug_step_out"/>
   </ToolBar>
 </kpartgui>
