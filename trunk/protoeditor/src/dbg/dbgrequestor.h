@@ -29,14 +29,50 @@
 
 class DBGRequestPack;
 class QSocket;
+class KProcess;
+class DCOPClient;
 class QHttp;
-class QHttpResponseHeader;
+class KURL;
 
-class DBGRequestor : public QObject {
-Q_OBJECT
+
+class  Browser : public QObject
+{
+  Q_OBJECT
+public:
+  Browser();
+  ~Browser();
+  void request(const QString&);
+
+signals:
+  void sigError(const QString& error);
+
+// private slots:
+//   void slotProcessExited(KProcess*);
+
+private slots:
+  void slotHttpDone(bool);
+  void slotProcessExited(KProcess*);
+private:
+  void initBrowserCommunication();
+  void doBrowserRequest(const QString& url);
+  void openURLOnBrowser(const QString& url);
+
+  void doHTTPRequest(const KURL& url);
+  void initHTTPCommunication();
+
+  QHttp      *m_http;
+  KProcess   *m_browserProcess;
+  DCOPClient *m_dcopClient;
+  bool        m_processRunning;
+};
+
+
+class DBGRequestor : public QObject
+{
+  Q_OBJECT
 public:
   DBGRequestor();
-   ~DBGRequestor();
+  ~DBGRequestor();
 
   void requestContinue();
   void requestStop();
@@ -59,16 +95,18 @@ public:
   void setSocket(QSocket* socket);
   void clear();
 private slots:
-  void slotHttpDone(bool error);
+  //void slotHttpDone(bool error);
 
   //void readyRead(const QHttpResponseHeader&);
 
 signals:
-  void requestorError(const QString& error);
+  void sigError(const QString& error);
 
 private:
+
   QSocket      *m_socket;
-  QHttp        *m_http;
+  Browser      *m_browser;
+  //QHttp        *m_http;
   dbgint        m_headerFlags;
 
 };

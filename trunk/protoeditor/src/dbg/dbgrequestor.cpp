@@ -26,39 +26,30 @@
 #include "dbgnetdata.h"
 #include "dbgrequestpack.h"
 #include "dbgrequestpackbuilder.h"
+#include "browsersettings.h"
 
 #include <qsocket.h>
 #include <qhttp.h>
 #include <klocale.h>
 #include <kdebug.h>
 
+#include <kurl.h>
+#include <kapplication.h>
+#include <kprocess.h>
+#include <dcopclient.h>
+
 DBGRequestor::DBGRequestor()
-    : QObject(), m_socket(NULL), m_http(0), m_headerFlags(0) /*, m_terminating(false)*/
+    : QObject(), m_socket(NULL)/*, m_http(0)*/, m_headerFlags(0) /*, m_terminating(false)*/
 {
-  m_http = new QHttp;;
-  connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
+  m_browser = new Browser();
 
-  //connect(m_http, SIGNAL(readyRead(const QHttpResponseHeader&)),
-  //  this, SLOT(readyRead(const QHttpResponseHeader&)));
+  connect(m_browser, SIGNAL(sigError(const QString&)),
+          this, SIGNAL(sigError(const QString&)));
 }
-
-/*
-void DBGRequestor::readyRead(const QHttpResponseHeader& resp) {
-  int _statusCode = resp.statusCode();
-  QString _reasonPhrase = resp.reasonPhrase();
-  int _majorVersio = resp.majorVersion ();
-  int _minorVersion  = resp.minorVersion();
-
-  QString data = QString(m_http->readAll());
-  QString hd = resp.toString();
-  int c = 1;
-}
-*/
 
 DBGRequestor::~DBGRequestor()
 {
-  //m_terminating = true;
-  delete m_http;
+  delete m_browser;
 }
 
 void DBGRequestor::requestContinue()
@@ -69,7 +60,6 @@ void DBGRequestor::requestContinue()
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStop()
@@ -80,7 +70,6 @@ void DBGRequestor::requestStop()
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStepInto()
@@ -91,7 +80,6 @@ void DBGRequestor::requestStepInto()
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStepOver()
@@ -102,7 +90,6 @@ void DBGRequestor::requestStepOver()
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStepOut()
@@ -113,7 +100,6 @@ void DBGRequestor::requestStepOut()
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestWatch(const QString& expression,int scope_id)
@@ -124,35 +110,18 @@ void DBGRequestor::requestWatch(const QString& expression,int scope_id)
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits)
-//void DBGRequestor::requestBreakpoint(int modno, DebuggerBreakpoint* bp)
 {
   if(!m_socket) return;
 
-  //DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(modno, bp);
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(
-    bpno, modno, remoteFilePath, line, condition, status, skiphits);
+                                  bpno, modno, remoteFilePath, line, condition, status, skiphits);
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
-
-/*
-void DBGRequestor::requestBreakpointList(int bpno)
-{
-  if(!m_socket) return;
-
-  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpointList(bpno);
-  requestPack->header()->setFlags(m_headerFlags);
-  requestPack->send(m_socket);
-  delete requestPack;
-  //   clearPack(requestPack);
-}
-*/
 
 void DBGRequestor::requestBreakpointRemoval(int bpid)
 {
@@ -162,7 +131,6 @@ void DBGRequestor::requestBreakpointRemoval(int bpid)
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestVariables(int scope_id)
@@ -173,7 +141,6 @@ void DBGRequestor::requestVariables(int scope_id)
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestSrcTree()
@@ -184,7 +151,6 @@ void DBGRequestor::requestSrcTree()
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestOptions(int op)
@@ -195,34 +161,26 @@ void DBGRequestor::requestOptions(int op)
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-  //   clearPack(requestPack);
 }
 
 void DBGRequestor::makeHttpRequest(const QString& host, const QString& path, int listenPort, int sessionId)
 {
-  //trigger the DBG server sending a http request to the web server
-
-  QString reqUrl = path + "?DBGSESSID="
+  QString reqUrl = QString("http://") + host + path + "?DBGSESSID="
                    + QString::number(sessionId)
                    + "@clienthost:"
                    + QString::number(listenPort);
 
-  kdDebug() << "Requesting \"" << reqUrl << "\" from " + host << endl;
-
-  m_http->setHost(host);
-  m_http->get(reqUrl);
+  m_browser->request(reqUrl);
 }
 
-void DBGRequestor::addHeaderFlags(dbgint flags) {
+void DBGRequestor::addHeaderFlags(dbgint flags)
+{
   m_headerFlags |= flags;
 }
 
 void DBGRequestor::setSocket(QSocket* socket)
 {
   m_socket = socket;
-  //if(m_socket) {
-  //connect(m_socket, SIGNAL(connectionClosed()), this, SLOT(slotClosed()));
-  //}
 }
 
 void DBGRequestor::clear()
@@ -230,39 +188,126 @@ void DBGRequestor::clear()
   m_socket = NULL;
 }
 
-void DBGRequestor::slotHttpDone(bool error)
+/********************************************************************************/
+
+Browser::Browser()
+    : m_http(0), m_browserProcess(0), m_dcopClient(0), m_processRunning(false)
+{}
+
+Browser::~Browser()
 {
-  if(error)
-  {
-    //TODO: make requestorError(QString title, QString msg);
-    emit requestorError(i18n("HTTP Conection error: " + m_http->errorString()));
+  if(m_browserProcess) m_browserProcess->kill();
+
+  delete m_browserProcess;
+  delete m_http;
+}
+
+void Browser::request(const QString& url)
+{
+  if(BrowserSettings::useExternalBrowser()) {
+    doBrowserRequest(url);
+  } else {
+    doHTTPRequest(KURL(url));
   }
 }
 
-/*
-void DBGRequestor::flushData() {
-  while(m_socket->bytesToWrite()) {
-    m_socket->flush();
-  }
-}
-*/
+void Browser::doBrowserRequest(const QString& url)
+{
+  initBrowserCommunication();
 
-/*
-void DBGRequestor::deletePacks() {
-  DBGRequestPack* p;
-  for(p = m_deleteList.first(); p; p = m_deleteList.next()) {
-    delete p;
+  if(!m_processRunning) {
+    openURLOnBrowser(url);
+    return;
   }
 
-  m_deleteList.clear();
-}
-*/
+  QString cmd = BrowserSettings::browserCmd();
 
-/*
-void DBGRequestor::clearPack(DBGRequestPack* requestPack) {
-  m_deleteList.append(requestPack);
-}
-*/
+  QByteArray data;
+  QDataStream arg(data, IO_WriteOnly);
+  arg << url;
 
+  kdDebug() << "asking for browser ("
+  << m_browserProcess->pid()
+  << ") to open URL: "
+  << url
+  << endl;
+
+  if(!m_dcopClient->send(
+       (cmd + "-" + QString::number(m_browserProcess->pid())).ascii()
+       , "konqueror-mainwindow#1", "openURL(QString)"
+       , data)) {
+    emit sigError("Error opening browser");
+  }
+}
+
+void Browser::initBrowserCommunication()
+{
+  if(!m_dcopClient) {
+    m_dcopClient = KApplication::dcopClient();
+
+    if(!m_dcopClient->attach()) {
+      emit sigError("Could not init browser communication");
+    }
+  }
+
+  if(!m_processRunning) {
+
+    if(m_browserProcess) {
+      delete m_browserProcess;
+    }
+
+    m_browserProcess = new KProcess;
+    connect(m_browserProcess, SIGNAL(processExited(KProcess*)),
+      this, SLOT(slotProcessExited(KProcess*)));
+  }
+}
+
+void Browser::openURLOnBrowser(const QString& url)
+{
+  QString cmd = BrowserSettings::browserCmd();
+
+  *m_browserProcess << cmd;
+  *m_browserProcess << url;
+
+  kdDebug() << "processing browser request: " << cmd << " " << url << endl;
+
+  if(!m_browserProcess->start()) {
+    emit sigError("Error opening browser");
+  } else {
+    kdDebug() << "New browser PID: " << m_browserProcess->pid() << endl;
+    m_processRunning = true;
+  }
+}
+
+void Browser::doHTTPRequest(const KURL& url)
+{
+  initHTTPCommunication();
+
+  kdDebug() << "HTTP request \"" << url.path() + url.query() <<  "\" from " << url.host() << endl;
+
+  m_http->setHost(url.host());
+  m_http->get(url.path() + url.query());
+}
+
+void Browser::initHTTPCommunication()
+{
+  if(!m_http) {
+    m_http = new QHttp;
+    connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
+  }
+}
+
+void Browser::slotHttpDone(bool error)
+{
+  if(error) {
+    emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
+  }
+}
+
+void Browser::slotProcessExited(KProcess*)
+{
+  //proc->kill();
+  m_processRunning = false;
+}
 
 #include "dbgrequestor.moc"
