@@ -229,7 +229,7 @@ void Browser::initHTTPCommunication()
 
 void Browser::slotHttpDone(bool error)
 {
-  if(error) {
+  if(error && (m_http->error() != QHttp::Aborted)) {
     emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
   }
 }
