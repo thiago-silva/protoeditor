@@ -24,6 +24,7 @@
 WatchListView::WatchListView(QWidget *parent, const char *name)
  : VariablesListView(parent, name)
 {
+
 }
 
 

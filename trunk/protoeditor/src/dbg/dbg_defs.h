@@ -132,6 +132,13 @@ const long  SOF_SEND_ERRORS           = 0x0020;
 const long  SOF_SEND_OUTPUT           = 0x0040;
 const long  SOF_SEND_OUTPUT_DETAILED  = 0x00080;
 
+/* LT_type */
+const long  LT_ODS      = 1;    /* OutputDebugString */
+const long  LT_ERROR    = 2;    /* Error/Warning/Notice while executing */
+const long  LT_OUTPUT   = 3;    /* Any echo(), print() or header() results */
+const long  LT_FATALERROR   = 256;    /* Fatal error (currently if error occured while evaluating)*/
+
+
 #if 0
 
 typedef enum tagBP_ACTION{
@@ -160,12 +167,6 @@ typedef enum tagListenerLogKind {
   LSTNRL_debugtrace
 } ListenerLogKind;
 
-
-/* LT_type */
-const long  LT_ODS      = 1;    /* OutputDebugString */
-const long  LT_ERROR    = 2;    /* Error/Warning/Notice while executing */
-const long  LT_OUTPUT   = 3;    /* Any echo(), print() or header() results */
-const long  LT_FATALERROR   = 256;    /* Fatal error (currently if error occured while evaluating)*/
 
 typedef enum tagSERVER_TYPE {
   SVR_AUTO  = 0x00,

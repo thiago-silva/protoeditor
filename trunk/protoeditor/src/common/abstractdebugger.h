@@ -56,7 +56,7 @@ public:
 
   virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&) = 0;
   virtual void addBreakpoint(DebuggerBreakpoint*)               = 0;
-  virtual void addBreakpoint(const QString&, int)               = 0;
+  //virtual void addBreakpoint(const QString&, int)               = 0;
   virtual void changeBreakpoint(DebuggerBreakpoint*) = 0;
   virtual void removeBreakpoint(DebuggerBreakpoint*) = 0;
 
