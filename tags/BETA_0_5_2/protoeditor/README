@@ -1,0 +1,110 @@
+                            Protoeditor Beta 0.5
+
+Project site:
+
+  http://protoeditor.sourceforge.net/
+
+1.0 About:
+
+  Protoeditor is a little KDE text editor developed for PHP debugging with the
+  free version of DBG debugger (http://dd.cron.ru/dbg), version 2.11.30.
+  It is a product of the development process of a DBG debugger client for
+  the Quanta+ project (http://www.kdewebdev.org), but got quite usable.
+
+  Protoeditor uses katepart as the text editor, so all the functionalities of a
+  _good_ editor are present (highlights, folding marks, etc, etc, etc).
+  This makes the debug experience more pratical.
+
+  Besides the editor and appearence, Protoeditor supports the main DBG features:
+  steps, watches, stack/backtrace, breakpoints, conditional breakpoints...
+  There are little things missing (and crashing) here and there, but with those,
+  we can do what we actually need. Remember: this is a client for the *free* version
+  of DBG. Don't try to use it with the commercial version. Won't work!
+
+2.0 Notes
+
+  2.1 Kate
+
+  The first time you execute Protoeditor, its configuration won't exist so,
+  kate will load the default settings for the editor, wich might not include Icon Border.
+  Just open a file (so you can configure the editor), goto "Editor" -> "Configure"
+  and, on "View defaults", mark "Show Icon Border". Then you will be able to see
+  the execution points and breakpoints.
+
+  2.2 Debugger Configuration
+
+  First, configure your php DBG module. Make sure it is active with phpinfo().
+
+  To configure DBG on Protoeditor:
+
+    Go to the "Settings -> Configure Protoeditor", set the "Local basedir" to your
+    local root folder (ie. /home/me/php/helloworld). On "Server basedir",
+    the remote location of the root folder (ie. /usr/apache/htdocs/helloworld).
+    For "Listen port", you can choose the default: 7869. This is the port on wich
+    your computer waits for DBG connection. Finally, set the "Host" to the http
+    server address (ie. 192.168.0.30).
+
+    If you are debugging locally, just setup to something like:
+
+    Local basedir  : /home/me/phpsite
+    Server basedir : /usr/apache/htdocs/phpsite
+    Listen port    : 7869
+    Host           : localhost
+
+    Now, open the hipotetical /home/me/phpsite/index.php.
+    Start the debug session on the menu (it starts to listen the connection).
+    Oh well, just run and have fun.
+
+
+  2.3 Main window
+
+    Now, some tricks and notes:
+
+      -On the variables list, you can expand the array/object childs and
+      on the next stepin/stepout/break, the item remains expanded (I haven't seen this
+      implemented in many PHP IDE's ;-)
+
+      -Again, on the variables list and watches, you can change the value
+      of some variable on the fly: just double click on the value and change it.
+
+      -Multiple breakpoints on the same file/line currently is not supported.
+
+3.0 Future plans
+
+  DBG is good. Very good. But there are some catches for the free version. So, when I finish
+  the DBG client, I might start working on XDebug (http://www.xdebug.org/) support.
+
+4.0 Extra info
+
+  I started working on this a year ago because, at the time, I needed for my job
+  (working with php applications on GNU/Linux). We didn't want to spend money on
+  commercial products (as a matter of fact, we didn't like the available ones).
+  Since the free version of DBG satisfied me, I planned to integrate a client into
+  the KDE Quanta+ project (http://www.kdewebdev.org) wich, at the time, Gubed
+  (http://gubed.sourceforge.net) was beginning to be incorporated. Also, there
+  was a discussion about incorporating many debuggers of many script languages into it.
+  So, be ready for Quanta+ :)
+
+
+5.0 Troubleshooting
+
+  5.1 Nothing happens when hitting "Run".
+
+    If you are trying to run and nothing happens, first, make sure you can access the http server.
+    Then, take a look at the debug output on the console. It should have something like:
+
+      "protoeditor: Requesting "/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
+
+    Where "/index.php" is the file you are running, "7869" is the port you typed on "Listen port" of
+    the configuration and "192.168.0.20" is the host you typed on "Host".
+
+    This is an HTTP request, so if you see something like:
+
+      "protoeditor: Requesting "/home/me/test/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
+
+    You probably typed something wrong for the paths.
+
+------------------------------------------
+Thiago Silva <thiago.silva@kdemail.com>
+
+$Id$
