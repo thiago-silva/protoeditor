@@ -308,18 +308,18 @@ void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 
   if(eval->ierror()) {
     error.setAscii(pack->retrieveRawdata(eval->ierror())->data(),
-                   pack->retrieveRawdata(eval->ierror())->size());
+                   pack->retrieveRawdata(eval->ierror())->size()-1);
   }
 
   if(eval->istr()) {
     str.setAscii(pack->retrieveRawdata(eval->istr())->data(),
-                 pack->retrieveRawdata(eval->istr())->size());
+                 pack->retrieveRawdata(eval->istr())->size()-1);
   }
 
   if(eval->iresult())
   {
     result.setAscii(pack->retrieveRawdata(eval->iresult())->data(),
-                    pack->retrieveRawdata(eval->iresult())->size());
+                    pack->retrieveRawdata(eval->iresult())->size()-1);
   }
 
   //note: eval errors are annoying to be displayed to the user
