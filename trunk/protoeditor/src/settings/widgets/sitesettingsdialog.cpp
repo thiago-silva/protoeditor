@@ -35,7 +35,7 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   QFrame *frame = plainPage();
   QVBoxLayout* vlayout = new QVBoxLayout(frame, 0, 0);
 
-  QGridLayout* grid = new QGridLayout(0, 5, 2, 5, 5);
+  QGridLayout* grid = new QGridLayout(0, 5, 2, 3, 5);
 
   m_lbName = new QLabel(frame);
   m_lbName->setText("Site name:");
