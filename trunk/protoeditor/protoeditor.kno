@@ -60,18 +60,19 @@
 
 \NewEntry 0 Site and non-implementation notes
 
-\NewEntry 1 Releasing notes
+\CurrentEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>test current CVS version on other distro/KDE versions</li>
-<li>Create ChangeLog file</li>
-<li>Create NEWS file</li>
-<li>Change version on kdevelop file and configure.in/configure.in.in</li>
-<li>Update README version</li>
-<li>TAG current CVS version</li>
-<li>Update site</li></ul>
+<ul type="disc"><li>1: Test current CVS version on other distro/KDE versions</li>
+<li>2: Change version on kdevelop file and configure.in/configure.in.in</li>
+<li>3: TAG current CVS version</li>
+<li>4: Create NEWS file</li>
+<li>5: Create ChangeLog file</li>
+<li>6: Update README version</li>
+<li>7: Update site</li></ul>
 <p></p>
 <p></p>
 </body></html>
+
 
 \NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -85,7 +86,7 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <li>Run</li>
