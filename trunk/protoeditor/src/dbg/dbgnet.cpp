@@ -246,9 +246,18 @@ bool DBGNet::processHeader(DBGHeader* header)
   switch(header->cmd())
   {
     case DBGC_REPLY:
+      break;
     case DBGC_END:
+      break;
     case DBGC_EMBEDDED_BREAK:
+      break;
     case DBGC_ERROR:
+      if(m_isProfiling)
+      {
+        error("PHP could not execute the script. Check for errors before running the profiler.");
+        return false;
+      }
+      break;
     case DBGC_LOG:
     case DBGC_SID:
     case DBGC_PAUSE:
@@ -271,9 +280,12 @@ bool DBGNet::processHeader(DBGHeader* header)
 
       if(m_isProfiling)
       {
+        m_requestor->requestStepInto();
+        
         //get module info
 //      m_requestor->requestSrcTree();
         //get frequency info
+        
         m_requestor->requestProfileFreqData(TEST_LOOPS);
         //get lines info to set temp breakpoint on the last valid line
         m_requestor->requestSrcLinesInfo(1);
