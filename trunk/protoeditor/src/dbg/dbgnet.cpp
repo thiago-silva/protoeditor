@@ -44,10 +44,10 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
   m_dbgFileInfo = new DBGFileInfo(m_debugger->configuration());
   m_dbgStack    = new DBGStack();
 
-  connect(m_receiver, SIGNAL(receiverError(const QString&)),
+  connect(m_receiver, SIGNAL(sigError(const QString&)),
     this, SLOT(slotError(const QString&)));
 
-  connect(m_requestor, SIGNAL(requestorError(const QString&)),
+  connect(m_requestor, SIGNAL(sigError(const QString&)),
     this, SLOT(slotError(const QString&)));
 }
 

@@ -192,7 +192,7 @@ DBGResponseTag* DBGReceiver::buildTag(int frameName, char* buffer)
       tag = new DBGResponseTagError(buffer);
       break;
     default:
-      emit receiverError("Error receiving network data.");
+      emit sigError("Error receiving network data.");
       break;
   }
   return tag;

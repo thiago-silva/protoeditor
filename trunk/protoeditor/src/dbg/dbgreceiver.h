@@ -41,7 +41,7 @@ public:
     void clear();
     void readBuffer();
 signals:
-  void receiverError(const QString&);
+  void sigError(const QString&);
 
 private slots:
   void slotReadBuffer();
