@@ -414,6 +414,8 @@ void EditorTabWidget::contextMenu(int index, const QPoint & p)
       closeAllDocuments();
       break;
   }
+
+  delete menu;
 }
 
 KTextEditor::View* EditorTabWidget::currentView()
