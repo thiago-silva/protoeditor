@@ -437,7 +437,8 @@ dbgint DBGResponseTagSid::sesstype() const
 
 void DBGResponseTagSid::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  net->processSessionId(m_sesstype, pack->retrieveRawdata(m_isid)->data());
+  //net->processSessionId(m_sesstype, pack->retrieveRawdata(m_isid)->data());
+  net->processSessionId(this, pack);
 }
 
 /*************************************************************
@@ -496,8 +497,9 @@ dbgint DBGResponseTagStack::idescr() const
 
 void DBGResponseTagStack::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  net->processStack(m_mod_no,
-                    pack->retrieveRawdata(m_idescr)->data(),m_line_no, m_scope_id);
+  //net->processStack(m_mod_no,
+  //                  pack->retrieveRawdata(m_idescr)->data(),m_line_no, m_scope_id);
+  net->processStack(this, pack);
 }
 
 /*************************************************************
@@ -545,8 +547,9 @@ dbgint DBGResponseTagVersion::idescription() const
 
 void DBGResponseTagVersion::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  net->processDBGVersion(m_major_version, m_minor_version,
-                         pack->retrieveRawdata(m_idescription)->data());
+  //net->processDBGVersion(m_major_version, m_minor_version,
+  //                       pack->retrieveRawdata(m_idescription)->data());
+  net->processDBGVersion(this, pack);
 }
 
 /*************************************************************
@@ -611,8 +614,8 @@ dbgint DBGResponseTagSrcTree::imodName() const
 
 void DBGResponseTagSrcTree::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  net->processSrcTree(m_mod_no, m_parent_line_no, m_parent_mod_no,
-                      pack->retrieveRawdata(m_imod_name)->data());
+  //net->processSrcTree(m_mod_no, pack->retrieveRawdata(m_imod_name)->data());
+  net->processSrcTree(this, pack);
 }
 
 /****************************
@@ -662,16 +665,7 @@ dbgint DBGResponseTagEval::ierror() const
 
 void DBGResponseTagEval::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  QString error =
-    (m_ierror)?pack->retrieveRawdata(m_ierror)->data():QString::null;
-
-  QString str =
-    (m_istr)?pack->retrieveRawdata(m_istr)->data():QString::null;
-
-  QString result =
-    (m_iresult)?pack->retrieveRawdata(m_iresult)->data():QString::null;
-
-  net->processEval(result, str, error);
+  net->processEval(this, pack);
 }
 
 
@@ -759,17 +753,7 @@ dbgint DBGResponseTagLog::extInfo() const
 
 void DBGResponseTagLog::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  QString log;
-  QString module;
-
-  if(m_ilog) {
-    log = pack->retrieveRawdata(m_ilog)->data();
-  }
-
-  if(m_imodName) {
-    module = pack->retrieveRawdata(m_imodName)->data();
-  }
-  net->processLog(m_type, log,m_modNo, m_lineNo, module, m_extInfo);
+  net->processLog(this, pack);
 }
 
 /****************************
@@ -814,7 +798,7 @@ dbgint DBGResponseTagError::imessage() const
 
 void DBGResponseTagError::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  net->processError(m_type, pack->retrieveRawdata(m_imessage)->data());
+  net->processError(this, pack);
 }
 
 /****************************
@@ -1016,16 +1000,7 @@ char* DBGTagBreakpoint::toArray()
 
 void DBGTagBreakpoint::process(DBGNet* net, DBGResponsePack* pack) const
 {
-  net->processBreakpoint(m_mod_no
-                         , m_line_no
-                         , pack->retrieveRawdata(m_imod_name)->data()
-                         , m_state
-                         , m_istemp
-                         , m_hitcount
-                         , m_skiphits
-                         , pack->retrieveRawdata(m_icondition)->data()
-                         , m_bp_no
-                         , m_isunderhit);
+  net->processBreakpoint(this, pack);
 }
 
 /****************************
