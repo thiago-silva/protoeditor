@@ -85,7 +85,8 @@ DBGRequestPack* DBGRequestPackBuilder::buildBreakpointList(int bpno) {
 }
 */
 
-DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits)
+DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int bpno, int modno, const QString& remoteFilePath,
+    int line, const QString& condition, int status, int skiphits, bool istemp)
 {
   DBGRequestPack* p = new DBGRequestPack(DBGA_REQUEST);
   DBGFrame* framebp;
@@ -114,7 +115,8 @@ DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int bpno, int modno, cons
   bptag->setLineNo(line);
   bptag->setModNo(modno);
   bptag->setSkipHits(skiphits);
-
+  bptag->setIsTemp(istemp);
+  
   bptag->setImodName(1);
   DBGTagRawdata* rawmod = new DBGTagRawdata(
                     1

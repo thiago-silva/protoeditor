@@ -151,7 +151,7 @@ public:
   void requestSrcLinesInfo(int modno);
   void requestSrcCtxInfo(int modno);
   //void requestBreakpoint(int modno, DebuggerBreakpoint*);
-  void requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
+  void requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits, bool istemp = false);
 
   //void requestBreakpointList(int bpno);
   void requestBreakpointRemoval(int bpid);

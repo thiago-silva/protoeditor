@@ -32,7 +32,8 @@ public:
   static DBGRequestPack* buildCommand(int cmd);
   static DBGRequestPack* buildWatch(const QString expression, int scope_id);
   //static DBGRequestPack* buildBreakpoint(int modno, DebuggerBreakpoint* breakpoint);
-  static DBGRequestPack* buildBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
+  static DBGRequestPack* buildBreakpoint(int bpno, int modno, const QString& remoteFilePath,
+                                         int line, const QString& condition, int status, int skiphits, bool istemp);
   //static DBGRequestPack* buildBreakpointList(int bpno);
   static DBGRequestPack* buildDeletedBreakpoint(int bpid);
   static DBGRequestPack* buildVars(int mod_no);

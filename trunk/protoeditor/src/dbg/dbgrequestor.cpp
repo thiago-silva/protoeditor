@@ -114,12 +114,12 @@ void DBGRequestor::requestWatch(const QString& expression,int scope_id)
   delete requestPack;
 }
 
-void DBGRequestor::requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits)
+void DBGRequestor::requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits, bool istemp)
 {
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(
-                                  bpno, modno, remoteFilePath, line, condition, status, skiphits);
+      bpno, modno, remoteFilePath, line, condition, status, skiphits, istemp);
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
