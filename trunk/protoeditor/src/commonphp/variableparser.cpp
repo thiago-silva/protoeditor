@@ -183,9 +183,6 @@ VariablesList_t* VariableParser::parseObjectMembers(PHPVariable* parent)
   int size;
   VariablesList_t* list = new VariablesList_t;
 
-  QString r = m_raw.mid( m_index-10, 20);
-  QCharRef a = r.at(m_index);
-
   QRegExp rx;
   rx.setPattern("(\\d*):\\{");
   if(rx.search(m_raw, m_index) == -1) return list;
