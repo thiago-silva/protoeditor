@@ -321,6 +321,18 @@ void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
   if(m_debugger) {
     m_debugger->changeBreakpoint(bp);
   }
+
+  switch(bp->status()) {
+    case DebuggerBreakpoint::ENABLED:
+      m_window->tabEditor()->unmarkDisabledBreakpoint(bp->filePath(), bp->line());
+      m_window->tabEditor()->markActiveBreakpoint(bp->filePath(), bp->line());
+      break;
+    case DebuggerBreakpoint::DISABLED:
+      m_window->tabEditor()->unmarkActiveBreakpoint(bp->filePath(), bp->line());
+      m_window->tabEditor()->markDisabledBreakpoint(bp->filePath(), bp->line());
+    case DebuggerBreakpoint::UNRESOLVED:
+      break;
+  }
 }
 
 void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)

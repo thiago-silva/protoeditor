@@ -378,10 +378,10 @@ void EditorTabWidget::createDocument(KURL url/*, const QString& text*/)
 
     #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
     imarkex->setPixmap(KTextEditor::MarkInterface::BreakpointDisabled, loader->loadIcon(
-                         "inactivebreakpoint",KIcon::Small));
+                         "disabledbreakpoint",KIcon::Small));
     #else
     imarkex->setPixmap(KTextEditor::MarkInterface::markType04, loader->loadIcon(
-                         "inactivebreakpoint", KIcon::Small));
+                         "disabledbreakpoint", KIcon::Small));
     #endif
 
     #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
