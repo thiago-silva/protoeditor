@@ -31,8 +31,9 @@ class DebuggerBreakpoint;
 class MainWindow;
 class DebuggerExecutionPoint;
 
-class DebuggerManager : public QObject {
-Q_OBJECT
+class DebuggerManager : public QObject
+{
+  Q_OBJECT
 public:
 
   enum { InfoMsg, WarningMsg, ErrorMsg, }; //Debugger session message types (non-internal)
@@ -52,14 +53,14 @@ public:
   void debugMessage(int, const QString&, const QString&, int);
   void debugError(const QString&);
   void updateOutput(const QString&);
-  
+
 public slots:
   void slotConfigurationChanged();
 
 private slots:
   /* Application - DebuggerManager */
 
-  void slotDebugRun();
+  void slotDebugStart();
   void slotDebugStop();
   void slotDebugStepInto();
   void slotDebugStepOver();
@@ -90,6 +91,9 @@ private slots:
 
 
 private:
+  void debugActiveScript();
+  void debugCurrentSiteScript();
+
   void connectDebugger();
 
   void loadDebugger();

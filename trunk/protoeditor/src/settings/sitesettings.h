@@ -13,7 +13,8 @@ class SiteSettings : public KConfigSkeleton
     ~SiteSettings();
 
     void load(const QString& name, const QString& host, int port,
-     const QString& remoteBaseDir, const QString& localBaseDir, bool matchFileInLowerCase,
+     const QString& remoteBaseDir, const QString& localBaseDir,
+     const QString& defaultFile, bool matchFileInLowerCase,
      const QString& debuggerClient);
 
     void setName(const QString& name)
@@ -67,6 +68,16 @@ class SiteSettings : public KConfigSkeleton
       return mRemoteBaseDir;
     }
 
+    void setDefaultFile(const QString& defaultFile)
+    {
+      mDefaultFile = defaultFile;
+    }
+
+    QString defaultFile() const
+    {
+      return mDefaultFile;
+    }
+
     void setMatchFileInLowerCase(bool value)
     {
       mMatchFileInLowerCase = value;
@@ -96,6 +107,7 @@ class SiteSettings : public KConfigSkeleton
     int mPort;
     QString mRemoteBaseDir;
     QString mLocalBaseDir;
+    QString mDefaultFile;
     bool mMatchFileInLowerCase;
     QString mDebuggerClient;
 

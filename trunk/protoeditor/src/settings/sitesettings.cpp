@@ -21,10 +21,15 @@ SiteSettings::SiteSettings(const QString &number)
   KConfigSkeleton::ItemPath  *itemLocalBaseDir;
   itemLocalBaseDir = new KConfigSkeleton::ItemPath( currentGroup(), QString::fromLatin1( "LocalBaseDir" ), mLocalBaseDir );
   addItem( itemLocalBaseDir, QString::fromLatin1( "LocalBaseDir" ) );
+
   KConfigSkeleton::ItemPath  *itemRemoteBaseDir;
   itemRemoteBaseDir = new KConfigSkeleton::ItemPath( currentGroup(), QString::fromLatin1( "RemoteBaseDir" ), mRemoteBaseDir );
   addItem( itemRemoteBaseDir, QString::fromLatin1( "RemoteBaseDir" ) );
 
+  KConfigSkeleton::ItemPath  *itemDefaultFile;
+  itemDefaultFile = new KConfigSkeleton::ItemPath( currentGroup(), QString::fromLatin1( "DefaultFile" ), mDefaultFile);
+  addItem( itemDefaultFile, QString::fromLatin1( "DefaultFile" ) );
+  
   KConfigSkeleton::ItemBool  *itemMatchFileInLowerCase;
   itemMatchFileInLowerCase = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "MatchFileInLowerCase" ), mMatchFileInLowerCase, false );
   addItem( itemMatchFileInLowerCase, QString::fromLatin1( "MatchFileInLowerCase" ) );
@@ -38,7 +43,8 @@ SiteSettings::SiteSettings(const QString &number)
 
 
 void SiteSettings::load(const QString& name, const QString& host, int port,
-     const QString& remoteBaseDir, const QString& localBaseDir, bool matchFileInLowerCase,
+     const QString& remoteBaseDir, const QString& localBaseDir,
+     const QString& defaultFile, bool matchFileInLowerCase,
      const QString& debuggerClient)
 {
   mName = name;
@@ -48,6 +54,7 @@ void SiteSettings::load(const QString& name, const QString& host, int port,
   mLocalBaseDir = localBaseDir;
   mMatchFileInLowerCase = matchFileInLowerCase;
   mDebuggerClient = debuggerClient;
+  mDefaultFile = defaultFile;
 }
 
 SiteSettings::~SiteSettings()

@@ -32,6 +32,7 @@
 #include "breakpointlistview.h"
 
 #include "protoeditorsettings.h"
+#include "sitesettings.h"
 
 #include <kapplication.h>
 #include <kcombobox.h>
@@ -42,6 +43,7 @@
 #include <ktextedit.h>
 #include <kpushbutton.h>
 #include <kdialogbase.h>
+#include <kdebug.h>
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
     : QObject(parent, name), m_debugger(0), m_window(window)
@@ -188,31 +190,75 @@ void DebuggerManager::slotConfigurationChanged()
   loadDebugger();
 }
 
-void DebuggerManager::slotDebugRun()
+void DebuggerManager::slotDebugStart()
 {
   if(!m_debugger) return;
 
   if(m_debugger->isRunning())
   {
     m_debugger->continueExecution();
+    return;
+  }
+
+  switch(m_window->preferredScript())
+  {
+    case MainWindow::ActiveScript:
+      debugActiveScript();
+      break;
+    case MainWindow::SiteScript:
+      debugCurrentSiteScript();
+      break;
+    default:
+      kdDebug() << "+++ Bug: undefined preferredScript" << endl;
+      m_window->showError("Undefined preferred script");
+  }
+}
+
+void DebuggerManager::debugActiveScript()
+{
+  if(m_window->tabEditor()->count() == 0)
+  {
+    m_window->openFile();
+    if(m_window->tabEditor()->count() == 0)
+    {
+      //couldn't open the file for some reason
+      return;
+    }
+  }
+
+  QString filepath = m_window->tabEditor()->currentDocumentPath();
+
+  m_debugger->run(filepath);
+  
+}
+
+void DebuggerManager::debugCurrentSiteScript()
+{
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  if(!currentSite)
+  {
+    m_window->showSorry("Can't use default site script. No site configured.");
+    return;
   }
   else
   {
-
+    QString filePath = currentSite->defaultFile();
+    if(filePath.isEmpty())
+    {
+      m_window->showSorry("Current site has no default script.");
+      return;
+    }
+    m_window->openFile(filePath);
     if(m_window->tabEditor()->count() == 0)
     {
-      m_window->openFile();
-      if(m_window->tabEditor()->count() == 0)
-      {
-        return;
-      }
+      //couldn't open the file for some reason
+      return;
     }
-
-    QString filepath = m_window->tabEditor()->currentDocumentPath();
-
-    m_debugger->run(filepath,
-                    ProtoeditorSettings::self()->currentSiteSettings());
   }
+  
+  QString filepath = m_window->tabEditor()->currentDocumentPath();
+
+  m_debugger->run(filepath);
 }
 
 void DebuggerManager::slotDebugStop()
@@ -377,7 +423,8 @@ void DebuggerManager::slotProfile()
   if(m_debugger)
   {
     KDialog* d = m_debugger->profileDialog();
-    if(d) {
+    if(d)
+    {
       d->show();
       m_debugger->profile();
     }
