@@ -38,6 +38,8 @@ public:
 
   void setVariables(VariablesList_t* vars);
 
+  void setReadOnly(bool);
+  bool isReadOnly();
 signals:
   void sigVarModified(Variable*);
 
@@ -63,7 +65,7 @@ protected:
 
   QValueList<QString> m_expanded;
   VariablesList_t*    m_variables;
-  //bool m_itemsRenameable;
+  bool m_isReadOnly;
 };
 
 #endif

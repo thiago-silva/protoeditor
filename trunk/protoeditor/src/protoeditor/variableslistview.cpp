@@ -25,11 +25,11 @@
 #include <qheader.h>
 
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
-  : KListView(parent, name), m_variables(0)//, m_itemsRenameable(false)
+  : KListView(parent, name), m_variables(0), m_isReadOnly(false)
 {
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
-  //setSorting(-1);
+  setSorting(-1);
 
   addColumn(tr2i18n("Name"));
   addColumn(tr2i18n("Value"));
@@ -55,15 +55,26 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
     this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
 }
 
+void VariablesListView::setReadOnly(bool readOnly) {
+  m_isReadOnly = readOnly;
+
+  QListViewItem* item = firstChild();
+  while(item) {
+    item->setRenameEnabled(ValueCol, !m_isReadOnly);
+    item = item->nextSibling();
+  }
+}
+
+bool VariablesListView::isReadOnly() {
+  return m_isReadOnly;
+}
+
+
 /*
  * The ListView doesn't start renaming if the item is not previously selected
  * And that sux...so, here we go.
  */
 void VariablesListView::slotDoubleClick( QListViewItem *item, const QPoint &, int col) {
-  //TODO: (implement this in QListViewItem::okRename()?)
-  //-if item is an array, show array dialog
-  //-if item is object, show object dialog
-
   if(col == ValueCol) {
     item->startRename(ValueCol);
   }
@@ -222,7 +233,11 @@ void VariablesListView::addVariable(Variable* variable, VariablesListViewItem* p
   } else {
     item = new VariablesListViewItem(parent, variable);
   }
+
+  //add new item to the bottom of the list
+  item->moveItem(lastItem());
 }
+
 
 void VariablesListView::deleteVars() {
   if(!m_variables) return;
