@@ -29,7 +29,7 @@ class DebuggerStack;
 class AbstractDebugger;
 class DebuggerBreakpoint;
 class MainWindow;
-class DebuggerExecutionLine;
+class DebuggerExecutionPoint;
 
 class DebuggerManager : public QObject {
 Q_OBJECT
@@ -41,6 +41,15 @@ public:
   ~DebuggerManager();
 
   void init();
+
+
+  /* for debugger */
+  void updateStack(DebuggerStack*);
+  void updateGlobalVars(VariablesList_t*);
+  void updateLocalVars(VariablesList_t*);
+  void updateWatch(Variable*);
+  void debugError(const QString&);
+
 
 public slots:
   void slotConfigurationChanged();
@@ -58,19 +67,24 @@ private slots:
   void slotDebugToggleBp();
 
   void slotAddWatch();
-  void slotComboStackChanged(DebuggerExecutionLine*, DebuggerExecutionLine*);
+  void slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
   void slotVarModified(Variable* var);
   void slotBreakpointCreated(DebuggerBreakpoint*);
   void slotBreakpointChanged(DebuggerBreakpoint*);
   void slotBreakpointRemoved(DebuggerBreakpoint*);
-  //void slotBreakpointDeleted(DebuggerBreakpoint*);
   void slotWatchRemoved(Variable*);
 
   /* DebuggerClient - DebuggerManager */
 
-  //TODO: set prefix to all: slotDebug*().
-  //reason: there is an amniguious func: slotBreakpointCreated()
-  //the user can change it and the debugger can change it
+
+  void slotSessionStarted();
+  void slotSessionEnded();
+  void slotDebugStarted();
+  void slotDebugEnded();
+
+  //Debugger internal error (conection, listen port, etc)
+  void slotInternalError(const QString&);
+  /*
 
   void slotSessionStarted();
   void slotSessionEnded();
@@ -78,12 +92,12 @@ private slots:
   void slotDebugEnded();
   void slotVariablesChanged(VariablesList_t*, bool);
   void slotWatchChanged(Variable*);
-  void slotStackChanged(DebuggerStack*);
+  //void slotStackChanged(DebuggerStack*);
   void slotDebugBreakpointChanged(DebuggerBreakpoint*);
   void slotDebugMessage(int, QString, int, QString);
   void slotDebugOutput(QString);
   void slotDebugError(QString);    //Session debug error
-  void slotInternalError(QString); //Debugger internal error (conection, listen port, etc)
+  */
 
 private:
   //disable all
