@@ -33,6 +33,17 @@ class QSocket;
 class DBGResponsePack;
 class DBGHeader;
 class DBGStack;
+class DBGFileInfo;
+class DebuggerBreakpoint;
+
+class DBGResponseTagSid;
+class DBGResponseTagStack;
+class DBGResponseTagVersion;
+class DBGResponseTagSrcTree;
+class DBGResponseTagEval;
+class DBGResponseTagLog;
+class DBGResponseTagError;
+class DBGTagBreakpoint;
 
 class DBGNet : public QObject
 {
@@ -57,31 +68,32 @@ public:
   void requestLocalVariables(dbgint scopeid);
   void requestGlobalVariables();
   void requestWatch(const QString& expression, dbgint scopeid);
+  void requestBreakpoint(DebuggerBreakpoint* bp);
+  void requestBreakpointRemoval(int bpid);
 
-  //DBGReceiver communicates through those:
+  //DBGReceiver communicatDBGNetes through those:
   void receivePack(DBGResponsePack* pack);
   void receiveHeader(DBGHeader* header);
 
   //tags communicate trought those:
 
-  void processSessionId(dbgint sessiontype, const QString& sessionId);
-  void processStack(dbgint modno,const QString& descr,dbgint lineno, dbgint scopeid);
-  void processDBGVersion(dbgint majorv, dbgint minorv, const QString& descr);
-  void processSrcTree(dbgint modno, dbgint parentlineno, dbgint parentmodno, const QString& modname);
-  void processEval(const QString& result, const QString& str, const QString& error);
+  void processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack);
+  void processStack(const DBGResponseTagStack* stack, DBGResponsePack* pack);
+  void processDBGVersion(const DBGResponseTagVersion* version, DBGResponsePack* pack);
+  void processSrcTree(const DBGResponseTagSrcTree* src, DBGResponsePack* pack);
+  void processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack);
 
+  void processLog(const DBGResponseTagLog* log, DBGResponsePack* pack);
+  void processError(const DBGResponseTagError*, DBGResponsePack* pack);
 
-  void processLog(dbgint type, const QString& log, dbgint modno, dbgint line, const QString& modname, dbgint extInfo);
-  void processError(dbgint type, const QString& msg);
-  void processBreakpoint(dbgint modno, dbgint lineno, const QString& modname,
-                         dbgint state, dbgint istemp, dbgint hitcount, dbgint skiphits,
-                         const QString& condition, dbgint bpno, dbgint isunderhit);
+  void processBreakpoint(const DBGTagBreakpoint*, DBGResponsePack* pack);
 
 
 signals:
   void sigError(const QString&);
   void sigDBGStarted();
   void sigDBGClosed();
+  void sigStepDone();
 
 private slots:
   void slotIncomingConnection(QSocket*);
@@ -90,9 +102,7 @@ private slots:
 
 private:
   bool processHeader(DBGHeader* header);
-  void RequestCommonData();
-
-  void updatePendingData();
+  void shipStack();
 
   void error(const QString&);
 
@@ -105,6 +115,7 @@ private:
   DBGRequestor      *m_requestor;
 
   DBGStack          *m_dbgStack;
+  DBGFileInfo       *m_dbgFileInfo;
   QValueList<dbgint> m_varScopeRequestList; //so we know wich context the vars belong
 
 };

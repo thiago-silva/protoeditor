@@ -28,17 +28,27 @@
 #include "dbgnetdata.h"
 #include "dbgstack.h"
 #include "debuggerstack.h"
+#include "debuggerbreakpoint.h"
+#include "dbgfileinfo.h"
+
+#include <kdebug.h>
 
 
 DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
     : QObject(parent, name), m_sessionId(0), m_headerFlags(0),
     m_debugger(debugger), m_con(0), m_receiver(0), m_requestor(0),
-    m_dbgStack(0)//, m_dbgFileInfo(0)
+    m_dbgStack(0), m_dbgFileInfo(0)
 {
   m_receiver    = new DBGReceiver(this);
   m_requestor   = new DBGRequestor();
+  m_dbgFileInfo = new DBGFileInfo(m_debugger->configuration());
   m_dbgStack    = new DBGStack();
-  //m_dbgFileInfo = new DBGFileInfo();
+
+  connect(m_receiver, SIGNAL(receiverError(const QString&)),
+    this, SLOT(slotError(const QString&)));
+
+  connect(m_requestor, SIGNAL(requestorError(const QString&)),
+    this, SLOT(slotError(const QString&)));
 }
 
 DBGNet::~DBGNet()
@@ -46,7 +56,7 @@ DBGNet::~DBGNet()
   delete m_receiver;
   delete m_requestor;
   delete m_dbgStack;
-  //delete m_dbgFileInfo;
+  delete m_dbgFileInfo;
 }
 
 bool DBGNet::startListener(int port)
@@ -74,7 +84,10 @@ void DBGNet::stopListener()
 void DBGNet::requestPage(const QString& host, const QString& filePath, int port, dbgint sessid)
 {
   m_sessionId = sessid;
-  m_requestor->makeHttpRequest(host, filePath, port, sessid);
+  m_requestor->makeHttpRequest(host
+                              , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
+                              , port
+                              , sessid);
 }
 
 void DBGNet::requestOptions(dbgint options)
@@ -118,15 +131,27 @@ void DBGNet::requestGlobalVariables()
   //so we know if we are asking for a vars on global or local scope
   m_varScopeRequestList.push_back(GLOBAL_SCOPE_ID);
   m_requestor->requestVariables(GLOBAL_SCOPE_ID);
-  //m_requestor->requestVariables(
-  //  m_dbgStack->debuggerStack()->bottomExecutionPoint()->id());
-
 }
 
 void DBGNet::requestWatch(const QString& expression, dbgint scopeid)
 {
   m_varScopeRequestList.push_back(WATCH_SCOPE_ID);
   m_requestor->requestWatch(expression, scopeid);
+}
+
+void DBGNet::requestBreakpoint(DebuggerBreakpoint* bp)
+{
+  m_requestor->requestBreakpoint( bp->id()
+                                , m_dbgFileInfo->moduleNumber(bp->filePath())
+                                , m_dbgFileInfo->toRemoteFilePath(bp->filePath())
+                                , bp->line()
+                                , bp->condition()
+                                , bp->status()
+                                , bp->skipHits());
+}
+
+void DBGNet::requestBreakpointRemoval(int bpid) {
+  m_requestor->requestBreakpointRemoval(bpid);
 }
 
 void DBGNet::receivePack(DBGResponsePack* pack)
@@ -141,8 +166,7 @@ void DBGNet::receivePack(DBGResponsePack* pack)
     tag->process(this, pack);
   }
 
-  //updates data that need more than 1 run (like stack, that needs srctree to get the filenames)
-  updatePendingData();
+  shipStack();
 }
 
 bool DBGNet::processHeader(DBGHeader* header)
@@ -153,34 +177,45 @@ bool DBGNet::processHeader(DBGHeader* header)
   }
 
   switch(header->cmd()) {
+    case DBGC_REPLY:
+    case DBGC_END:
+    case DBGC_EMBEDDED_BREAK:
+    case DBGC_ERROR:
+    case DBGC_LOG:
+    case DBGC_SID:
+    case DBGC_PAUSE:
+      break;
     case DBGC_STARTUP:
       //so lets start too
       m_requestor->addHeaderFlags(DBGF_STARTED);
+
+      //ask for module information
+      m_requestor->requestSrcTree();
+
+      //is annoying having to step twice in the begginig. Lets do the the first.
       m_requestor->requestStepInto();
+
+      //tell everyone we are ok.
       emit sigDBGStarted();
       break;
+    case DBGC_BREAKPOINT:
     case DBGC_STEPINTO_DONE:
     case DBGC_STEPOVER_DONE:
     case DBGC_STEPOUT_DONE:
       m_requestor->requestSrcTree();
-      requestGlobalVariables();
+      emit sigStepDone();
       break;
   }
-
   return true;
 }
 
-void DBGNet::processSessionId(dbgint sessiontype, const QString& sessionId)
+void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack)
 {
-  switch(sessiontype) {
+  switch(sid->sesstype()) {
   case DBG_JIT:
-    m_sessionId = sessionId.toLong();
+    m_sessionId = QString(pack->retrieveRawdata(sid->isid())->data()).toLong();
     break;
   case DBG_REQ:
-    /*if(sessionId.toLong() != m_sessionId) {
-      error("DBG requested a debug session with wrong session ID.");
-      return;
-    } */
     break;
   case DBG_COMPAT:
   case DBG_EMB:
@@ -189,60 +224,135 @@ void DBGNet::processSessionId(dbgint sessiontype, const QString& sessionId)
   }
 }
 
-void DBGNet::processStack(dbgint modno,const QString& descr,dbgint lineno, dbgint scopeid)
+void DBGNet::processStack(const DBGResponseTagStack* stack, DBGResponsePack* pack)
 {
-  m_dbgStack->add(modno, descr, lineno, scopeid);
+  m_dbgStack->add(stack->modNo()
+                , pack->retrieveRawdata(stack->idescr())->data()
+                , stack->lineNo(), stack->scopeId());
 }
 
-void DBGNet::processDBGVersion(dbgint majorv, dbgint minorv, const QString& descr)
+void DBGNet::processDBGVersion(const DBGResponseTagVersion* version, DBGResponsePack* pack)
 {
-  /* I hope commenting this doesn't break anything :)
-
-  if((majorv != DBG_API_MAJOR_VESION) || (minorv != DBG_API_MINOR_VESION)) {
-    error(QString("DBG version differs. Expecting %1.%2.").arg(
-      QString::number(DBG_API_MAJOR_VESION), QString::number(DBG_API_MINOR_VESION)));
-  } */
+  m_debugger->checkDBGVersion(version->majorVersion()
+    , version->minorVersion()
+    , pack->retrieveRawdata(version->idescription())->data());
 }
 
-void DBGNet::processSrcTree(dbgint modno, dbgint parentlineno, dbgint parentmodno, const QString& modname)
+void DBGNet::processSrcTree(const DBGResponseTagSrcTree* src, DBGResponsePack* pack)
 {
-  m_dbgStack->setModulePath(modno, modname);
+  m_dbgFileInfo->setModulePath(src->modNo(),
+    pack->retrieveRawdata(src->imodName())->data());
 }
 
-void DBGNet::processEval(const QString& result, const QString& str, const QString& error)
+void DBGNet::processEval(const DBGResponseTagEval* eval, DBGResponsePack* pack)
 {
+  QString error =
+    (eval->ierror())?pack->retrieveRawdata(eval->ierror())->data():QString::null;
+
+  QString str =
+    (eval->istr())?pack->retrieveRawdata(eval->istr())->data():QString::null;
+
+  QString result =
+    (eval->iresult())?pack->retrieveRawdata(eval->iresult())->data():QString::null;
+
+  //note: eval errors are annoying to be displayed to the user
+
+  if(!error.isEmpty()) {
+    kdDebug() << "Eval error: " << error << endl;
+  }
+
   dbgint scopeid = m_varScopeRequestList.first();
   m_varScopeRequestList.pop_front();
+
   if(scopeid == WATCH_SCOPE_ID) {
-    m_debugger->updateWatch(result, str, error);
+    m_debugger->updateWatch(result, str/*, error*/);
   } else {
-    m_debugger->updateVar(result, str, error, scopeid);
+    m_debugger->updateVar(result, str/*, error*/, scopeid);
   }
 }
 
-void DBGNet::processLog(dbgint type, const QString& log, dbgint modno, dbgint line, const QString& modname, dbgint extInfo)
-{}
-
-void DBGNet::processError(dbgint type, const QString& msg)
-{}
-
-void DBGNet::processBreakpoint(dbgint modno, dbgint lineno, const QString& modname,
-                               dbgint state, dbgint istemp, dbgint hitcount, dbgint skiphits,
-                               const QString& condition, dbgint bpno, dbgint isunderhit)
-{}
-
-
-void DBGNet::RequestCommonData()
+void DBGNet::processLog(const DBGResponseTagLog* log, DBGResponsePack* pack)
 {
-  m_requestor->requestSrcTree();
-  requestGlobalVariables();
+  QString logmsg;
+  QString module;
+
+  if(log->ilog()) {
+    logmsg = pack->retrieveRawdata(log->ilog())->data();
+  }
+
+  if(log->imodName()) {
+    module = pack->retrieveRawdata(log->imodName())->data();
+  }
+
+  m_debugger->debugLog(log->type()
+                     , logmsg
+                     , log->lineNo()
+                     , m_dbgFileInfo->toLocalFilePath(module)
+                     , log->extInfo());
 }
 
-void DBGNet::updatePendingData()
+void DBGNet::processError(const DBGResponseTagError* error, DBGResponsePack* pack)
 {
-  if(m_dbgStack->ready()) {
-    m_debugger->updateStack(m_dbgStack->debuggerStack());
+  m_debugger->debugError(pack->retrieveRawdata(error->imessage())->data());
+}
+
+void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack)
+{
+  QString modname;
+  QString condition;
+
+  if(bp->imodname()) {
+    modname = pack->retrieveRawdata(bp->imodname())->data();
   }
+  if(bp->icondition()) {
+    condition = pack->retrieveRawdata(bp->icondition())->data();
+  }
+
+  m_debugger->updateBreakpoint(bp->bpNo()
+    , m_dbgFileInfo->toLocalFilePath(modname)
+    , bp->lineNo()
+    , bp->state()
+    //, bp->isTemp()
+    , bp->hitCount()
+    , bp->skipHits()
+    , condition
+    //, (bp->isUnderHit()==1)?true:false
+    );
+}
+
+
+void DBGNet::shipStack()
+{
+  if(m_dbgStack->isEmpty()) return;
+
+  if(m_dbgFileInfo->updated()) {
+    m_debugger->updateStack(m_dbgStack->debuggerStack(m_dbgFileInfo));
+
+    m_dbgFileInfo->clearStatus();
+    m_dbgStack->clear();
+  }
+
+/*
+  static bool reqSrcTree = true;
+
+  if(m_dbgStack->isEmpty()) return;
+
+  m_dbgStack->freeze();
+
+  if(reqSrcTree) {
+    m_requestor->requestSrcTree();
+    reqSrcTree = false;
+    return;
+  }
+
+  if((!m_dbgStack->isEmpty()) && (m_dbgFileInfo->status())) {
+    m_debugger->updateStack(m_dbgStack->debuggerStack(m_dbgFileInfo));
+
+    m_dbgFileInfo->clearStatus();
+    m_dbgStack->clear();
+    reqSrcTree = true;
+  }
+*/
 }
 
 void DBGNet::slotIncomingConnection(QSocket* sock)
@@ -261,6 +371,7 @@ void DBGNet::slotDBGClosed()
   m_requestor->clear();
 
   m_dbgStack->clear();
+  m_dbgFileInfo->clear();
   m_varScopeRequestList.clear();
 }
 
