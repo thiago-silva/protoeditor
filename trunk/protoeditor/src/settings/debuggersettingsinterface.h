@@ -20,22 +20,31 @@
 #ifndef DEBUGGERSETTINGSINTERFACE_H
 #define DEBUGGERSETTINGSINTERFACE_H
 
+#include <qwidget.h>
+
 #include <qstring.h>
 #include <kconfigskeleton.h>
 
-class QWidget;
+class DebuggerTab : public QWidget {
+public:
+  DebuggerTab(QWidget* parent = 0, const char* name = 0) : QWidget(parent, name) {}
+
+  virtual ~DebuggerTab() {}
+
+  virtual void populate() = 0;
+};
 
 class DebuggerSettingsInterface : public KConfigSkeleton {
 public:
 
   DebuggerSettingsInterface()
-    :  KConfigSkeleton(QString::fromLatin1("protoeditorrc")) {}
+      :  KConfigSkeleton(QString::fromLatin1("protoeditorrc")) {}
 
   virtual ~DebuggerSettingsInterface() {}
 
-  virtual QString  name()                 = 0;
-  virtual void     loadValuesFromWidget() = 0;
-  virtual QWidget* widget()               = 0;
+  virtual QString      name()                 = 0;
+  virtual void         loadValuesFromWidget() = 0;
+  virtual DebuggerTab* widget()               = 0;
 };
 
 #endif
