@@ -170,10 +170,10 @@ void DBGNet::processSessionId(dbgint sessiontype, const QString& sessionId)
     m_sessionId = sessionId.toLong();
     break;
   case DBG_REQ:
-    if(sessionId.toLong() != m_sessionId) {
+    /*if(sessionId.toLong() != m_sessionId) {
       error("DBG requested a debug session with wrong session ID.");
       return;
-    }
+    } */
     break;
   case DBG_COMPAT:
   case DBG_EMB:
