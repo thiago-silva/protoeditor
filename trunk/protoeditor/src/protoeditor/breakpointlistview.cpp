@@ -213,12 +213,12 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QStrin
 
 void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line)
 {
-  toggleBreakpoint(filePath, line+1);
+  toggleBreakpoint(filePath, line);
 }
 
 void BreakpointListView::slotBreakpointUnmarked(const QString& filePath, int line)
 {
-  toggleBreakpoint(filePath, line+1);
+  toggleBreakpoint(filePath, line);
 }
 
 /*

@@ -1,22 +1,18 @@
 \NewEntry 0 Mental Notes / Random ideas
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
-<li>Take a look on PHP Designer 2005.</li>
 <li>Take a look at http://www.enginsite.com/php-editor.htm<br /></li>
 <li>Change the color of VariableListViews to inform about debug status? (running/not running)<br /></li>
-<li>Make taskbar app button blink on JIT (like KMail notification)<br /></li>
 <li>Change the colums of breakpoint and message listviews.</li>
 <ul type="disc"><li>Create a column for the filename only</li>
 <li>Create a column for the path of the file<br /></li></ul>
 <li>Add icons that Protoeditor uses on the distribution<br /></li>
 <li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
-<li>Include other StdActions/Kate actions (like &quot;goto line&quot;)<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
 <li>Try to get default kate settings from the user's katerc<br /></li>
 <li>Check if we can return const QString&amp; like this:<br />const QString&amp; func() {<br />  return QString(&quot;str&quot;);<br />}<br /></li>
-<li>Have a look at KMainWindow and XMLGUI stuff<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
 <li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
@@ -139,15 +135,14 @@
 
 \CurrentEntry 1 Bug reminder
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>When on JIT, the button &quot;run/continue&quot; is disabled<br /></li>
-<li>Run debugger, delete some lines before the execution point, stop debugger. The execPoint icon is no deleted</li>
-<ul type="disc"><li>When the debugger starts, should the editor be read only?</li>
-<li>When debugger is running and user edits file, when he/she saves, should the debugger stops?<br /><br /></li></ul>
-<li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /></li>
-<li>Run a script on browser with DBGSESSID, and protoeditor with JIT enabled. The file is not automatically opened on Protoeditor.<br /></li>
-<li>Open a file, edit, close protoeditor. Its window is closed and a &quot;orfan&quot; dialog appears asking for saving the file. Protoeditor shouldn't close before the dialog appears</li></ul>
+<ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.</li></ul>
 </body></html>
 
+
+\NewEntry 1 Usability issues
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Open a file, edit, close protoeditor. Its window is closed and a &quot;orfan&quot; dialog appears asking for saving the file. Protoeditor shouldn't close before the dialog appears</li></ul>
+</body></html>
 
 \NewEntry 0 Quanta
 
