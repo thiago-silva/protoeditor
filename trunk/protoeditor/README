@@ -13,15 +13,13 @@ Project site:
 
   Protoeditor uses katepart as the text editor, so all the functionalities of a
   _good_ editor are present (highlights, folding marks, etc, etc, etc).
-  As you will see, I didn't care too mutch to how it looks, since the point
-  is not to make some kind of IDE. This is just a software constructed for testing
-  purposes that became quite usable for quick debugging.
+  This makes the debug experience more pratical.
 
-  Ok, the main DBG features are present: steps, watches, stack/backtrace,
-  breakpoints, conditional breakpoints...There are little things missing (and crashing)
-  here and there, but with those, we can do what we actually need. Remember: this is a
-  client for the *free* version of DBG. Don't try to use it with the commercial
-  version. Won't work!
+  Besides the editor and appearence, Protoeditor supports the main DBG features:
+  steps, watches, stack/backtrace, breakpoints, conditional breakpoints...
+  There are little things missing (and crashing) here and there, but with those,
+  we can do what we actually need. Remember: this is a client for the *free* version
+  of DBG. Don't try to use it with the commercial version. Won't work!
 
 2.0 Notes
 
@@ -29,8 +27,9 @@ Project site:
 
   The first time you execute Protoeditor, its configuration won't exist so,
   kate will load the default settings for the editor, wich might not include Icon Border.
-  Just open a file, goto "Editor" -> "Configure" and, on "View defaults",
-  mark "Show Icon Border", so you can see the execution point and breakpoints.
+  Just open a file (so you can configure the editor), goto "Editor" -> "Configure"
+  and, on "View defaults", mark "Show Icon Border". Then you will be able to see
+  the execution points and breakpoints.
 
   2.2 Debugger Configuration
 
@@ -38,13 +37,14 @@ Project site:
 
   To configure DBG on Protoeditor:
 
-    Set the "Local basedir" to your local root folder (ie. /home/me/php/helloworld).
-    On "Server basedir", the remote location of the root folder
-    (ie. /usr/apache/htdocs/helloworld). For "Listen port", you can choose the
-    default: 7869. This is the port on wich your computer waits for DBG connection.
-    Finally, set the "Host" to the http server address (ie. 192.168.0.30).
+    Go to the "Settings -> Configure Protoeditor", set the "Local basedir" to your
+    local root folder (ie. /home/me/php/helloworld). On "Server basedir",
+    the remote location of the root folder (ie. /usr/apache/htdocs/helloworld).
+    For "Listen port", you can choose the default: 7869. This is the port on wich
+    your computer waits for DBG connection. Finally, set the "Host" to the http
+    server address (ie. 192.168.0.30).
 
-    If you are debugging everything locally, just setup to something like:
+    If you are debugging locally, just setup to something like:
 
     Local basedir  : /home/me/phpsite
     Server basedir : /usr/apache/htdocs/phpsite
@@ -98,7 +98,7 @@ Project site:
     Where "/index.php" is the file you are running, "7869" is the port you typed on "Listen port" of
     the configuration and "192.168.0.20" is the host you typed on "Host".
 
-    This is like an HTTP request, so if you see something like:
+    This is an HTTP request, so if you see something like:
 
       "protoeditor: Requesting "/home/me/test/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
 
