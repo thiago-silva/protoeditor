@@ -100,16 +100,9 @@
 <li>Add icons that Protoeditor uses on the distribution<br /></li>
 <li>See if possible: Change output widget to KTExtEdit, so it can highlight HTML tags<br /></li>
 <li>Create context menus for the listviews</li>
-<li>Add Breakpoint/Watches buttons (add, clear, disable..). Add Breakpoint Context Menu<br /><br /></li>
-<li>Try to get default kate settings from the user's katerc<br /></li>
-<li>See what can be done to support firefox/mozilla/opera/etc like konqueror <br /></li>
-<ul type="disc"><li>Mozilla/firefox:</li>
-<ul type="disc"><li>mozilla -remote &quot;ping()&quot; - check if there is a running mozilla</li>
-<li>mozilla-xremote-client -a mozilla &quot;openurl(www.somwehere.com)&quot;</li>
-<li>mozilla-xremote-client -a firefox &quot;openurl(www.somwehere.com)&quot;</li>
-<li>mozilla -remote &quot;openurl(www.somwehere.com)&quot;<br /></li>
-<li>Note: I haven't found anything about send message to a specific window (process). The active window (or in the most top level) will be used.</li></ul>
-<li><br /><br /></li></ul></ul>
+<li>Add Breakpoint/Watches buttons (add, clear, disable..). Add Breakpoint Context Menu<br /></li>
+<li>simplify markChage code<br /></li>
+<li>Try to get default kate settings from the user's katerc</li></ul>
 </body></html>
 
 
