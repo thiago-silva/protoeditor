@@ -611,6 +611,8 @@ void EditorTabWidget::loadMarks(Document_t& d, KTextEditor::Document* doc)
 
 void EditorTabWidget::slotCurrentChanged(QWidget* w)
 {
+  if(m_terminating) return;
+
   if((*(m_docList.at(indexOf(w)))).hasUndo) {
     enableUndoAction();
   } else {
