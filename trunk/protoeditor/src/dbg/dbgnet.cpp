@@ -49,11 +49,17 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
 
   connect(m_requestor, SIGNAL(sigError(const QString&)),
     this, SLOT(slotError(const QString&)));
+
+  m_con = new DBGConnection();
+  connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
+  connect(m_con, SIGNAL(sigClientClosed()), this, SLOT(slotDBGClosed()));
+  connect(m_con, SIGNAL(sigError(const QString&)), this, SLOT(slotError(const QString&)));
+
 }
 
 DBGNet::~DBGNet()
 {
-  stopListener();
+  delete m_con;
   delete m_receiver;
   delete m_requestor;
   delete m_dbgStack;
@@ -62,24 +68,12 @@ DBGNet::~DBGNet()
 
 bool DBGNet::startListener(int port)
 {
-  QHostAddress addr;
-  addr.setAddress("localhost");
-
-  if(m_con) delete m_con;
-
-  m_con = new DBGConnection(addr, port);
-
-  connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
-  connect(m_con, SIGNAL(sigClosed()), this, SLOT(slotDBGClosed()));
-  connect(m_con, SIGNAL(sigError(const QString&)), this, SLOT(slotError(const QString&)));
-
-  return m_con->listening();
+  return m_con->listenOn(port);
 }
 
 void DBGNet::stopListener()
 {
-  delete m_con;
-  m_con = NULL;
+  m_con->close();
 }
 
 void DBGNet::requestPage(const QString& host, const QString& filePath, int port, dbgint sessid)
@@ -332,28 +326,6 @@ void DBGNet::shipStack()
     m_dbgFileInfo->clearStatus();
     m_dbgStack->clear();
   }
-
-/*
-  static bool reqSrcTree = true;
-
-  if(m_dbgStack->isEmpty()) return;
-
-  m_dbgStack->freeze();
-
-  if(reqSrcTree) {
-    m_requestor->requestSrcTree();
-    reqSrcTree = false;
-    return;
-  }
-
-  if((!m_dbgStack->isEmpty()) && (m_dbgFileInfo->status())) {
-    m_debugger->updateStack(m_dbgStack->debuggerStack(m_dbgFileInfo));
-
-    m_dbgFileInfo->clearStatus();
-    m_dbgStack->clear();
-    reqSrcTree = true;
-  }
-*/
 }
 
 void DBGNet::slotIncomingConnection(QSocket* sock)

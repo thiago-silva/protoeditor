@@ -20,47 +20,68 @@
 
 
 #include "dbgconnection.h"
+
 #include <qsocket.h>
+#include <qsocketdevice.h>
+#include <qsocketnotifier.h>
+
 #include <klocale.h>
 
-DBGConnection::DBGConnection(const QHostAddress& host, int port, QObject * parent, const char * name)
-    : QServerSocket(host, port, 1, parent, name), m_currentSocket(0)
+DBGConnection::DBGConnection(QObject * parent, const char * name)
+  : QObject(parent, name),
+    m_currentClient(0), m_device(0), m_notifier(0), m_listening(false)
+
 {
-  m_listening = ok();
 }
 
 DBGConnection::~DBGConnection()
 {
-  clearSocket();
+  close();
+}
+
+void DBGConnection::clearDevice()
+{
+  if(m_listening) {
+    m_device->close();
+    m_listening = false;
+  }
+
+  delete m_device;
+  m_device = NULL;
+  delete m_notifier;
+  m_notifier = NULL;
 }
 
 void DBGConnection::clearSocket()
 {
-  if(m_currentSocket) {
-    delete m_currentSocket;
-    m_currentSocket = NULL;
-    emit sigClosed();
+  if(m_currentClient) {
+    m_currentClient->close();
+    delete m_currentClient;
+    m_currentClient = NULL;
+    emit sigClientClosed();
   }
 }
 
-void DBGConnection::newConnection(int socket)
+void DBGConnection::slotIncomingConnection(int)
 {
+  int fd = m_device->accept();
+  if(fd < 0) return;
+
   clearSocket();
 
+  m_currentClient = new QSocket();
+  m_currentClient->setSocket(fd);
 
-  m_currentSocket = new QSocket();
-  m_currentSocket->setSocket(socket);
-  //m_currentSocket->socketDevice()->setBlocking(true);
+  connect(m_currentClient, SIGNAL(connectionClosed()), this, SLOT(slotClosed()));
+  connect(m_currentClient, SIGNAL(error(int)), this, SLOT(slotError(int)));
 
-  connect(m_currentSocket, SIGNAL(connectionClosed()), this, SLOT(slotClosed()));
-  connect(m_currentSocket, SIGNAL(error(int)), this, SLOT(slotError(int)));
-
-  emit sigAccepted(m_currentSocket);
+  emit sigAccepted(m_currentClient);
 }
 
 void DBGConnection::slotClosed()
 {
   clearSocket();
+  emit sigClientClosed();
 }
 
 void DBGConnection::slotError(int error)
@@ -78,7 +99,7 @@ void DBGConnection::slotError(int error)
   }
 }
 
-bool DBGConnection::listening()
+bool DBGConnection::isListening()
 {
   return m_listening;
 }
@@ -87,6 +108,40 @@ void DBGConnection::closeClient()
 {
   clearSocket();
 }
+
+void DBGConnection::close()
+{
+  closeClient();
+  clearDevice();
+}
+
+bool DBGConnection::listenOn(int port)
+{
+  close();
+
+  m_device = new QSocketDevice(QSocketDevice::Stream, QHostAddress().isIPv4Address()
+            ? QSocketDevice::IPv4 : QSocketDevice::IPv6, 0);
+  m_device->setAddressReusable( TRUE );
+
+  if(m_device->bind(QHostAddress(), port)
+      && m_device->listen(1))
+  {
+    m_listening = true;
+    m_notifier = new QSocketNotifier(m_device->socket(), QSocketNotifier::Read,
+            this, "accepting new connections" );
+
+    connect( m_notifier, SIGNAL(activated(int)),
+     this, SLOT(slotIncomingConnection(int)) );
+  } else {
+    m_listening = false;
+    delete m_device;
+    m_device = 0;
+  }
+
+  return isListening();
+}
+
+
 
 
 #include "dbgconnection.moc"

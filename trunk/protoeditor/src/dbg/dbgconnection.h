@@ -22,35 +22,47 @@
 #ifndef DBGCONNECTION_H
 #define DBGCONNECTION_H
 
-#include <qserversocket.h>
+#include <qobject.h>
 
 class QSocket;
+class QSocketDevice;
+class QSocketNotifier;
 
-class DBGConnection  : public QServerSocket
+class DBGConnection  : public QObject
 {
   Q_OBJECT
 public:
-  DBGConnection(const QHostAddress& host, int port, QObject * parent = 0, const char * name = 0);
+  DBGConnection(QObject * parent = 0, const char * name = 0);
   ~DBGConnection();
 
-  virtual void newConnection(int socket);
-  bool listening();
+  //virtual void newConnection(int socket);
 
+  bool isListening();
+  bool listenOn(int);
+
+  //close client only
   void closeClient();
+
+  //close everything
+  void close();
 private slots:
+  void slotIncomingConnection(int);
   void slotClosed();
   void slotError(int);
 
 signals:
   void sigAccepted(QSocket*);
-  void sigClosed();
+  void sigClientClosed();
   void sigError(const QString&);
 
 private:
   void clearSocket();
-  //QString m_error;
+  void clearDevice();
+
+  QSocket         *m_currentClient;
+  QSocketDevice   *m_device;
+  QSocketNotifier *m_notifier;
   bool m_listening;
-  QSocket* m_currentSocket;
 };
 
 #endif
