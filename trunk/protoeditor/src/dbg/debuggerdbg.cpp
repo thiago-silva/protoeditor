@@ -38,10 +38,9 @@
 #include <qregexp.h>
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
-    : AbstractDebugger(parent), m_name("DBG"), m_isSessionActive(false), m_isRunning(false),
+    : AbstractDebugger(parent), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
     m_dbgSettings(0), m_net(0), m_currentExecutionPointID(CURLOC_SCOPE_ID),
-    m_globalExecutionPointID(GLOBAL_SCOPE_ID)
-{
+m_globalExecutionPointID(GLOBAL_SCOPE_ID) {
   m_dbgSettings = new DBGSettings();
 
   ProtoeditorSettings::self()->registerDebuggerSettings(m_dbgSettings, m_name);
@@ -52,79 +51,69 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
   connect(m_net, SIGNAL(sigDBGClosed()), this, SLOT(slotDBGClosed()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
+
+  if(m_dbgSettings->enableJIT()) {
+    startJIT();
+  }
 }
 
-DebuggerDBG::~DebuggerDBG()
-{
+DebuggerDBG::~DebuggerDBG() {
   delete m_net;
   //delete m_dbgSettings;
 }
 
-QString DebuggerDBG::name() const
-{
+QString DebuggerDBG::name() const {
   return m_name;
 }
 
-/*
-int DebuggerDBG::id() const
-{
-  return Settings::EnumClient::DBG;
-}
-*/
-
-bool DebuggerDBG::isSessionActive() const
-{
-  return m_isSessionActive;
-}
-
-bool DebuggerDBG::isRunning() const
-{
+bool DebuggerDBG::isRunning() const {
   return m_isRunning;
 }
 
-void DebuggerDBG::slotSettingsChanged()
-{
-  //endSession();
-}
-
-/*
-void DebuggerDBG::reloadConfiguration()
-{
-  endSession();
-}
-*/
-
-void DebuggerDBG::startSession()
-{
-  if(!m_isSessionActive) {
-
-    if(m_net->startListener(m_dbgSettings->listenPort())) {
-      m_isSessionActive = true;
-      kdDebug() << "DBG: listening on port " << m_dbgSettings->listenPort() << endl;
-      emit sigSessionStarted();
-    } else {
-      emit sigInternalError(i18n("Unable to listen on port: %1").arg(
-                              m_dbgSettings->listenPort()));
+void DebuggerDBG::slotSettingsChanged() {
+  if(m_dbgSettings->enableJIT()) {
+    if(!m_isJITActive) {
+      startJIT();
     }
+  } else {
+    stopJIT();
   }
 }
 
-void DebuggerDBG::endSession()
-{
+bool  DebuggerDBG::startJIT() {
+  if(!m_isJITActive) {
 
+    if(m_net->startListener(m_dbgSettings->listenPort())) {
+      m_isJITActive = true;
+      kdDebug() << "DBG: Listening on port " << m_dbgSettings->listenPort() << endl;
+    } else {
+      emit sigInternalError(i18n("Unable to listen on port: %1").arg(
+                              m_dbgSettings->listenPort()));
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void DebuggerDBG::stopJIT() {
   if(m_isRunning) {
     m_net->requestStop();
   }
 
   m_net->stopListener();
-  emit sigSessionEnded();
-  m_isSessionActive = false;
+  m_isJITActive = false;
 }
 
-void DebuggerDBG::run(const QString& filepath, SiteSettings* site)
-{
+void DebuggerDBG::run(const QString& filepath, SiteSettings* site) {
   if(!isRunning()) {
     dbgint sessionid = kapp->random();
+
+    if(!m_isJITActive && !startJIT()) {
+      return;
+    }
+
+    m_net->setOptions(getDBGOptions());
 
     m_net->requestPage(filepath, site, m_dbgSettings->listenPort(), sessionid);
   } else {
@@ -132,36 +121,54 @@ void DebuggerDBG::run(const QString& filepath, SiteSettings* site)
   }
 }
 
-void DebuggerDBG::stop()
-{
+int DebuggerDBG::getDBGOptions() {
+  int opts = 0;
+  if(m_dbgSettings->breakOnLoad()) {
+    opts |= SOF_BREAKONLOAD;
+  }
+  if(m_dbgSettings->sendDetailedOutput()) {
+    opts |= SOF_SEND_OUTPUT_DETAILED;
+  }
+
+  if(m_dbgSettings->sendErrors()) {
+    opts |= SOF_SEND_ERRORS;
+  }
+
+  if(m_dbgSettings->sendLogs()) {
+    opts |= SOF_SEND_LOGS;
+  }
+
+  if(m_dbgSettings->sendOutput()) {
+    opts |= SOF_SEND_OUTPUT;
+  }
+  return opts;
+}
+
+void DebuggerDBG::stop() {
   if(isRunning()) {
     m_net->requestStop();
   }
 }
 
-void DebuggerDBG::stepInto()
-{
+void DebuggerDBG::stepInto() {
   if(isRunning()) {
     m_net->requestStepInto();
   }
 }
 
-void DebuggerDBG::stepOver()
-{
+void DebuggerDBG::stepOver() {
   if(isRunning()) {
     m_net->requestStepOver();
   }
 }
 
-void DebuggerDBG::stepOut()
-{
+void DebuggerDBG::stepOut() {
   if(isRunning()) {
     m_net->requestStepOut();
   }
 }
 
-void DebuggerDBG::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps)
-{
+void DebuggerDBG::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps) {
   if(isRunning()) {
     QValueList<DebuggerBreakpoint*>::const_iterator it;
     for(it = bps.begin(); it != bps.end(); ++it) {
@@ -170,8 +177,7 @@ void DebuggerDBG::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps)
   }
 }
 
-void DebuggerDBG::addBreakpoint(DebuggerBreakpoint* bp)
-{
+void DebuggerDBG::addBreakpoint(DebuggerBreakpoint* bp) {
   if(isRunning()) {
     m_net->requestBreakpoint(bp);
   }
@@ -182,23 +188,20 @@ void DebuggerDBG::addBreakpoint(const QString&, int)
 {}
 */
 
-void DebuggerDBG::changeBreakpoint(DebuggerBreakpoint* bp)
-{
+void DebuggerDBG::changeBreakpoint(DebuggerBreakpoint* bp) {
   if(isRunning()) {
     m_net->requestBreakpoint(bp);
   }
 }
 
-void DebuggerDBG::removeBreakpoint(DebuggerBreakpoint* bp)
-{
+void DebuggerDBG::removeBreakpoint(DebuggerBreakpoint* bp) {
   if(isRunning()) {
     m_net->requestBreakpointRemoval(bp->id());
   }
 }
 
 
-void DebuggerDBG::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoint)
-{
+void DebuggerDBG::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoint) {
   if(isRunning()) {
     QString name  =  var->compositeName();
     QString value =  var->value()->toString();
@@ -215,8 +218,7 @@ void DebuggerDBG::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoin
   }
 }
 
-void DebuggerDBG::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint)
-{
+void DebuggerDBG::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint) {
   m_currentExecutionPointID = execPoint->id();
   if(isRunning()) {
     m_net->requestVariables(execPoint->id(), false);
@@ -224,8 +226,7 @@ void DebuggerDBG::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint)
 }
 
 
-void DebuggerDBG::addWatch(const QString& expression)
-{
+void DebuggerDBG::addWatch(const QString& expression) {
   m_wathcesList.append(expression);
 
   if(isRunning()) {
@@ -235,8 +236,7 @@ void DebuggerDBG::addWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::removeWatch(const QString& expression)
-{
+void DebuggerDBG::removeWatch(const QString& expression) {
   QValueList<QString>::iterator it = m_wathcesList.find(expression);
 
   if(it != m_wathcesList.end()) {
@@ -244,8 +244,7 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::requestWatches(int scopeid)
-{
+void DebuggerDBG::requestWatches(int scopeid) {
   if(isRunning()) {
     QValueList<QString>::iterator it;
     for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it) {
@@ -256,15 +255,13 @@ void DebuggerDBG::requestWatches(int scopeid)
 
 /**************************** DBGNET **************************/
 
-void DebuggerDBG::updateStack(DebuggerStack* stack)
-{
+void DebuggerDBG::updateStack(DebuggerStack* stack) {
   m_currentExecutionPointID = stack->topExecutionPoint()->id();
   m_globalExecutionPointID  = stack->bottomExecutionPoint()->id();
   manager()->updateStack(stack);
 }
 
-void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGlobal)
-{
+void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGlobal) {
   if(str.isEmpty()) {
     //global vars
     VariableParser p(result);
@@ -279,8 +276,7 @@ void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGl
   }
 }
 
-void DebuggerDBG::updateWatch(const QString& result, const QString& str)
-{
+void DebuggerDBG::updateWatch(const QString& result, const QString& str) {
   if(m_wathcesList.find(str) == m_wathcesList.end()) {
     //This watch is not on our list.
     //It might happen whe the user modifies the value of a variable (ie. "$var=123").
@@ -306,116 +302,107 @@ void DebuggerDBG::updateWatch(const QString& result, const QString& str)
 }
 
 void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, int state, int hitcount, int skiphits,
-                               const QString& condition)
-{
+                                   const QString& condition) {
   int status;
   switch(state) {
     //case BPS_DELETED
-    case BPS_DISABLED:
-      status = DebuggerBreakpoint::DISABLED;
-      break;
-    case BPS_ENABLED:
-      status = DebuggerBreakpoint::ENABLED;
-      break;
-    case BPS_UNRESOLVED:
-    default:
-      status = DebuggerBreakpoint::UNRESOLVED;
-      break;
+  case BPS_DISABLED:
+    status = DebuggerBreakpoint::DISABLED;
+    break;
+  case BPS_ENABLED:
+    status = DebuggerBreakpoint::ENABLED;
+    break;
+  case BPS_UNRESOLVED:
+  default:
+    status = DebuggerBreakpoint::UNRESOLVED;
+    break;
   }
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(id, filePath, line, status, condition, hitcount, skiphits);
   manager()->updateBreakpoint(bp);
 }
 
 
-void DebuggerDBG::debugError(/*int type,*/ const QString&)
-{
+void DebuggerDBG::debugError(/*int type,*/ const QString&) {
   //NOTE: When a PHP error ocurr, I'm not sure why DBG some times
   //sends a TagError and some times not. So, we are sending errors through the Log
   //manager()->debugError(msg);
 }
 
-void DebuggerDBG::debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo)
-{
+void DebuggerDBG::debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo) {
   QString message = msg;
   QRegExp rx;
   switch(type) {
-    case LT_ODS:
-      kdDebug() << msg << endl;
-      break;
-    case LT_ERROR:
-      //remove HTML tag
-      rx.setPattern("\\[[^\\]]*\\]");
-      message.remove(rx);
+  case LT_ODS:
+    kdDebug() << msg << endl;
+    break;
+  case LT_ERROR:
+    //remove HTML tag
+    rx.setPattern("\\[[^\\]]*\\]");
+    message.remove(rx);
 
-      switch(extInfo) {
-        case E_ERROR:
-        case E_CORE_ERROR:
-        case E_PARSE:
-        case E_COMPILE_ERROR:
-        case E_USER_ERROR:
-          manager()->debugMessage(DebuggerManager::ErrorMsg, message, filePath, line);
-          manager()->debugError(message);
-          break;
+    switch(extInfo) {
+    case E_ERROR:
+    case E_CORE_ERROR:
+    case E_PARSE:
+    case E_COMPILE_ERROR:
+    case E_USER_ERROR:
+      manager()->debugMessage(DebuggerManager::ErrorMsg, message, filePath, line);
+      manager()->debugError(message);
+      break;
 
-        case E_WARNING:
-        case E_CORE_WARNING:
-        case E_COMPILE_WARNING:
-        case E_USER_WARNING:
-          manager()->debugMessage(DebuggerManager::WarningMsg, message, filePath, line);
-          break;
-        case E_NOTICE:
-        case E_USER_NOTICE:
-        case E_STRICT:
-          manager()->debugMessage(DebuggerManager::InfoMsg, message, filePath, line);
-          break;
-      }
+    case E_WARNING:
+    case E_CORE_WARNING:
+    case E_COMPILE_WARNING:
+    case E_USER_WARNING:
+      manager()->debugMessage(DebuggerManager::WarningMsg, message, filePath, line);
       break;
-    case LT_OUTPUT:
-      m_output += msg;
-      manager()->updateOutput(m_output);
+    case E_NOTICE:
+    case E_USER_NOTICE:
+    case E_STRICT:
+      manager()->debugMessage(DebuggerManager::InfoMsg, message, filePath, line);
       break;
-    case LT_FATALERROR:
+    }
+    break;
+  case LT_OUTPUT:
+    m_output += msg;
+    manager()->updateOutput(m_output);
+    break;
+  case LT_FATALERROR:
     break;
   }
 }
 
-void DebuggerDBG::checkDBGVersion(int major, int minor, const QString& desc)
-{
+void DebuggerDBG::checkDBGVersion(int major, int minor, const QString& desc) {
   kdDebug() << desc << endl;
 
   if((major != DBG_API_MAJOR_VESION) ||
      (minor != DBG_API_MINOR_VESION)) {
 
     emit sigInternalError(QString("DBG version differs. Expecting %1.%2.").arg(
-      QString::number(DBG_API_MAJOR_VESION), QString::number(DBG_API_MINOR_VESION)));
+                            QString::number(DBG_API_MAJOR_VESION), QString::number(DBG_API_MINOR_VESION)));
   }
 }
 
 /***************************** SLOTS *********************************/
 
-void DebuggerDBG::slotInternalError(const QString& msg)
-{
+void DebuggerDBG::slotInternalError(const QString& msg) {
   emit sigInternalError(msg);
 }
 
-void DebuggerDBG::slotDBGStarted()
-{
-
-  m_net->requestOptions(SOF_SEND_LOGS
-                       | SOF_SEND_ERRORS
-                       | SOF_SEND_OUTPUT
-                       | SOF_SEND_OUTPUT_DETAILED );
-
+void DebuggerDBG::slotDBGStarted() {
   m_isRunning = true;
   emit sigDebugStarted();
 }
 
-void DebuggerDBG::slotDBGClosed()
-{
+void DebuggerDBG::slotDBGClosed() {
   //end of debug
 
   m_isRunning = false;
   m_output = QString::null;
+
+  if(!m_dbgSettings->enableJIT()) {
+    stopJIT();
+  }
 
   emit sigDebugEnded();
 }

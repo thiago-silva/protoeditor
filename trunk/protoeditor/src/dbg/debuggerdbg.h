@@ -42,11 +42,8 @@ public:
   virtual QString name()   const;
   //virtual int     id() const;
 
-  virtual bool isSessionActive() const;
   virtual bool isRunning() const;
 
-  virtual void startSession();
-  virtual void endSession();
   virtual void run(const QString&, SiteSettings*);
   virtual void stop();
   virtual void stepInto();
@@ -76,7 +73,7 @@ public:
   //DBGSettings* configuration();
 
 public slots:
-  virtual void slotSettingsChanged();
+  void slotSettingsChanged();
 
   void slotInternalError(const QString&);
   void slotDBGStarted();
@@ -85,10 +82,13 @@ public slots:
 private slots:
   void slotStepDone();
 private:
+  bool startJIT();
+  void stopJIT();
   void requestWatches(int scopeid);
+  int getDBGOptions();
 
   QString                 m_name;
-  bool                    m_isSessionActive;
+  bool                    m_isJITActive;
   bool                    m_isRunning;
 
   DBGSettings            *m_dbgSettings;
