@@ -271,11 +271,8 @@ void DebuggerManager::slotAddWatch()
   QString expression = m_window->edAddWatch()->text();
   m_window->edAddWatch()->clear();
 
-  if(!expression.isEmpty()) {
-    if(m_debugger) {
-      m_debugger->addWatch(expression,
-        m_window->stackCombo()->stack()->topExecutionPoint());
-    }
+  if(m_debugger) {
+    m_debugger->addWatch(expression);
   }
 }
 

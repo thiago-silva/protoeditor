@@ -62,9 +62,8 @@ public:
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint* execPoint);
 
   virtual void requestLocalVariables(DebuggerExecutionPoint*);
-  virtual void addWatch(const QString& expression, DebuggerExecutionPoint* execPoint);
+  virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
-  virtual void requestWatches(DebuggerExecutionPoint*);
 
   /* Internal use (provided for DBGNet use) */
   void updateStack(DebuggerStack*);
@@ -86,6 +85,8 @@ public slots:
 private slots:
   void slotStepDone();
 private:
+  void requestWatches(DebuggerExecutionPoint*);
+
   bool                    m_isSessionActive;
   bool                    m_isRunning;
 

@@ -220,12 +220,15 @@ void DebuggerDBG::requestLocalVariables(DebuggerExecutionPoint* execPoint)
   }
 }
 
-void DebuggerDBG::addWatch(const QString& expression, DebuggerExecutionPoint* execPoint)
+void DebuggerDBG::addWatch(const QString& expression)
 {
   m_wathcesList.append(expression);
 
   if(isRunning()) {
-    m_net->requestWatch(expression, execPoint->id());
+    m_net->requestWatch(expression,
+      m_currentExecutionPoint?m_currentExecutionPoint->id():GLOBAL_SCOPE_ID);
+  } else {
+    updateWatch(QString::null, expression);
   }
 }
 

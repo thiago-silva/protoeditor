@@ -63,11 +63,11 @@ public:
   virtual void requestLocalVariables(DebuggerExecutionPoint*)       = 0;
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*) = 0;
 
-  virtual void addWatch(const QString& expression, DebuggerExecutionPoint*) = 0;
+  virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
 
   //request the values of the watches on a given executionPoint
-  virtual void requestWatches(DebuggerExecutionPoint*) = 0;
+  //virtual void requestWatches(DebuggerExecutionPoint*) = 0;
 
 protected:
   virtual DebuggerManager* manager();
