@@ -283,7 +283,9 @@ void EditorTabWidget::createDocument(KURL url/*, QString text*/)
      popupIf->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 */
 
-  KTextEditor::View *view = openKDocument(url);
+  KTextEditor::View *view;
+  if((view = openKDocument(url)) == NULL) return;
+
 
   KTextEditor::MarkInterfaceExtension* imarkex =
     dynamic_cast<KTextEditor::MarkInterfaceExtension*>(view->document());
@@ -347,7 +349,11 @@ KTextEditor::View* EditorTabWidget::openKDocument(KURL url)
     KTextEditor::EditorChooser::createDocument(
       0L, "KTextEditor::Document");
 
-  doc->openURL(url);
+  if(!doc->openURL(url)) {
+    delete tab;
+    delete doc;
+    return NULL;
+  }
 
   KTextEditor::View * view = doc->createView(tab);
 
