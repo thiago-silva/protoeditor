@@ -28,7 +28,8 @@
 
 ProtoeditorSettings* ProtoeditorSettings::m_self = 0;
 
-ProtoeditorSettings::ProtoeditorSettings()
+ProtoeditorSettings::ProtoeditorSettings(QObject* parent, const char* name)
+  : QObject(parent, name)
 {
   m_phpSettings = new PHPSettings();
   m_extOutputSettings = new ExtOutputSettings();
@@ -80,6 +81,11 @@ QValueList<DebuggerSettingsInterface*> ProtoeditorSettings::debuggerSettingsList
 
 }
 
+SiteSettings* ProtoeditorSettings::currentSiteSettings()
+{
+  return siteSettings(m_currentSiteName);
+}
+
 SiteSettings* ProtoeditorSettings::siteSettings(const QString& name)
 {
   return m_siteSettingsMap[name];
@@ -99,20 +105,28 @@ ExtOutputSettings* ProtoeditorSettings::extOutputSettings()
   return m_extOutputSettings;
 }
 
-void ProtoeditorSettings::addSite(SiteSettings* s)
-{
-  m_siteSettingsMap[s->name()] = s;
-}
-
 void ProtoeditorSettings::clearSites()
 {
-
   QMap<QString, SiteSettings*>::iterator sit;
+  SiteSettings* s;
   for(sit = m_siteSettingsMap.begin(); sit != m_siteSettingsMap.end(); ++sit) {
-    delete sit.data();
+     s = sit.data();
+     s->config()->deleteGroup(s->currentGroup());
+     delete s;
   }
-
   m_siteSettingsMap.clear();
+}
+
+void ProtoeditorSettings::addSite(int number, const QString& name, const QString& host, int port,
+               const QString& remoteBaseDir, const QString& localBaseDir)
+
+{
+  SiteSettings* s = new SiteSettings(QString::number(number));
+  s->load(name, host, port, remoteBaseDir, localBaseDir,
+    /* TODO: */
+    false, "DBG");
+
+  m_siteSettingsMap[s->name()] = s;
 }
 
 void ProtoeditorSettings::writeConfig()
@@ -120,14 +134,31 @@ void ProtoeditorSettings::writeConfig()
   m_phpSettings->writeConfig();
   m_extOutputSettings->writeConfig();
 
+  writeDebuggersConf();
+  writeSiteConf();
+
+  emit sigSettingsChanged();
+}
+
+void ProtoeditorSettings::writeDebuggersConf()
+{
   QMap<QString, DebuggerSettingsInterface*>::iterator dit;
   for(dit = m_debuggerSettingsMap.begin(); dit != m_debuggerSettingsMap.end(); ++dit) {
     dit.data()->writeConfig();
   }
+}
 
+void ProtoeditorSettings::writeSiteConf()
+{
   QMap<QString, SiteSettings*>::iterator sit;
   for(sit = m_siteSettingsMap.begin(); sit != m_siteSettingsMap.end(); ++sit) {
     sit.data()->writeConfig();
   }
 }
 
+void ProtoeditorSettings::slotCurrentSiteChanged(const QString& sitename)
+{
+  m_currentSiteName = sitename;
+}
+
+#include "protoeditorsettings.moc"

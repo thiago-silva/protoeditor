@@ -20,6 +20,7 @@
 #ifndef PROTOEDITORSETTINGS_H
 #define PROTOEDITORSETTINGS_H
 
+#include <qobject.h>
 #include <qstring.h>
 
 #include <qmap.h>
@@ -31,7 +32,8 @@ class SiteSettings;
 class PHPSettings;
 class ExtOutputSettings;
 
-class ProtoeditorSettings {
+class ProtoeditorSettings  : public QObject {
+  Q_OBJECT
 public:
   ~ProtoeditorSettings();
 
@@ -42,23 +44,35 @@ public:
   DebuggerSettingsInterface*             debuggerSettings(const QString& name);
   QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
   SiteSettings*                          siteSettings(const QString& name);
+  SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
   PHPSettings*                           phpSettings();
   ExtOutputSettings*                     extOutputSettings();
 
-  void addSite(SiteSettings*);
   void clearSites();
+  void addSite(int number, const QString& name, const QString& host, int port,
+               const QString& remoteBaseDir, const QString& localBaseDir);
   void writeConfig();
 
+signals:
+  void sigSettingsChanged();
+
+public slots:
+  void slotCurrentSiteChanged(const QString&);
 private:
-  ProtoeditorSettings();
+  ProtoeditorSettings(QObject* parent = 0, const char* name = 0);
+
   void loadSites();
+
+  void writeDebuggersConf();
+  void writeSiteConf();
 
   static ProtoeditorSettings *m_self;
 
   PHPSettings              *m_phpSettings;
   ExtOutputSettings        *m_extOutputSettings;
 
+  QString                   m_currentSiteName;
 
   QMap<QString, DebuggerSettingsInterface*>  m_debuggerSettingsMap;
   QMap<QString, SiteSettings*>               m_siteSettingsMap;
