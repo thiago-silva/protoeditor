@@ -137,19 +137,19 @@ void DebuggerManager::loadDebugger()
       clearDebugger();
       return;
     }
-   
+
     if(m_debugger && (m_debugger->id() == Settings::client())) {
       //is the same current debugger, just load its settings again
       //m_debugger->reloadConfiguration();
     } else {
       if(m_debugger) clearDebugger();
-   
+
       if((m_debugger = DebuggerFactory::buildDebugger(this)) == NULL) {
         m_window->showError("Error loading debugger client");
         disableAllDebugActions();
         return;
       }
-   
+
       //m_debugger->reloadConfiguration();
       connectDebugger();
     }
@@ -163,6 +163,8 @@ void DebuggerManager::loadDebugger()
   {
     connectDebugger();
   }
+
+  m_debugger->init();
 }
 
 void DebuggerManager::connectDebugger()
@@ -252,7 +254,7 @@ void DebuggerManager::slotDebugToggleBp()
     m_window->tabEditor()->unmarkActiveBreakpoint(filePath, line);
   }
 
-  //   m_window->breakpointListView()->toggleBreakpoint(filePath, line);
+  m_window->breakpointListView()->toggleBreakpoint(filePath, line);
 }
 
 void DebuggerManager::slotAddWatch()
@@ -317,7 +319,7 @@ void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 {
   if(!m_debugger) return;
   m_debugger->changeBreakpoint(bp);
-  
+
   switch(bp->status())
   {
     case DebuggerBreakpoint::ENABLED:
