@@ -27,10 +27,10 @@
 #include <qptrlist.h>
 #include "dbg_defs.h"
 
-class DebuggerBreakpoint;
 class DBGRequestPack;
 class QSocket;
 class QHttp;
+class QHttpResponseHeader;
 
 class DBGRequestor : public QObject {
 Q_OBJECT
@@ -46,9 +46,11 @@ public:
   void requestWatch(const QString& expression, int scope_id);
   void requestVariables(int scope_id);
   void requestSrcTree();
-  void requestBreakpoint(int modno, DebuggerBreakpoint*);
-  void requestBreakpointList(int bpno);
-  void requestBreakpointRemoval(DebuggerBreakpoint* bp);
+  //void requestBreakpoint(int modno, DebuggerBreakpoint*);
+  void requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits);
+
+  //void requestBreakpointList(int bpno);
+  void requestBreakpointRemoval(int bpid);
   void requestOptions(int op);
 
   void makeHttpRequest(const QString& host, const QString& path, int listenPort, int sessionId);
@@ -58,6 +60,8 @@ public:
   void clear();
 private slots:
   void slotHttpDone(bool error);
+
+  //void readyRead(const QHttpResponseHeader&);
 
 signals:
   void requestorError(const QString& error);

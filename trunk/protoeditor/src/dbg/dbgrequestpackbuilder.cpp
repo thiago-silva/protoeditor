@@ -72,6 +72,7 @@ DBGRequestPack* DBGRequestPackBuilder::buildDeletedBreakpoint(int bpid)
   return p;
 }
 
+/*
 DBGRequestPack* DBGRequestPackBuilder::buildBreakpointList(int bpno) {
   DBGRequestPack* p = new DBGRequestPack(DBGA_REQUEST);
   DBGFrame* framebp;
@@ -82,8 +83,9 @@ DBGRequestPack* DBGRequestPackBuilder::buildBreakpointList(int bpno) {
   p->addInfo(framebp, bptag);
   return p;
 }
+*/
 
-DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int modno, DebuggerBreakpoint* breakpoint)
+DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits)
 {
   DBGRequestPack* p = new DBGRequestPack(DBGA_REQUEST);
   DBGFrame* framebp;
@@ -91,9 +93,7 @@ DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int modno, DebuggerBreakp
   DBGTagBreakpoint* bptag = new DBGTagBreakpoint();
   framebp = new DBGFrame(FRAME_BPS, bptag->tagSize());
 
-  bptag->setLineNo(breakpoint->line());
-  bptag->setImodName(1);
-  switch(breakpoint->status()) {
+  switch(status) {
     case DebuggerBreakpoint::ENABLED:
       bptag->setState(BPS_ENABLED);
       break;
@@ -110,17 +110,31 @@ DBGRequestPack* DBGRequestPackBuilder::buildBreakpoint(int modno, DebuggerBreakp
       break;
   }
 
-  bptag->setBpNo(breakpoint->id());
+  bptag->setBpNo(bpno);
+  bptag->setLineNo(line);
   bptag->setModNo(modno);
+  bptag->setSkipHits(skiphits);
 
-  DBGTagRawdata* rawdata = new DBGTagRawdata(
+  bptag->setImodName(1);
+  DBGTagRawdata* rawmod = new DBGTagRawdata(
                     1
-                    , breakpoint->filePath().ascii()
-                    , breakpoint->filePath().length()+1);
+                    , remoteFilePath.ascii()
+                    , remoteFilePath.length()+1);
 
-  DBGFrame* frameraw = new DBGFrame(FRAME_RAWDATA, rawdata->tagSize());
+  DBGFrame* framemod = new DBGFrame(FRAME_RAWDATA, rawmod->tagSize());
 
-  p->addInfo(frameraw, rawdata);
+  if(!condition.isEmpty()) {
+    bptag->setIcondition(2);
+    DBGTagRawdata* rawcond = new DBGTagRawdata(
+                      2
+                      , condition.ascii()
+                      , condition.length()+1);
+
+    DBGFrame* framecond = new DBGFrame(FRAME_RAWDATA, rawcond->tagSize());
+    p->addInfo(framecond, rawcond);
+  }
+
+  p->addInfo(framemod, rawmod);
   p->addInfo(framebp, bptag);
 
   return p;

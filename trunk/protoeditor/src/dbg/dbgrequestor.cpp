@@ -37,7 +37,23 @@ DBGRequestor::DBGRequestor()
 {
   m_http = new QHttp;;
   connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
+
+  //connect(m_http, SIGNAL(readyRead(const QHttpResponseHeader&)),
+  //  this, SLOT(readyRead(const QHttpResponseHeader&)));
 }
+
+/*
+void DBGRequestor::readyRead(const QHttpResponseHeader& resp) {
+  int _statusCode = resp.statusCode();
+  QString _reasonPhrase = resp.reasonPhrase();
+  int _majorVersio = resp.majorVersion ();
+  int _minorVersion  = resp.minorVersion();
+
+  QString data = QString(m_http->readAll());
+  QString hd = resp.toString();
+  int c = 1;
+}
+*/
 
 DBGRequestor::~DBGRequestor()
 {
@@ -111,17 +127,21 @@ void DBGRequestor::requestWatch(const QString& expression,int scope_id)
   //   clearPack(requestPack);
 }
 
-void DBGRequestor::requestBreakpoint(int modno, DebuggerBreakpoint* bp)
+void DBGRequestor::requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits)
+//void DBGRequestor::requestBreakpoint(int modno, DebuggerBreakpoint* bp)
 {
   if(!m_socket) return;
 
-  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(modno, bp);
+  //DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(modno, bp);
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(
+    bpno, modno, remoteFilePath, line, condition, status, skiphits);
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
   //   clearPack(requestPack);
 }
 
+/*
 void DBGRequestor::requestBreakpointList(int bpno)
 {
   if(!m_socket) return;
@@ -132,12 +152,13 @@ void DBGRequestor::requestBreakpointList(int bpno)
   delete requestPack;
   //   clearPack(requestPack);
 }
+*/
 
-void DBGRequestor::requestBreakpointRemoval(DebuggerBreakpoint* bp)
+void DBGRequestor::requestBreakpointRemoval(int bpid)
 {
   if(!m_socket) return;
 
-  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildDeletedBreakpoint(bp->id());
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildDeletedBreakpoint(bpid);
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
