@@ -81,7 +81,7 @@ PHPVariable* VariableParser::parseVarName(PHPVariable* parent)
       name = parseString();
       break;
     default:
-      kdDebug() << "+++++ Bug on PHPVariableParser!";
+      kdDebug() << "+++++ Bug on PHPVariableParser!" << endl;
   }
 
   PHPVariable* var = new PHPVariable(parent);
@@ -290,7 +290,7 @@ VariableValue* VariableParser::parseValue(PHPVariable* var)
       scalarValue->set(parseResource());
       return scalarValue;
     default:
-      kdDebug() << "+++++ Bug on PHPVariableParser!";
+      kdDebug() << "+++++ Bug on PHPVariableParser!" << endl;
       return 0;
   }
 }
