@@ -3,3 +3,4 @@
 protoeditoricondir = $(kde_datadir)/protoeditor/icons
 protoeditoricon_ICON = AUTO
 
+KDE_ICON = protoeditor
