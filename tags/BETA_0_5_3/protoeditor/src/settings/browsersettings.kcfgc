@@ -1,0 +1,4 @@
+# Code generation options for kconfig_compiler
+File=browser.kcfg
+ClassName=BrowserSettings
+Singleton=true

@@ -1,0 +1,34 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="protoeditor" version="1">
+  <MenuBar>
+    <Menu name="debug"><text>&amp;Debug</text>
+     <text>Debugger toolbar</text>
+     <Action name="debug_start_session"/>
+     <Action name="debug_end_session"/>
+     <Separator />
+     <Action name="debug_run"/>
+     <Action name="debug_stop"/>
+     <Action name="debug_step_over"/>
+     <Action name="debug_step_into"/>
+     <Action name="debug_step_out"/>
+     <Separator />
+     <Action name="debug_toggle_bp"/>
+    </Menu>
+    <Menu name="settings"><text>&amp;Settings</text>
+      <Separator />
+      <Action name="settings_editor"/>
+      <Action name="settings_protoeditor"/>
+    </Menu>
+  </MenuBar>
+  <ToolBar name="debugger">
+     <text>Debugger toolbar</text>
+     <Action name="debug_start_session"/>
+     <Action name="debug_end_session"/>
+     <Separator />
+     <Action name="debug_run"/>
+     <Action name="debug_stop"/>
+     <Action name="debug_step_over"/>
+     <Action name="debug_step_into"/>
+     <Action name="debug_step_out"/>
+  </ToolBar>
+</kpartgui>
