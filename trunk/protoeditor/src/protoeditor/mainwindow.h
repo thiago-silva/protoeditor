@@ -78,8 +78,12 @@ public:
   void showSorry(const QString&) const;
 
   void openFile();
+  void openFile(const KURL& url);  
   void actionStateChanged(const QString&);
 
+  enum { SiteScript, ActiveScript };
+  int preferredScript();
+  
 private slots:
   void slotOpenFile();
   void slotCloseFile();
@@ -108,14 +112,10 @@ private slots:
 
   void slotSettingsChanged();
 private:
-  //void setupConfiguration();
   void setupStatusBar();
   void setupActions();
   void createWidgets();
   void loadSites();
-
-  //void saveCurrentPath();
-  void openFile(const KURL& url);
 
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;
@@ -130,6 +130,7 @@ private:
   //KTextEditor::EditInterface *m_edOutput;
 
   KSelectAction      *m_siteAction;
+  KSelectAction      *m_defaultScriptAction;
   KStatusBar         *m_statusBar;
   KRecentFilesAction *m_actionRecent;
 

@@ -66,7 +66,7 @@
 
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 //     : KMainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
-  : KParts::MainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
+    : KParts::MainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
 {
   if(!name) { setName("MainWindow"); }
 
@@ -89,9 +89,6 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
-
-  connect(m_siteAction, SIGNAL(activated(const QString&)),
-          ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
 
   loadSites();
 
@@ -163,12 +160,26 @@ void MainWindow::setupActions()
   KStdAction::configureToolbars(this, SLOT(slotEditToolbars()), actionCollection());
   KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
-  m_siteAction = new KSelectAction("Site", 0, actionCollection(), "site");
+  m_siteAction     = new KSelectAction("Site", 0, actionCollection(), "site_selection");
+
+  connect(m_siteAction, SIGNAL(activated(const QString&)),
+          ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+
+  m_defaultScriptAction = new KSelectAction("Default script", 0, actionCollection(), "default_script");
+  QStringList l;
+  l << "Site Script" << "Active Script";
+  m_defaultScriptAction->setItems(l);
+  m_defaultScriptAction->setCurrentItem(0);
+
+//   connect(m_defaultScriptAction, SIGNAL(activated(int)),
+//           this, SLOT(slotDefaultScriptChanged(int)));
+
+
   //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
-  //                     SLOT(slotDebugRun()), actionCollection(), "script_run");
+  //                     SLOT(slotDebugStart()), actionCollection(), "script_run_current_script");
 
   (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", m_debugger_manager,
-                    SLOT(slotDebugRun()), actionCollection(), "debug_start");
+                    SLOT(slotDebugStart()), actionCollection(), "debug_start");
 
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
@@ -183,7 +194,7 @@ void MainWindow::setupActions()
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
   (void)new KAction(i18n("Profile (EXPERIMENTAL)"), "", "Alt+P", m_debugger_manager,
-    SLOT(slotProfile()), actionCollection(), "profile");
+                    SLOT(slotProfile()), actionCollection(), "profile");
 
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
@@ -299,6 +310,11 @@ MainWindow::~MainWindow()
   delete m_debugger_manager;
 }
 
+int MainWindow::preferredScript()
+{
+  return m_defaultScriptAction->currentItem();
+}
+
 void MainWindow::slotSettingsChanged()
 {
   loadSites();
@@ -311,9 +327,24 @@ void MainWindow::openFile()
 
 void MainWindow::slotOpenFile()
 {
+  //Show KFileDialog on the current Site's "local base dir" or
+  //use ::protoeditor to retrieve the last folder used
+
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  QString location;
+  if(currentSite)
+  {
+    location = currentSite->localBaseDir();
+  }
+  else
+  {
+    location = ":protoeditor";
+  }
+
+  //note: the filter must be the same as SiteSettingsDialog::SiteSettingsDialog default file
   QStringList strList =
     KFileDialog::getOpenFileNames(
-      ":protoeditor", "*.php", this);
+      location, "*.php| PHP Scripts\n*|All Files", this);
 
   if(strList.count())
   {
@@ -329,15 +360,15 @@ void MainWindow::openFile(const KURL& url)
   KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
   if(file.isReadable())
   {
-    m_tabEditor->openDocument(url);
-    m_actionRecent->addURL(url);
-
+    if(m_tabEditor->openDocument(url))
+    {
+      m_actionRecent->addURL(url);
+      return;
+    }
   }
-  else
-  {
-    m_actionRecent->removeURL(url);
-    showSorry(url.prettyURL() + " is unreadable.");
-  }
+  
+  m_actionRecent->removeURL(url);
+  showSorry(QString("\"") + url.prettyURL() + "\" is unreadable.");
 }
 
 
@@ -366,7 +397,21 @@ void MainWindow::slotSaveFile()
 
 void MainWindow::slotSaveFileAs()
 {
-  KURL url = KFileDialog::getSaveURL(":protoeditor", "*.php", this);
+  //Show KFileDialog on the current Site's "local base dir" or
+  //use ::protoeditor to retrieve the last folder used
+
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  QString location;
+  if(currentSite)
+  {
+    location = currentSite->localBaseDir();
+  }
+  else
+  {
+    location = ":protoeditor";
+  }
+
+  KURL url = KFileDialog::getSaveURL(location, QString::null, this);
 
   if(!url.isEmpty())
   {
