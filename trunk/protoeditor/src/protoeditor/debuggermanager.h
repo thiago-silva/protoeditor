@@ -56,7 +56,8 @@ public:
 
 public slots:
   void slotConfigurationChanged();
-
+  void slotGotoLineAtFile(const QString&, int);
+  
 private slots:
   /* Application - DebuggerManager */
 
@@ -77,7 +78,6 @@ private slots:
   void slotBreakpointCreated(DebuggerBreakpoint*);
   void slotBreakpointChanged(DebuggerBreakpoint*);
   void slotBreakpointRemoved(DebuggerBreakpoint*);
-  void slotGotoLineAtFile(const QString&, int);
   void slotWatchRemoved(Variable*);
   void slotNoDocument();
   

@@ -30,6 +30,7 @@
 #include "phpdefs.h"
 // #include "dbgprofile.h"
 #include "dbgprofiledialog.h"
+#include "dbgprofilelistview.h"
 #include "dbgprofiledata.h"
 
 #include "protoeditorsettings.h"
@@ -332,7 +333,9 @@ DBGProfileDialog* DebuggerDBG::profileDialog()
   if(!m_profileDialog)
   {
     m_profileDialog = new DBGProfileDialog(0, "profile");
-    //     connect(m_profileDialog, SIGNAL(sigClose()), manager(), SLOT(slotProfileDialogClosed()));
+    
+    connect(m_profileDialog->listview(), SIGNAL(sigDoubleClick(const QString&, int)),
+            manager(), SLOT(slotGotoLineAtFile(const QString&, int )));
   }
 
   return m_profileDialog;

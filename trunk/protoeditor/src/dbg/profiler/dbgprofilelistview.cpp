@@ -157,6 +157,10 @@ DBGProfileListView::DBGProfileListView(QWidget *parent, const char *name)
   setColumnAlignment(TotalCol, Qt::AlignHCenter);
   setColumnAlignment(MinCol, Qt::AlignHCenter);
   setColumnAlignment(MaxCol, Qt::AlignHCenter);
+
+  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )),
+          this, SLOT(slotDoubleClick(QListViewItem *, const QPoint &, int )));
+  
 }
 
 
@@ -286,6 +290,17 @@ void DBGProfileListView::reloadList()
   {
     addToList(*it);
   }
+}
+
+void DBGProfileListView::slotDoubleClick(QListViewItem * item, const QPoint &, int)
+{
+  if(item->parent() == 0) return;
+  
+  DBGProfileListViewItem* vitem =
+      dynamic_cast<DBGProfileListViewItem*>(item);
+  
+  emit sigDoubleClick(vitem->data()->location()->moduleName(),
+                      vitem->data()->location()->line());
 }
 
 #include "dbgprofilelistview.moc"

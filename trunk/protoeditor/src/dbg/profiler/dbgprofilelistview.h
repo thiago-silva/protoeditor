@@ -27,20 +27,21 @@ class DBGProfileData;
 
 class DBGProfileListViewItem : public KListViewItem
 {
-  public:
-    DBGProfileListViewItem(KListView *parent, DBGProfileData* data, int view);
-    DBGProfileListViewItem(KListViewItem *parent, DBGProfileData* data, int view);
-    ~DBGProfileListViewItem();
+public:
+  DBGProfileListViewItem(KListView *parent, DBGProfileData* data, int view);
+  DBGProfileListViewItem(KListViewItem *parent, DBGProfileData* data, int view);
+  ~DBGProfileListViewItem();
 
-    DBGProfileListViewItem* lastItem();
+  DBGProfileListViewItem* lastItem();
 
-    DBGProfileData* data();
-  private:
-    bool isRoot();
-    void loadData(int view);
-    void calculateTotalTime();
+  DBGProfileData* data();
 
-    DBGProfileData* m_data;
+private:
+  bool isRoot();
+  void loadData(int view);
+  void calculateTotalTime();
+
+  DBGProfileData* m_data;
 };
 
 //------------------------------------------------------------------------------
@@ -60,12 +61,19 @@ public:
   int view();
 
   void addData(DBGProfileData*);
+
+signals:
+    void sigDoubleClick(const QString& filePath, int line);
+    
+private slots:
+  void slotDoubleClick(QListViewItem *, const QPoint &, int );
+  
 private:
   DBGProfileListViewItem* getRootItem(DBGProfileData* data);
   DBGProfileListViewItem* getModuleRootItem(int modid);
   DBGProfileListViewItem* getContextRootItem(int ctxid);
   QListViewItem* lastRootItem();
-  
+
   void addToList(DBGProfileData* data);
   void reloadList();
 
