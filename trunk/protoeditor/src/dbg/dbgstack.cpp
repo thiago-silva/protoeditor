@@ -17,66 +17,66 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #include "dbgstack.h"
 #include "debuggerstack.h"
-#include "dbgtags.h"
-#include "dbgfileinfo.h"
 
 DBGStack::DBGStack()
-  :   m_stack(0)
-{
-}
+  : m_ready(false)
+{}
 
 DBGStack::~DBGStack()
+{}
+
+void DBGStack::add(dbgint modno, QString descr, dbgint lineno, dbgint scopeid)
 {
+  StackInfo info;
+  info.line = lineno;
+  info.function = descr;
+  info.modNo = modno;
+  info.scopeId = scopeid;
+  m_stackInfoList.push_front(info);
 }
 
-void DBGStack::setStackTagList(DBGResponsePack::StackTagList_t list)
+void DBGStack::setModulePath(dbgint modno, QString filePath)
 {
-
-  DBGResponsePack::StackTagPair_t p;
-  DBGResponseTagStack* stackTag;
-  DBGTagRawdata* rawTag;
-
-  DBGResponsePack::StackTagList_t::iterator it;
-  for(it = list.begin(); it != list.end(); ++it) {
-    stackTag = (*it).first;
-    rawTag = (*it).second;
-
-    StackInfo info;
-    info.line = stackTag->lineNo();
-    info.function = rawTag->data();
-    info.modNo = stackTag->modNo();
-    info.scopeId = stackTag->scopeId();
-    m_stackInfoList.push_front(info);
+  QValueList<StackInfo>::iterator it;
+  for(it = m_stackInfoList.begin(); it != m_stackInfoList.end(); ++it)
+  {
+    if((*it).modNo == modno)
+    {
+      (*it).filePath = filePath;
+      //break; do not break. We may have many execpoints on a single file
+    }
   }
+
+  //now that we are setting the filepaths correctly (from the srctree request),
+  //we can build the stack
+  m_ready = true;
 }
 
 void DBGStack::clear()
 {
+  m_ready = false;
   m_stackInfoList.clear();
 }
 
-DebuggerStack* DBGStack::debuggerStack(DBGFileInfo* dbgFileInfo)
+bool DBGStack::ready()
 {
-  if(m_stack) {
-    return m_stack;
-  }
+  return m_ready;
+}
 
-  DebuggerStack* m_stack = new DebuggerStack();
-
-  QString function;
+DebuggerStack* DBGStack::debuggerStack()
+{
+  DebuggerStack* stack = new DebuggerStack();
 
   QValueList<StackInfo>::iterator it;
-
-  for(it = m_stackInfoList.begin(); it != m_stackInfoList.end(); ++it) {
-    if(((*it).function).find("::") == -1) {
-      function = (*it).function;
-    } else {
-      function = "main()";
-    }
-    m_stack->push((*it).scopeId, dbgFileInfo->localFilePath((*it).modNo), (*it).line, function);
+  for(it = m_stackInfoList.begin(); it != m_stackInfoList.end(); ++it)
+  {
+    stack->push((*it).scopeId, (*it).filePath, (*it).line, (*it).function);
   }
-  return m_stack;
+
+  //be ready for the next
+  clear();
+
+  return stack;
 }

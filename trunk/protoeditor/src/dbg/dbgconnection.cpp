@@ -21,11 +21,10 @@
 
 #include "dbgconnection.h"
 #include <qsocket.h>
-//#include <qsocketdevice.h>
 #include <klocale.h>
 
 DBGConnection::DBGConnection(const QHostAddress& host, int port, QObject * parent, const char * name)
- : QServerSocket(host, port, 1, parent, name), m_currentSocket(0)
+    : QServerSocket(host, port, 1, parent, name), m_currentSocket(0)
 {
   m_listening = ok();
 }
@@ -35,7 +34,8 @@ DBGConnection::~DBGConnection()
   clearSocket();
 }
 
-void DBGConnection::clearSocket() {
+void DBGConnection::clearSocket()
+{
   if(m_currentSocket) {
     delete m_currentSocket;
     m_currentSocket = NULL;
@@ -43,7 +43,8 @@ void DBGConnection::clearSocket() {
   }
 }
 
-void DBGConnection::newConnection(int socket) {
+void DBGConnection::newConnection(int socket)
+{
   clearSocket();
 
 
@@ -62,23 +63,29 @@ void DBGConnection::slotClosed()
   clearSocket();
 }
 
-void DBGConnection::slotError(int errno) {
+void DBGConnection::slotError(int errno)
+{
   switch(errno) {
-    case QSocket::ErrConnectionRefused:
-      emit sigError(QString("Connection refused"));
-      break;
-    case QSocket::ErrHostNotFound:
-      emit sigError(QString("Host not found"));
-      break;
-    case QSocket::ErrSocketRead:
-      emit sigError(QString("Error reading network data"));
-      break;
+  case QSocket::ErrConnectionRefused:
+    emit sigError(QString("Connection refused"));
+    break;
+  case QSocket::ErrHostNotFound:
+    emit sigError(QString("Host not found"));
+    break;
+  case QSocket::ErrSocketRead:
+    emit sigError(QString("Error reading network data"));
+    break;
   }
 }
 
 bool DBGConnection::listening()
 {
   return m_listening;
+}
+
+void DBGConnection::closeClient()
+{
+  clearSocket();
 }
 
 

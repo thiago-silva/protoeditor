@@ -22,53 +22,59 @@
 
 DBGConfiguration::DBGConfiguration(const QString& localBaseDir, const QString& serverBaseDir,
                                    int listenPort, const QString& serverHost)
-  : m_localBaseDir(localBaseDir), m_serverBaseDir(serverBaseDir), m_listenPort(listenPort),
-    m_serverHost(serverHost)
-{
-}
+  : m_localBaseDir(localBaseDir), m_serverBaseDir(serverBaseDir),
+    m_listenPort(listenPort), m_serverHost(serverHost)
+{}
 
 DBGConfiguration::~DBGConfiguration()
-{
-}
+{}
 
-void DBGConfiguration::setLocalBaseDir(const QString& localBaseDir) {
+void DBGConfiguration::setLocalBaseDir(const QString& localBaseDir)
+{
   m_localBaseDir = localBaseDir;
   if(m_localBaseDir.at(m_localBaseDir.length()-1) == '/') {
     m_localBaseDir.remove(m_localBaseDir.length()-1, 1);
   }
 }
 
-void DBGConfiguration::setServerBaseDir(const QString& serverBaseDir) {
+void DBGConfiguration::setServerBaseDir(const QString& serverBaseDir)
+{
   m_serverBaseDir = serverBaseDir;
   if(m_serverBaseDir.at(m_serverBaseDir.length()-1) == '/') {
     m_serverBaseDir.remove(m_serverBaseDir.length()-1, 1);
   }
 }
 
-void DBGConfiguration::setListenPort(int port) {
+void DBGConfiguration::setListenPort(int port)
+{
   m_listenPort = port;
 }
 
-void DBGConfiguration::setServerHost(const QString& host) {
+void DBGConfiguration::setServerHost(const QString& host)
+{
   m_serverHost = host;
   if(m_serverHost.at(m_serverHost.length()-1) == '/') {
-    m_serverHost.remove(m_serverHost.length()-1, 1);
+    m_serverHost.remove(host.length()-1, 1);
   }
 }
 
-const QString& DBGConfiguration::localBaseDir() {
+const QString& DBGConfiguration::localBaseDir() const
+{
   return m_localBaseDir;
 }
 
-const QString& DBGConfiguration::serverBaseDir() {
+const QString& DBGConfiguration::serverBaseDir() const
+{
   return m_serverBaseDir;
 }
 
-int DBGConfiguration::listenPort() {
+int DBGConfiguration::listenPort() const
+{
   return m_listenPort;
 }
 
-const QString& DBGConfiguration::serverHost() {
+const QString& DBGConfiguration::serverHost() const
+{
   return m_serverHost;
 }
 

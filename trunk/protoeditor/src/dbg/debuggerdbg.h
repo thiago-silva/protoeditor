@@ -18,119 +18,73 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef DEBUGGERDBG_H
 #define DEBUGGERDBG_H
 
 #include "abstractdebugger.h"
-#include "dbgresponsepack.h"
-#include <qmap.h>
 #include <qvaluelist.h>
-#include <qptrlist.h>
 
-class DBGConfiguration;
 class DebuggerManager;
-
-class DBGRequestor;
-class DBGReceiver;
-class DBGConnection;
-class DBGResponseTagStack;
-class DBGResponseTagVersion;
-class DBGResponseTagSid;
-class DBGTagRawdata;
-class DBGResponseTagEval;
-class DBGResponsePack;
-class DBGTagBreakpoint;
-class DBGResponseTagLog;
-class DBGResponseTagError;
+class DBGConfiguration;
+class DBGNet;
 class DebuggerStack;
-class DBGStack;
-class QSocket;
-class DebuggerBreakpoint;
-class DBGFileInfo;
+class PHPVariable;
 
 class DebuggerDBG : public AbstractDebugger
 {
 Q_OBJECT
 public:
-  DebuggerDBG(DebuggerManager* manager);
-  ~DebuggerDBG();
+  DebuggerDBG(DebuggerManager*);
+  virtual ~DebuggerDBG();
+
+  /* Interface of AbstractDebugger */
+
+  virtual QString name()   const;
+  virtual int     id() const;
+
+  virtual bool isSessionActive() const;
+  virtual bool isRunning() const;
+
+  virtual void reloadConfiguration();
 
   virtual void startSession();
   virtual void endSession();
-  virtual void run(QString);
+  virtual void run(const QString&);
   virtual void stop();
   virtual void stepInto();
   virtual void stepOver();
   virtual void stepOut();
-  virtual QString name();
-  virtual void loadConfiguration();
 
-  virtual void addBreakpoints(QPtrList<DebuggerBreakpoint>);
+  virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
   virtual void addBreakpoint(DebuggerBreakpoint*);
-  //virtual void addBreakpoint(QString, int);
+  virtual void addBreakpoint(const QString&, int);
   virtual void changeBreakpoint(DebuggerBreakpoint*);
   virtual void removeBreakpoint(DebuggerBreakpoint*);
+  virtual void modifyVariable(Variable* v, DebuggerExecutionPoint* execPoint);
 
+  virtual void requestLocalVariables(DebuggerExecutionPoint*);
+  virtual void addWatch(const QString& expression, DebuggerExecutionPoint* execPoint);
+  virtual void removeWatch(const QString& expression);
+  virtual void requestWatches(DebuggerExecutionPoint*);
 
-  virtual void requestLocalVariables(DebuggerExecutionLine* stackContext);
-  virtual void modifyVariable(Variable*, DebuggerExecutionLine*);
-
-  virtual void addWatch(QString , DebuggerExecutionLine*);
-  virtual void removeWatch(QString expression);
-  virtual void requestWatches(DebuggerExecutionLine* stackContext);
-
-  void receivePack(DBGResponsePack* pack);
+  /* Internal use (provided for DBGNet use) */
+  void updateStack(DebuggerStack*);
+  void updateVar(const QString& result, const QString& str, const QString& error, long scope);
+  void updateWatch(const QString& result, const QString& str, const QString& error);
 
 public slots:
-  void slotError(const QString&);
-  void slotIncomingConnection(QSocket* socket);
-  void slotConnectionClosed();
+  void slotInternalError(const QString&);
+  void slotDBGStarted();
+  void slotDBGClosed(); //end of debug
 
 private:
-  //void initListener();
+  bool                m_isSessionActive;
+  bool                m_isRunning;
 
-  void requestData();
-  void requestGlobalVariables();
-  //void requestBreakpoints();
+  DBGConfiguration   *m_configuration;
 
-
-  void updateSessionInfo(DBGResponseTagSid* sid, DBGTagRawdata* raw);
-  void updateDebuggerVersion(DBGResponseTagVersion* version, DBGTagRawdata* raw);
-
-  void updateBreakpoints(DBGResponsePack::BpTagMap_t bpMap);
-  void sendBreakpoint(DBGTagBreakpoint* bpTag, DBGTagRawdata* fileraw, DBGTagRawdata* condraw);
-
-  void updateVariables(DBGResponseTagEval* eval, DBGTagRawdata* result , DBGTagRawdata* istr, DBGTagRawdata* error);
-  void updateStack();
-
-  void showLog(DBGResponseTagLog* log, DBGTagRawdata* rawmod, DBGTagRawdata* rawlog);
-  void showError(DBGResponseTagError* error, DBGTagRawdata* raw);
-
-  void stopDebugger();
-
-  void clearConnection();
-  void internalError(QString error);
-
-  //DebuggerBreakpoint* breakpoint(int id);
-
-  DBGConnection     *m_con;
-  DBGReceiver       *m_receiver;
-  DBGRequestor      *m_requestor;
-
-  DBGConfiguration  *m_configuration;
-  DBGStack          *m_dbgStack;
-  DBGFileInfo       *m_dbgFileInfo;
-
-  int                m_currentSessionId;
-  bool               m_initialized;
-  QValueList<bool>   m_varScopeRequestList; //so we know wich context the vars belong
-
-  QValueList<QString>          m_wathcesList;
-  //QPtrList<VariableValue>      m_indexedVarList; //backup to use with watches
-
-  //QPtrList<DebuggerBreakpoint> m_bpList;
-
+  DBGNet             *m_net;
+  QValueList<QString> m_wathcesList;
 };
 
 

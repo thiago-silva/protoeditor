@@ -25,36 +25,37 @@
 
 class DBGHeader;
 class DBGFrame;
-class DBGBaseTag;
+class DBGResponseTag;
 class DBGPack;
 class QSocket;
-class DebuggerDBG;
+class DBGNet;
 
 class DBGReceiver : public QObject
 {
 Q_OBJECT
 public:
-    DBGReceiver(DebuggerDBG* debugger, QObject *parent = 0, const char *name = 0);
+    DBGReceiver(DBGNet* net, const char *name = 0);
     ~DBGReceiver();
 
     void setSocket(QSocket* socket);
-
+    void clear();
+    void readBuffer();
 signals:
   void receiverError(const QString&);
 
-public slots:
+private slots:
   void slotReadBuffer();
 
 private:
-  void        syncBuffer();
-  DBGHeader*  readHeader();
-  DBGFrame*   readFrame();
-  DBGBaseTag* buildTag(int frameName, char* buffer);
-  char*       readData(long len);
-  void        dispatch(DBGPack* pack);
+  void            syncBuffer();
+  DBGHeader*      readHeader();
+  DBGFrame*       readFrame();
+  DBGResponseTag* buildTag(int frameName, char* buffer);
+  char*           readData(long len);
+  void            dispatch(DBGPack* pack);
 
   QSocket    *m_socket;
-  DebuggerDBG *m_debugger;
+  DBGNet     *m_net;
 };
 
 #endif

@@ -24,11 +24,11 @@
 #include <qptrlist.h>
 #include <qstring.h>
 
-class DebuggerExecutionLine {
+class DebuggerExecutionPoint {
 public:
-  DebuggerExecutionLine();
-  DebuggerExecutionLine(int id, QString filePath, int line, QString function);
-  ~DebuggerExecutionLine();
+  DebuggerExecutionPoint();
+  DebuggerExecutionPoint(int id, QString filePath, int line, QString function);
+  ~DebuggerExecutionPoint();
 
   void setId(int);
   int  id();
@@ -52,17 +52,17 @@ private:
 
 class DebuggerStack{
 public:
-  typedef QPtrList<DebuggerExecutionLine> DebuggerExecutionLineList_t;
+  typedef QPtrList<DebuggerExecutionPoint> DebuggerExecutionPointList_t;
   DebuggerStack();
   ~DebuggerStack();
 
   void push(int id, QString filePath, int line, QString function);
-  void push(DebuggerExecutionLine*);
+  void push(DebuggerExecutionPoint*);
 
-  DebuggerExecutionLine* topExecutionLine();
-  DebuggerExecutionLineList_t debuggerExecutionLineList();
+  DebuggerExecutionPoint* topExecutionPoint();
+  DebuggerExecutionPointList_t DebuggerExecutionPointList();
 private:
-  DebuggerExecutionLineList_t m_execLineList;
+  DebuggerExecutionPointList_t m_execPointList;
 };
 
 #endif

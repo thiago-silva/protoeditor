@@ -23,6 +23,7 @@
 
 #include "debuggerbreakpoint.h"
 #include "dbg_defs.h"
+#include "dbgnetdata.h"
 #include "dbgrequestpack.h"
 #include "dbgrequestpackbuilder.h"
 
@@ -32,7 +33,7 @@
 #include <kdebug.h>
 
 DBGRequestor::DBGRequestor()
-  : QObject(), m_socket(NULL), m_terminating(false)
+    : QObject(), m_socket(NULL), m_http(0), m_headerFlags(0) /*, m_terminating(false)*/
 {
   m_http = new QHttp;;
   connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
@@ -40,9 +41,8 @@ DBGRequestor::DBGRequestor()
 
 DBGRequestor::~DBGRequestor()
 {
-  m_terminating = true;
+  //m_terminating = true;
   delete m_http;
-  //deletePacks();
 }
 
 void DBGRequestor::requestContinue()
@@ -50,8 +50,10 @@ void DBGRequestor::requestContinue()
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildCommand(DBGA_CONTINUE);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStop()
@@ -59,8 +61,10 @@ void DBGRequestor::requestStop()
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildCommand(DBGA_STOP);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStepInto()
@@ -68,8 +72,10 @@ void DBGRequestor::requestStepInto()
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildCommand(DBGA_STEPINTO);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStepOver()
@@ -77,8 +83,10 @@ void DBGRequestor::requestStepOver()
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildCommand(DBGA_STEPOVER);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //clearPack(requestPack);
 }
 
 void DBGRequestor::requestStepOut()
@@ -86,8 +94,10 @@ void DBGRequestor::requestStepOut()
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildCommand(DBGA_STEPOUT);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestWatch(const QString& expression,int scope_id)
@@ -95,32 +105,43 @@ void DBGRequestor::requestWatch(const QString& expression,int scope_id)
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildWatch(expression, scope_id);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
-void DBGRequestor::requestBreakpoint(int modno, DebuggerBreakpoint* bp) {
+void DBGRequestor::requestBreakpoint(int modno, DebuggerBreakpoint* bp)
+{
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(modno, bp);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
-void DBGRequestor::requestBreakpointList(int bpno) {
+void DBGRequestor::requestBreakpointList(int bpno)
+{
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpointList(bpno);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
-void DBGRequestor::requestBreakpointRemoval(DebuggerBreakpoint* bp) {
+void DBGRequestor::requestBreakpointRemoval(DebuggerBreakpoint* bp)
+{
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildDeletedBreakpoint(bp->id());
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestVariables(int scope_id)
@@ -128,8 +149,10 @@ void DBGRequestor::requestVariables(int scope_id)
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildVars(scope_id);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
 void DBGRequestor::requestSrcTree()
@@ -137,16 +160,21 @@ void DBGRequestor::requestSrcTree()
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildSrcTree();
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
-void DBGRequestor::requestOptions(int op) {
+void DBGRequestor::requestOptions(int op)
+{
   if(!m_socket) return;
 
   DBGRequestPack* requestPack = DBGRequestPackBuilder::buildOptions(op);
+  requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
-  clearPack(requestPack);
+  delete requestPack;
+  //   clearPack(requestPack);
 }
 
 void DBGRequestor::makeHttpRequest(const QString& host, const QString& path, int listenPort, int sessionId)
@@ -154,9 +182,9 @@ void DBGRequestor::makeHttpRequest(const QString& host, const QString& path, int
   //trigger the DBG server sending a http request to the web server
 
   QString reqUrl = path + "?DBGSESSID="
-                       + QString::number(sessionId)
-                       + "@clienthost:"
-                       + QString::number(listenPort);
+                   + QString::number(sessionId)
+                   + "@clienthost:"
+                   + QString::number(listenPort);
 
   kdDebug() << "Requesting \"" << reqUrl << "\" from " + host << endl;
 
@@ -164,16 +192,28 @@ void DBGRequestor::makeHttpRequest(const QString& host, const QString& path, int
   m_http->get(reqUrl);
 }
 
+void DBGRequestor::addHeaderFlags(dbgint flags) {
+  m_headerFlags |= flags;
+}
+
 void DBGRequestor::setSocket(QSocket* socket)
 {
   m_socket = socket;
-  if(m_socket) {
-    connect(m_socket, SIGNAL(connectionClosed()), this, SLOT(slotClosed()));
-  }
+  //if(m_socket) {
+  //connect(m_socket, SIGNAL(connectionClosed()), this, SLOT(slotClosed()));
+  //}
 }
 
-void DBGRequestor::slotHttpDone(bool error) {
-  if(error) {
+void DBGRequestor::clear()
+{
+  m_socket = NULL;
+}
+
+void DBGRequestor::slotHttpDone(bool error)
+{
+  if(error)
+  {
+    //TODO: make requestorError(QString title, QString msg);
     emit requestorError(i18n("HTTP Conection error: " + m_http->errorString()));
   }
 }
@@ -186,10 +226,7 @@ void DBGRequestor::flushData() {
 }
 */
 
-void DBGRequestor::slotClosed() {
-  deletePacks();
-}
-
+/*
 void DBGRequestor::deletePacks() {
   DBGRequestPack* p;
   for(p = m_deleteList.first(); p; p = m_deleteList.next()) {
@@ -198,15 +235,13 @@ void DBGRequestor::deletePacks() {
 
   m_deleteList.clear();
 }
+*/
 
+/*
 void DBGRequestor::clearPack(DBGRequestPack* requestPack) {
-  /* FIXME: deleting requestPack is causing the app to crash when
-   * it was builded by this->requestWatch()
-   */
-
-  //delete requestPack;
-
   m_deleteList.append(requestPack);
 }
+*/
+
 
 #include "dbgrequestor.moc"

@@ -25,6 +25,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qptrlist.h>
+#include "dbg_defs.h"
 
 class DebuggerBreakpoint;
 class DBGRequestPack;
@@ -45,35 +46,27 @@ public:
   void requestWatch(const QString& expression, int scope_id);
   void requestVariables(int scope_id);
   void requestSrcTree();
-  void makeHttpRequest(const QString& host, const QString& path, int listenPort, int sessionId);
   void requestBreakpoint(int modno, DebuggerBreakpoint*);
   void requestBreakpointList(int bpno);
   void requestBreakpointRemoval(DebuggerBreakpoint* bp);
   void requestOptions(int op);
 
-  void setSocket(QSocket* socket);
+  void makeHttpRequest(const QString& host, const QString& path, int listenPort, int sessionId);
 
+  void addHeaderFlags(dbgint);
+  void setSocket(QSocket* socket);
+  void clear();
 private slots:
   void slotHttpDone(bool error);
-  void slotClosed();
-  //void slotBytesWritten(int bytes);
 
 signals:
   void requestorError(const QString& error);
 
 private:
-  void flushData();
-  void clearPack(DBGRequestPack*);
-  void deletePacks();
-  //making a list of DBGRequestPack because we can't delete the pack
-  //right after sending it.
-  //DBGRequestPack* m_requestPack;
-
-  QPtrList<DBGRequestPack> m_deleteList;
-
   QSocket      *m_socket;
   QHttp        *m_http;
-  bool          m_terminating;
+  dbgint        m_headerFlags;
+
 };
 
 #endif

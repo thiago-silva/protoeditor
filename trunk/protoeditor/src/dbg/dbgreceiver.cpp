@@ -20,12 +20,10 @@
 
 
 #include "dbgreceiver.h"
-#include "debuggerdbg.h"
+#include "dbgnet.h"
 #include "dbg_defs.h"
 #include "dbgresponsepack.h"
-#include "dbgheader.h"
-#include "dbgframe.h"
-#include "dbgtags.h"
+#include "dbgnetdata.h"
 
 
 #include <qsocket.h>
@@ -33,8 +31,8 @@
 #include <klocale.h>
 
 
-DBGReceiver::DBGReceiver(DebuggerDBG* debugger, QObject *parent, const char *name)
- : QObject(parent, name), m_socket(0), m_debugger(debugger)
+DBGReceiver::DBGReceiver(DBGNet* net, const char *name)
+ : QObject(net, name), m_socket(0), m_net(net)
 {
 }
 
@@ -50,6 +48,10 @@ void DBGReceiver::setSocket(QSocket* socket)
   }
 }
 
+void DBGReceiver::clear() {
+  m_socket = NULL;
+}
+
 void DBGReceiver::syncBuffer()
 {
   if(!m_socket || (m_socket->socket() == -1))  return;
@@ -60,18 +62,18 @@ void DBGReceiver::syncBuffer()
   delete data;
 }
 
-void DBGReceiver::slotReadBuffer()
-{
-  //this shouldn't happen...
-  if(!m_socket || (m_socket->socket() == -1))  return;
+void DBGReceiver::readBuffer() {
 
-  DBGResponsePack* pack = NULL;
-  DBGHeader* header     = NULL;
-  DBGFrame* frame       = NULL;
-  DBGBaseTag* tag       = NULL;
-  char* buffer          = NULL;
+  DBGResponsePack* pack   = NULL;
+  DBGHeader*       header = NULL;
+  DBGFrame*        frame  = NULL;
+  DBGResponseTag*  tag    = NULL;
+  char* buffer            = NULL;
 
-  while(m_socket->size()) {
+  while(m_socket && m_socket->size()) {
+
+    pack = new DBGResponsePack();
+
     if((header = readHeader()) == NULL) {
       break;
     }
@@ -81,11 +83,14 @@ void DBGReceiver::slotReadBuffer()
       break; //out of sync
     }
 
-    if(header->bodysize() <= 0) {
-      continue; //no body here
-    }
+    pack->setHeader(header);
 
-    pack = NULL;
+    /*
+    if(header->bodysize() <= 0) {
+      break; //no body here
+    }
+    */
+
     int total = 0;
 
     while(total < header->bodysize()) {
@@ -104,8 +109,6 @@ void DBGReceiver::slotReadBuffer()
         break;
       }
 
-      if(!pack) pack = new DBGResponsePack();
-
       pack->addTag(tag);
 
       total += DBGFrame::SIZE + frame->datasize();
@@ -116,21 +119,26 @@ void DBGReceiver::slotReadBuffer()
       buffer = NULL;
     }
 
-    if(pack)
-    {
-      m_debugger->receivePack(pack);
+    if(pack) {
+      m_net->receivePack(pack);
     }
 
-    delete header;
-    header = NULL;
     delete pack;
     pack = NULL;
   }
 }
 
+void DBGReceiver::slotReadBuffer()
+{
+  readBuffer();
+}
+
+
 
 DBGHeader*  DBGReceiver::readHeader()
 {
+  if(!m_socket) return NULL;
+
   char data[16];
   long ret;
   if((ret = m_socket->readBlock(data, 16)) != 16) {
@@ -142,6 +150,8 @@ DBGHeader*  DBGReceiver::readHeader()
 }
 DBGFrame* DBGReceiver::readFrame()
 {
+  if(!m_socket) return NULL;
+
   char data[8];
   int ret;
   if((ret = m_socket->readBlock(data, 8)) != 8) {
@@ -150,9 +160,9 @@ DBGFrame* DBGReceiver::readFrame()
     return new DBGFrame(data);
   }
 }
-DBGBaseTag* DBGReceiver::buildTag(int frameName, char* buffer)
+DBGResponseTag* DBGReceiver::buildTag(int frameName, char* buffer)
 {
-  DBGBaseTag* tag = NULL;
+  DBGResponseTag* tag = NULL;
   switch(frameName) {
     case FRAME_SID:
       tag = new DBGResponseTagSid(buffer);
@@ -173,7 +183,7 @@ DBGBaseTag* DBGReceiver::buildTag(int frameName, char* buffer)
       tag = new DBGResponseTagEval(buffer);
       break;
     case FRAME_SRC_TREE:
-      tag = new DBGResponseTagSrcLinesInfo(buffer);
+      tag = new DBGResponseTagSrcTree(buffer);
       break;
     case FRAME_LOG:
       tag = new DBGResponseTagLog(buffer);
@@ -182,13 +192,15 @@ DBGBaseTag* DBGReceiver::buildTag(int frameName, char* buffer)
       tag = new DBGResponseTagError(buffer);
       break;
     default:
-      kdDebug(24000) << "UNKNOW FRAME: " << QString::number(frameName) << endl;
+      emit receiverError("Error receiving network package.");
       break;
   }
   return tag;
 }
 char* DBGReceiver::readData(long bytesToRead)
 {
+  if(!m_socket) return NULL;
+
   /* Note: make sure there are the bytesToRead available
      before attempting to read.
   */
@@ -216,25 +228,6 @@ char* DBGReceiver::readData(long bytesToRead)
   }
 
   return data;
-
-/*
-  if((ret = m_socket->readBlock(data, len)) != len) {
-    while((available = m_socket->bytesAvailable()) == 0) {
-      available = m_socket->waitForMore(-1);
-      int ret2;
-      if((ret2 = m_socket->readBlock(&data[len], available)) == 0) {
-        return NULL;
-      }
-      ret += ret2;
-      while(
-    }
-
-    return NULL;
-  } else {
-    return data;
-  }
-*/
 }
-
 
 #include "dbgreceiver.moc"

@@ -21,89 +21,66 @@
 #ifndef ABSTRACTDEBUGGER_H
 #define ABSTRACTDEBUGGER_H
 
-#include <variable.h>
 #include <qobject.h>
 #include <qstring.h>
+//#include "variable.h"
 
 class DebuggerManager;
 class DebuggerBreakpoint;
-//class DebuggerConfigurations;
-class DebuggerExecutionLine;
+class DebuggerConfigurations;
+class DebuggerExecutionPoint;
 class DebuggerStack;
+class Variable;
 
 class AbstractDebugger : public QObject {
 Q_OBJECT
 public:
-  AbstractDebugger(DebuggerManager* manager, QObject *parent = 0, const char* name = 0);
-
-  AbstractDebugger(AbstractDebugger*); //copy ctor
-
+  AbstractDebugger(QObject *parent, const char* name = 0);
   virtual ~AbstractDebugger();
 
-  int id();
-  DebuggerManager* debuggerManager();
+  virtual QString name()   const = 0;
+  virtual int     id() const = 0;
 
-  bool isSessionActive();
-  bool isRunning();
+  virtual bool isSessionActive() const = 0;
+  virtual bool isRunning()       const = 0;
 
-  virtual void startSession() = 0;
-  virtual void endSession()   = 0;
-  virtual void run(QString)   = 0;
-  virtual void stop()         = 0;
-  virtual void stepInto()     = 0;
-  virtual void stepOver()     = 0;
-  virtual void stepOut()      = 0;
+  virtual void reloadConfiguration() = 0;
 
-  virtual QString name()      = 0;
-  virtual void loadConfiguration() = 0;
+  virtual void startSession()      = 0;
+  virtual void endSession()        = 0;
+  virtual void run(const QString&) = 0;
+  virtual void stop()              = 0;
+  virtual void stepInto()          = 0;
+  virtual void stepOver()          = 0;
+  virtual void stepOut()           = 0;
 
-  virtual void addBreakpoints(QPtrList<DebuggerBreakpoint>) = 0;
-  virtual void addBreakpoint(DebuggerBreakpoint*) = 0;
-  //virtual void addBreakpoint(QString, int) = 0;
+  virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&) = 0;
+  virtual void addBreakpoint(DebuggerBreakpoint*)               = 0;
+  virtual void addBreakpoint(const QString&, int)               = 0;
   virtual void changeBreakpoint(DebuggerBreakpoint*) = 0;
   virtual void removeBreakpoint(DebuggerBreakpoint*) = 0;
-  //virtual void requestBreakpointList() = 0;
 
-  virtual void requestLocalVariables(DebuggerExecutionLine* stackContext) = 0;
-  virtual void modifyVariable(Variable* v, DebuggerExecutionLine* stackContext) = 0;
+  virtual void requestLocalVariables(DebuggerExecutionPoint*)       = 0;
+  virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*) = 0;
 
-  //default stack context: global variables
-  virtual void addWatch(QString expression, DebuggerExecutionLine* stackContext = 0) = 0;
-  virtual void removeWatch(QString expression) = 0;
-  virtual void requestWatches(DebuggerExecutionLine* stackContext) = 0;
+  virtual void addWatch(const QString& expression, DebuggerExecutionPoint*) = 0;
+  virtual void removeWatch(const QString& expression) = 0;
+
+  //request the values of the watches on a given executionPoint
+  virtual void requestWatches(DebuggerExecutionPoint*) = 0;
+
+protected:
+  virtual DebuggerManager* manager();
 
 signals:
-
   void sigSessionStarted();
   void sigSessionEnded();
 
   void sigDebugStarted();
   void sigDebugEnded();
-  void sigVariablesChanged(VariablesList_t*, bool);
-  void sigStackChanged(DebuggerStack*);
-  void sigWatchChanged(Variable*);
-  void sigBreakpointChanged(DebuggerBreakpoint*);
 
-  //TODO: rename to sigMessage, sigOutput, sigError.
-
-  void sigDebugMessage(int, QString, int, QString);
-  void sigDebugOutput(QString);
-  void sigDebugError(QString); //Session debug error
-  void sigInternalError(QString);//Debugger internal error (conection, listen port, etc)
-
-
-protected:
-  void setId(int);
-  void setRunning(bool);
-  void setSessionActive(bool);
-
-private:
-  int m_id;
-
-  bool m_isSessionActive;
-  bool m_isRunning;
-
-  DebuggerManager* m_manager;
+  //Debugger client error (conection, listen port, etc)
+  void sigInternalError(const QString&);
 };
 
 #endif

@@ -18,14 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #include "dbgrequestpack.h"
 
 #include <qsocket.h>
-#include "dbgheader.h"
-#include "dbgframe.h"
 #include "dbg_defs.h"
-#include "dbgtags.h"
+#include "dbgnetdata.h"
 #include <kdebug.h>
 
 /*
@@ -39,7 +36,6 @@ DBGRequestPack::DBGRequestPack(int cmd)
 {
   m_header = new DBGHeader();
   m_header->setCmd(cmd);
-  m_header->setFlags(DBGF_WAITACK | DBGF_STARTED);
 }
 
 DBGRequestPack::~DBGRequestPack()

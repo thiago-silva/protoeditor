@@ -19,8 +19,65 @@
  ***************************************************************************/
 
 
+/***************************
+* from dbg_defs.h          *
+****************************/
+#ifndef DBG_DEFS
+#define DBG_DEFS
+
+typedef long dbgint;
+
+const int NET_SIZE_T = sizeof(int);
+
+const int DBG_API_MAJOR_VESION     = 0x02;
+const int DBG_API_MINOR_VESION     = 0x11;
+const int DBG_API_RELEASE_STAGE    = 0x3;   /* 0-dev, 1-beta, 2-prerelease, 3-release */
+const int DBG_API_MINOR_SUB_VESION = 0x30;
+
+const int DBG_DEFAULT_PORT = 7869; //default client listen port
+
+/*  tagSESSTYPE */
+const int DBG_COMPAT  = 0x0001;
+const int DBG_JIT     = 0x0002;
+const int DBG_REQ     = 0x0003;
+const int DBG_EMB     = 0x0004;
+
+/* debugger_flags */
+/* state: */
+const int DBGF_STARTED        = 0x0001;    /* debugger has been started */
+const int DBGF_FINISHED       = 0x0002;    /* DBGC_END notification has been sent */
+const int DBGF_WAITACK        = 0x0004;    /* awaiting replay|request */
+const int DBGF_UNSYNC         = 0x0008;    /* protocol has been unsynchronized */
+const int DBGF_REQUESTPENDING = 0x0010;    /* Debug session request pending */
+const int DBGF_REQUESTFOUND   = 0x0020;    /* Debug session request found */
+const int DBGF_REJECTIONFOUND = 0x0040;      /* DBGSESSID=-1 found - session rejection */
+/* execution:  */
+const int DBGF_STEPINTO       = 0x0100;    /* break on next script instruction */
+const int DBGF_STEPOVER       = 0x0200;    /* break on next script instruction on the same context */
+const int DBGF_STEPOUT        = 0x0400;    /* break on next script instruction on the outer context */
+const int DBGF_ABORT          = 0x0800;    /* stop instruction passed */
 
 const int DBGSYNC =  0x5953;
+
+
+/*
+  PHP ENGINE to DEBUGGER CLIENT WAY:
+*/
+
+/* php-engine commands/events */
+const int DBGC_REPLY          = 0x0000;    /* reply to previous DBGA_REQUEST request */
+const int DBGC_STARTUP        = 0x0001;    /* script startup */
+const int DBGC_END            = 0x0002;    /* script done */
+const int DBGC_BREAKPOINT     = 0x0003;    /* user definded breakpoint occured */
+const int DBGC_STEPINTO_DONE  = 0x0004;    /* step to the next statement is completed */
+const int DBGC_STEPOVER_DONE  = 0x0005;    /* step to the next statement is completed */
+const int DBGC_STEPOUT_DONE   = 0x0006;    /* step to the next statement is completed */
+const int DBGC_EMBEDDED_BREAK = 0x0007;    /* breakpoint caused by DebugBreak() function */
+const int DBGC_ERROR          = 0x0010;    /* error occured */
+const int DBGC_LOG            = 0x0011;    /* logging support */
+const int DBGC_SID            = 0x0012;    /* send SID */
+const int DBGC_PAUSE          = 0x0013;    /* pause current session as soon as possible */
+
 
 const int FRAME_STACK          =  100000;    /* "call:stack" - e.g. backtrace */
 const int FRAME_SOURCE         =  100100;    /* source text */
@@ -39,18 +96,12 @@ const int FRAME_PROF           =  101300;    /* profiler */
 const int FRAME_PROF_C         =  101400;    /* profiler counter/accuracy */
 const int FRAME_SET_OPT        =  101500;    /* set/update options */
 
+const int CURLOC_SCOPE_ID =  1;   /* nested locations are 2,3... and so on in backward order, so 2 represents most out-standing stack context*/
+const int GLOBAL_SCOPE_ID = -1;    /* it is global context, not stacked */
 
-const int TAG_STACK_SIZE          =  16;
-const int TAG_RAWDATA_SIZE        =  8;
-const int TAG_RES_EVAL_SIZE       =  12;
-const int TAG_REQ_EVAL_SIZE       =  8;
-const int TAG_BPS_SIZE            =  40;
-const int TAG_RES_BPL_SIZE        =  40;
-const int TAG_REQ_BPL_SIZE        =  4;
-const int TAG_VER_SIZE            =  12;
-const int TAG_SID_SIZE            =  8;
-const int FRAME_SET_OPT_SIZE      =  8;
-
+/*
+  DEBUGGER CLIENT to DBG SERVER WAY:
+*/
 
 /* debugger client makes acknowledgement */
 
@@ -62,53 +113,26 @@ const int DBGA_STEPOUT   =  0x8005;
 const int DBGA_IGNORE    =  0x8006;
 const int DBGA_REQUEST   =  0x8010;  /* debugger client requests some information from PHP engine */
 
-/** breakpoint states */
+
+/* TODO: from dbg_base_intf.h */
+
+/* breakpoint states */
 const int BPS_DELETED  = 0;
 const int BPS_DISABLED = 1;
 const int BPS_ENABLED  = 2;
 const int BPS_UNRESOLVED = 0x0100;
-
-/** session types */
-const int DBG_COMPAT  = 0x0001;
-const int DBG_JIT     = 0x0002;
-const int DBG_REQ     = 0x0003;
-const int DBG_EMB     = 0x0004;
-
-
-const int CURLOC_SCOPE_ID =  1;   /* nested locations are 2,3... and so on in backward order, so 2 represents most out-standing stack context*/
-const int GLOBAL_SCOPE_ID = -1;    /* it is global context, not stacked */
 
 /* Session flags */
 const long  SOF_BREAKONLOAD         = 0x0001;
 const long  SOF_BREAKONFINISH       = 0x0002;
 const long  SOF_MATCHFILESINLOWCASE = 0x0004;
 
-const long  SOF_SEND_LOGS   = 0x0010;
-const long  SOF_SEND_ERRORS   = 0x0020;
-const long  SOF_SEND_OUTPUT   = 0x0040;
+const long  SOF_SEND_LOGS             = 0x0010;
+const long  SOF_SEND_ERRORS           = 0x0020;
+const long  SOF_SEND_OUTPUT           = 0x0040;
 const long  SOF_SEND_OUTPUT_DETAILED  = 0x00080;
 
-/** TODO: from dbg_cli, file dbg_base_intf.h */
 #if 0
-typedef enum tagBR_REASON {
-    BR_UNKNOWN    = 0x0000, //
-    BR_STEPINTO     = 0x0001, // Caused by the stepping mode
-    BR_STEPOVER     = 0x0002, // Caused by the stepping mode
-    BR_STEPOUT      = 0x0003, // Caused by the stepping mode
-    BR_BREAKPOINT   = 0x0004, // Caused by an explicit breakpoint
-    BR_EMBEDDED     = 0x0005, // Caused by a scripted break e.g. DebugBreak()
-    BR_DEBUGGER_REQ = 0x0006, // Caused by debugger IDE requested break e.g. "Pause"
-    BR_START_SESSION= 0x1007, // Pseudo breakpoint
-    BR_END_SESSION  = 0x1008  // Pseudo breakpoint
-} BR_REASON;
-
-const long  ERR_ERROR   = 0x01;
-const long  ERR_WARNING   = 0x02;
-const long  ERR_PARSE   = 0x04;
-const long  ERR_NOTICE    = 0x08;
-const long  ERR_CORE_ERROR    = 0x10;
-const long  ERR_CORE_WARNING  = 0x20;
-
 
 typedef enum tagBP_ACTION{
     BP_ABORT = 0,   // Abort the application
@@ -118,13 +142,6 @@ typedef enum tagBP_ACTION{
     BP_STEP_OUT = 4,    // Step out of the current procedure
     BP_DELAY_HANDLING = 5,  // IDE didn't accept HandleBreakpoint request
 } BP_ACTION;
-
-typedef enum tagBPSTATE {
-    BPS_DELETED  = 0,
-    BPS_DISABLED = 1,
-    BPS_ENABLED  = 2,
-    BPS_UNRESOLVED = 0x0100
-} BPSTATE;
 
 
 /* Listener status */
@@ -183,21 +200,25 @@ typedef enum tagBP_ACTION{
     BP_DELAY_HANDLING = 5,  // IDE didn't accept HandleBreakpoint request
 } BP_ACTION;
 
-typedef enum tagBPSTATE {
-    BPS_DELETED  = 0,
-    BPS_DISABLED = 1,
-    BPS_ENABLED  = 2,
-    BPS_UNRESOLVED = 0x0100
-} BPSTATE;
 #endif
 
-const int DBGF_STARTED    =0x0001;    /* debugger has been started */
-const int DBGF_FINISHED   =0x0002;    /* DBGC_END notification has been sent */
-const int DBGF_WAITACK    =0x0004;    /* awaiting replay|request */
-const int DBGF_UNSYNC     =0x0008;    /* protocol has been unsynchronized */
-const int DBGF_REQUESTPENDING =0x0010;    /* Debug session request pending */
-const int DBGF_REQUESTFOUND =0x0020;    /* Debug session request found */
-const int DBGF_REJECTIONFOUND =0x0040;      /* DBGSESSID=-1 found - session rejection */
 
+/******************************************
+ * internal definitions (for request tags)*
+ ******************************************/
 
-const int DBG_DEFAULT_PORT = 7869; //default client listen port
+const int TAG_RAWDATA_SIZE            =  8;
+const int TAG_REQ_SOURCE_SIZE         =  8;
+const int TAG_REQ_BPL_SIZE            =  4;
+const int TAG_REQ_EVAL_SIZE           =  8;
+const int TAG_BPS_SIZE                =  40;
+const int TAG_REQ_SRCLINESINFO_SIZE   =  4;
+const int TAG_REQ_SRCCTXINFO_SIZE     =  4;
+const int TAG_REQ_PROF_SIZE           =  4;
+const int TAG_REQ_PROF_C              =  4;
+const int TAG_REQ_SET_OPT_SIZE        =  8; //for some reason, "4" here and DBG doesn't ack
+
+/* custom def, complements CURLOC_SCOPE_ID and GLOBAL_SCOPE_ID. Used on DBGNet */
+const int WATCH_SCOPE_ID = -2;
+
+#endif

@@ -17,36 +17,38 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifndef DBGSTACK_H
 #define DBGSTACK_H
+#include "dbg_defs.h"
 #include <qvaluelist.h>
-#include "dbgresponsepack.h"
 
 class DebuggerStack;
-class DBGFileInfo;
 
 class DBGStack {
 public:
   DBGStack();
   ~DBGStack();
 
-  void setStackTagList(DBGResponsePack::StackTagList_t);
+  void add(dbgint modno, QString descr, dbgint lineno, dbgint scopeid);
+
+  void setModulePath(dbgint modno, QString filePath);
+
   void clear();
 
-  DebuggerStack* debuggerStack(DBGFileInfo*);
+  bool ready();
 
+  DebuggerStack* debuggerStack();
 private:
+
   typedef struct {
     QString filePath;
     QString function;
-    int line;
-    int count;
-    int modNo;
-    int scopeId;
+    dbgint line;
+    dbgint modNo;
+    dbgint scopeId;
   } StackInfo;
 
-  DebuggerStack* m_stack;
+  bool m_ready;
   QValueList<StackInfo> m_stackInfoList; //temp used to get the filepaths
 };
 

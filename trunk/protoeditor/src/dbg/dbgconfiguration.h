@@ -35,15 +35,15 @@ public:
   void setListenPort(int);
   void setServerHost(const QString&);
 
-  const QString& localBaseDir();
-  const QString& serverBaseDir();
-  int     listenPort();
-  const QString& serverHost();
+  const QString& localBaseDir() const;
+  const QString& serverBaseDir() const;
+  int   listenPort() const;
+  const QString& serverHost() const;
 
 private:
   QString m_localBaseDir;
   QString m_serverBaseDir;
-  int m_listenPort;
+  int     m_listenPort;
   QString m_serverHost;
 };
 

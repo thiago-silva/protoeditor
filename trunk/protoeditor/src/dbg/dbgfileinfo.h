@@ -25,22 +25,23 @@
 
 class DBGConfiguration;
 
-class DBGFileInfo {
+class DBGFileInfo
+{
 public:
   DBGFileInfo(DBGConfiguration*);
   ~DBGFileInfo();
 
-  void loadFilePathInformation(DBGResponsePack::TreeStackList_t treeList);
+  //void loadFilePathInformation(DBGResponsePack::TreeStackList_t treeList);
 
-  QString localFilePath(int modno);
-  int moduleNumber(QString);
+  QString localFilePath(int modno) const;
+  int moduleNumber(const QString&) const;
 
   void setConfiguration(DBGConfiguration*);
   void clear();
 
 private:
   QMap<int, QString> m_fileMap;
-  DBGConfiguration* m_configuration;
+  DBGConfiguration*  m_configuration;
 };
 
 #endif

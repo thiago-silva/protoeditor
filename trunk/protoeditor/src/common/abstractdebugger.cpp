@@ -21,54 +21,17 @@
 #include "abstractdebugger.h"
 #include "debuggermanager.h"
 
-AbstractDebugger::AbstractDebugger(DebuggerManager* manager, QObject *parent, const char* name)
-  : QObject(parent, name), m_id(-1), m_isSessionActive(false), m_isRunning(false)
-  , m_manager(manager)
-{
+#include "abstractdebugger.h"
+#include "debuggermanager.h"
+
+AbstractDebugger::AbstractDebugger(QObject *parent, const char* name)
+  : QObject(parent, name) { }
+
+AbstractDebugger::~AbstractDebugger() {
 }
 
-AbstractDebugger::AbstractDebugger(AbstractDebugger* debugger)
-  : m_id(debugger->m_id), m_manager(debugger->m_manager)
-{
-}
-
-AbstractDebugger::~AbstractDebugger()
-{
-}
-
-void AbstractDebugger::setId(int id)
-{
-  m_id = id;
-}
-
-int AbstractDebugger::id()
-{
-  return m_id;
-}
-
-DebuggerManager* AbstractDebugger::debuggerManager()
-{
-  return m_manager;
-}
-
-bool AbstractDebugger::isSessionActive()
-{
-  return m_isSessionActive;
-}
-
-bool AbstractDebugger::isRunning()
-{
-  return m_isRunning;
-}
-
-void AbstractDebugger::setRunning(bool value)
-{
-  m_isRunning = value;
-}
-
-void AbstractDebugger::setSessionActive(bool value)
-{
-  m_isSessionActive = value;
+DebuggerManager* AbstractDebugger::manager() {
+  return dynamic_cast<DebuggerManager*>(parent());
 }
 
 #include "abstractdebugger.moc"

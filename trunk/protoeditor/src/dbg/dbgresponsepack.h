@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef DBGPACK_H
 #define DBGPACK_H
 
@@ -28,7 +27,7 @@
 #include <qmap.h>
 
 class DBGHeader;
-class DBGBaseTag;
+class DBGResponseTag;
 class DBGFrame;
 class DBGTagRawdata;
 class DBGResponseTagStack;
@@ -37,35 +36,28 @@ class DBGTagBreakpoint;
 
 class DBGResponsePack {
 public:
-
-  //the order of the elements for the stack is important so, not using a map
-  typedef QPair<DBGResponseTagStack*, DBGTagRawdata*> StackTagPair_t;
-  typedef QValueList<StackTagPair_t> StackTagList_t;
-
-  typedef QPair<DBGResponseTagSrcLinesInfo*, DBGTagRawdata*> TreeStackPair_t;
-  typedef QValueList<TreeStackPair_t> TreeStackList_t;
-
-  typedef QPair<DBGTagRawdata*, DBGTagRawdata*> RawPair_t;
-  typedef QMap<DBGTagBreakpoint*, RawPair_t> BpTagMap_t;
-
   DBGResponsePack();
   ~DBGResponsePack();
 
-  void addTag(DBGBaseTag* tag);
-  bool has(int framename);
+  void setHeader(DBGHeader*);
+  DBGHeader* header();
 
-  DBGBaseTag*    retrieve(int framename);
+  void addTag(DBGResponseTag* tag);
   DBGTagRawdata* retrieveRawdata(int id);
 
-  StackTagList_t   retrieveStackTagList();
-  BpTagMap_t       retrieveBpTagMap();
-  TreeStackList_t  retrieveTreeTagList();
+  void rewind();
+  DBGResponseTag* next();
 
+  //DBGBaseTag*    retrieve(int framename);
 
 private:
-  typedef QPtrList<DBGBaseTag> TagList_t;
+  int m_index;
 
-  TagList_t   m_baseTags;
+  DBGHeader* m_header;
+
+  typedef QPtrList<DBGResponseTag> TagList_t;
+
+  TagList_t   m_tags;
   TagList_t   m_rawTags;
 };
 

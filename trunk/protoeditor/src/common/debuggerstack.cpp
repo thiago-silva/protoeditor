@@ -21,56 +21,56 @@
 #include "debuggerstack.h"
 
 
-DebuggerExecutionLine::DebuggerExecutionLine()
+DebuggerExecutionPoint::DebuggerExecutionPoint()
   : m_id(0), m_filePath(), m_line(0), m_function(0)
 {
 }
 
-DebuggerExecutionLine::DebuggerExecutionLine(int id, QString filePath, int line, QString function)
+DebuggerExecutionPoint::DebuggerExecutionPoint(int id, QString filePath, int line, QString function)
   : m_id(id), m_filePath(filePath), m_line(line), m_function(function)
 {
 }
 
-DebuggerExecutionLine::~DebuggerExecutionLine()
+DebuggerExecutionPoint::~DebuggerExecutionPoint()
 {
 }
 
-void DebuggerExecutionLine::setId(int id)
+void DebuggerExecutionPoint::setId(int id)
 {
   m_id = id;
 }
 
-int DebuggerExecutionLine::id()
+int DebuggerExecutionPoint::id()
 {
   return m_id;
 }
 
-void DebuggerExecutionLine::setFilePath(QString filePath)
+void DebuggerExecutionPoint::setFilePath(QString filePath)
 {
   m_filePath = filePath;
 }
 
-QString DebuggerExecutionLine::filePath()
+QString DebuggerExecutionPoint::filePath()
 {
   return m_filePath;
 }
 
-void DebuggerExecutionLine::setLine(int line)
+void DebuggerExecutionPoint::setLine(int line)
 {
   m_line = line;
 }
 
-int DebuggerExecutionLine::line()
+int DebuggerExecutionPoint::line()
 {
   return m_line;
 }
 
-void DebuggerExecutionLine::setFunction(QString function)
+void DebuggerExecutionPoint::setFunction(QString function)
 {
   m_function = function;
 }
 
-QString DebuggerExecutionLine::function()
+QString DebuggerExecutionPoint::function()
 {
   return m_function;
 }
@@ -83,30 +83,30 @@ DebuggerStack::DebuggerStack()
 
 DebuggerStack::~DebuggerStack()
 {
-  DebuggerExecutionLine *execLine;
-  for(execLine = m_execLineList.first(); execLine; execLine = m_execLineList.next()) {
-    delete execLine;
+  DebuggerExecutionPoint *execPoint;
+  for(execPoint = m_execPointList.first(); execPoint; execPoint = m_execPointList.next()) {
+    delete execPoint;
   }
 }
 
 void DebuggerStack::push(int id, QString filePath, int line, QString function)
 {
-  DebuggerExecutionLine *execLine =
-    new DebuggerExecutionLine(id, filePath, line, function);
-  m_execLineList.prepend(execLine);
+  DebuggerExecutionPoint *execPoint =
+    new DebuggerExecutionPoint(id, filePath, line, function);
+  m_execPointList.prepend(execPoint);
 }
 
-void DebuggerStack::push(DebuggerExecutionLine* execLine)
+void DebuggerStack::push(DebuggerExecutionPoint* execPoint)
 {
-  m_execLineList.prepend(execLine);
+  m_execPointList.prepend(execPoint);
 }
 
-DebuggerExecutionLine* DebuggerStack::topExecutionLine()
+DebuggerExecutionPoint* DebuggerStack::topExecutionPoint()
 {
-  return m_execLineList.getFirst();
+  return m_execPointList.getFirst();
 }
 
-DebuggerStack::DebuggerExecutionLineList_t DebuggerStack::debuggerExecutionLineList()
+DebuggerStack::DebuggerExecutionPointList_t DebuggerStack::DebuggerExecutionPointList()
 {
-  return m_execLineList;
+  return m_execPointList;
 }

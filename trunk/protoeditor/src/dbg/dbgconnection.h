@@ -26,8 +26,9 @@
 
 class QSocket;
 
-class DBGConnection  : public QServerSocket {
-Q_OBJECT
+class DBGConnection  : public QServerSocket
+{
+  Q_OBJECT
 public:
   DBGConnection(const QHostAddress& host, int port, QObject * parent = 0, const char * name = 0);
   ~DBGConnection();
@@ -35,7 +36,7 @@ public:
   virtual void newConnection(int socket);
   bool listening();
 
-
+  void closeClient();
 private slots:
   void slotClosed();
   void slotError(int);

@@ -18,33 +18,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#error me
 #include "dbgfileinfo.h"
 #include "debuggerstack.h"
 #include "dbgtags.h"
 #include "dbgconfiguration.h"
 
 DBGFileInfo::DBGFileInfo(DBGConfiguration* conf)
-  : m_configuration(conf)
-{
-}
+    : m_configuration(conf)
+{}
 
 
 DBGFileInfo::~DBGFileInfo()
-{
-}
+{}
 
+/*
 void DBGFileInfo::loadFilePathInformation(DBGResponsePack::TreeStackList_t treeList)
 {
   m_fileMap.clear();
 
   DBGResponsePack::TreeStackList_t::iterator it;
-  for(it = treeList.begin(); it != treeList.end(); ++it)
-  {
+  for(it = treeList.begin(); it != treeList.end(); ++it) {
     m_fileMap[(*it).first->modNo()] = (*it).second->data();
   }
 }
+*/
 
-QString DBGFileInfo::localFilePath(int modno) {
+QString DBGFileInfo::localFilePath(int modno) const
+{
   QString remotefile = m_fileMap[modno];
 
   remotefile.remove(0, m_configuration->serverBaseDir().length());
@@ -53,7 +54,8 @@ QString DBGFileInfo::localFilePath(int modno) {
   return ret;
 }
 
-int DBGFileInfo::moduleNumber(QString remoteFilePath) {
+int DBGFileInfo::moduleNumber(const QString& remoteFilePath) const
+{
   QMap<int, QString>::Iterator it;
   for( it = m_fileMap.begin(); it != m_fileMap.end(); ++it ) {
     if(it.data() == remoteFilePath) {
@@ -64,10 +66,12 @@ int DBGFileInfo::moduleNumber(QString remoteFilePath) {
   return 0;
 }
 
-void DBGFileInfo::setConfiguration(DBGConfiguration* conf) {
+void DBGFileInfo::setConfiguration(DBGConfiguration* conf)
+{
   m_configuration = conf;
 }
 
-void DBGFileInfo::clear() {
+void DBGFileInfo::clear()
+{
   m_fileMap.clear();
 }

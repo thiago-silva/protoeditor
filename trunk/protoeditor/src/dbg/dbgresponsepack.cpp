@@ -18,50 +18,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #include "dbgresponsepack.h"
-#include "dbgtags.h"
-#include "dbgheader.h"
+#include "dbgnetdata.h"
 #include "dbg_defs.h"
 #include <qsocket.h>
 
 DBGResponsePack::DBGResponsePack()
-{
-}
+    : m_index(0), m_header(0)
+{}
 
 DBGResponsePack::~DBGResponsePack()
 {
-  for(DBGBaseTag *baseTag = m_baseTags.first(); baseTag ; baseTag = m_baseTags.next() ) {
-    delete baseTag;
+  for(DBGResponseTag *tag = m_tags.first(); tag ; tag = m_tags.next() ) {
+    delete tag;
   }
 
-  for(DBGBaseTag *rawTag = m_rawTags.first(); rawTag ; rawTag = m_rawTags.next() ) {
-    delete rawTag;
+  for(DBGResponseTag *rawtag = m_rawTags.first(); rawtag ; rawtag = m_rawTags.next() ) {
+    delete rawtag;
   }
+
+  delete m_header;
 }
 
-void DBGResponsePack::addTag(DBGBaseTag* tag)
+void DBGResponsePack::setHeader(DBGHeader* header)
 {
-  if(tag->name() == FRAME_RAWDATA)
-  {
+  m_header = header;
+}
+
+DBGHeader* DBGResponsePack::header()
+{
+  return m_header;
+}
+
+
+void DBGResponsePack::addTag(DBGResponseTag* tag)
+{
+  if(tag->name() == FRAME_RAWDATA) {
     m_rawTags.append(tag);
-  }
-  else
-  {
-    m_baseTags.append(tag);
+  } else {
+    m_tags.append(tag);
   }
 }
 
-bool DBGResponsePack::has(int framename)
-{
-  for(DBGBaseTag *tag = m_baseTags.first(); tag ; tag = m_baseTags.next() ) {
-    if(tag->name() == framename) {
-      return true;
-    }
-  }
-  return false;
-}
-
+/*
 DBGBaseTag* DBGResponsePack::retrieve(int framename)
 {
   for(DBGBaseTag *tag = m_baseTags.first(); tag ; tag = m_baseTags.next() ) {
@@ -71,68 +70,26 @@ DBGBaseTag* DBGResponsePack::retrieve(int framename)
   }
   return NULL;
 }
+*/
 
-DBGResponsePack::StackTagList_t DBGResponsePack::retrieveStackTagList()
-{
-  StackTagList_t stackList;
-  DBGResponseTagStack* stackTag;
-
-  for(DBGBaseTag *tag = m_baseTags.first(); tag ; tag = m_baseTags.next() )
-  {
-    if(tag->name() == FRAME_STACK)
-    {
-      stackTag = dynamic_cast<DBGResponseTagStack*>(tag);
-      StackTagPair_t p(stackTag, retrieveRawdata(stackTag->idescr()));
-      stackList.append(p);
-    }
-  }
-
-  return stackList;
-}
-
-DBGResponsePack::BpTagMap_t DBGResponsePack::retrieveBpTagMap() {
-  BpTagMap_t map;
-
-  DBGTagBreakpoint* bpTag;
-
-  for(DBGBaseTag *tag = m_baseTags.first(); tag ; tag = m_baseTags.next() )
-  {
-    if(tag->name() == FRAME_BPS)
-    {
-      bpTag = dynamic_cast<DBGTagBreakpoint*>(tag);
-      RawPair_t  p(retrieveRawdata(bpTag->imodname()),
-        retrieveRawdata(bpTag->icondition()));
-      map[bpTag] = p;
-    }
-  }
-
-  return map;
-}
-
-DBGResponsePack::TreeStackList_t DBGResponsePack::retrieveTreeTagList()
-{
-  TreeStackList_t treeList;
-  DBGResponseTagSrcLinesInfo* srcTag;
-
-  for(DBGBaseTag *tag = m_baseTags.first(); tag ; tag = m_baseTags.next() )
-  {
-    srcTag = dynamic_cast<DBGResponseTagSrcLinesInfo*>(tag);
-    TreeStackPair_t p(srcTag, retrieveRawdata(srcTag->imodName()));
-    treeList.append(p);
-  }
-
-  return treeList;
-}
 
 DBGTagRawdata* DBGResponsePack::retrieveRawdata(int id)
 {
-  for(DBGBaseTag *tag = m_rawTags.first(); tag ; tag = m_rawTags.next() )
-  {
+  for(DBGResponseTag *tag = m_rawTags.first(); tag ; tag = m_rawTags.next() ) {
     DBGTagRawdata* raw = dynamic_cast<DBGTagRawdata*>(tag);
-    if(raw->id() == id)
-    {
+    if(raw->id() == id) {
       return raw;
     }
   }
   return NULL;
+}
+
+void DBGResponsePack::rewind()
+{
+  m_index = 0;
+}
+
+DBGResponseTag* DBGResponsePack::next()
+{
+  return m_tags.at(m_index++);
 }
