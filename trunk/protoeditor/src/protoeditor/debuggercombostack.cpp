@@ -34,13 +34,6 @@ DebuggerComboStack::~DebuggerComboStack()
 
 void DebuggerComboStack::setStack(DebuggerStack* stack)
 {
-  int selectedId = -1;
-  int newIndex = 0;
-
-  if(count() > 0) {
-    selectedId = m_stack->DebuggerExecutionPointList().at(currentItem())->id();
-  }
-
   clear();
 
   DebuggerStack::DebuggerExecutionPointList_t execPointList
@@ -49,17 +42,10 @@ void DebuggerComboStack::setStack(DebuggerStack* stack)
   DebuggerExecutionPoint* execPoint;
   for(execPoint = execPointList.first(); execPoint; execPoint = execPointList.next()) {
     insertItem(execPoint->function() + " : " + QString::number(execPoint->line()));
-    if(execPoint->id() == selectedId) {
-      newIndex = count()-1;
-      m_currentExecutionPoint = execPoint;
-      setCurrentItem(newIndex);
-    }
   }
 
-  if(newIndex == 0) {
-    setCurrentItem(0);
-    m_currentExecutionPoint = execPointList.first();
-  }
+  setCurrentItem(0);
+  m_currentExecutionPoint = execPointList.first();
 
   if(m_stack) delete m_stack;
   m_stack = stack;
