@@ -76,10 +76,12 @@ public:
   void showError(const QString&) const;
   void showSorry(const QString&) const;
 
+  void openFile();
   void actionStateChanged(const QString&);
 private slots:
   void slotOpenFile();
   void slotCloseFile();
+  void slotCloseAllFiles();
   void slotSaveFile();
   void slotSaveFileAs();
   void slotQuit();

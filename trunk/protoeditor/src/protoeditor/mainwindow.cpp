@@ -69,15 +69,15 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 {
   if(!name) { setName("MainWindow"); }
 
-  m_debugger_manager = new DebuggerManager(this);
-
   setupStatusBar();
 
+  m_debugger_manager = new DebuggerManager(this);
+    
+  setupActions();
+  
   createWidgets();
 
-  setupActions();
-
-   createGUI(0);
+  createGUI(0);
 
   resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
   clearWState(WState_Polished);
@@ -94,8 +94,7 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   loadSites();
 
-
-  stateChanged("debug_disabled");
+  stateChanged("init");
 }
 
 void MainWindow::loadSites()
@@ -156,36 +155,19 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Close All"), 0, this, SLOT(slotCloseAllFiles()), actionCollection(), "file_close_all");
   
   KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
-  
-  /*
-  KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
-  KStdAction::save(this, SLOT(slotSaveFile()), actionCollection());
-  KStdAction::saveAs(this, SLOT(slotSaveFileAs()), actionCollection());
-
-
-  //edit menu
-  KStdAction::undo(m_tabEditor,      SLOT(slotUndo()), actionCollection());
-  KStdAction::redo(m_tabEditor,      SLOT(slotRedo()), actionCollection());
-  KStdAction::cut(m_tabEditor,       SLOT(slotCut()), actionCollection());
-  KStdAction::copy(m_tabEditor,      SLOT(slotCopy()), actionCollection());
-  KStdAction::paste(m_tabEditor,     SLOT(slotPaste()), actionCollection());
-  KStdAction::selectAll(m_tabEditor, SLOT(slotSelectAll()), actionCollection());
-  */
 
   KStdAction::keyBindings(this, SLOT(slotEditKeys()), actionCollection());
   KStdAction::configureToolbars(this, SLOT(slotEditToolbars()), actionCollection());
   KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
-//   (void)new KAction(i18n("Configure &Editor..."), 0, m_tabEditor, SLOT(slotConfigEditor()), actionCollection(), "settings_editor");
-
   m_siteAction = new KSelectAction("Site", 0, actionCollection(), "site");
 //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
 //                     SLOT(slotDebugRun()), actionCollection(), "script_run");
 
-  (void)new KAction(i18n("Start"), "dbgstart", "F5", m_debugger_manager,
+  (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", m_debugger_manager,
                     SLOT(slotDebugRun()), actionCollection(), "debug_start");
 
-  (void)new KAction(i18n("Stop"), "stop", "ESC", m_debugger_manager,
+  (void)new KAction(i18n("Stop Debug"), "stop", "ESC", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
   (void)new KAction(i18n("Step Over"), "dbgnext", "F6", m_debugger_manager,
@@ -317,6 +299,10 @@ void MainWindow::slotSettingsChanged()
   loadSites();
 }
 
+void MainWindow::openFile() {
+  slotOpenFile();
+}
+
 void MainWindow::slotOpenFile()
 {
 
@@ -354,6 +340,11 @@ void MainWindow::slotFileRecent(const KURL& url)
 void MainWindow::slotCloseFile()
 {
   m_tabEditor->closeCurrentDocument();
+}
+
+void MainWindow::slotCloseAllFiles()
+{
+  m_tabEditor->closeAllDocuments();
 }
 
 void MainWindow::slotSaveFile()
@@ -403,7 +394,7 @@ void MainWindow::slotEditKeys()
   dlg.insert(actionCollection());
 
   if(m_tabEditor->count() != 0) {
-    KTextEditor::View* view  = m_tabEditor->anyView();
+    KTextEditor::View* view  = m_tabEditor->currentView();
     if(view) {
       dlg.insert(view->actionCollection());
     }  
@@ -419,9 +410,11 @@ void MainWindow::actionStateChanged(const QString& str)
 
 void MainWindow::slotEditToolbars()
 {
-  KEditToolbar dlg(actionCollection());
-  if (dlg.exec())
-    createGUI(0);
+  KEditToolbar dlg(guiFactory());
+  if (dlg.exec()) {
+    //setupGUI();
+    applyMainWindowSettings( KGlobal::config(), autoSaveGroup() );
+  }
 }
 
 void MainWindow::slotShowSettings()
