@@ -19,20 +19,26 @@
       <Separator/>      
       <Action name="file_quit"/>            
     </Menu>
-    
+
     <Menu name="menu_script" noMerge="1">
-     <text>&amp;Script</text>
-     <Action name="script_run"/>
-     <Separator />
-     <Action name="debug_stop"/>
-     <Action name="debug_start"/>
-     <Action name="debug_step_over"/>
-     <Action name="debug_step_into"/>
-     <Action name="debug_step_out"/>
-     <Separator />
-     <Action name="profile"/>
-     <Separator />
-     <Action name="debug_toggle_bp"/>
+      <text>S&amp;cript</text>
+      <Action name="site_selection"/>
+      <Action name="default_script"/>
+      <Separator />      
+      <Action name="script_run"/>
+      <Separator />            
+      <Action name="debug_start"/>
+      <Action name="debug_stop"/>
+      <Action name="debug_interrupt"/>
+      <Action name="debug_start_to_cursor"/>
+      <Separator />     
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+      <Separator />
+      <Action name="profile"/>
+      <Separator />
+      <Action name="debug_toggle_bp"/>
     </Menu>
 
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
@@ -59,12 +65,12 @@
 
   <ToolBar name="debug_toolbar" noMerge="1" newline="true">
     <text>Debug Toolbar</text>
-    <Action name="site"/>
+    <Action name="site_selection"/>
     <Separator />
     <Action name="script_run"/>
     <Separator />
-    <Action name="debug_stop"/>
     <Action name="debug_start"/>
+    <Action name="debug_stop"/>
     <Action name="debug_step_over"/>
     <Action name="debug_step_into"/>
     <Action name="debug_step_out"/>
@@ -73,6 +79,9 @@
   <!--         States        -->
 
   <State name="init">
+    <enable>
+      <Action name="script_run"/>
+    </enable>
     <disable>
       <Action name="debug_stop"/>
       <Action name="debug_step_over"/>
