@@ -90,13 +90,15 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO Now
+\CurrentEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Create Actions:</li>
 <ul type="disc"><li>Run (gear.png) / Start debug</li>
 <ul type="disc"><li>Run with args</li>
 <li>Run to the cursor</li></ul>
 <li>Pause<br /></li></ul>
+<li>Test the size of the path on the Protoeditor caption (if is too big, what happens)</li>
+<li>See if can make a hint on over the tab to show the complete path of the documeent<br /></li>
 <li>Features / Usability:</li>
 <ul type="disc"><li>Add signal/slots for &quot;file changed on disk&quot;</li>
 <li>Add to editor context menu:</li>
@@ -106,10 +108,8 @@
 <li>Create context menus for the listviews (breakpoints/messages, etc)</li>
 <li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
 <li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings</li>
-<li>Have a status bar with fields of information such as debugger being used, if debug is running (green/red led), status<br /> (&quot;steping&quot;, &quot;step in done&quot;, &quot;stopped&quot;, &quot;retrieving profile data..&quot;.....)</li>
 <li>Add terminal output</li>
-<li>CGI</li>
-<li></li></ul>
+<li>CGI</li></ul>
 <li>Implementation:</li>
 <ul type="disc"><li>set static objects to be deleted<br /></li></ul>
 <li>Improve Profile / Start Gubed support<br /></li></ul>
@@ -144,7 +144,7 @@
 <p>	filepath | line | hits | (time_avg_hit) time/hit (ms) | totaltime (ms) | min time (ms)  | maxtime (ms) | context</p>
 </body></html>
 
-\CurrentEntry 1 Bug reminder
+\NewEntry 1 Bug reminder
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
 <li>DBGnet::processProf() : Profiler calc is hardcoded. Use prof_c to get the freq (divide for freq and multip for 1000. See script).</li>
