@@ -1,0 +1,117 @@
+/***************************************************************************
+ *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   thiago.silva@kdemail.net                                              *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+#include "debuggerstack.h"
+
+
+DebuggerExecutionPoint::DebuggerExecutionPoint()
+  : m_id(0), m_filePath(), m_line(0), m_function(0)
+{
+}
+
+DebuggerExecutionPoint::DebuggerExecutionPoint(int id, QString filePath, int line, QString function)
+  : m_id(id), m_filePath(filePath), m_line(line), m_function(function)
+{
+}
+
+DebuggerExecutionPoint::~DebuggerExecutionPoint()
+{
+}
+
+void DebuggerExecutionPoint::setId(int id)
+{
+  m_id = id;
+}
+
+int DebuggerExecutionPoint::id()
+{
+  return m_id;
+}
+
+void DebuggerExecutionPoint::setFilePath(QString filePath)
+{
+  m_filePath = filePath;
+}
+
+QString DebuggerExecutionPoint::filePath()
+{
+  return m_filePath;
+}
+
+void DebuggerExecutionPoint::setLine(int line)
+{
+  m_line = line;
+}
+
+int DebuggerExecutionPoint::line()
+{
+  return m_line;
+}
+
+void DebuggerExecutionPoint::setFunction(QString function)
+{
+  m_function = function;
+}
+
+QString DebuggerExecutionPoint::function()
+{
+  return m_function;
+}
+
+//-----------------------------------------------------------
+
+DebuggerStack::DebuggerStack()
+{
+}
+
+DebuggerStack::~DebuggerStack()
+{
+  DebuggerExecutionPoint *execPoint;
+  for(execPoint = m_execPointList.first(); execPoint; execPoint = m_execPointList.next()) {
+    delete execPoint;
+  }
+}
+
+void DebuggerStack::push(int id, QString filePath, int line, QString function)
+{
+  DebuggerExecutionPoint *execPoint =
+    new DebuggerExecutionPoint(id, filePath, line, function);
+  m_execPointList.prepend(execPoint);
+}
+
+void DebuggerStack::push(DebuggerExecutionPoint* execPoint)
+{
+  m_execPointList.prepend(execPoint);
+}
+
+DebuggerExecutionPoint* DebuggerStack::bottomExecutionPoint()
+{
+  return m_execPointList.getLast();
+}
+
+DebuggerExecutionPoint* DebuggerStack::topExecutionPoint()
+{
+  return m_execPointList.getFirst();
+}
+
+DebuggerStack::DebuggerExecutionPointList_t DebuggerStack::DebuggerExecutionPointList()
+{
+  return m_execPointList;
+}
