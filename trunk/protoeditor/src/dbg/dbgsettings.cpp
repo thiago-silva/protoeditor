@@ -3,6 +3,7 @@
 
 #include "dbgsettings.h"
 #include "dbgsettingswidget.h"
+#include "dbg_defs.h"
 
 #include <qwidget.h>
 
@@ -12,26 +13,26 @@ DBGSettings::DBGSettings()
   setCurrentGroup( QString::fromLatin1( "DBG" ) );
 
   KConfigSkeleton::ItemBool  *itemBreakOnLoad;
-  itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, false );
+  itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, true );
   addItem( itemBreakOnLoad, QString::fromLatin1( "BreakOnLoad" ) );
   KConfigSkeleton::ItemBool  *itemSendErrors;
-  itemSendErrors = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendErrors" ), mSendErrors, false );
+  itemSendErrors = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendErrors" ), mSendErrors, true );
   addItem( itemSendErrors, QString::fromLatin1( "SendErrors" ) );
   KConfigSkeleton::ItemBool  *itemSendLogs;
-  itemSendLogs = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendLogs" ), mSendLogs, false );
+  itemSendLogs = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendLogs" ), mSendLogs, true );
   addItem( itemSendLogs, QString::fromLatin1( "SendLogs" ) );
   KConfigSkeleton::ItemBool  *itemSendOutput;
-  itemSendOutput = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendOutput" ), mSendOutput, false );
+  itemSendOutput = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendOutput" ), mSendOutput, true );
   addItem( itemSendOutput, QString::fromLatin1( "SendOutput" ) );
   KConfigSkeleton::ItemBool  *itemSendDetailedOutput;
-  itemSendDetailedOutput = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendDetailedOutput" ), mSendDetailedOutput, false );
+  itemSendDetailedOutput = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendDetailedOutput" ), mSendDetailedOutput, true );
   addItem( itemSendDetailedOutput, QString::fromLatin1( "SendDetailedOutput" ) );
   KConfigSkeleton::ItemInt  *itemListenPort;
-  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, 7869 );
+  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, DBG_DEFAULT_PORT );
   addItem( itemListenPort, QString::fromLatin1( "ListenPort" ) );
 
   KConfigSkeleton::ItemBool  *itemEnableJIT;
-  itemEnableJIT = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "EnableJIT" ), mEnableJIT, false );
+  itemEnableJIT = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "EnableJIT" ), mEnableJIT, true );
   addItem( itemEnableJIT, QString::fromLatin1( "EnableJIT" ) );
 
   readConfig();
@@ -52,7 +53,7 @@ void DBGSettings::loadValuesFromWidget()
   mSendOutput = m_widget->sendOutput();
 }
 
-QWidget* DBGSettings::widget()
+DebuggerTab* DBGSettings::widget()
 {
   if(!m_widget) {
     m_widget = new DBGSettingsWidget(this);

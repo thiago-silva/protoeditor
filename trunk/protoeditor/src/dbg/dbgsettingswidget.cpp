@@ -28,7 +28,7 @@
 #include "dbgsettings.h"
 
 DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, const char *name)
-    : QWidget(parent, name) {
+    : DebuggerTab(parent, name), m_settings(settings) {
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
 
@@ -59,7 +59,7 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   grid->addWidget(m_ckSendOutput, 0, 1);
 
   m_ckSendDetailedOutput = new QCheckBox(groupbox);
-  m_ckSendDetailedOutput->setText("Send Detailed Output");
+  m_ckSendDetailedOutput->setText("Send detailed output");
   grid->addWidget(m_ckSendDetailedOutput, 1, 1);
 
   groupboxLayout->addLayout(grid);
@@ -89,8 +89,6 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   mainLayout->addLayout(jitbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-
-  loadValues(settings);
 }
 
 DBGSettingsWidget::~DBGSettingsWidget() {}
@@ -131,16 +129,16 @@ bool DBGSettingsWidget::enableJIT()
 }
 
 
-void DBGSettingsWidget::loadValues(DBGSettings* settings)
+void DBGSettingsWidget::populate()
 {
-  m_ckBreakOnLoad->setChecked(settings->breakOnLoad());
-  m_ckSendErrors->setChecked(settings->sendErrors());
-  m_ckSendLogs->setChecked(settings->sendLogs());
-  m_ckSendOutput->setChecked(settings->sendOutput());
-  m_ckSendDetailedOutput->setChecked(settings->sendDetailedOutput());
+  m_ckBreakOnLoad->setChecked(m_settings->breakOnLoad());
+  m_ckSendErrors->setChecked(m_settings->sendErrors());
+  m_ckSendLogs->setChecked(m_settings->sendLogs());
+  m_ckSendOutput->setChecked(m_settings->sendOutput());
+  m_ckSendDetailedOutput->setChecked(m_settings->sendDetailedOutput());
 
-  m_spListenPort->setValue(settings->listenPort());
-  m_ckEnableJIT->setChecked(settings->enableJIT());
+  m_spListenPort->setValue(m_settings->listenPort());
+  m_ckEnableJIT->setChecked(m_settings->enableJIT());
 }
 
 #include "dbgsettingswidget.moc"

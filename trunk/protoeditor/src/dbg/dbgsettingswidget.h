@@ -20,14 +20,14 @@
 #ifndef DBGSETTINGSWIDGET_H
 #define DBGSETTINGSWIDGET_H
 
-#include <qwidget.h>
+#include "debuggersettingsinterface.h"
 
 class QCheckBox;
 class QSpinBox;
 
 class DBGSettings;
 
-class DBGSettingsWidget : public QWidget {
+class DBGSettingsWidget : public DebuggerTab {
   Q_OBJECT
 public:
   DBGSettingsWidget(DBGSettings*, QWidget *parent = 0, const char *name = 0);
@@ -41,8 +41,8 @@ public:
   int  listenPort();
   bool enableJIT();
 
+  void populate();
 private:
-  void loadValues(DBGSettings*);
 
   QCheckBox *m_ckBreakOnLoad;
   QCheckBox *m_ckSendErrors;
@@ -52,6 +52,8 @@ private:
 
   QSpinBox  *m_spListenPort;
   QCheckBox *m_ckEnableJIT;
+
+  DBGSettings* m_settings;
 };
 
 #endif

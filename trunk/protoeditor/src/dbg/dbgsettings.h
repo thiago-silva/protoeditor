@@ -53,7 +53,7 @@ class DBGSettings : public DebuggerSettingsInterface
     }
 
     virtual void loadValuesFromWidget();
-    virtual QWidget* widget();
+    virtual DebuggerTab* widget();
   protected:
 
     // DBG
