@@ -59,16 +59,8 @@
 </body></html>
 
 \NewEntry 0 Site and non-implementation notes
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
-<li>Create a logo for the site</li>
-<li>Create Doxygen documentation</li>
-<li>Create user documentation</li>
-<li>Backup sourceforge contents.<br /></li>
-<li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
-</body></html>
 
-\CurrentEntry 0 Releasing notes
+\NewEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>test current CVS version on other distro/KDE versions</li>
 <li>Create ChangeLog file</li>
@@ -79,6 +71,17 @@
 <li>Update site</li></ul>
 <p></p>
 <p></p>
+</body></html>
+
+
+\CurrentEntry 1 TODO
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
+<li>Create a logo for the site</li>
+<li>Create Doxygen documentation</li>
+<li>Create user documentation</li>
+<li>Backup sourceforge contents.</li>
+<li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
 </body></html>
 
 
