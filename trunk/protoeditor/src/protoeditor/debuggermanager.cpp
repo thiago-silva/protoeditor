@@ -58,10 +58,10 @@ void DebuggerManager::init()
   connect(m_window->watchList(), SIGNAL(sigWatchRemoved(Variable*)),
           this, SLOT(slotWatchRemoved(Variable*)));
 
-  /*
+
   connect(m_window->watchList(), SIGNAL(sigVarModified(Variable*)),
           this, SLOT(slotVarModified(Variable*)));
-  */
+
 
   //-------STACK UI
   connect(m_window->stackCombo(),
@@ -77,14 +77,17 @@ void DebuggerManager::init()
 
   //---BREAKPOINT UI -- TextEditor * BreakpointListview
   connect(m_window->tabEditor(),
-          SIGNAL(sigBreakpointMarked(QString, int )),
+          SIGNAL(sigBreakpointMarked(const QString&, int )),
           m_window->breakpointListView(),
-          SLOT(slotBreakpointMarked(QString, int)));
+          SLOT(slotBreakpointMarked(const QString&, int)));
 
   connect(m_window->tabEditor(),
-          SIGNAL(sigBreakpointUnmarked(QString, int )),
+          SIGNAL(sigBreakpointUnmarked(const QString&, int )),
           m_window->breakpointListView(),
-          SLOT(slotBreakpointUnmarked(QString, int)));
+          SLOT(slotBreakpointUnmarked(const QString&, int)));
+
+  connect(m_window->tabEditor(), SIGNAL(sigNewDocument()),
+    this, SLOT(slotNewDocument()));
 
   //------BREAKPOINT UI (from listview)
   connect(m_window->breakpointListView(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
@@ -95,6 +98,13 @@ void DebuggerManager::init()
 
   connect(m_window->breakpointListView(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
           this, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
+
+  connect(m_window->breakpointListView(), SIGNAL(sigDoubleClick(const QString&, int)),
+    this, SLOT(slotGotoLineAtFile(const QString&, int)));
+
+  //-------- LOG
+  connect(m_window->logListView(), SIGNAL(sigDoubleClick(const QString&, int)),
+    this, SLOT(slotGotoLineAtFile(const QString&, int)));
 
   /*
   connect(m_window->breakpointListView(), SIGNAL(sigBrekpointDeleted(DebuggerBreakpoint*)),
@@ -243,13 +253,6 @@ void DebuggerManager::slotDebugStepOut()
   m_debugger->stepOut();
 }
 
-void DebuggerManager::slotDebugToggleBp()
-{
-  if(!m_debugger) return;
-  m_debugger->stepOut();
-
-}
-
 void DebuggerManager::slotAddWatch()
 {
   QString expression = m_window->edAddWatch()->text();
@@ -272,7 +275,7 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, Debugge
 
   EditorTabWidget* ed = m_window->tabEditor();
 
-  m_window->tabEditor()->setCurrentDocument(nw->filePath(), true);
+  //m_window->tabEditor()->setCurrentDocument(nw->filePath(), true);
   ed->gotoLineAtFile(nw->filePath(), nw->line()-1);
 
   ed->unmarkPreExecutionPoint(old->filePath(), old->line());
@@ -316,11 +319,30 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   }
 }
 
+void DebuggerManager::slotGotoLineAtFile(const QString& filePath, int line)
+{
+  m_window->tabEditor()->gotoLineAtFile(filePath, line-1);
+}
+
 void DebuggerManager::slotWatchRemoved(Variable* var)
 {
   if(!m_debugger) return;
 
   m_debugger->removeWatch(var->name());
+}
+
+void DebuggerManager::slotNewDocument()
+{
+  //if the new document has breakpoints, mark them.
+
+  QValueList<DebuggerBreakpoint*> bplist =
+    m_window->breakpointListView()->breakpointsFrom(
+      m_window->tabEditor()->documentPath(m_window->tabEditor()->currentPageIndex()));
+
+  QValueList<DebuggerBreakpoint*>::iterator it;
+  for(it = bplist.begin(); it != bplist.end(); ++it) {
+    m_window->tabEditor()->markActiveBreakpoint((*it)->filePath(), (*it)->line());
+  }
 }
 
 /******************************* Debugger interface ******************************************/
@@ -333,6 +355,7 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   //-if stackCombo is not pointed to the top context, unmark the previously
   // marked PreExecutionPoint and request the vars for this context
 
+  //Conveniece vars:
   DebuggerExecutionPoint* execPoint;
   EditorTabWidget* ed = m_window->tabEditor();
 
@@ -356,26 +379,22 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   //-mark the new ExecutionPoint
   //-sets the stack to the comboStack
 
+  //lets update first and force the user to be on the top of the stack
+  m_window->stackCombo()->setStack(stack);
+
   execPoint = stack->topExecutionPoint();
   ed->setCurrentDocument(execPoint->filePath(), true);
   ed->gotoLineAtFile(execPoint->filePath(), execPoint->line()-1);
 
   ed->markExecutionPoint(execPoint->filePath(), execPoint->line());
 
-  m_window->stackCombo()->setStack(stack);
+  //--request stack context dependent vars
 
-  //----updating data relative to the current stack context
-
-  //--request the local vars
-
-  execPoint =
-    m_window->stackCombo()->selectedDebuggerExecutionPoint();
-
-  if(m_debugger) {
-    m_debugger->requestLocalVariables(execPoint);
-    //---requesting watches
-    m_debugger->requestWatches(execPoint);
-  }
+  //if(m_debugger) {
+  //  m_debugger->requestLocalVariables(execPoint);
+  //  //---requesting watches
+  //  m_debugger->requestWatches(execPoint);
+  //}
 }
 
 void DebuggerManager::updateGlobalVars(VariablesList_t* vars) {
@@ -392,11 +411,23 @@ void DebuggerManager::updateWatch(Variable* var)
   m_window->watchList()->addWatch(var);
 }
 
-//TODO: add error to logview
-void DebuggerManager::debugError(const QString& message /*line, file*/)
+void DebuggerManager::updateBreakpoint(DebuggerBreakpoint* bp)
 {
-  m_window->showError(message);
-  //m_window->logListView()->add(ErrorMsg, message, line, file);
+  m_window->breakpointListView()->updateBreakpoint(bp);
+}
+
+void DebuggerManager::debugMessage(int type, const QString& msg, const QString& filePath, int line)
+{
+  m_window->logListView()->add(type, msg, line, filePath);
+}
+
+void DebuggerManager::debugError(const QString& msg)
+{
+  m_window->showError(msg);
+}
+
+void DebuggerManager::updateOutput(const QString& output) {
+  m_window->edOutput()->setText(output);
 }
 
 void DebuggerManager::slotSessionStarted()
@@ -417,6 +448,10 @@ void DebuggerManager::slotDebugStarted()
   m_debugger->addBreakpoints(
     m_window->breakpointListView()->breakpoints());
 
+  m_window->globalVarList()->setReadOnly(false);
+  m_window->localVarList()->setReadOnly(false);
+  m_window->watchList()->setReadOnly(false);
+
   m_window->globalVarList()->clear();
   m_window->localVarList()->clear();
   m_window->logListView()->clear();
@@ -433,6 +468,10 @@ void DebuggerManager::slotDebugStarted()
 void DebuggerManager::slotDebugEnded()
 {
   m_window->breakpointListView()->resetBreakpointItems();
+
+  m_window->globalVarList()->setReadOnly(true);
+  m_window->localVarList()->setReadOnly(true);
+  m_window->watchList()->setReadOnly(true);
 
   m_window->statusBar()->message("Debug ended");
 

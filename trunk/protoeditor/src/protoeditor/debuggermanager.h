@@ -48,7 +48,10 @@ public:
   void updateGlobalVars(VariablesList_t*);
   void updateLocalVars(VariablesList_t*);
   void updateWatch(Variable*);
+  void updateBreakpoint(DebuggerBreakpoint* bp);
+  void debugMessage(int, const QString&, const QString&, int);
   void debugError(const QString&);
+  void updateOutput(const QString&);
 
 
 public slots:
@@ -64,7 +67,6 @@ private slots:
   void slotDebugStepInto();
   void slotDebugStepOver();
   void slotDebugStepOut();
-  void slotDebugToggleBp();
 
   void slotAddWatch();
   void slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
@@ -72,7 +74,10 @@ private slots:
   void slotBreakpointCreated(DebuggerBreakpoint*);
   void slotBreakpointChanged(DebuggerBreakpoint*);
   void slotBreakpointRemoved(DebuggerBreakpoint*);
+  void slotGotoLineAtFile(const QString&, int);
   void slotWatchRemoved(Variable*);
+
+  void slotNewDocument();
 
   /* DebuggerClient - DebuggerManager */
 
