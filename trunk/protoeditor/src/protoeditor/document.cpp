@@ -27,7 +27,7 @@ Document::~Document()
   {
     KTextEditor::Document* doc = m_view->document();
     doc->closeURL();
-    delete m_view;
+    //     delete m_view; //KWrite only deletes the doc
     delete doc;
   }
 
@@ -99,12 +99,22 @@ bool Document::open(const KURL& url)
   m_view = view;
 
   setupMarks();
+
+//   connect(m_view->document(), SIGNAL(textChanged()), this, SLOT(slotTextChanged()));
+  connect(m_view, SIGNAL(newStatus()), this, SIGNAL(sigTextChanged()));
+  connect(m_view, SIGNAL(viewStatusMsg(const QString&)), this, SIGNAL(sigStatusMsg(const QString&)));
+  
   return true;
 }
 
 bool Document::close()
 {
   return m_view->document()->closeURL();
+}
+
+bool Document::isModified()
+{
+  return m_view->document()->isModified();
 }
 
 void Document::setupMarks()

@@ -32,6 +32,8 @@ public:
   bool saveAs(const KURL&);
   bool open(const KURL& url);
   bool close();
+
+  bool isModified();
   
   void gotoLine(int line);
   int currentLine();
@@ -48,10 +50,11 @@ public:
 signals:
   void sigBreakpointUnmarked(Document*, int);
   void sigBreakpointMarked(Document*, int);
-    
+  void sigStatusMsg(const QString&);
+  void sigTextChanged();
+  
 private slots:
   void slotMarkChanged();
-
 private:
  
   void setupMarks();
