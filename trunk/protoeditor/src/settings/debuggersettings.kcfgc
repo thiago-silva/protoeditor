@@ -1,4 +1,4 @@
 # Code generation options for kconfig_compiler
-File=protoeditor.kcfg
+File=debugger.kcfg
 ClassName=DebuggerSettings
 Singleton=true
