@@ -28,6 +28,9 @@
 
 #include "debuggermanager.h"
 
+#include "debuggersettings.h"
+#include "debuggersettingswidget.h"
+
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kstatusbar.h>
@@ -40,6 +43,7 @@
 #include <klocale.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
+#include <kconfigdialog.h>
 #include <ktexteditor/view.h>
 
 
@@ -70,25 +74,20 @@
 */
 
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-    : KMainWindow(parent, name, fl), m_currentOpenPath("/")
+    : KMainWindow(parent, name, fl), m_currentOpenPath("/"), m_debuggerSettings(0)
 {
   if(!name) { setName("MainWindow"); }
 
   setupConfiguration();
-
   setupStatusBar();
-
   createWidgets();
+  setStandardToolBarMenuEnabled(true);
+
+  m_debugger_manager = new DebuggerManager(this);
 
   setupActions();
 
-  setStandardToolBarMenuEnabled(true);
-
   createGUI();
-  //??? need this?
-  //m_tabEditor->setMainWindow(this);
-
-  //m_debugger_manager = new DebuggerManager(this);
 
   resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
   clearWState(WState_Polished);
@@ -101,23 +100,6 @@ void MainWindow::setupConfiguration()
 {
 
   KConfig* config = KApplication::kApplication()->config();
-  /*
-  if(config->hasGroup ("Protoeditor")) {
-    config->setGroup("Protoeditor");
-
-    if(config->hasKey("xpos")  &&
-       config->hasKey("ypos")  &&
-       config->hasKey("width") &&
-       config->hasKey("height")) {
-
-      setGeometry(config->readNumEntry("xpos"),
-                  config->readNumEntry("ypos"),
-                  config->readNumEntry("width"),
-                  config->readNumEntry("height"));
-    }
-  }
-  */
-
   config->setGroup("Protoeditor");
   if(config->hasKey("CurrentFilePath")) {
     m_currentOpenPath = config->readEntry("CurrentFilePath");
@@ -168,7 +150,8 @@ void MainWindow::setupActions()
   KStdAction::configureToolbars(this, SLOT(slotEditToolbars()), actionCollection());
 
   (void)new KAction(i18n("Configure &Editor..."), 0, m_tabEditor, SLOT(slotConfigEditor()), actionCollection(), "settings_editor");
-  //(void)new KAction(i18n("Configure &Debugger..."), 0, m_tabEditor, SLOT(slotConfigEditor()), actionCollection(), "config_debugger");
+  //(void)new KAction(i18n("Configure &Debugger..."), 0, m_debugger_manager, SLOT(slotShowDebuggerOptions()), actionCollection(), "settings_debugger");
+  (void)new KAction(i18n("Configure &Debugger..."), 0, this, SLOT(slotShowSettings()), actionCollection(), "settings_debugger");
 
 
 
@@ -286,8 +269,6 @@ void MainWindow::createWidgets()
   connect(m_tabEditor, SIGNAL(sigHasUndo()), this, SLOT(slotHasUndo()));
   connect(m_tabEditor, SIGNAL(sigHasNoRedo()), this, SLOT(slotHasNoRedo()));
   connect(m_tabEditor, SIGNAL(sigHasRedo()), this, SLOT(slotHasRedo()));
-  //connect(m_tabEditor, SIGNAL(sigTabChanged(int)), this, SLOT(slotTabChanged()));
-
 }
 
 /*
@@ -295,7 +276,6 @@ void MainWindow::createWidgets()
 */
 MainWindow::~MainWindow()
 {
-  //saveGeometry();
   saveCurrentPath();
   /* TODO: delete all widgets? */
 }
@@ -308,19 +288,6 @@ void MainWindow::saveCurrentPath()
   config->sync();
 }
 
-/*
-void MainWindow::saveGeometry()
-{
-  KConfig* config = KApplication::kApplication()->config();
-  config->setGroup("Protoeditor");
-  config->writeEntry("xpos", x());
-  config->writeEntry("ypos", y());
-  config->writeEntry("width", width());
-  config->writeEntry("height", height());
-  config->sync();
-}
-*/
-
 void MainWindow::slotOpenFile()
 {
   QString filePath = QFileDialog::getOpenFileName(m_currentOpenPath, "PHP (*.php)",
@@ -328,7 +295,6 @@ void MainWindow::slotOpenFile()
 
   if(!filePath.isEmpty()) {
     m_currentOpenPath = filePath.mid(0, filePath.findRev('/', -1));
-    //TODO: set addDocument to receive KURL
     m_tabEditor->addDocument(filePath);
     slotHasNoRedo();
     slotHasNoUndo();
@@ -356,9 +322,6 @@ void MainWindow::slotQuit()
   //tabEditor()->terminate();
   close();
 }
-
-void MainWindow::slotShowSettings()
-{}
 
 void MainWindow::showError(const QString& msg) const
 {
@@ -452,6 +415,25 @@ void MainWindow::slotHasRedo()
   actionCollection()->action("edit_redo")->setEnabled(true);
 }
 
+void MainWindow::slotShowSettings() {
+  if(KConfigDialog::showDialog("settings"))
+    return;
+
+  KConfigDialog* dialog = new KConfigDialog(this, "settings", DebuggerSettings::self());
+
+  initDebuggerSettings();
+  dialog->addPage( m_debuggerSettings, i18n("Debugger"), "debugger" );
+
+  connect( dialog, SIGNAL(settingsChanged()),
+         m_debugger_manager, SLOT(updateConfiguration()) );
+
+  dialog->show();
+}
+void MainWindow::initDebuggerSettings() {
+  if(!m_debuggerSettings) {
+    m_debuggerSettings = new DebuggerSettingsWidget(0, "Debugger");
+  }
+}
 
 void MainWindow::showSorry(const QString& msg) const
 {

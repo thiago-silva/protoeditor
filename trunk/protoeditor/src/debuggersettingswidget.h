@@ -17,37 +17,55 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef DEBUGGERSETTINGSWIDGET_H
+#define DEBUGGERSETTINGSWIDGET_H
 
+#include <qwidget.h>
 
-#ifndef DEBUGGERCONFIGFORM_H
-#define DEBUGGERCONFIGFORM_H
+class QCheckBox;
+class KLineEdit;
+class QSpinBox;
+class QGridLayout;
+class QLabel;
 
-#include "dbugrconfigformbase.h"
+class QTabWidget;
+class QButtonGroup;
+class QRadioButton;
+class QVBoxLayout;
 
-class DebuggerConfigurations;
-
-class DebuggerConfigForm : public DebuggerConfigFormBase
+class DebuggerSettingsWidget : public QWidget
 {
   Q_OBJECT
-
 public:
-  DebuggerConfigForm(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
-  ~DebuggerConfigForm();
+  DebuggerSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  ~DebuggerSettingsWidget();
 
-  bool optionsChanged();
+  QTabWidget   *m_tabWidget;
+  QButtonGroup *m_buttonGroup;
+  QRadioButton *m_rdDBG;
+  QVBoxLayout  *m_vlayout;
+  QRadioButton *m_rdOther;
 
-  DebuggerConfigurations* configurations();
-  void setConfigurations(DebuggerConfigurations*);
 
-public slots:
-  virtual void confirmed();
-  virtual void canceled();
+  //QCheckBox    *m_ckDBGnabled;
+  KLineEdit    *m_edLocalBaseDir;
+  KLineEdit    *m_edRemoteBaseDir;
+  QSpinBox     *m_spListenPort;
+  KLineEdit    *m_edHost;
+
+  QGridLayout *m_gridLayout;
+  //QLabel      *m_lbDBGEnabled;
+  QLabel      *m_lbLocalBaseDir;
+  QLabel      *m_lbRemoteBaseDir;
+  QLabel      *m_lbListenPort;
+  QLabel      *m_lbHost;
+
+private slots:
+  void clientChanged(int);
 
 private:
-  void updateConfigurations();
-
-  bool m_options_changed;
+  void enableDBG();
+  void disableDBG();
 };
 
 #endif
-

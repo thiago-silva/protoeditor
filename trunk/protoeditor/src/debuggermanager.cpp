@@ -22,7 +22,6 @@
 #include "mainwindow.h"
 #include "debuggerconfigurations.h"
 #include "debuggerstack.h"
-#include "dbugrconfigform.h"
 #include "editortabwidget.h"
 #include "abstractdebugger.h"
 #include "debuggerfactory.h"
@@ -32,6 +31,7 @@
 #include "loglistview.h"
 #include "debuggerbreakpoint.h"
 #include "breakpointlistview.h"
+#include "debuggersettings.h"
 
 #include <kapplication.h>
 #include <kcombobox.h>
@@ -109,18 +109,18 @@ DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char
   connect(m_window->breakpointListView(), SIGNAL(sigBrekpointDeleted(DebuggerBreakpoint*)),
           this, SLOT(slotBrekpointDeleted(DebuggerBreakpoint*)));
   */
-/*
-  m_window->debuggerEndSessionAction()->setEnabled(false);
-  m_window->debuggerOptionsAction()->setEnabled(false);
-  m_window->debuggerRunAction()->setEnabled(false);
-  m_window->debuggerStartSessionAction()->setEnabled(false);
-  m_window->debuggerStepIntoAction()->setEnabled(false);
-  m_window->debuggerStepOutAction()->setEnabled(false);
-  m_window->debuggerStepOverAction()->setEnabled(false);
-  m_window->debuggerStopAction()->setEnabled(false);
-  */
+  /*
+    m_window->debuggerEndSessionAction()->setEnabled(false);
+    m_window->debuggerOptionsAction()->setEnabled(false);
+    m_window->debuggerRunAction()->setEnabled(false);
+    m_window->debuggerStartSessionAction()->setEnabled(false);
+    m_window->debuggerStepIntoAction()->setEnabled(false);
+    m_window->debuggerStepOutAction()->setEnabled(false);
+    m_window->debuggerStepOverAction()->setEnabled(false);
+    m_window->debuggerStopAction()->setEnabled(false);
+    */
 
-  m_debuggerConfigurations = new DebuggerConfigurations();
+  /*m_debuggerConfigurations = new DebuggerConfigurations();
 
   m_debuggerConfigurations->readConfigurations(
     KApplication::kApplication()->config());
@@ -128,7 +128,7 @@ DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char
   {
     loadDebugger();
   }
-  //m_window->debuggerOptionsAction()->setEnabled(true);
+  */
 }
 
 DebuggerManager::~DebuggerManager()
@@ -143,26 +143,27 @@ void DebuggerManager::clearDebugger()
   m_debugger = NULL;
 }
 
+
+
+void DebuggerManager::updateConfiguration()
+{
+  //m_debuggerConfigurations = DebuggerSettings::debuggerConfigurations();
+}
+
 void DebuggerManager::loadDebugger()
 {
-  if(m_debugger)
-  {
+  if(m_debugger) {
     m_debugger->endSession();
   }
 
-  if(!m_debugger)
-  {
+  if(!m_debugger) {
     m_debugger = DebuggerFactory::buildDebugger(this, m_debuggerConfigurations);
     if(m_debugger) connectDebugger();
-  }
-  else if(m_debuggerConfigurations->debuggerId() != m_debugger->id())
-  {
+  } else if(m_debuggerConfigurations->debuggerId() != m_debugger->id()) {
     clearDebugger();
     m_debugger = DebuggerFactory::buildDebugger(this, m_debuggerConfigurations);
     if(m_debugger) connectDebugger();
-  }
-  else
-  {
+  } else {
     m_debugger->loadConfiguration(m_debuggerConfigurations);
   }
 
@@ -214,12 +215,9 @@ void DebuggerManager::connectDebugger()
 
 void DebuggerManager::slotVariablesChanged(VariablesList_t* list, bool isglobalContext)
 {
-  if(isglobalContext)
-  {
+  if(isglobalContext) {
     m_window->globalVarList()->setVariables(list);
-  }
-  else
-  {
+  } else {
     m_window->localVarList()->setVariables(list);
   }
 }
@@ -241,16 +239,14 @@ void DebuggerManager::slotStackChanged(DebuggerStack* stack)
   EditorTabWidget* ed = m_window->tabEditor();
 
 
-  if(m_window->stackCombo()->count() > 0)
-  {
+  if(m_window->stackCombo()->count() > 0) {
     execLine =
       m_window->stackCombo()->stack()->topExecutionLine();
 
     ed->unmarkExecutionLine(execLine->filePath(), execLine->line());
   }
 
-  if(m_window->stackCombo()->currentItem() != 0)
-  {
+  if(m_window->stackCombo()->currentItem() != 0) {
     execLine =
       m_window->stackCombo()->selectedDebuggerExecutionLine();
 
@@ -277,8 +273,7 @@ void DebuggerManager::slotStackChanged(DebuggerStack* stack)
   execLine =
     m_window->stackCombo()->selectedDebuggerExecutionLine();
 
-  if(m_debugger)
-  {
+  if(m_debugger) {
     m_debugger->requestLocalVariables(execLine);
     //---requesting watches
     m_debugger->requestWatches(execLine);
@@ -292,35 +287,36 @@ void DebuggerManager::slotDebugBreakpointChanged(DebuggerBreakpoint* bp)
 
 /*** Application - DebuggerManager
  */
-void DebuggerManager::slotShowDebuggerOptions()
+
+/*
+void DebuggerManager::loadDebuggerConfigurations()
 {
-  DebuggerConfigForm* configForm = new DebuggerConfigForm(
-                                     m_window);
 
-  configForm->setConfigurations(m_debuggerConfigurations);
+ DebuggerConfigForm* configForm = new DebuggerConfigForm(
+                                    m_window);
 
-  configForm->setModal(true);
-  configForm->exec();
+ configForm->setConfigurations(m_debuggerConfigurations);
 
-  if(configForm->optionsChanged())
-  {
-    delete m_debuggerConfigurations;
-    m_debuggerConfigurations = configForm->configurations();
-    m_debuggerConfigurations->saveConfigurations(
-      KApplication::kApplication()->config());
-    loadDebugger();
-  }
-  delete configForm;
+ configForm->setModal(true);
+ configForm->exec();
+
+ if(configForm->optionsChanged())
+ {
+   delete m_debuggerConfigurations;
+   m_debuggerConfigurations = configForm->configurations();
+   m_debuggerConfigurations->saveConfigurations(
+     KApplication::kApplication()->config());
+   loadDebugger();
+ }
+ delete configForm;
 }
+ */
 
 void DebuggerManager::slotDebuggerStartSession()
 {
-  if(m_debugger)
-  {
+  if(m_debugger) {
     m_debugger->startSession();
-  }
-  else
-  {
+  } else {
     m_window->showError("No debugger selected");
   }
 }
@@ -338,7 +334,7 @@ void DebuggerManager::slotDebuggerRun()
 
   if(m_window->tabEditor()->count() != 0) {
     QString filepath = m_window->tabEditor()->documentPath(
-                       m_window->tabEditor()->currentPageIndex());
+                         m_window->tabEditor()->currentPageIndex());
     m_debugger->run(filepath);
   } else {
     m_window->showError("Select a file first");
@@ -374,10 +370,8 @@ void DebuggerManager::slotAddWatch()
   QString expression = m_window->edAddWatch()->text();
   m_window->edAddWatch()->clear();
 
-  if(!expression.isEmpty())
-  {
-    if(m_debugger)
-    {
+  if(!expression.isEmpty()) {
+    if(m_debugger) {
       m_debugger->addWatch(expression);
     }
   }
@@ -397,13 +391,11 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionLine* old, Debugger
 
   ed->unmarkPreExecutionLine(old->filePath(), old->line());
 
-  if(nw != m_window->stackCombo()->stack()->topExecutionLine())
-  {
+  if(nw != m_window->stackCombo()->stack()->topExecutionLine()) {
     ed->markPreExecutionLine(nw->filePath(), nw->line());
   }
 
-  if(m_debugger)
-  {
+  if(m_debugger) {
     m_debugger->requestLocalVariables(nw);
   }
 }
@@ -445,8 +437,7 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   m_window->tabEditor()->unmarkActiveBreakpoint(
     bp->filePath(), bp->line());
 
-  if(m_debugger)
-  {
+  if(m_debugger) {
     m_debugger->removeBreakpoint(bp);
   }
 }
@@ -476,16 +467,16 @@ void DebuggerManager::slotWatchRemoved(Variable* var)
 
 void DebuggerManager::slotSessionStarted()
 {
-//  m_window->debuggerEndSessionAction()->setEnabled(true);
-//   m_window->debuggerStartSessionAction()->setEnabled(false);
-//   m_window->debuggerRunAction()->setEnabled(true);
+  //  m_window->debuggerEndSessionAction()->setEnabled(true);
+  //   m_window->debuggerStartSessionAction()->setEnabled(false);
+  //   m_window->debuggerRunAction()->setEnabled(true);
 }
 
 void DebuggerManager::slotSessionEnded()
 {
-//   m_window->debuggerEndSessionAction()->setEnabled(false);
-//   m_window->debuggerStartSessionAction()->setEnabled(true);
-//   m_window->debuggerRunAction()->setEnabled(false);
+  //   m_window->debuggerEndSessionAction()->setEnabled(false);
+  //   m_window->debuggerStartSessionAction()->setEnabled(true);
+  //   m_window->debuggerRunAction()->setEnabled(false);
 }
 
 void DebuggerManager::slotDebugStarted()
@@ -496,10 +487,10 @@ void DebuggerManager::slotDebugStarted()
 
   m_window->statusBar()->message("Debug started");
 
-//   m_window->debuggerStepIntoAction()->setEnabled(true);
-//   m_window->debuggerStepOutAction()->setEnabled(true);
-//   m_window->debuggerStepOverAction()->setEnabled(true);
-//   m_window->debuggerStopAction()->setEnabled(true);
+  //   m_window->debuggerStepIntoAction()->setEnabled(true);
+  //   m_window->debuggerStepOutAction()->setEnabled(true);
+  //   m_window->debuggerStepOverAction()->setEnabled(true);
+  //   m_window->debuggerStopAction()->setEnabled(true);
 }
 
 void DebuggerManager::slotDebugEnded()
@@ -516,8 +507,7 @@ void DebuggerManager::slotDebugEnded()
 
   DebuggerStack* stack = m_window->stackCombo()->stack();
 
-  if(stack)
-  {
+  if(stack) {
     //remove the execution line mark
     DebuggerExecutionLine* execLine;
     execLine = stack->topExecutionLine();
@@ -533,10 +523,10 @@ void DebuggerManager::slotDebugEnded()
 
   //m_window->stackCombo()->clear();
 
-//   m_window->debuggerStepIntoAction()->setEnabled(false);
-//   m_window->debuggerStepOutAction()->setEnabled(false);
-//   m_window->debuggerStepOverAction()->setEnabled(false);
-//   m_window->debuggerStopAction()->setEnabled(false);
+  //   m_window->debuggerStepIntoAction()->setEnabled(false);
+  //   m_window->debuggerStepOutAction()->setEnabled(false);
+  //   m_window->debuggerStepOverAction()->setEnabled(false);
+  //   m_window->debuggerStopAction()->setEnabled(false);
 }
 
 void DebuggerManager::slotDebugError(QString message)

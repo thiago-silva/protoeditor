@@ -36,6 +36,7 @@ class KTextEdit;
 class KPushButton;
 class KStatusBar;
 class DebuggerManager;
+class DebuggerSettingsWidget;
 
 class MainWindow : public KMainWindow
 {
@@ -43,7 +44,7 @@ class MainWindow : public KMainWindow
 
 public:
   MainWindow(QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
-  virtual ~MainWindow();
+  ~MainWindow();
 
   EditorTabWidget*    tabEditor();
   DebuggerComboStack* stackCombo();
@@ -67,7 +68,7 @@ private slots:
   void slotSaveFile();
   void slotSaveFileAs();
   void slotQuit();
-  void slotShowSettings();
+  //void slotShowSettings();
   void slotEditKeys();
   void slotEditToolbars();
 
@@ -79,6 +80,7 @@ private slots:
   void slotHasNoRedo();
   void slotHasRedo();
 
+  void slotShowSettings();
 private:
   void setupConfiguration();
   void setupStatusBar();
@@ -86,7 +88,7 @@ private:
   void createWidgets();
 
   void saveCurrentPath();
-  //void saveGeometry();
+  void initDebuggerSettings();
 
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;
@@ -100,6 +102,8 @@ private:
   KTextEdit* m_edOutput;
 
   KStatusBar* m_statusBar;
+
+  DebuggerSettingsWidget* m_debuggerSettings;
 
   DebuggerManager* m_debugger_manager;
   QString m_currentOpenPath;

@@ -28,11 +28,8 @@ class DebuggerConfigurations;
 class DebuggerStack;
 class AbstractDebugger;
 class DebuggerBreakpoint;
-//class ProtoEditor;
 class MainWindow;
 class DebuggerExecutionLine;
-
-class Tester;
 
 class DebuggerManager : public QObject {
 Q_OBJECT
@@ -44,11 +41,12 @@ public:
 
   ~DebuggerManager();
 
+public slots:
+  void updateConfiguration();
+
 private slots:
   /* Application - DebuggerManager */
 
-  //TODO: prefix with slotCommand*()
-  void slotShowDebuggerOptions();
   void slotDebuggerStartSession();
   void slotDebuggerEndSession();
   void slotDebuggerRun();
