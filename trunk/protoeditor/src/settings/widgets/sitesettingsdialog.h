@@ -23,8 +23,8 @@
 #include <kdialogbase.h>
 
 class KLineEdit;
-class QLabel;
 class QSpinBox;
+class KURLRequester;
 
 class SiteSettingsDialog : public KDialogBase
 {
@@ -38,27 +38,23 @@ public:
   int            port();
   QString remoteBaseDir();
   QString localBaseDir();
+  QString defaultFile();
 
   void populate(const QString& name, const QString& host, int port,
-                const QString& remoteBaseDir, const QString& localBaseDir);
+                const QString& remoteBaseDir, const QString& localBaseDir,
+                const QString& defaultFile);
 
   void setUpdate();
 protected slots:
   void slotOk();
 
 private:
-  KLineEdit *m_edName;
-  KLineEdit *m_edHost;
-  QSpinBox  *m_spPort;
-  KLineEdit *m_edRemoteBaseDir;
-  KLineEdit *m_edLocalBaseDir;
-
-
-  QLabel* m_lbName;
-  QLabel* m_lbHost;
-  QLabel* m_lbPort;
-  QLabel* m_lbRemoteBaseDir;
-  QLabel* m_lbLocalBaseDir;
+  KLineEdit     *m_edName;
+  KLineEdit     *m_edHost;
+  QSpinBox      *m_spPort;
+  KLineEdit     *m_edRemoteBaseDir;
+  KURLRequester *m_edLocalBaseDir;
+  KURLRequester *m_edDefaultFile;
 };
 
 #endif

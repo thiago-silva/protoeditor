@@ -26,10 +26,10 @@
 #include <qframe.h>
 
 #include <kmessagebox.h>
-
+#include <kurlrequester.h>
 
 SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
- : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, "Site settings", KDialogBase::Ok|KDialogBase::Cancel)
+    : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, "Site settings", KDialogBase::Ok|KDialogBase::Cancel)
 {
 
   QFrame *frame = plainPage();
@@ -37,54 +37,65 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
 
   QGridLayout* grid = new QGridLayout(0, 5, 2, 3, 5);
 
-  m_lbName = new QLabel(frame);
-  m_lbName->setText("Site name:");
-  grid->addWidget(m_lbName, 0, 0);
+  QLabel* label = new QLabel(frame);
+  label->setText("Site name:");
+  grid->addWidget(label, 0, 0);
 
   m_edName = new KLineEdit(frame);
   grid->addWidget(m_edName, 0, 1);
 
-  m_lbHost = new QLabel(frame);
-  m_lbHost->setText("Host:");
-  grid->addWidget(m_lbHost, 1, 0);
+  label = new QLabel(frame);
+  label->setText("Host:");
+  grid->addWidget(label, 1, 0);
 
   m_edHost = new KLineEdit(frame);
   grid->addWidget(m_edHost, 1, 1);
 
-  m_lbPort = new QLabel(frame);
-  m_lbPort->setText("Port:");
-  grid->addWidget(m_lbPort, 2, 0);
-
+  label = new QLabel(frame);
+  label->setText("Port:");
+  grid->addWidget(label, 2, 0);
 
   m_spPort = new QSpinBox(frame);
   m_spPort->setMaxValue(999999);
   m_spPort->setValue(80);
   grid->addWidget(m_spPort, 2, 1);
 
-  m_lbRemoteBaseDir = new QLabel(frame);
-  m_lbRemoteBaseDir->setText("Remote base dir:");
-  grid->addWidget(m_lbRemoteBaseDir, 3, 0);
+  label = new QLabel(frame);
+  label->setText("Remote base dir:");
+  grid->addWidget(label, 3, 0);
 
   m_edRemoteBaseDir = new KLineEdit(frame);
   grid->addWidget(m_edRemoteBaseDir, 3, 1);
 
-  m_lbLocalBaseDir = new QLabel(frame);
-  m_lbLocalBaseDir->setText("Local base dir:");
-  grid->addWidget(m_lbLocalBaseDir, 4, 0);
+  label = new QLabel(frame);
+  label->setText("Local base dir:");
+  grid->addWidget(label, 4, 0);
 
-  m_edLocalBaseDir = new KLineEdit(frame);
+  m_edLocalBaseDir = new KURLRequester(frame);
+  m_edLocalBaseDir->setMode(KFile::Directory);
   grid->addWidget(m_edLocalBaseDir, 4, 1);
+  
+  //
+  label = new QLabel(frame);
+  label->setText("Default file:");
+  grid->addWidget(label, 5, 0);
+
+  m_edDefaultFile = new KURLRequester(frame);
+  //note: this filter must be the same as in void MainWindow::slotOpenFile()
+  m_edDefaultFile->setFilter("*.php| PHP Scripts\n*|All Files");
+  grid->addWidget(m_edDefaultFile, 5, 1);
 
   vlayout->addLayout(grid);
   vlayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
   enableButtonSeparator(true);
+
+  setMinimumWidth(400);
 }
 
 
 SiteSettingsDialog::~SiteSettingsDialog()
-{
-}
+{}
 
 void SiteSettingsDialog::setUpdate()
 {
@@ -93,21 +104,26 @@ void SiteSettingsDialog::setUpdate()
 
 void SiteSettingsDialog::slotOk()
 {
-  if(m_edName->text().isEmpty()) {
+  if(m_edName->text().isEmpty())
+  {
     KMessageBox::sorry(this, "\"Name\" is required.");
-  } else {
+  }
+  else
+  {
     KDialogBase::slotOk();
   }
 }
 
 void SiteSettingsDialog::populate(const QString& name, const QString& host, int port,
-                const QString& remoteBaseDir, const QString& localBaseDir)
+                                  const QString& remoteBaseDir, const QString& localBaseDir,
+                                  const QString& defaultFile)
 {
   m_edName->setText(name);
   m_edHost->setText(host);
   m_spPort->setValue(port);
   m_edRemoteBaseDir->setText(remoteBaseDir);
-  m_edLocalBaseDir->setText(localBaseDir);
+  m_edLocalBaseDir->setURL(localBaseDir);
+  m_edDefaultFile->setURL(defaultFile);
 }
 
 
@@ -133,7 +149,12 @@ QString SiteSettingsDialog::remoteBaseDir()
 
 QString SiteSettingsDialog::localBaseDir()
 {
-  return m_edLocalBaseDir->text();
+  return m_edLocalBaseDir->url();
+}
+
+QString SiteSettingsDialog::defaultFile()
+{
+  return m_edDefaultFile->url();
 }
 
 #include "sitesettingsdialog.moc"
