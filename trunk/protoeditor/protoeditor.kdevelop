@@ -39,7 +39,7 @@
       <autocompile>true</autocompile>
       <envvars/>
       <runarguments>
-        <protoeditor></protoeditor>
+        <protoeditor/>
       </runarguments>
     </run>
     <configurations>
