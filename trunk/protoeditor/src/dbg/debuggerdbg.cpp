@@ -42,7 +42,7 @@
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     : AbstractDebugger(parent), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
-    m_isProfilingEnabled(false), m_dbgSettings(0), m_net(0), m_profileDialog(0),
+    /*m_isProfilingEnabled(false),*/ m_dbgSettings(0), m_net(0), m_profileDialog(0),
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
   m_dbgSettings = new DBGSettings();
@@ -133,7 +133,7 @@ void DebuggerDBG::stopJIT()
 void DebuggerDBG::run(const QString& filepath)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
-  
+
   dbgint sessionid = kapp->random();
 
   if(!m_isJITActive && !startJIT())
@@ -308,20 +308,23 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::enableProfile(bool value)
+void DebuggerDBG::profile(const QString& filePath)
 {
-  m_isProfilingEnabled = value;
+  //   m_isProfilingEnabled = value;
 
-  if(m_isProfilingEnabled)
+  profileDialog()->clear();
+  //   profileDialog()->show();
+
+  SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
+
+  dbgint sessionid = kapp->random();
+
+  if(!m_isJITActive && !startJIT())
   {
-    profileDialog()->show();
+    return;
   }
-  else
-  {
-    profileDialog()->close();    
-  }
-  
-  requestProfileData();
+
+  m_net->requestProfileData(filePath, site, m_dbgSettings->listenPort(), sessionid);
 }
 
 DBGProfileDialog* DebuggerDBG::profileDialog()
@@ -329,7 +332,7 @@ DBGProfileDialog* DebuggerDBG::profileDialog()
   if(!m_profileDialog)
   {
     m_profileDialog = new DBGProfileDialog(0, "profile");
-    connect(m_profileDialog, SIGNAL(sigClose()), manager(), SLOT(slotProfileDialogClosed()));
+    //     connect(m_profileDialog, SIGNAL(sigClose()), manager(), SLOT(slotProfileDialogClosed()));
   }
 
   return m_profileDialog;
@@ -430,8 +433,13 @@ void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, in
 
 void DebuggerDBG::addProfileData(int modid, const QString& filePath, int ctxid, const QString ctxname, int line, long hitcount, double min, double max, double sum)
 {
+  if(!profileDialog()->isVisible())
+  {
+    profileDialog()->show();
+  }
+  
   m_profileDialog->addData(
-      new DBGProfileData(modid, filePath, ctxid, ctxname, line, hitcount, sum / hitcount, sum, min, max));
+    new DBGProfileData(modid, filePath, ctxid, ctxname, line, hitcount, sum / hitcount, sum, min, max));
 }
 
 void DebuggerDBG::debugError(/*int type,*/ const QString&)
@@ -536,20 +544,20 @@ void DebuggerDBG::processStepData()
   m_net->requestVariables(m_currentExecutionPointID, false);
   m_net->requestVariables(m_globalExecutionPointID, true);
   requestWatches(m_currentExecutionPointID);
-  requestProfileData();
+  //   requestProfileData();
 }
 
-void DebuggerDBG::requestProfileData()
-{
-  if(isRunning())
-  {
-    if(m_isProfilingEnabled)
-    {
-      profileDialog()->clear();
-      m_net->profile();
-    }
-  }
-}
+// void DebuggerDBG::requestProfileData()
+// {
+//   if(isRunning())
+//   {
+//     if(m_isProfilingEnabled)
+//     {
+//       profileDialog()->clear();
+//       m_net->profile();
+//     }
+//   }
+// }
 
 void DebuggerDBG::slotBreakpoint()
 {

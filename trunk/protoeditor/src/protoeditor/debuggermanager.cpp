@@ -46,7 +46,7 @@
 #include <kdebug.h>
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
-  : QObject(parent, name), m_debugger(0), m_window(window), m_showProfileDialog(false)
+  : QObject(parent, name), m_debugger(0), m_window(window)/*, m_showProfileDialog(false)*/
 {}
 
 /******************************* internal functions ******************************************/
@@ -93,8 +93,13 @@ void DebuggerManager::init()
           m_window->breakpointListView(),
           SLOT(slotBreakpointUnmarked(const QString&, int)));
 
+  //----documents 
   connect(m_window->tabEditor(), SIGNAL(sigNewDocument()),
           this, SLOT(slotNewDocument()));
+
+  connect(m_window->tabEditor(), SIGNAL(sigNoDocument()),
+          this, SLOT(slotNoDocument()));
+  
 
   //------BREAKPOINT UI (from listview)
   connect(m_window->breakpointListView(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
@@ -433,6 +438,14 @@ void DebuggerManager::slotWatchRemoved(Variable* var)
   m_debugger->removeWatch(var->name());
 }
 
+void DebuggerManager::slotNoDocument()
+{
+  if(!m_debugger) return;
+  
+  m_debugger->stop();
+  
+}
+
 void DebuggerManager::slotNewDocument()
 {
   //if the new document has breakpoints, mark them.
@@ -450,11 +463,32 @@ void DebuggerManager::slotNewDocument()
 
 void DebuggerManager::slotProfile()
 {
-  m_showProfileDialog = !m_showProfileDialog;
-  if(m_debugger)
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  if(!currentSite)
   {
-    m_debugger->enableProfile(m_showProfileDialog);
+    m_window->showSorry("Can't use default site script. No site configured.");
+    return;
   }
+  else
+  {
+    QString filePath = currentSite->defaultFile();
+    if(filePath.isEmpty())
+    {
+      m_window->showSorry("Current site has no default script.");
+      return;
+    }
+    m_window->openFile(filePath);
+    if(m_window->tabEditor()->count() == 0)
+    {
+      //couldn't open the file for some reason
+      return;
+    }
+  }
+  
+  QString filepath = m_window->tabEditor()->currentDocumentPath();
+
+  m_window->setDebugStatusMsg("Profiling...");
+  m_debugger->profile(filepath);
 }
 
 /******************************* Debugger interface ******************************************/
@@ -623,10 +657,10 @@ void DebuggerManager::slotInternalError(const QString& message)
   m_window->showError(message);
 }
 
-void DebuggerManager::slotProfileDialogClosed()
-{
-  m_showProfileDialog = false;
-  dynamic_cast<KToggleAction*>(m_window->actionCollection()->action("profile"))->setChecked(false);
-}
+// void DebuggerManager::slotProfileDialogClosed()
+// {
+// //   m_showProfileDialog = false;
+//   dynamic_cast<KToggleAction*>(m_window->actionCollection()->action("profile"))->setChecked(false);
+// }
 
 #include "debuggermanager.moc"

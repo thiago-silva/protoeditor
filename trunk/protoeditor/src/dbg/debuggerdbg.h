@@ -63,7 +63,7 @@ public:
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
-  virtual void enableProfile(bool);
+  virtual void profile(const QString&);
 
   /* Internal use (provided for DBGNet use) */
   void updateStack(DebuggerStack*);
@@ -97,12 +97,12 @@ private:
   void requestWatches(int scopeid);
   int getDBGOptions();
   void processStepData();
-  void requestProfileData();
+//   void requestProfileData();
 
   QString                 m_name;
   bool                    m_isJITActive;
   bool                    m_isRunning;
-  bool                    m_isProfilingEnabled;
+//   bool                    m_isProfilingEnabled;
   
   DBGSettings            *m_dbgSettings;
 

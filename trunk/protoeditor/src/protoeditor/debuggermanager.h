@@ -79,7 +79,8 @@ private slots:
   void slotBreakpointRemoved(DebuggerBreakpoint*);
   void slotGotoLineAtFile(const QString&, int);
   void slotWatchRemoved(Variable*);
-
+  void slotNoDocument();
+  
   void slotNewDocument();
 
   void slotProfile();
@@ -92,7 +93,7 @@ private slots:
   //Debugger internal error (conection, listen port, etc)
   void slotInternalError(const QString&);
 
-  void slotProfileDialogClosed();
+//   void slotProfileDialogClosed();
 private:
   void debugActiveScript();
   void debugCurrentSiteScript();
@@ -104,7 +105,7 @@ private:
 
   AbstractDebugger *m_debugger;
   MainWindow       *m_window;
-  bool             m_showProfileDialog;
+//   bool             m_showProfileDialog;
 };
 
 #endif
