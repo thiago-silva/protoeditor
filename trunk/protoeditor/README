@@ -7,7 +7,7 @@ Project site:
 1.0 About:
 
   Protoeditor is a little KDE text editor developed for PHP debugging with the
-  free version of DBG debugger (http://dd.cron.ru/dbg).
+  free version of DBG debugger (http://dd.cron.ru/dbg), version 2.11.30.
   It is a product of the development process of a DBG debugger client for
   the Quanta+ project (http://www.kdewebdev.org), but got quite usable.
 
