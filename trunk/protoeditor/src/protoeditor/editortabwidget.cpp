@@ -164,7 +164,7 @@ void EditorTabWidget::setCurrentDocument(QString filePath, bool forceOpen)
   if(index != -1) {
     setCurrentPage(index);
   } else if(forceOpen) {
-    createDocument(KURL(filePath));
+    addDocument(KURL(filePath));
   }
 }
 
