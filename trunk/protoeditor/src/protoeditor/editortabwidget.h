@@ -90,6 +90,9 @@ private slots:
   void slotCurrentChanged(QWidget*);
   void slotBreakpointMarked(Document* doc, int line);
   void slotBreakpointUnmarked(Document* doc, int line);
+
+  void slotTextChanged();
+  void sigStatusMsg(const QString&);
 private:
   bool                        closeDocument(int);
   Document*                   document(uint);

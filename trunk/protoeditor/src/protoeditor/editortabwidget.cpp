@@ -89,7 +89,7 @@ bool EditorTabWidget::closeDocument(int index)
   Document* doc = document(index);
 
   if(!doc->close()) return false; //file is modifiyed and the user hit "cancel" on prompt to save
-  
+
   if(!m_terminating)
   {
     m_window->guiFactory()->removeClient(doc->view());
@@ -109,6 +109,7 @@ bool EditorTabWidget::closeDocument(int index)
   {
     m_window->actionStateChanged("has_nofileopened");
     m_window->setCaption(QString::null);
+    m_window->setEditorStatusMsg(QString::null);
   }
 
   return true;
@@ -293,6 +294,11 @@ bool EditorTabWidget::createDocument(const KURL& url)
   connect(doc, SIGNAL(sigBreakpointUnmarked(Document*, int )), this,
           SLOT(slotBreakpointUnmarked(Document*, int)));
 
+  connect(doc, SIGNAL(sigTextChanged()), this,
+          SLOT(slotTextChanged()));
+  
+  connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
+          SLOT(sigStatusMsg(const QString&)));
 
   QIconSet mimeIcon (KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
   if (mimeIcon.isNull())
@@ -362,6 +368,33 @@ void EditorTabWidget::slotBreakpointUnmarked(Document* doc, int line)
   emit sigBreakpointUnmarked(doc->path(), line);
 }
 
+void EditorTabWidget::slotTextChanged()
+{
+  if(currentPageIndex() == -1) return;
+
+  int index = currentPageIndex();
+  Document* doc = document(index);
+  
+  if(doc->isModified())
+  {
+    setTabIconSet(page(index), QIconSet(SmallIcon("filesave")));
+  }
+  else
+  {
+    QIconSet mimeIcon(KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
+    if (mimeIcon.isNull())
+    {
+      mimeIcon = QIconSet(SmallIcon("document"));
+    }
+    setTabIconSet(page(index), mimeIcon);
+  }
+}
+
+void EditorTabWidget::sigStatusMsg(const QString& msg)
+{
+  m_window->setEditorStatusMsg(msg);
+}
+  
 void EditorTabWidget::contextMenu(int index, const QPoint & p)
 {
   enum { Close, CloseOthers, CloseAll };
