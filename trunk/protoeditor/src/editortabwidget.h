@@ -22,7 +22,7 @@
 #define EDITORTABWIDGET_H
 
 #include <ktabwidget.h>
-#include <qurl.h>
+#include <kurl.h>
 #include <qvaluelist.h>
 #include <ktexteditor/markinterface.h>
 #include <qpair.h>
@@ -45,7 +45,7 @@ public:
 
   //void setMainWindow(MainWindow*);
 
-  void addDocument(QUrl url);
+  void addDocument(KURL url);
   void closeCurrentDocument();
   void closeAllDocuments();
   void setCurrentDocument(QString, bool forceOpen = false);
@@ -128,11 +128,11 @@ private:
     InactiveBreakpoint   = KTextEditor::MarkInterface::markType04
   };
 
-  void createDocument(QUrl url);
+  void createDocument(KURL url);
 
   int documentIndex(QString filepath);
 
-  KTextEditor::View*          openKDocument(QUrl);
+  KTextEditor::View*          openKDocument(KURL);
 
   KTextEditor::MarkInterface* documentMarkIf(QString);
 

@@ -87,7 +87,7 @@ void EditorTabWidget::terminate()
 }
 
 
-void EditorTabWidget::addDocument(QUrl url)
+void EditorTabWidget::addDocument(KURL url)
 {
   int index;
   if((index = documentIndex(url.path())) != -1)
@@ -168,7 +168,7 @@ void EditorTabWidget::setCurrentDocument(QString filePath, bool forceOpen)
   }
   else if(forceOpen)
   {
-    createDocument(QUrl(filePath));
+    createDocument(KURL(filePath));
   }
 }
 
@@ -275,7 +275,7 @@ void EditorTabWidget::unmarkPreExecutionLine(QString filepath, int line)
   imark->removeMark(line-1, PreExecutionLine);
 }
 
-void EditorTabWidget::createDocument(QUrl url/*, QString text*/)
+void EditorTabWidget::createDocument(KURL url/*, QString text*/)
 {
 /*
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view());
@@ -338,7 +338,7 @@ int EditorTabWidget::documentIndex(QString filepath)
   return -1;
 }
 
-KTextEditor::View* EditorTabWidget::openKDocument(QUrl url)
+KTextEditor::View* EditorTabWidget::openKDocument(KURL url)
 {
   QWidget* tab = new QWidget(this);
   QVBoxLayout *lay = new QVBoxLayout(tab, 1, 1);
