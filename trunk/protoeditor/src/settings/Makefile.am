@@ -1,4 +1,4 @@
-INCLUDES = $(all_includes)
+INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/settings $(all_includes)
 METASOURCES = AUTO
 
 # Application settings data
