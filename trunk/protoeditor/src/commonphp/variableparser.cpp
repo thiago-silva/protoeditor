@@ -119,7 +119,8 @@ QString VariableParser::parseString()
 QString VariableParser::parseInt()
 {
   QRegExp rx;
-  rx.setPattern("i:(\\d*);");
+  //rx.setPattern("i:(\\d*);"); //crash if the number is negative, ie. "i:-1". \\d doesn't reconize negatives
+  rx.setPattern("i:([^;]*);");
 
   if(rx.search(m_raw, m_index) == -1) return "";
   m_index += rx.matchedLength();
@@ -181,6 +182,9 @@ VariablesList_t* VariableParser::parseObjectMembers(PHPVariable* parent)
   //O:6:"Classe":3:{s:6:"membro";N;s:4:"mem2";N;s:4:"priv";N;}
   int size;
   VariablesList_t* list = new VariablesList_t;
+
+  QString r = m_raw.mid( m_index-10, 20);
+  QCharRef a = r.at(m_index);
 
   QRegExp rx;
   rx.setPattern("(\\d*):\\{");
