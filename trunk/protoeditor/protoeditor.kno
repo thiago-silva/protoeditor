@@ -9,10 +9,14 @@
 <li>Include other StdActions/Kate actions (like &quot;goto line&quot;)<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>Maybe, change the BreakpointListView to:<br />[icon] [status]    [file]      [path]<br />   o         ...       sd.php    /home/...<br /><br /></li>
+<li>Open file buttom on toolbar with pulldown menu that shows recent files.<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /><br /></li>
 <li>See the possibility to setup katepart to show line number / icon margin by on the first run.<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
-<ul type="disc"><li>All it should do is request a setep. The client should be responsable for feeding the manager with all the info.<br /><br /></li></ul>
+<ul type="disc"><li>All it should do is request a setep. The client should be responsable for feeding the manager with all the info.<br /><br /><br /></li></ul>
+<li>VariableListView: Options of sorting:</li>
+<ul type="disc"><li>No sorting (new variables are added to the bottom)</li>
+<li>sorted (user is able to sort clicking on the header of a column (name/value, etc)<br /><br /></li></ul>
 <li>Add context Menu for the editor<br /></li>
 <li>Context menu for VariableListView:</li>
 <ul type="disc"><li>for scalars:</li>

@@ -135,7 +135,7 @@
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <programargs> > debugger_output</programargs>
+      <programargs/>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>
