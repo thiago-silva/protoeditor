@@ -117,7 +117,34 @@ PHPArrayValue::~PHPArrayValue()
 {
 }
 
-QString PHPArrayValue::toString()
+QString PHPArrayValue::toString(int indent)
+{
+  QString ind;
+  ind.fill(' ', indent);
+
+  QString s;
+
+  Variable* v;
+  for(v =  m_list->first(); v; v = m_list->next()) {
+    s += "\n";
+    s += ind;
+
+    if(v->isReference()) {
+      s += v->name() + " => &" + v->value()->owner()->name();
+    } else {
+      if(v->value()->isScalar()) {
+        s += v->name() + " => " + v->value()->toString();
+      } else {
+        s += v->name() + " = (" + v->value()->typeName() + ")";
+        s += v->value()->toString(indent+3);
+      }
+    }
+  }
+
+  return s;
+}
+
+QString PHPArrayValue::typeName()
 {
   QString s = "Array[";
   if(m_list) {
@@ -125,12 +152,8 @@ QString PHPArrayValue::toString()
   } else {
     s += "0]";
   }
-  return s;
-}
 
-QString PHPArrayValue::typeName()
-{
-  return QString("Array");
+  return s;
 }
 
 //----------------------------------------------------------------
@@ -145,9 +168,31 @@ PHPObjectValue::~PHPObjectValue()
 {
 }
 
-QString PHPObjectValue::toString()
+QString PHPObjectValue::toString(int indent)
 {
-  return m_classType;
+  QString ind;
+  ind.fill(' ', indent);
+
+  QString s;
+
+  Variable* v;
+  for(v =  m_list->first(); v; v = m_list->next()) {
+    s += "\n";
+    s += ind;
+
+    if(v->isReference()) {
+      s += v->name() + " => &" + v->value()->owner()->name();
+    } else {
+      if(v->value()->isScalar()) {
+        s += v->name() + " => " + v->value()->toString();
+      } else {
+        s += v->name() + " = (" + v->value()->typeName() + ")";
+        s += v->value()->toString(indent+3);
+      }
+    }
+  }
+
+  return s;
 }
 
 QString PHPObjectValue::typeName()

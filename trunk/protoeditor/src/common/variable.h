@@ -50,6 +50,8 @@ public:
   void setValueShared(bool);
   bool isValueShared();
 
+  QString toString();
+
   virtual void setReference(bool);
   virtual bool isReference();
 
@@ -74,7 +76,7 @@ public:
   Variable* owner();
 
   virtual QString typeName() = 0;
-  virtual QString toString() = 0;
+  virtual QString toString(int indent = 0) = 0;
 protected:
   VariableValue(Variable* owner);
 private:
@@ -88,7 +90,8 @@ public:
   virtual ~VariableScalarValue();
 
   virtual void set(QString);
-  virtual QString toString();
+
+  virtual QString toString(int indent = 0);
 
   virtual QString typeName() = 0;
 protected:
@@ -103,7 +106,7 @@ public:
   void setList(VariablesList_t*);
   VariablesList_t* list();
 
-  virtual QString toString() = 0;
+  virtual QString toString(int indent = 0) = 0;
   virtual QString typeName() = 0;
 protected:
   VariableListValue(Variable* owner);

@@ -38,7 +38,7 @@ public:
 
 class PHPScalarValue : public VariableScalarValue {
 public:
-  enum { Integer, Double, Boolean, String, Resource, /*Reference,*/ Undefined };
+  enum { Integer, Double, Boolean, String, Resource, /*Reference, Object, */ Undefined };
 
   PHPScalarValue(Variable* owner);
   virtual ~PHPScalarValue();
@@ -58,7 +58,7 @@ public:
   PHPArrayValue(Variable* owner);
   virtual ~PHPArrayValue();
 
-  virtual QString toString();
+  virtual QString toString(int indent = 0);
   virtual QString typeName();
 };
 
@@ -67,7 +67,7 @@ public:
   PHPObjectValue(Variable* owner);
   virtual ~PHPObjectValue();
 
-  virtual QString toString();
+  virtual QString toString(int indent = 0);
   virtual QString typeName();
   virtual void setClassType(QString);
 

@@ -21,15 +21,10 @@
 #include "variable.h"
 
 Variable::Variable(Variable* parent)
-  : m_parent(parent), m_name(""), m_value(NULL), m_isShared(false), m_isReference(false)
-{
-
-}
+    : m_parent(parent), m_name(""), m_value(NULL), m_isShared(false), m_isReference(false) {}
 
 Variable::Variable(QString name)
-  : m_parent(0), m_name(name), m_value(NULL), m_isReference(false)
-{
-}
+    : m_parent(0), m_name(name), m_value(NULL), m_isReference(false) {}
 
 Variable::~Variable()
 {
@@ -62,14 +57,28 @@ VariableValue* Variable::value()
 }
 
 
-void Variable::setValueShared(bool shared) {
+void Variable::setValueShared(bool shared)
+{
   m_isShared = shared;
 }
 
-bool Variable::isValueShared() {
+bool Variable::isValueShared()
+{
   return m_isShared;
 }
 
+QString Variable::toString()
+{
+  QString s;
+
+  if(value()->isScalar()) {
+    s = name() + " = " + value()->toString();
+  } else {
+    s =  name() + " = (" + value()->typeName() + ")";
+    s += value()->toString(3);
+  }
+  return s;
+}
 
 void Variable::setReference(bool reference)
 {
@@ -81,7 +90,8 @@ bool Variable::isReference()
   return m_isReference;
 }
 
-Variable* Variable::parent() {
+Variable* Variable::parent()
+{
   return m_parent;
 }
 
@@ -90,20 +100,17 @@ Variable* Variable::parent() {
 
 
 VariableValue::VariableValue(Variable* owner)
-  : m_varOwner(owner), m_isScalar(true)
-{
-}
+    : m_varOwner(owner), m_isScalar(true) {}
 
-VariableValue::~VariableValue()
-{
-}
+VariableValue::~VariableValue() {}
 
 void VariableValue::setScalar(bool scalar)
 {
   m_isScalar = scalar;
 }
 
-Variable* VariableValue::owner() {
+Variable* VariableValue::owner()
+{
   return m_varOwner;
 }
 
@@ -115,20 +122,16 @@ bool VariableValue::isScalar()
 //---------------------------------------------------------------------------
 
 VariableScalarValue::VariableScalarValue(Variable* owner)
-  : VariableValue(owner)
-{
-}
+    : VariableValue(owner) {}
 
-VariableScalarValue::~VariableScalarValue()
-{
-}
+VariableScalarValue::~VariableScalarValue() {}
 
 void VariableScalarValue::set(QString value)
 {
   m_value = value;
 }
 
-QString VariableScalarValue::toString()
+QString VariableScalarValue::toString(int)
 {
   return m_value;
 }
@@ -136,9 +139,7 @@ QString VariableScalarValue::toString()
 //---------------------------------------------------------------------------
 
 VariableListValue::VariableListValue(Variable* owner)
-  : VariableValue(owner), m_list(NULL)
-{
-}
+    : VariableValue(owner), m_list(NULL) {}
 
 VariableListValue::~VariableListValue()
 {
