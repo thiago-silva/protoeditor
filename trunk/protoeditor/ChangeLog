@@ -1,10 +1,32 @@
+2005-02-07 01:52  thiago_silva
+
+	* src/protoeditor/editortabwidget.cpp: FIXED: application was
+	  crashing on close. Added verification for slotCurrentChanged().
+
+2005-02-07 01:49  thiago_silva
+
+	* src/settings/debuggersettingswidget.cpp: Expanded the spacing
+	  between the widgets. On Fedora, some labels were overriden by
+	  other widgets
+
+2005-02-07 01:48  thiago_silva
+
+	* src/settings/Makefile.am: FIXED: libsettings should not be
+	  installed
+
+2005-02-07 00:15  thiago_silva
+
+	* README, configure.in, configure.in.in, protoeditor.kdevelop,
+	  src/protoeditor/protoeditor.cpp: version 5.0 > 5.0.2
+
 2005-02-06 22:33  thiago_silva
 
-	* src/settings/Makefile.am: fixed includes
+	* src/settings/Makefile.am (tags: BETA_0_5_2): fixed includes
 
 2005-02-06 22:30  thiago_silva
 
-	* configure.in: icon Makefile.am creation changed
+	* configure.in (tags: BETA_0_5_2): icon Makefile.am creation
+	  changed
 
 2005-02-06 21:18  thiago_silva
 
@@ -64,9 +86,9 @@
 	  src/protoeditor/variableslistviewitem.cpp,
 	  src/protoeditor/variableslistviewitem.h,
 	  src/protoeditor/watchlistview.cpp,
-	  src/protoeditor/watchlistview.h: project tree modification:
-	  -src/* goes to src/protoeditor except settings files. They go to
-	  src/settings
+	  src/protoeditor/watchlistview.h (utags: BETA_0_5_2): project tree
+	  modification: -src/* goes to src/protoeditor except settings
+	  files. They go to src/settings
 
 	  -Settings improvement -Debugger KActions added -Toolbar added
 	  -DebuggerManager and EditorTabWidget handling the menu/toolbar
@@ -76,13 +98,13 @@
 
 2005-02-06 20:52  thiago_silva
 
-	* src/Makefile.am, configure.in, src/settings/Makefile.am,
-	  src/settings/debuggersettings.kcfgc,
-	  src/settings/debuggersettingswidget.cpp,
-	  src/settings/debuggersettingswidget.h,
-	  src/settings/protoeditor.kcfg: project tree modification: -src/*
-	  goes to src/protoeditor except settings files. They go to
-	  src/settings
+	* src/Makefile.am (tags: BETA_0_5_2), configure.in,
+	  src/settings/Makefile.am, src/settings/debuggersettings.kcfgc
+	  (tags: BETA_0_5_2), src/settings/debuggersettingswidget.cpp
+	  (tags: BETA_0_5_2), src/settings/debuggersettingswidget.h (tags:
+	  BETA_0_5_2), src/settings/protoeditor.kcfg (tags: BETA_0_5_2):
+	  project tree modification: -src/* goes to src/protoeditor except
+	  settings files. They go to src/settings
 
 2005-02-05 18:26  thiago_silva
 
@@ -101,9 +123,9 @@
 
 2005-02-05 16:34  thiago_silva
 
-	* configure.in, configure.in.in: there are some problems creating
-	  the kcfg settings using #MIN_CONFIG(3.0.0).  fixed with
-	  #MIN_CONFIG(3.2)
+	* configure.in, configure.in.in (tags: BETA_0_5_2): there are some
+	  problems creating the kcfg settings using #MIN_CONFIG(3.0.0).
+	  fixed with #MIN_CONFIG(3.2)
 
 2005-02-05 16:31  thiago_silva
 
