@@ -22,7 +22,7 @@
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <secondaryLanguages/>
   </general>
   <kdevautoproject>
@@ -89,6 +89,8 @@
       <group pattern="*.png" name="Icons" />
       <group pattern="*.po;*.ts" name="Translations" />
       <group pattern="*" name="Others" />
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
@@ -135,11 +137,11 @@
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <programargs/>
+      <gdbpath/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

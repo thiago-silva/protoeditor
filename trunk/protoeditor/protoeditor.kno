@@ -90,7 +90,7 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\NewEntry 1 TODO Now
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Use KPart::MainWindow to merge KTextEditor features.</li>
 <li>Implement the profiler<br /><br /><br />Create Actions:</li>
@@ -119,7 +119,6 @@
 <li>When all files are closed and debugger is running, next step opens the current file.</li></ul>
 </body></html>
 
-
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>Each debugger has its own QWidget to be used on the settings dialog (it will be a child of QTabWidget). Maybe they should have its own KConfigSkeleton, registered on a hipotetical ConfigManager. ConfigManager would be responsable to inform all registered KConfigSkeleton subclasses registered to read/write its configuration.<br /><br />Besides the specific options of each debugger on the QWidget, they shall have a &quot;enable JIT&quot;. When its &quot;on&quot;, it will inform the debugger client to listen for incoming connections permanently. Otherwise, listening on port is temporary, ie, when a debugger is actually running. <br /><br />When a new connection arises for some debugger, they must know wich folder mapping to use. So they inform DebuggerManager about the incoming connection, and the manager is responsable for chose the apropriate registered Site according to the debugger triggered and the remote host (<span style="color:#ff0000">can't solve the remote port to help on this</span>) connected to the client. Also it's possible for a site to have many script languages. If there are 2 Sites registered for a given host (maybe the user's Site has different folder mapping for different languages), we wouldn't know wich one to use. So maybe, one more entry (Debugger) should be added.<br /><br />Each Site has the following entries:<br /></p>
@@ -138,15 +137,17 @@
 <p>See http://dd.cron.ru/dbg/download.php?h=prof_sample2</p>
 </body></html>
 
-\NewEntry 1 Bug reminder
+\CurrentEntry 1 Bug reminder
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>When on JIT, the button &quot;run/continue&quot; is disabled<br /></li>
 <li>Run debugger, delete some lines before the execution point, stop debugger. The execPoint icon is no deleted</li>
 <ul type="disc"><li>When the debugger starts, should the editor be read only?</li>
 <li>When debugger is running and user edits file, when he/she saves, should the debugger stops?<br /><br /></li></ul>
 <li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /></li>
-<li>Run a script on browser with DBGSESSID, and protoeditor with JIT enabled. The file is not automatically opened on Protoeditor.</li></ul>
+<li>Run a script on browser with DBGSESSID, and protoeditor with JIT enabled. The file is not automatically opened on Protoeditor.<br /></li>
+<li>Open a file, edit, close protoeditor. Its window is closed and a &quot;orfan&quot; dialog appears asking for saving the file. Protoeditor shouldn't close before the dialog appears</li></ul>
 </body></html>
+
 
 \NewEntry 0 Quanta
 
