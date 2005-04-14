@@ -62,7 +62,9 @@ public:
   bool startListener(int port);
   void stopListener();
 
-  void requestPage(const QString& filePath, SiteSettings* site, int port, dbgint sessid);
+  void startDebugging(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid);
+  void startProfiling(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid);
+  
   void requestOptions(dbgint options);
 
   void requestContinue();
@@ -75,8 +77,6 @@ public:
   void requestWatch(const QString& expression, dbgint scopeid);
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointRemoval(int bpid);
-
-  void requestProfileData(const QString& filePath, SiteSettings* site, int port, dbgint sessid);
   
   //DBGReceiver communicatDBGNetes through those:
   void receivePack(DBGResponsePack* pack);
@@ -114,6 +114,7 @@ private slots:
   void slotError(const QString&);
 
 private:
+  void requestPage(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid);
   void processStepData();
   void processProfileData();
   bool processHeader(DBGHeader* header);

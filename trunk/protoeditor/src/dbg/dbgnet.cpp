@@ -79,13 +79,24 @@ void DBGNet::stopListener()
   m_con->close();
 }
 
+void DBGNet::startDebugging(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
+{
+  requestPage(filePath, site, listenPort, sessid);
+}
+  
+void DBGNet::startProfiling(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
+{
+  m_isProfiling = true;
+  requestPage(filePath, site, listenPort, sessid);
+}
+
 void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
 {
   m_dbgFileInfo->setSite(site);
 
   m_sessionId = sessid;
-  m_requestor->makeHttpRequest(site->host()
-                               , site->port()
+  m_requestor->makeHttpRequest(site->url()
+//                                , site->port()
                                , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
                                , listenPort
                                , sessid);
@@ -157,12 +168,6 @@ void DBGNet::requestBreakpoint(DebuggerBreakpoint* bp)
 void DBGNet::requestBreakpointRemoval(int bpid)
 {
   m_requestor->requestBreakpointRemoval(bpid);
-}
-
-void DBGNet::requestProfileData(const QString& filePath, SiteSettings* site, int port, dbgint sessid)
-{
-  m_isProfiling = true;
-  requestPage(filePath, site, port, sessid);
 }
 
 void DBGNet::setOptions(int op)
