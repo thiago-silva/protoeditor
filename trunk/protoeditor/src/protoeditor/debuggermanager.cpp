@@ -46,7 +46,7 @@
 #include <kdebug.h>
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
-  : QObject(parent, name), m_debugger(0), m_window(window)/*, m_showProfileDialog(false)*/
+    : QObject(parent, name), m_debugger(0), m_window(window)/*, m_showProfileDialog(false)*/
 {}
 
 /******************************* internal functions ******************************************/
@@ -56,7 +56,7 @@ void DebuggerManager::init()
   //-----WATCH UI
   connect(m_window->btAddWatch(), SIGNAL(clicked()),
           this, SLOT(slotAddWatch()));
-  
+
   connect(m_window->edAddWatch(), SIGNAL(returnPressed()),
           this, SLOT(slotAddWatch()));
 
@@ -93,13 +93,13 @@ void DebuggerManager::init()
           m_window->breakpointListView(),
           SLOT(slotBreakpointUnmarked(const QString&, int)));
 
-  //----documents 
+  //----documents
   connect(m_window->tabEditor(), SIGNAL(sigNewDocument()),
           this, SLOT(slotNewDocument()));
 
   connect(m_window->tabEditor(), SIGNAL(sigNoDocument()),
           this, SLOT(slotNoDocument()));
-  
+
 
   //------BREAKPOINT UI (from listview)
   connect(m_window->breakpointListView(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
@@ -215,6 +215,13 @@ void DebuggerManager::slotDebugStart()
     return;
   }
 
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  if(!currentSite)
+  {
+    m_window->showSorry("No site configured.");
+    return;
+  }
+
   switch(m_window->preferredScript())
   {
     case MainWindow::ActiveScript:
@@ -244,38 +251,31 @@ void DebuggerManager::debugActiveScript()
 
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
-  m_window->setDebugStatusMsg("Starting...");
+//   m_window->setDebugStatusMsg("Starting...");
   m_debugger->run(filepath);
-  
+
 }
 
 void DebuggerManager::debugCurrentSiteScript()
 {
   SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  if(!currentSite)
+  QString filePath = currentSite->defaultFile();
+  if(filePath.isEmpty())
   {
-    m_window->showSorry("Can't use default site script. No site configured.");
+    m_window->showSorry("Current site has no default script.");
     return;
   }
-  else
+  m_window->openFile(filePath);
+  if(m_window->tabEditor()->count() == 0)
   {
-    QString filePath = currentSite->defaultFile();
-    if(filePath.isEmpty())
-    {
-      m_window->showSorry("Current site has no default script.");
-      return;
-    }
-    m_window->openFile(filePath);
-    if(m_window->tabEditor()->count() == 0)
-    {
-      //couldn't open the file for some reason
-      return;
-    }
+    //couldn't open the file for some reason
+    return;
   }
-  
+
+
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
-  m_window->setDebugStatusMsg("Starting...");
+//   m_window->setDebugStatusMsg("Starting...");
   m_debugger->run(filepath);
 }
 
@@ -298,7 +298,7 @@ void DebuggerManager::slotDebugStepInto()
 void DebuggerManager::slotDebugStepOver()
 {
   if(!m_debugger) return;
-  
+
   m_window->setDebugStatusMsg("Steping...");
   m_debugger->stepOver();
 }
@@ -442,9 +442,9 @@ void DebuggerManager::slotWatchRemoved(Variable* var)
 void DebuggerManager::slotNoDocument()
 {
   if(!m_debugger) return;
-  
+
   m_debugger->stop();
-  
+
 }
 
 void DebuggerManager::slotNewDocument()
@@ -504,10 +504,10 @@ void DebuggerManager::profileCurrentSiteScript()
       return;
     }
   }
-  
+
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
-  m_window->setDebugStatusMsg("Profiling...");
+//   m_window->setDebugStatusMsg("Profiling...");
   m_debugger->profile(filepath);
 }
 
@@ -527,7 +527,7 @@ void DebuggerManager::profileActiveScript()
 
   m_window->setDebugStatusMsg("Profiling...");
   m_debugger->profile(filepath);
-  
+
 }
 
 /******************************* Debugger interface ******************************************/
@@ -629,7 +629,7 @@ void DebuggerManager::slotDebugStarted()
 
   m_window->setDebugStatusMsg("Debug started");
   m_window->setLedEnabled(true);
-  
+
   m_window->actionStateChanged("debug_started");
   m_window->actionCollection()->action("debug_start")->setText("Continue");
   /*
