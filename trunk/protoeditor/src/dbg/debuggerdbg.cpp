@@ -142,7 +142,7 @@ void DebuggerDBG::run(const QString& filepath)
     return;
   }
 
-  m_net->requestPage(filepath, site, m_dbgSettings->listenPort(), sessionid);
+  m_net->startDebugging(filepath, site, m_dbgSettings->listenPort(), sessionid);
 }
 
 void DebuggerDBG::continueExecution()
@@ -325,7 +325,7 @@ void DebuggerDBG::profile(const QString& filePath)
     return;
   }
 
-  m_net->requestProfileData(filePath, site, m_dbgSettings->listenPort(), sessionid);
+  m_net->startProfiling(filePath, site, m_dbgSettings->listenPort(), sessionid);
 }
 
 DBGProfileDialog* DebuggerDBG::profileDialog()
@@ -507,7 +507,7 @@ void DebuggerDBG::checkDBGVersion(int major, int minor, const QString& desc)
       (minor != DBG_API_MINOR_VESION))
   {
 
-    emit sigInternalError(QString("DBG version differs. Expecting %1.%2.").arg(
+    emit sigInternalError(QString("Incompatible DBG version. Expecting %1.%2.").arg(
                             QString::number(DBG_API_MAJOR_VESION), QString::number(DBG_API_MINOR_VESION)));
   }
 }
