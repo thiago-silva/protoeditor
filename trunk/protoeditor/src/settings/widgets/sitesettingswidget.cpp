@@ -89,8 +89,8 @@ void SiteSettingsWidget::populate()
   QValueList<SiteSettings*> list = ProtoeditorSettings::self()->siteSettingsList();
   QValueList<SiteSettings*>::iterator it;
   for(it = list.begin(); it != list.end(); ++it) {
-    addSite((*it)->name(), (*it)->host(),
-              (*it)->port(), (*it)->remoteBaseDir(), (*it)->localBaseDir(), (*it)->defaultFile());
+    addSite((*it)->name(), (*it)->url(),
+             /* (*it)->port(),*/ (*it)->remoteBaseDir(), (*it)->localBaseDir(), (*it)->defaultFile());
   }
 }
 
@@ -102,7 +102,7 @@ void SiteSettingsWidget::slotAdd()
     if(m_sitesListBox->findItem(dialog->name()) != 0) {
       KMessageBox::sorry(this, QString("Site \"") + dialog->name() + "\" already exists.");
     } else {
-      addSite(dialog->name(), dialog->host(), dialog->port(),
+      addSite(dialog->name(), dialog->url(),/* dialog->port(),*/
               dialog->remoteBaseDir(), dialog->localBaseDir(), dialog->defaultFile());
       break;
     }
@@ -119,10 +119,10 @@ void SiteSettingsWidget::slotModify()
 
   Site s = m_siteMap[m_sitesListBox->text(m_sitesListBox->currentItem())];
 
-  dialog->populate(s.name, s.host, s.port, s.remoteBaseDir, s.localBaseDir, s.defaultFile);
+  dialog->populate(s.name, s.url,/* s.port,*/ s.remoteBaseDir, s.localBaseDir, s.defaultFile);
   dialog->setUpdate();
   if(dialog->exec() == QDialog::Accepted) {
-    modifySite(dialog->name(), dialog->host(), dialog->port(),
+    modifySite(dialog->name(), dialog->url(),/* dialog->port(),*/
                dialog->remoteBaseDir(), dialog->localBaseDir(), dialog->defaultFile());
   }
   delete dialog;
@@ -153,22 +153,22 @@ void SiteSettingsWidget::slotListDoubleClicked(QListBoxItem*)
   slotModify();
 }
 
-void SiteSettingsWidget::modifySite(const QString& name, const QString& host, int port,
+void SiteSettingsWidget::modifySite(const QString& name, const QString& url,/* int port,*/
                                  const QString& remoteBaseDir, const QString& localBaseDir,
                                   const QString& defaultFile)
 {
-  Site s(name, host, port, remoteBaseDir, localBaseDir, defaultFile);
+  Site s(name, url, /*port, */remoteBaseDir, localBaseDir, defaultFile);
   
   m_siteMap[name] = s;
   //s->setMatchCase
   //s->setDebuggger
 }
 
-void SiteSettingsWidget::addSite(const QString& name, const QString& host, int port,
+void SiteSettingsWidget::addSite(const QString& name, const QString& url, /*int port,*/
                                  const QString& remoteBaseDir, const QString& localBaseDir,
                                  const QString& defaultFile)
 {
-  Site s(name, host, port, remoteBaseDir, localBaseDir, defaultFile);
+  Site s(name, url,/* port,*/ remoteBaseDir, localBaseDir, defaultFile);
 
 //s->load(name, host, port, remoteBaseDir, localBaseDir,
 //     /* TODO: */
@@ -187,7 +187,7 @@ void SiteSettingsWidget::updateSettings()
   for(it = m_siteMap.begin(); it != m_siteMap.end(); ++it, ++count ) {
     Site s = it.data();
     ProtoeditorSettings::self()->addSite(count,
-      it.data().name, it.data().host, it.data().port, it.data().remoteBaseDir,
+      it.data().name, it.data().url, /*it.data().port,*/ it.data().remoteBaseDir,
       it.data().localBaseDir, it.data().defaultFile);
   }
 }

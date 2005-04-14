@@ -12,12 +12,13 @@ SiteSettings::SiteSettings(const QString &number)
   KConfigSkeleton::ItemString  *itemName;
   itemName = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "Name" ), mName );
   addItem( itemName, QString::fromLatin1( "Name" ) );
-  KConfigSkeleton::ItemString  *itemHost;
-  itemHost = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "Host" ), mHost );
-  addItem( itemHost, QString::fromLatin1( "Host" ) );
-  KConfigSkeleton::ItemInt  *itemPort;
+  KConfigSkeleton::ItemString  *itemUrl;
+  itemUrl = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "URL" ), mUrl );
+  addItem( itemUrl, QString::fromLatin1( "URL" ) );
+  
+/*  KConfigSkeleton::ItemInt  *itemPort;
   itemPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "Port" ), mPort, 80 );
-  addItem( itemPort, QString::fromLatin1( "Port" ) );
+  addItem( itemPort, QString::fromLatin1( "Port" ) );*/
   KConfigSkeleton::ItemPath  *itemLocalBaseDir;
   itemLocalBaseDir = new KConfigSkeleton::ItemPath( currentGroup(), QString::fromLatin1( "LocalBaseDir" ), mLocalBaseDir );
   addItem( itemLocalBaseDir, QString::fromLatin1( "LocalBaseDir" ) );
@@ -42,14 +43,14 @@ SiteSettings::SiteSettings(const QString &number)
 }
 
 
-void SiteSettings::load(const QString& name, const QString& host, int port,
+void SiteSettings::load(const QString& name, const QString& url,/* int port,*/
      const QString& remoteBaseDir, const QString& localBaseDir,
      const QString& defaultFile, bool matchFileInLowerCase,
      const QString& debuggerClient)
 {
   mName = name;
-  mHost = host;
-  mPort = port;
+  mUrl = url;
+//   mPort = port;
   mRemoteBaseDir = remoteBaseDir;
   mLocalBaseDir = localBaseDir;
   mMatchFileInLowerCase = matchFileInLowerCase;

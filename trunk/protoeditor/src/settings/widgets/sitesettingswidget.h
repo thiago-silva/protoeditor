@@ -49,26 +49,26 @@ private slots:
   void slotListDoubleClicked(QListBoxItem*);
 
 private:
-  void addSite(const QString& name, const QString& host, int port,
+  void addSite(const QString& name, const QString& url, /*int port,*/
                const QString& remoteBaseDir, const QString& localBaseDir,
                const QString& defaultFile);
 
-  void modifySite(const QString& name, const QString& host, int port,
+  void modifySite(const QString& name, const QString& url, /*int port,*/
                   const QString& remoteBaseDir, const QString& localBaseDir,
                       const QString& defaultFile);
 
   class Site {
   public:
-    Site() : port(0) {};
-    Site(const QString& n, const QString& h, int p,
+    Site() /*: port(0)*/ {};
+    Site(const QString& n, const QString& h, /*int p,*/
          const QString& r, const QString& l, const QString& d)
-        : name(n), host(h), port(p), remoteBaseDir(r), localBaseDir(l),
+        : name(n), url(h), /*port(p),*/ remoteBaseDir(r), localBaseDir(l),
           defaultFile(d){}
     ~Site() {}
 
     QString name;
-    QString host;
-    int     port;
+    QString url;
+//     int     port;
     QString remoteBaseDir;
     QString localBaseDir;
     QString defaultFile;

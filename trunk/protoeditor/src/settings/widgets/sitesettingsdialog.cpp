@@ -45,45 +45,46 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   grid->addWidget(m_edName, 0, 1);
 
   label = new QLabel(frame);
-  label->setText("Host:");
+  label->setText("URL:");
   grid->addWidget(label, 1, 0);
 
-  m_edHost = new KLineEdit(frame);
-  grid->addWidget(m_edHost, 1, 1);
+  m_edUrl = new KLineEdit(frame);
+  m_edUrl->setText("http://");
+  grid->addWidget(m_edUrl, 1, 1);
 
-  label = new QLabel(frame);
-  label->setText("Port:");
-  grid->addWidget(label, 2, 0);
-
-  m_spPort = new QSpinBox(frame);
-  m_spPort->setMaxValue(999999);
-  m_spPort->setValue(80);
-  grid->addWidget(m_spPort, 2, 1);
+//   label = new QLabel(frame);
+//   label->setText("Port:");
+//   grid->addWidget(label, 2, 0);
+// 
+//   m_spPort = new QSpinBox(frame);
+//   m_spPort->setMaxValue(999999);
+//   m_spPort->setValue(80);
+//   grid->addWidget(m_spPort, 2, 1);
 
   label = new QLabel(frame);
   label->setText("Remote base dir:");
-  grid->addWidget(label, 3, 0);
+  grid->addWidget(label, 2, 0);
 
   m_edRemoteBaseDir = new KLineEdit(frame);
-  grid->addWidget(m_edRemoteBaseDir, 3, 1);
+  grid->addWidget(m_edRemoteBaseDir, 2, 1);
 
   label = new QLabel(frame);
   label->setText("Local base dir:");
-  grid->addWidget(label, 4, 0);
+  grid->addWidget(label, 3, 0);
 
   m_edLocalBaseDir = new KURLRequester(frame);
   m_edLocalBaseDir->setMode(KFile::Directory);
-  grid->addWidget(m_edLocalBaseDir, 4, 1);
+  grid->addWidget(m_edLocalBaseDir, 3, 1);
   
   //
   label = new QLabel(frame);
   label->setText("Default file:");
-  grid->addWidget(label, 5, 0);
+  grid->addWidget(label, 4, 0);
 
   m_edDefaultFile = new KURLRequester(frame);
   //note: this filter must be the same as in void MainWindow::slotOpenFile()
   m_edDefaultFile->setFilter("*.php| PHP Scripts\n*|All Files");
-  grid->addWidget(m_edDefaultFile, 5, 1);
+  grid->addWidget(m_edDefaultFile, 4, 1);
 
   vlayout->addLayout(grid);
   vlayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
@@ -107,20 +108,25 @@ void SiteSettingsDialog::slotOk()
   if(m_edName->text().isEmpty())
   {
     KMessageBox::sorry(this, "\"Name\" is required.");
+    return;
   }
-  else
+
+  if(!KURL(m_edUrl->text()).isValid())
   {
-    KDialogBase::slotOk();
+    KMessageBox::sorry(this, "\"URL\" is not valid.");
+    return;
   }
+
+  KDialogBase::slotOk();
 }
 
-void SiteSettingsDialog::populate(const QString& name, const QString& host, int port,
+void SiteSettingsDialog::populate(const QString& name, const QString& url,/* int port,*/
                                   const QString& remoteBaseDir, const QString& localBaseDir,
                                   const QString& defaultFile)
 {
   m_edName->setText(name);
-  m_edHost->setText(host);
-  m_spPort->setValue(port);
+  m_edUrl->setText(url);
+//   m_spPort->setValue(port);
   m_edRemoteBaseDir->setText(remoteBaseDir);
   m_edLocalBaseDir->setURL(localBaseDir);
   m_edDefaultFile->setURL(defaultFile);
@@ -132,15 +138,20 @@ QString SiteSettingsDialog::name()
   return m_edName->text();
 }
 
-QString SiteSettingsDialog::host()
+QString SiteSettingsDialog::url()
 {
-  return m_edHost->text();
+  QString str = m_edUrl->text();
+  if(str.at(str.length()-1) == '/')
+  {
+    str = str.left(str.length()-1);
+  }
+  return str;
 }
 
-int SiteSettingsDialog::port()
-{
-  return m_spPort->value();
-}
+// int SiteSettingsDialog::port()
+// {
+//   return m_spPort->value();
+// }
 
 QString SiteSettingsDialog::remoteBaseDir()
 {

@@ -115,7 +115,7 @@ class Browser : public QObject
 public:
   Browser();
   ~Browser();
-  void request(const QString&);
+  void request(const KURL&);
 
 signals:
   void sigError(const QString& error);
@@ -124,7 +124,7 @@ private slots:
   void slotHttpDone(bool);
 private:
   void doHTTPRequest(const KURL& url);
-  void doBrowserRequest(const QString&);
+  void doBrowserRequest(const KURL&);
   void initHTTPCommunication();
 
   QHttp            *m_http;
@@ -160,7 +160,7 @@ public:
   void requestProfileData(int modno);
   void requestProfileFreqData(int testLoops);
   
-  void makeHttpRequest(const QString& host, int port, const QString& path, int listenPort, int sessionId);
+  void makeHttpRequest(const QString& host, /*int port, */const QString& path, int listenPort, int sessionId);
 
   void addHeaderFlags(dbgint);
   void setSocket(QSocket* socket);

@@ -34,13 +34,13 @@ public:
   ~SiteSettingsDialog();
 
   QString name();
-  QString host();
-  int            port();
+  QString url();
+//   int     port();
   QString remoteBaseDir();
   QString localBaseDir();
   QString defaultFile();
 
-  void populate(const QString& name, const QString& host, int port,
+  void populate(const QString& name, const QString& url, /*int port,*/
                 const QString& remoteBaseDir, const QString& localBaseDir,
                 const QString& defaultFile);
 
@@ -50,8 +50,8 @@ protected slots:
 
 private:
   KLineEdit     *m_edName;
-  KLineEdit     *m_edHost;
-  QSpinBox      *m_spPort;
+  KLineEdit     *m_edUrl;
+//   QSpinBox      *m_spPort;
   KLineEdit     *m_edRemoteBaseDir;
   KURLRequester *m_edLocalBaseDir;
   KURLRequester *m_edDefaultFile;

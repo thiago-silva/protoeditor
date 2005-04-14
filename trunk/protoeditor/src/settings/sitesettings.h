@@ -12,7 +12,7 @@ class SiteSettings : public KConfigSkeleton
     SiteSettings( const QString &number );
     ~SiteSettings();
 
-    void load(const QString& name, const QString& host, int port,
+    void load(const QString& name, const QString& url, /*int port,*/
      const QString& remoteBaseDir, const QString& localBaseDir,
      const QString& defaultFile, bool matchFileInLowerCase,
      const QString& debuggerClient);
@@ -28,25 +28,25 @@ class SiteSettings : public KConfigSkeleton
     }
 
 
-    void setHost(const QString& host)
+    void setUrl(const QString& url)
     {
-      mHost = host;
+      mUrl = url;
     }
 
-    QString host() const
+    QString url() const
     {
-      return mHost;
+      return mUrl;
     }
 
-    void setPort(int port)
-    {
-      mPort = port;
-    }
-
-    int port() const
-    {
-      return mPort;
-    }
+//     void setPort(int port)
+//     {
+//       mPort = port;
+//     }
+// 
+//     int port() const
+//     {
+//       return mPort;
+//     }
 
     void setLocalBaseDir(const QString& localBaseDir)
     {
@@ -103,8 +103,8 @@ class SiteSettings : public KConfigSkeleton
 
     // Site_$(number)
     QString mName;
-    QString mHost;
-    int mPort;
+    QString mUrl;
+//     int mPort;
     QString mRemoteBaseDir;
     QString mLocalBaseDir;
     QString mDefaultFile;

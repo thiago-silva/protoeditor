@@ -117,12 +117,12 @@ void ProtoeditorSettings::clearSites()
   m_siteSettingsMap.clear();
 }
 
-void ProtoeditorSettings::addSite(int number, const QString& name, const QString& host, int port,
+void ProtoeditorSettings::addSite(int number, const QString& name, const QString& url, /*int port,*/
                const QString& remoteBaseDir, const QString& localBaseDir, const QString& defaultFile)
 
 {
   SiteSettings* s = new SiteSettings(QString::number(number));
-  s->load(name, host, port, remoteBaseDir, localBaseDir, defaultFile,
+  s->load(name, url,/* port, */remoteBaseDir, localBaseDir, defaultFile,
     /* TODO: */
     false, "DBG");
 

@@ -205,15 +205,23 @@ void DBGRequestor::requestProfileFreqData(int testLoops)
   delete requestPack;
 }
 
-void DBGRequestor::makeHttpRequest(const QString& host, int port, const QString& path, int listenPort, int sessionId)
+void DBGRequestor::makeHttpRequest(const QString& host, /*int port,*/ const QString& path, int listenPort, int sessionId)
 {
-  QString reqUrl = QString("http://") + host + ":" + QString::number(port)
-                   + path + "?DBGSESSID="
-                   + QString::number(sessionId)
-                   + "@clienthost:"
-                   + QString::number(listenPort);
+  KURL url(host);
+//   url.setPort(port);
+  url.setPath(url.path() + path);
+  url.setQuery(QString("DBGSESSID=")
+              + QString::number(sessionId)
+              + "@clienthost:"
+              + QString::number(listenPort));
+      
+//   QString reqUrl = QString("http://") + host + ":" + QString::number(port)
+//                    + path + "?DBGSESSID="
+//                    + QString::number(sessionId)
+//                    + "@clienthost:"
+//                    + QString::number(listenPort);
 
-  m_browser->request(reqUrl);
+  m_browser->request(url);
 }
 
 void DBGRequestor::addHeaderFlags(dbgint flags)
@@ -243,12 +251,12 @@ Browser::~Browser()
   delete m_http;
 }
 
-void Browser::request(const QString& url)
+void Browser::request(const KURL& url)
 {
   if(ProtoeditorSettings::self()->extOutputSettings()->useExternalBrowser()) {
     doBrowserRequest(url);
   } else {
-    doHTTPRequest(KURL(url));
+    doHTTPRequest(url);
   }
 }
 
@@ -256,7 +264,15 @@ void Browser::doHTTPRequest(const KURL& url)
 {
   initHTTPCommunication();
 
-  kdDebug() << "HTTP request \"" << url.path() + url.query() <<  "\" from " << url.host() << endl;
+  kdDebug() << "HTTP request \""
+      << url.protocol()
+      << "://"
+      << url.host()
+      << ":"
+      << url.port()
+      << url.path() + url.query()
+      << "\""
+      << endl;
 
   m_http->setHost(url.host());
   m_http->get(url.path() + url.query());
@@ -278,12 +294,12 @@ void Browser::slotHttpDone(bool error)
   m_http->abort();
 }
 
-void Browser::doBrowserRequest(const QString& url)
+void Browser::doBrowserRequest(const KURL& url)
 {
   m_browserRequestor = BrowserRequestor::retrieveBrowser(
     ProtoeditorSettings::self()->extOutputSettings()->browser(), this);
   //TODO: assert-me
-  m_browserRequestor->doRequest(url);
+  m_browserRequestor->doRequest(url.prettyURL());
 }
 
 /***************************** BROWSER REQUESTOR *****************************************/
