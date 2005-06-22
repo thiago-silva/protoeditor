@@ -222,7 +222,7 @@ const int TAG_REQ_SET_OPT_SIZE        =  8; //for some reason, "4" here and DBG 
 /* custom def, complements CURLOC_SCOPE_ID and GLOBAL_SCOPE_ID. Used on DBGNet */
 const int WATCH_SCOPE_ID = -2;
 
-const int FRAME_SIZE = 8;
+// const int FRAME_SIZE = 8;
 
 const int TEST_LOOPS = 1000;
 
