@@ -274,7 +274,7 @@ void Browser::doHTTPRequest(const KURL& url)
       << "\""
       << endl;
 
-  m_http->setHost(url.host());
+  m_http->setHost(url.host(), url.port());
   m_http->get(url.path() + url.query());
 }
 
