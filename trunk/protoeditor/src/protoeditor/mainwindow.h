@@ -86,6 +86,7 @@ public:
 
   void setEditorStatusMsg(const QString&);
   void setDebugStatusMsg(const QString&);
+  void setDebugStatusName(const QString&);
   void setLedEnabled(bool);
 private slots:
   void slotOpenFile();
@@ -123,8 +124,9 @@ private:
   void createWidgets();
   void loadSites();
 
-  QLabel* m_lbLed;
+  QLabel *m_lbLed;
   QLabel *m_lbDebugMsg;
+  QLabel *m_lbDebugName;
   QLabel *m_lbEditorMsg;
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;

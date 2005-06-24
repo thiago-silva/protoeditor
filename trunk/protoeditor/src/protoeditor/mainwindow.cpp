@@ -130,13 +130,19 @@ void MainWindow::setupStatusBar()
   m_lbLed->setSizePolicy(QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Expanding ));
   m_statusBar->addWidget(m_lbLed);
 
-  //second item: debug msgs
+  //second item: debugger name
+  m_lbDebugName = new QLabel(this);
+  m_lbDebugName->setMinimumSize( 40, 0 );
+  //m_lbDebugMsg->setSizePolicy(QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Expanding ));
+  m_statusBar->addWidget(m_lbDebugName, 0 /*stretch*/, false );
+  
+  //third item: debug msgs
   m_lbDebugMsg = new QLabel(this);
   m_lbDebugMsg->setMinimumSize( 0, 0 );
   m_lbDebugMsg->setSizePolicy(QSizePolicy( QSizePolicy::Ignored, QSizePolicy::Fixed ));
   m_statusBar->addWidget(m_lbDebugMsg, 1 /*stretch*/, false );
 
-  //Third item: editor msgs
+  //fourth item: editor msgs
   m_lbEditorMsg = new QLabel(this);
   m_lbEditorMsg->setMinimumSize( 230, 0 );
   m_lbEditorMsg->setSizePolicy(QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ));
@@ -503,6 +509,11 @@ void MainWindow::setEditorStatusMsg(const QString& msg)
 void MainWindow::setDebugStatusMsg(const QString& msg)
 {
   m_lbDebugMsg->setText(msg);
+}
+
+void MainWindow::setDebugStatusName(const QString& name)
+{
+  m_lbDebugName->setText(name);
 }
 
 void MainWindow::setLedEnabled(bool on)
