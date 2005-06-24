@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 
-#include "dbgconnection.h"
+#include "connection.h"
 
 #include <qsocket.h>
 #include <qsocketdevice.h>
@@ -28,22 +28,22 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-DBGConnection::DBGConnection(QObject * parent, const char * name)
+Connection::Connection(QObject * parent, const char * name)
   : QObject(parent, name),
     m_currentClient(0), m_device(0), m_notifier(0), m_listening(false)
 
 {
 }
 
-DBGConnection::~DBGConnection()
+Connection::~Connection()
 {
   close();
 }
 
-void DBGConnection::clearDevice()
+void Connection::clearDevice()
 {
   if(m_listening) {
-    kdDebug() << "DBG: Stop listening on port " << m_device->port() << endl;
+    kdDebug() << "Stop listening on port " << m_device->port() << endl;
     m_device->close();
     m_listening = false;
   }
@@ -54,7 +54,7 @@ void DBGConnection::clearDevice()
   m_notifier = NULL;
 }
 
-void DBGConnection::clearSocket()
+void Connection::clearSocket()
 {
   if(m_currentClient) {
     m_currentClient->close();
@@ -64,7 +64,7 @@ void DBGConnection::clearSocket()
   }
 }
 
-void DBGConnection::slotIncomingConnection(int)
+void Connection::slotIncomingConnection(int)
 {
   int fd = m_device->accept();
   if(fd < 0) return;
@@ -80,13 +80,13 @@ void DBGConnection::slotIncomingConnection(int)
   emit sigAccepted(m_currentClient);
 }
 
-void DBGConnection::slotClosed()
+void Connection::slotClosed()
 {
   clearSocket();
 //   emit sigClientClosed();
 }
 
-void DBGConnection::slotError(int error)
+void Connection::slotError(int error)
 {
   switch(error) {
   case QSocket::ErrConnectionRefused:
@@ -101,24 +101,24 @@ void DBGConnection::slotError(int error)
   }
 }
 
-bool DBGConnection::isListening()
+bool Connection::isListening()
 {
   return m_listening;
 }
 
-void DBGConnection::closeClient()
+void Connection::closeClient()
 {
   clearSocket();
 //   emit sigClientClosed();
 }
 
-void DBGConnection::close()
+void Connection::close()
 {
   closeClient();
   clearDevice();
 }
 
-bool DBGConnection::listenOn(int port)
+bool Connection::listenOn(int port)
 {
   close();
 
@@ -144,7 +144,4 @@ bool DBGConnection::listenOn(int port)
   return isListening();
 }
 
-
-
-
-#include "dbgconnection.moc"
+#include "connection.moc"

@@ -19,8 +19,8 @@
  ***************************************************************************/
 
 
-#ifndef DBGCONNECTION_H
-#define DBGCONNECTION_H
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
 #include <qobject.h>
 
@@ -28,12 +28,12 @@ class QSocket;
 class QSocketDevice;
 class QSocketNotifier;
 
-class DBGConnection  : public QObject
+class Connection  : public QObject
 {
   Q_OBJECT
 public:
-  DBGConnection(QObject * parent = 0, const char * name = 0);
-  ~DBGConnection();
+  Connection(QObject * parent = 0, const char * name = 0);
+  ~Connection();
 
   //virtual void newConnection(int socket);
 
