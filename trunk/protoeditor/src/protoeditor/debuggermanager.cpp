@@ -172,9 +172,6 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
   connect(debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotInternalError(const QString&)));
 
-  connect(debugger, SIGNAL(sigStepDone()),
-          this, SLOT(slotStepDone()));
-
   connect(debugger, SIGNAL(sigBreak()),
           this, SLOT(slotBreak()));
 }
