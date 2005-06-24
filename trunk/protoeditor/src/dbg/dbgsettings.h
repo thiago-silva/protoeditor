@@ -10,7 +10,7 @@ class DBGSettingsWidget;
 class DBGSettings : public DebuggerSettingsInterface
 {
   public:
-    DBGSettings();
+    DBGSettings(const QString& name);
     ~DBGSettings();
 
     bool breakOnLoad() const
@@ -49,7 +49,7 @@ class DBGSettings : public DebuggerSettingsInterface
     }
 
     virtual QString name() {
-      return QString("DBG");
+      return m_name;
     }
 
     virtual void loadValuesFromWidget();
@@ -64,6 +64,8 @@ class DBGSettings : public DebuggerSettingsInterface
     bool mSendDetailedOutput;
     int  mListenPort;
     bool mEnableJIT;
+
+    QString m_name;
 
   private:
     DBGSettingsWidget* m_widget;

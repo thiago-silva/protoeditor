@@ -7,12 +7,11 @@
 
 #include <qwidget.h>
 
-DBGSettings::DBGSettings()
-  : DebuggerSettingsInterface()
+DBGSettings::DBGSettings(const QString& name)
+  : DebuggerSettingsInterface(), m_name(name)
 {
   m_widget = 0;
-  
-  setCurrentGroup( QString::fromLatin1( "DBG" ) );
+  setCurrentGroup( QString::fromLatin1( m_name ) );
 
   KConfigSkeleton::ItemBool  *itemBreakOnLoad;
   itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, true );
