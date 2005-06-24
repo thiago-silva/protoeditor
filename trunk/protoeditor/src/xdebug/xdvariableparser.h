@@ -17,23 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+ 
+#ifndef XDVARIABLEPARSER_H
+#define XDVARIABLEPARSER_H
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
+#include "phpvariable.h"
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+class QDomNodeList;
+class QDomNode;
 
-  AbstractDebugger* debugger;
-
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
-
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+class XDVariableParser
+{
+public:
+  XDVariableParser();
+  ~XDVariableParser();
   
-  return map;
-}
+  VariablesList_t* parse(QDomNodeList&);
+  PHPVariable* parse(QDomNode&);
+
+private:
+  VariablesList_t* parseList(const QDomNodeList& list, PHPVariable* parent);
+  PHPVariable*     parseVar(QDomNode& e, PHPVariable* parent);
+};
+
+#endif

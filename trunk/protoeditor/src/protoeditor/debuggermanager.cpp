@@ -33,6 +33,7 @@
 
 #include "protoeditorsettings.h"
 #include "sitesettings.h"
+#include "phpsettings.h"
 
 #include <kapplication.h>
 #include <kcombobox.h>
@@ -46,7 +47,7 @@
 #include <kdebug.h>
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
-    : QObject(parent, name), m_debugger(0), m_window(window)/*, m_showProfileDialog(false)*/
+    : QObject(parent, name), m_activeDebugger(0), m_window(window)/*, m_showProfileDialog(false)*/
 {}
 
 /******************************* internal functions ******************************************/
@@ -123,76 +124,58 @@ void DebuggerManager::init()
           this, SLOT(slotBrekpointDeleted(DebuggerBreakpoint*)));
   */
 
-  loadDebugger();
+  loadDebuggers();
 }
 
 DebuggerManager::~DebuggerManager()
 {
-  clearDebugger();
+  clearDebuggers();
 }
 
-void DebuggerManager::clearDebugger()
+void DebuggerManager::clearDebuggers()
 {
-  //if(m_debugger) m_debugger->endSession();
-
-  delete m_debugger;
-  m_debugger = NULL;
-}
-
-
-void DebuggerManager::loadDebugger()
-{
-  /*
-    if(Settings::client() == -1) {
-      clearDebugger();
-      return;
-    }
-
-    if(m_debugger && (m_debugger->id() == Settings::client())) {
-      //is the same current debugger, just load its settings again
-      //m_debugger->reloadConfiguration();
-    } else {
-      if(m_debugger) clearDebugger();
-
-      if((m_debugger = DebuggerFactory::buildDebugger(this)) == NULL) {
-        m_window->showError("Error loading debugger client");
-        disableAllDebugActions();
-        return;
-      }
-
-      //m_debugger->reloadConfiguration();
-      connectDebugger();
-    }
-    */
-
-  if((m_debugger = DebuggerFactory::buildDebugger("DBG", this)) == NULL)
+  for(QMap<QString, AbstractDebugger*>::iterator it = m_debuggerMap.begin();
+      it != m_debuggerMap.end();
+      it++)
   {
-    m_window->showError("Error loading debugger client");
-  }
-  else
-  {
-    connectDebugger();
+    AbstractDebugger* d = it.data();
+    delete d;
   }
 
-  m_debugger->init();
+  m_debuggerMap.clear();
 }
 
-void DebuggerManager::connectDebugger()
+
+void DebuggerManager::loadDebuggers()
+{
+  clearDebuggers();
+
+  m_debuggerMap = DebuggerFactory::buildDebuggers(this);
+  for(QMap<QString,AbstractDebugger*>::iterator it = m_debuggerMap.begin();
+      it != m_debuggerMap.end();
+      it++)
+  {
+    connectDebugger(it.data());
+    it.data()->init();
+  }
+}
+
+void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
 {
 
-  connect(m_debugger, SIGNAL(sigDebugStarted()),
-          this, SLOT(slotDebugStarted()));
+  connect(debugger, SIGNAL(sigDebugStarted(AbstractDebugger*)),
+          this, SLOT(slotDebugStarted(AbstractDebugger*)));
 
-  connect(m_debugger, SIGNAL(sigDebugEnded()),
+  connect(debugger, SIGNAL(sigDebugEnded()),
           this, SLOT(slotDebugEnded()));
 
-  connect(m_debugger, SIGNAL(sigInternalError(const QString&)),
+  connect(debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotInternalError(const QString&)));
 
-  connect(m_debugger, SIGNAL(sigStepDone()),
+  connect(debugger, SIGNAL(sigStepDone()),
           this, SLOT(slotStepDone()));
 
-  connect(m_debugger, SIGNAL(sigBreakpointReached()),
+  connect(debugger, SIGNAL(sigBreakpointReached()),
           this, SLOT(slotBreakpointReached()));
 }
 
@@ -201,16 +184,14 @@ void DebuggerManager::connectDebugger()
 
 void DebuggerManager::slotConfigurationChanged()
 {
-  loadDebugger();
+  loadDebuggers();
 }
 
 void DebuggerManager::slotDebugStart()
 {
-  if(!m_debugger) return;
-
-  if(m_debugger->isRunning())
+  if(m_activeDebugger && m_activeDebugger->isRunning())
   {
-    m_debugger->continueExecution();
+    m_activeDebugger->continueExecution();
     m_window->setDebugStatusMsg("Continuing...");
     return;
   }
@@ -239,6 +220,14 @@ void DebuggerManager::slotDebugStart()
 
 void DebuggerManager::debugActiveScript()
 {
+  m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
+
+  if(!m_activeDebugger)
+  {
+    m_window->showError("Unknown client.");
+    return;
+  }
+
   if(m_window->tabEditor()->count() == 0)
   {
     m_window->openFile();
@@ -251,15 +240,29 @@ void DebuggerManager::debugActiveScript()
 
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
-//   m_window->setDebugStatusMsg("Starting...");
-  m_debugger->run(filepath);
+  //   m_window->setDebugStatusMsg("Starting...");
+  m_activeDebugger->run(filepath);
 
 }
 
 void DebuggerManager::debugCurrentSiteScript()
 {
   SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  if(!currentSite)
+  {
+    m_window->showSorry("Can't use default site script. No site configured.");
+    return;
+  }
+
+  m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];
+  if(!m_activeDebugger)
+  {
+    m_window->showError("Unknown client.");
+    return;
+  }
+
   QString filePath = currentSite->defaultFile();
+
   if(filePath.isEmpty())
   {
     m_window->showSorry("Current site has no default script.");
@@ -273,42 +276,39 @@ void DebuggerManager::debugCurrentSiteScript()
   }
 
 
-  QString filepath = m_window->tabEditor()->currentDocumentPath();
-
-//   m_window->setDebugStatusMsg("Starting...");
-  m_debugger->run(filepath);
+  m_activeDebugger->run(filePath);
 }
 
 void DebuggerManager::slotDebugStop()
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
   m_window->setDebugStatusMsg("Stoping...");
-  m_debugger->stop();
+  m_activeDebugger->stop();
 }
 
 void DebuggerManager::slotDebugStepInto()
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
   m_window->setDebugStatusMsg("Steping...");
-  m_debugger->stepInto();
+  m_activeDebugger->stepInto();
 }
 
 void DebuggerManager::slotDebugStepOver()
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
   m_window->setDebugStatusMsg("Steping...");
-  m_debugger->stepOver();
+  m_activeDebugger->stepOver();
 }
 
 void DebuggerManager::slotDebugStepOut()
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
   m_window->setDebugStatusMsg("Steping...");
-  m_debugger->stepOut();
+  m_activeDebugger->stepOut();
 }
 
 //from the menu action
@@ -334,9 +334,11 @@ void DebuggerManager::slotAddWatch()
   QString expression = m_window->edAddWatch()->text();
   m_window->edAddWatch()->clear();
 
-  if(m_debugger)
+  for(QMap<QString,AbstractDebugger*>::iterator it = m_debuggerMap.begin();
+      it != m_debuggerMap.end();
+      it++)
   {
-    m_debugger->addWatch(expression);
+    it.data()->addWatch(expression);
   }
 }
 
@@ -344,9 +346,11 @@ void DebuggerManager::slotAddWatch(const QString& expression)
 {
   m_window->edAddWatch()->clear();
 
-  if(m_debugger)
+  for(QMap<QString,AbstractDebugger*>::iterator it = m_debuggerMap.begin();
+      it != m_debuggerMap.end();
+      it++)
   {
-    m_debugger->addWatch(expression);
+    it.data()->addWatch(expression);
   }
 }
 
@@ -369,38 +373,39 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, Debugge
     ed->markPreExecutionPoint(nw->filePath(), nw->line());
   }
 
-  if(m_debugger)
+
+  if(m_activeDebugger)
   {
-    m_debugger->changeCurrentExecutionPoint(nw);
+    m_activeDebugger->changeCurrentExecutionPoint(nw);
   }
 }
 
 void DebuggerManager::slotGlobalVarModified(Variable* var)
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
-  m_debugger->modifyVariable(var,
-                             m_window->stackCombo()->stack()->bottomExecutionPoint());
+  m_activeDebugger->modifyVariable(var,
+                                   m_window->stackCombo()->stack()->bottomExecutionPoint());
 }
 
 void DebuggerManager::slotLocalVarModified(Variable* var)
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
-  m_debugger->modifyVariable(var,
-                             m_window->stackCombo()->selectedDebuggerExecutionPoint());
+  m_activeDebugger->modifyVariable(var,
+                                   m_window->stackCombo()->selectedDebuggerExecutionPoint());
 }
 
 void DebuggerManager::slotBreakpointCreated(DebuggerBreakpoint* bp)
 {
-  if(!m_debugger) return;
-  m_debugger->addBreakpoint(bp);
+  if(!m_activeDebugger) return;
+  m_activeDebugger->addBreakpoint(bp);
 }
 
 void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 {
-  if(!m_debugger) return;
-  m_debugger->changeBreakpoint(bp);
+  if(!m_activeDebugger) return;
+  m_activeDebugger->changeBreakpoint(bp);
 
   switch(bp->status())
   {
@@ -421,9 +426,9 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   m_window->tabEditor()->unmarkActiveBreakpoint(
     bp->filePath(), bp->line());
 
-  if(m_debugger)
+  if(m_activeDebugger)
   {
-    m_debugger->removeBreakpoint(bp);
+    m_activeDebugger->removeBreakpoint(bp);
   }
 }
 
@@ -434,16 +439,16 @@ void DebuggerManager::slotGotoLineAtFile(const QString& filePath, int line)
 
 void DebuggerManager::slotWatchRemoved(Variable* var)
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
-  m_debugger->removeWatch(var->name());
+  m_activeDebugger->removeWatch(var->name());
 }
 
 void DebuggerManager::slotNoDocument()
 {
-  if(!m_debugger) return;
+  if(!m_activeDebugger) return;
 
-  m_debugger->stop();
+  m_activeDebugger->stop();
 
 }
 
@@ -464,8 +469,6 @@ void DebuggerManager::slotNewDocument()
 
 void DebuggerManager::slotProfile()
 {
-  if(!m_debugger) return;
-
   switch(m_window->preferredScript())
   {
     case MainWindow::ActiveScript:
@@ -489,30 +492,40 @@ void DebuggerManager::profileCurrentSiteScript()
     m_window->showSorry("Can't use default site script. No site configured.");
     return;
   }
-  else
+  
+  m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];
+  if(!m_activeDebugger)
   {
-    QString filePath = currentSite->defaultFile();
-    if(filePath.isEmpty())
-    {
-      m_window->showSorry("Current site has no default script.");
-      return;
-    }
-    m_window->openFile(filePath);
-    if(m_window->tabEditor()->count() == 0)
-    {
-      //couldn't open the file for some reason
-      return;
-    }
+    m_window->showError("Unknown client.");
+    return;
+  }
+
+  QString filePath = currentSite->defaultFile();
+  if(filePath.isEmpty())
+  {
+    m_window->showSorry("Current site has no default script.");
+    return;
+  }
+  m_window->openFile(filePath);
+  if(m_window->tabEditor()->count() == 0)
+  {
+    //couldn't open the file for some reason
+    return;
   }
 
   QString filepath = m_window->tabEditor()->currentDocumentPath();
-
-//   m_window->setDebugStatusMsg("Profiling...");
-  m_debugger->profile(filepath);
+  m_activeDebugger->profile(filepath);
 }
 
 void DebuggerManager::profileActiveScript()
 {
+  m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
+  if(!m_activeDebugger)
+  {
+    m_window->showError("Unknown client.");
+    return;
+  }
+
   if(m_window->tabEditor()->count() == 0)
   {
     m_window->openFile();
@@ -526,7 +539,7 @@ void DebuggerManager::profileActiveScript()
   QString filepath = m_window->tabEditor()->currentDocumentPath();
 
   m_window->setDebugStatusMsg("Profiling...");
-  m_debugger->profile(filepath);
+  m_activeDebugger->profile(filepath);
 
 }
 
@@ -611,11 +624,14 @@ void DebuggerManager::updateOutput(const QString& output)
   m_window->edOutput()->setText(output);
 }
 
-void DebuggerManager::slotDebugStarted()
+void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
 {
+  //JIT is not actived through UI
+  m_activeDebugger = debugger;
+  
   m_window->edOutput()->clear();
 
-  m_debugger->addBreakpoints(
+  m_activeDebugger->addBreakpoints(
     m_window->breakpointListView()->breakpoints());
 
   m_window->globalVarList()->setReadOnly(false);
@@ -628,6 +644,7 @@ void DebuggerManager::slotDebugStarted()
   m_window->stackCombo()->clear();
 
   m_window->setDebugStatusMsg("Debug started");
+  m_window->setDebugStatusName(m_activeDebugger->name());
   m_window->setLedEnabled(true);
 
   m_window->actionStateChanged("debug_started");
@@ -679,6 +696,9 @@ void DebuggerManager::slotDebugEnded()
   m_window->actionCollection()->action("debug_step_over")->setEnabled(false);
   m_window->actionCollection()->action("debug_step_out")->setEnabled(false);
   */
+
+  m_activeDebugger = 0;
+  m_window->setDebugStatusName("");
 }
 
 void DebuggerManager::slotStepDone()

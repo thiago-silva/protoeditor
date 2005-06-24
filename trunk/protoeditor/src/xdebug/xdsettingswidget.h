@@ -18,22 +18,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
+#ifndef XDSETTINGSWIDGET_H
+#define XDSETTINGSWIDGET_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include "debuggersettingsinterface.h"
 
-  AbstractDebugger* debugger;
+class QCheckBox;
+class QSpinBox;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class XDSettings;
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
-  
-  return map;
-}
+
+class XDSettingsWidget : public DebuggerTab
+{
+  Q_OBJECT
+public:
+  XDSettingsWidget(XDSettings*, QWidget *parent = 0, const char *name = 0);
+  ~XDSettingsWidget();
+
+  int  listenPort();
+  bool enableJIT();
+
+  void populate();
+private:
+  QSpinBox  *m_spListenPort;
+  QCheckBox *m_ckEnableJIT;
+
+  XDSettings* m_settings;
+
+};
+
+#endif

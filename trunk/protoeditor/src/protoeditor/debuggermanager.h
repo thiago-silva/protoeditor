@@ -21,6 +21,7 @@
 #ifndef DEBUGGERMANAGER_H
 #define DEBUGGERMANAGER_H
 #include <qobject.h>
+#include <qmap.h>
 #include <qstring.h>
 #include "variable.h"
 
@@ -87,7 +88,7 @@ private slots:
 
   /* DebuggerClient - DebuggerManager */
 
-  void slotDebugStarted();
+  void slotDebugStarted(AbstractDebugger*);
   void slotDebugEnded();
 
   //Debugger internal error (conection, listen port, etc)
@@ -100,12 +101,13 @@ private:
   void profileActiveScript();
   void profileCurrentSiteScript();
     
-  void connectDebugger();
+  void connectDebugger(AbstractDebugger*);
 
-  void loadDebugger();
-  void clearDebugger();
+  void loadDebuggers();
+  void clearDebuggers();
 
-  AbstractDebugger *m_debugger;
+  QMap<QString, AbstractDebugger*> m_debuggerMap;
+  AbstractDebugger* m_activeDebugger;
   MainWindow       *m_window;
 //   bool             m_showProfileDialog;
 };
