@@ -46,7 +46,7 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     /*m_isProfilingEnabled(false),*/ m_dbgSettings(0), m_net(0), m_profileDialog(0),
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
-  m_dbgSettings = new DBGSettings();
+  m_dbgSettings = new DBGSettings(m_name);
 
   ProtoeditorSettings::self()->registerDebuggerSettings(m_dbgSettings, m_name);
 
@@ -523,7 +523,7 @@ void DebuggerDBG::slotDBGStarted()
 {
   m_firstStep = true;
   m_isRunning = true;
-  emit sigDebugStarted();
+  emit sigDebugStarted(this);
 }
 
 void DebuggerDBG::slotDBGClosed()
