@@ -47,9 +47,10 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   m_edPHPBinaryPath = new KLineEdit(this);
   m_edPHPBinaryPath->setText("/usr/local/bin/php");
   phpbox->addWidget(m_edPHPBinaryPath);
-
+  
   mainLayout->addLayout(phpbox);
-
+  */
+  
   QHBoxLayout* debuggerbox = new QHBoxLayout(0, 3, 10);
 
   QLabel* lbDefaultDebugger = new QLabel(this);
@@ -57,10 +58,15 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   debuggerbox->addWidget(lbDefaultDebugger);
 
   m_cbDefaultDebugger = new QComboBox(this);
+  QValueList<DebuggerSettingsInterface*> list =
+      ProtoeditorSettings::self()->debuggerSettingsList();
+  
+  for(QValueList<DebuggerSettingsInterface*>::iterator it = list.begin(); it != list.end(); it++) {
+    m_cbDefaultDebugger->insertItem((*it)->name());
+  }  
   debuggerbox->addWidget(m_cbDefaultDebugger);
 
   mainLayout->addLayout(debuggerbox);
-  */
 
   QTabWidget* debuggersTabWidget = new QTabWidget(this);
 
@@ -82,6 +88,13 @@ PHPSettingsWidget::~PHPSettingsWidget()
 
 void PHPSettingsWidget::populate()
 {
+  PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
+  if(!settings->defaultDebugger().isEmpty())
+  {
+    m_cbDefaultDebugger->setCurrentText(settings->defaultDebugger());
+  }
+  
+  
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
     (*it)->widget()->populate();
@@ -90,8 +103,8 @@ void PHPSettingsWidget::populate()
 
 void PHPSettingsWidget::updateSettings()
 {
-  //PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
-  //settings->setDefaultDebugger(m_cbDefaultDebugger->currentItem());
+  PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
+  settings->setDefaultDebugger(m_cbDefaultDebugger->currentText());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {

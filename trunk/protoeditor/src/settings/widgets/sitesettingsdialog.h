@@ -35,14 +35,14 @@ public:
 
   QString name();
   QString url();
-//   int     port();
   QString remoteBaseDir();
   QString localBaseDir();
   QString defaultFile();
-
-  void populate(const QString& name, const QString& url, /*int port,*/
+  QString debuggerClient();
+  
+  void populate(const QString& name, const QString& url,
                 const QString& remoteBaseDir, const QString& localBaseDir,
-                const QString& defaultFile);
+                const QString& defaultFile, const QString& debuggerClient);
 
   void setUpdate();
 protected slots:
@@ -51,10 +51,10 @@ protected slots:
 private:
   KLineEdit     *m_edName;
   KLineEdit     *m_edUrl;
-//   QSpinBox      *m_spPort;
   KLineEdit     *m_edRemoteBaseDir;
   KURLRequester *m_edLocalBaseDir;
   KURLRequester *m_edDefaultFile;
+  QComboBox     *m_cbDebuggerClient;
 };
 
 #endif

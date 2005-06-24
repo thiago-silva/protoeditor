@@ -25,6 +25,9 @@
 #include <qstring.h>
 #include <kconfigskeleton.h>
 
+
+//------------------------------------------------------------------
+
 class DebuggerTab : public QWidget {
 public:
   DebuggerTab(QWidget* parent = 0, const char* name = 0) : QWidget(parent, name) {}
@@ -33,6 +36,8 @@ public:
 
   virtual void populate() = 0;
 };
+
+//------------------------------------------------------------------
 
 class DebuggerSettingsInterface : public KConfigSkeleton {
 public:

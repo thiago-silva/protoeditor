@@ -8,110 +8,99 @@
 
 class SiteSettings : public KConfigSkeleton
 {
-  public:
-    SiteSettings( const QString &number );
-    ~SiteSettings();
+public:
+  SiteSettings( const QString &number );
+  ~SiteSettings();
 
-    void load(const QString& name, const QString& url, /*int port,*/
-     const QString& remoteBaseDir, const QString& localBaseDir,
-     const QString& defaultFile, bool matchFileInLowerCase,
-     const QString& debuggerClient);
+  void load(const QString& name, const QString& url,
+            const QString& remoteBaseDir, const QString& localBaseDir,
+            const QString& defaultFile, bool matchFileInLowerCase,
+            const QString& debuggerClient);
 
-    void setName(const QString& name)
-    {
-      mName = name;
-    }
+  void setName(const QString& name)
+  {
+    mName = name;
+  }
 
-    QString name() const
-    {
-      return mName;
-    }
+  QString name() const
+  {
+    return mName;
+  }
 
 
-    void setUrl(const QString& url)
-    {
-      mUrl = url;
-    }
+  void setUrl(const QString& url)
+  {
+    mUrl = url;
+  }
 
-    QString url() const
-    {
-      return mUrl;
-    }
+  QString url() const
+  {
+    return mUrl;
+  }
 
-//     void setPort(int port)
-//     {
-//       mPort = port;
-//     }
-// 
-//     int port() const
-//     {
-//       return mPort;
-//     }
+  void setLocalBaseDir(const QString& localBaseDir)
+  {
+    mLocalBaseDir = localBaseDir;
+  }
 
-    void setLocalBaseDir(const QString& localBaseDir)
-    {
-      mLocalBaseDir = localBaseDir;
-    }
+  QString localBaseDir() const
+  {
+    return mLocalBaseDir;
+  }
 
-    QString localBaseDir() const
-    {
-      return mLocalBaseDir;
-    }
+  void setRemoteBaseDir(const QString& remoteBaseDir)
+  {
+    mRemoteBaseDir = remoteBaseDir;
+  }
 
-    void setRemoteBaseDir(const QString& remoteBaseDir)
-    {
-      mRemoteBaseDir = remoteBaseDir;
-    }
+  QString remoteBaseDir() const
+  {
+    return mRemoteBaseDir;
+  }
 
-    QString remoteBaseDir() const
-    {
-      return mRemoteBaseDir;
-    }
+  void setDefaultFile(const QString& defaultFile)
+  {
+    mDefaultFile = defaultFile;
+  }
 
-    void setDefaultFile(const QString& defaultFile)
-    {
-      mDefaultFile = defaultFile;
-    }
+  QString defaultFile() const
+  {
+    return mDefaultFile;
+  }
 
-    QString defaultFile() const
-    {
-      return mDefaultFile;
-    }
+  void setMatchFileInLowerCase(bool value)
+  {
+    mMatchFileInLowerCase = value;
+  }
 
-    void setMatchFileInLowerCase(bool value)
-    {
-      mMatchFileInLowerCase = value;
-    }
+  bool matchFileInLowerCase() const
+  {
+    return mMatchFileInLowerCase;
+  }
 
-    bool matchFileInLowerCase() const
-    {
-      return mMatchFileInLowerCase;
-    }
+  void setDebuggerClient(const QString& name)
+  {
+    mDebuggerClient = name;
+  }
 
-    void setDebuggerClient(const QString& name)
-    {
-      mDebuggerClient = name;
-    }
+  QString debuggerClient() const
+  {
+    return mDebuggerClient;
+  }
 
-    QString debuggerClient() const
-    {
-      return mDebuggerClient;
-    }
+protected:
+  QString mParamnumber;
 
-  protected:
-    QString mParamnumber;
+  // Site_$(number)
+  QString mName;
+  QString mUrl;
+  QString mRemoteBaseDir;
+  QString mLocalBaseDir;
+  QString mDefaultFile;
+  bool mMatchFileInLowerCase;
+  QString mDebuggerClient;
 
-    // Site_$(number)
-    QString mName;
-    QString mUrl;
-//     int mPort;
-    QString mRemoteBaseDir;
-    QString mLocalBaseDir;
-    QString mDefaultFile;
-    bool mMatchFileInLowerCase;
-    QString mDebuggerClient;
-
-  private:
+private:
 };
 
 #endif

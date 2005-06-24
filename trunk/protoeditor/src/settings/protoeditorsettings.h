@@ -50,9 +50,9 @@ public:
   ExtOutputSettings*                     extOutputSettings();
 
   void clearSites();
-  void addSite(int number, const QString& name, const QString& url,/* int port,*/
+  void addSite(int number, const QString& name, const QString& url,
                const QString& remoteBaseDir, const QString& localBaseDir,
-              const QString& defaultFile);
+              const QString& defaultFile, const QString& debuggerClient);
   void writeConfig();
 
 signals:

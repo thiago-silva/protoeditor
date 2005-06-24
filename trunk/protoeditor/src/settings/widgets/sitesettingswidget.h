@@ -27,7 +27,8 @@ class QListBox;
 class QListBoxItem;
 class SiteSettings;
 
-class SiteSettingsWidget : public QWidget {
+class SiteSettingsWidget : public QWidget
+{
   Q_OBJECT
 public:
   SiteSettingsWidget(QWidget *parent = 0, const char *name = 0);
@@ -49,29 +50,30 @@ private slots:
   void slotListDoubleClicked(QListBoxItem*);
 
 private:
-  void addSite(const QString& name, const QString& url, /*int port,*/
+  void addSite(const QString& name, const QString& url,
                const QString& remoteBaseDir, const QString& localBaseDir,
-               const QString& defaultFile);
+               const QString& defaultFile, const QString& debuggerClinet);
 
-  void modifySite(const QString& name, const QString& url, /*int port,*/
+  void modifySite(const QString& name, const QString& url,
                   const QString& remoteBaseDir, const QString& localBaseDir,
-                      const QString& defaultFile);
+                  const QString& defaultFile, const QString& debuggerClinet);
 
-  class Site {
+  class Site
+  {
   public:
-    Site() /*: port(0)*/ {};
-    Site(const QString& n, const QString& h, /*int p,*/
-         const QString& r, const QString& l, const QString& d)
-        : name(n), url(h), /*port(p),*/ remoteBaseDir(r), localBaseDir(l),
-          defaultFile(d){}
+    Site() {};
+    Site(const QString& n, const QString& h,
+         const QString& r, const QString& l, const QString& d, const QString& c)
+        : name(n), url(h), remoteBaseDir(r), localBaseDir(l), defaultFile(d),
+          debuggerClient(c){}
     ~Site() {}
 
     QString name;
     QString url;
-//     int     port;
     QString remoteBaseDir;
     QString localBaseDir;
     QString defaultFile;
+    QString debuggerClient;
   };
 
   QMap<QString, Site> m_siteMap;

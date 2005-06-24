@@ -20,13 +20,17 @@
 #include "sitesettingsdialog.h"
 
 #include <qlabel.h>
-#include <qspinbox.h>
+#include <qcombobox.h>
 #include <klineedit.h>
 #include <qlayout.h>
 #include <qframe.h>
 
 #include <kmessagebox.h>
 #include <kurlrequester.h>
+
+#include "debuggersettingsinterface.h"
+#include "sitesettings.h"
+#include "protoeditorsettings.h"
 
 SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
     : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, "Site settings", KDialogBase::Ok|KDialogBase::Cancel)
@@ -86,6 +90,20 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   m_edDefaultFile->setFilter("*.php| PHP Scripts\n*|All Files");
   grid->addWidget(m_edDefaultFile, 4, 1);
 
+  label = new QLabel(frame);
+  label->setText("Debugger:");
+  grid->addWidget(label, 5, 0);
+
+  m_cbDebuggerClient = new QComboBox(frame);
+  QValueList<DebuggerSettingsInterface*> list =
+      ProtoeditorSettings::self()->debuggerSettingsList();
+  
+  for(QValueList<DebuggerSettingsInterface*>::iterator it = list.begin(); it != list.end(); it++) {
+    m_cbDebuggerClient->insertItem((*it)->name());
+  }
+  
+  grid->addWidget(m_cbDebuggerClient, 5, 1);
+    
   vlayout->addLayout(grid);
   vlayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
@@ -122,14 +140,14 @@ void SiteSettingsDialog::slotOk()
 
 void SiteSettingsDialog::populate(const QString& name, const QString& url,/* int port,*/
                                   const QString& remoteBaseDir, const QString& localBaseDir,
-                                  const QString& defaultFile)
+                                  const QString& defaultFile, const QString& debuggerClient)
 {
   m_edName->setText(name);
   m_edUrl->setText(url);
-//   m_spPort->setValue(port);
   m_edRemoteBaseDir->setText(remoteBaseDir);
   m_edLocalBaseDir->setURL(localBaseDir);
   m_edDefaultFile->setURL(defaultFile);
+  m_cbDebuggerClient->setCurrentText(debuggerClient);
 }
 
 
@@ -166,6 +184,11 @@ QString SiteSettingsDialog::localBaseDir()
 QString SiteSettingsDialog::defaultFile()
 {
   return m_edDefaultFile->url();
+}
+
+QString SiteSettingsDialog::debuggerClient()
+{
+  return m_cbDebuggerClient->currentText();
 }
 
 #include "sitesettingsdialog.moc"

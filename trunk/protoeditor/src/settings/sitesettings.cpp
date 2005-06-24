@@ -16,9 +16,6 @@ SiteSettings::SiteSettings(const QString &number)
   itemUrl = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "URL" ), mUrl );
   addItem( itemUrl, QString::fromLatin1( "URL" ) );
   
-/*  KConfigSkeleton::ItemInt  *itemPort;
-  itemPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "Port" ), mPort, 80 );
-  addItem( itemPort, QString::fromLatin1( "Port" ) );*/
   KConfigSkeleton::ItemPath  *itemLocalBaseDir;
   itemLocalBaseDir = new KConfigSkeleton::ItemPath( currentGroup(), QString::fromLatin1( "LocalBaseDir" ), mLocalBaseDir );
   addItem( itemLocalBaseDir, QString::fromLatin1( "LocalBaseDir" ) );
@@ -50,7 +47,6 @@ void SiteSettings::load(const QString& name, const QString& url,/* int port,*/
 {
   mName = name;
   mUrl = url;
-//   mPort = port;
   mRemoteBaseDir = remoteBaseDir;
   mLocalBaseDir = localBaseDir;
   mMatchFileInLowerCase = matchFileInLowerCase;
