@@ -26,7 +26,7 @@ DebuggerExecutionPoint::DebuggerExecutionPoint()
 {
 }
 
-DebuggerExecutionPoint::DebuggerExecutionPoint(int id, QString filePath, int line, QString function)
+DebuggerExecutionPoint::DebuggerExecutionPoint(int id, const QString& filePath, int line, const QString& function)
   : m_id(id), m_filePath(filePath), m_line(line), m_function(function)
 {
 }
@@ -40,17 +40,17 @@ void DebuggerExecutionPoint::setId(int id)
   m_id = id;
 }
 
-int DebuggerExecutionPoint::id()
+int DebuggerExecutionPoint::id() const
 {
   return m_id;
 }
 
-void DebuggerExecutionPoint::setFilePath(QString filePath)
+void DebuggerExecutionPoint::setFilePath(const QString& filePath)
 {
   m_filePath = filePath;
 }
 
-QString DebuggerExecutionPoint::filePath()
+QString DebuggerExecutionPoint::filePath() const
 {
   return m_filePath;
 }
@@ -60,17 +60,17 @@ void DebuggerExecutionPoint::setLine(int line)
   m_line = line;
 }
 
-int DebuggerExecutionPoint::line()
+int DebuggerExecutionPoint::line() const 
 {
   return m_line;
 }
 
-void DebuggerExecutionPoint::setFunction(QString function)
+void DebuggerExecutionPoint::setFunction(const QString& function)
 {
   m_function = function;
 }
 
-QString DebuggerExecutionPoint::function()
+QString DebuggerExecutionPoint::function() const
 {
   return m_function;
 }
@@ -89,7 +89,7 @@ DebuggerStack::~DebuggerStack()
   }
 }
 
-void DebuggerStack::push(int id, QString filePath, int line, QString function)
+void DebuggerStack::push(int id, const QString& filePath, int line, const QString& function)
 {
   DebuggerExecutionPoint *execPoint =
     new DebuggerExecutionPoint(id, filePath, line, function);
@@ -101,6 +101,19 @@ void DebuggerStack::push(DebuggerExecutionPoint* execPoint)
   m_execPointList.prepend(execPoint);
 }
 
+void DebuggerStack::insert(int id, const QString& filePath, int line, const QString& function)
+{
+  DebuggerExecutionPoint *execPoint =
+      new DebuggerExecutionPoint(id, filePath, line, function);
+  m_execPointList.append(execPoint);
+}
+
+void DebuggerStack::insert(DebuggerExecutionPoint* execPoint)
+{
+  m_execPointList.append(execPoint);
+}
+
+  
 DebuggerExecutionPoint* DebuggerStack::bottomExecutionPoint()
 {
   return m_execPointList.getLast();

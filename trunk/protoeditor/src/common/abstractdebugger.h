@@ -73,10 +73,9 @@ protected:
   virtual DebuggerManager* manager();
 
 signals:
-  void sigDebugStarted();
+  void sigDebugStarted(AbstractDebugger*);
   void sigDebugEnded();
-  void sigStepDone();
-  void sigBreakpointReached();
+  void sigBreak(); //stepdone/breakpoint reached
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);

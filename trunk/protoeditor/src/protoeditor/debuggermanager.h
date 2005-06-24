@@ -64,8 +64,6 @@ private slots:
 
   void slotDebugStart();
   void slotDebugStop();
-  void slotStepDone();
-  void slotBreakpointReached();
   void slotDebugStepInto();
   void slotDebugStepOver();
   void slotDebugStepOut();
@@ -90,7 +88,8 @@ private slots:
 
   void slotDebugStarted(AbstractDebugger*);
   void slotDebugEnded();
-
+  void slotBreak();
+  
   //Debugger internal error (conection, listen port, etc)
   void slotInternalError(const QString&);
 

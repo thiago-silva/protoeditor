@@ -27,20 +27,20 @@
 class DebuggerExecutionPoint {
 public:
   DebuggerExecutionPoint();
-  DebuggerExecutionPoint(int id, QString filePath, int line, QString function);
+  DebuggerExecutionPoint(int id, const QString& filePath, int line, const QString& function);
   ~DebuggerExecutionPoint();
 
   void setId(int);
-  int  id();
+  int  id() const;
 
-  void setFilePath(QString);
-  QString filePath();
+  void setFilePath(const QString&);
+  QString filePath() const;
 
   void setLine(int);
-  int line();
+  int line() const;
 
-  void setFunction(QString);
-  QString function();
+  void setFunction(const QString&);
+  QString function() const;
 private:
   int m_id;
   QString m_filePath;
@@ -56,9 +56,12 @@ public:
   DebuggerStack();
   ~DebuggerStack();
 
-  void push(int id, QString filePath, int line, QString function);
+  void push(int id, const QString& filePath, int line, const QString& function);
   void push(DebuggerExecutionPoint*);
 
+  void insert(int id, const QString& filePath, int line, const QString& function);
+  void insert(DebuggerExecutionPoint*);
+  
   DebuggerExecutionPoint*     bottomExecutionPoint();
   DebuggerExecutionPoint*     topExecutionPoint();
   DebuggerExecutionPointList_t DebuggerExecutionPointList();

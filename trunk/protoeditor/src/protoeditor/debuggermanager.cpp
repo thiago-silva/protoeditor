@@ -175,8 +175,8 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
   connect(debugger, SIGNAL(sigStepDone()),
           this, SLOT(slotStepDone()));
 
-  connect(debugger, SIGNAL(sigBreakpointReached()),
-          this, SLOT(slotBreakpointReached()));
+  connect(debugger, SIGNAL(sigBreak()),
+          this, SLOT(slotBreak()));
 }
 
 
@@ -631,6 +631,8 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
   
   m_window->edOutput()->clear();
 
+  m_window->actionCollection()->action("site_selection")->setEnabled(false);
+  
   m_activeDebugger->addBreakpoints(
     m_window->breakpointListView()->breakpoints());
 
@@ -665,7 +667,7 @@ void DebuggerManager::slotDebugEnded()
   m_window->localVarList()->setReadOnly(true);
   m_window->watchList()->setReadOnly(true);
 
-
+  m_window->actionCollection()->action("site_selection")->setEnabled(true);
   m_window->setDebugStatusMsg("Stopped");
   m_window->setLedEnabled(false);
 
@@ -701,14 +703,9 @@ void DebuggerManager::slotDebugEnded()
   m_window->setDebugStatusName("");
 }
 
-void DebuggerManager::slotStepDone()
+void DebuggerManager::slotBreak()
 {
-  m_window->setDebugStatusMsg("Step done");
-}
-
-void DebuggerManager::slotBreakpointReached()
-{
-  m_window->setDebugStatusMsg("Breakpoint reached");
+  m_window->setDebugStatusMsg("Done");
 }
 
 void DebuggerManager::slotInternalError(const QString& message)

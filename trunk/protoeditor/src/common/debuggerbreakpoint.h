@@ -55,12 +55,12 @@ public:
   virtual int hitCount();
   virtual int skipHits();
 
-  //compare only relevant members!
+  //compare only relevant members: line/file
   virtual bool compare(DebuggerBreakpoint*);
   virtual bool compare(QString, int);
 
 protected:
-  int     m_id;
+  int     m_id; //this is not currently used (only internaly by the debugger clients)
   QString m_filePath;
   int     m_line;
   int     m_status;
