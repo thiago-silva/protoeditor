@@ -23,7 +23,7 @@
 #include "dbgnet.h"
 #include "dbg_defs.h"
 #include "dbgresponsepack.h"
-#include "dbgconnection.h"
+#include "connection.h"
 #include "dbgreceiver.h"
 #include "dbgrequestor.h"
 #include "dbgnetdata.h"
@@ -53,7 +53,7 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
   connect(m_requestor, SIGNAL(sigError(const QString&)),
           this, SLOT(slotError(const QString&)));
 
-  m_con = new DBGConnection();
+  m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
   connect(m_con, SIGNAL(sigClientClosed()), this, SLOT(slotDBGClosed()));
   connect(m_con, SIGNAL(sigError(const QString&)), this, SLOT(slotError(const QString&)));
@@ -350,12 +350,13 @@ void DBGNet::processProfileData()
    m_requestor->requestSrcTree();
 }
 
-void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack* pack)
+void DBGNet::processSessionId(const DBGResponseTagSid* sid, DBGResponsePack*)
 {
   switch(sid->sesstype())
   {
     case DBG_JIT:
-      m_sessionId = QString(pack->retrieveRawdata(sid->isid())->data()).toLong();
+      //NOTE: pack->retrieveRawdata(sid->isid()) IS NULL
+      //m_sessionId = QString(pack->retrieveRawdata(sid->isid())->data()).toLong();
       break;
     case DBG_REQ:
       break;

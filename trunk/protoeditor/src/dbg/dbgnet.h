@@ -26,7 +26,7 @@
 #include "dbg_defs.h"
 
 class DebuggerDBG;
-class DBGConnection;
+class Connection;
 class DBGReceiver;
 class DBGRequestor;
 class QSocket;
@@ -128,7 +128,7 @@ private:
   dbgint             m_headerFlags;
   dbgint             m_profFreq;
   DebuggerDBG       *m_debugger;
-  DBGConnection     *m_con;
+  Connection     *m_con;
   DBGReceiver       *m_receiver;
   DBGRequestor      *m_requestor;
 
