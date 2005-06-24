@@ -292,6 +292,7 @@ void Browser::slotHttpDone(bool error)
     emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
   }
   m_http->abort();
+  kdDebug() << "HTTP closed connection!" << endl;
 }
 
 void Browser::doBrowserRequest(const KURL& url)

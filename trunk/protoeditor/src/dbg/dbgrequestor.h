@@ -36,6 +36,8 @@ class KURL;
 
 class Browser;
 
+//HTTPSession
+
 class BrowserRequestor : public QObject
 {
   Q_OBJECT
