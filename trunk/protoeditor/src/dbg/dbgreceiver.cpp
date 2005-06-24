@@ -219,6 +219,7 @@ char* DBGReceiver::readData(long bytesToRead)
 
   char* data = new char[bytesToRead];
   long read = 0;
+  long last = 0;
   long available = m_socket->bytesAvailable();
 
   while(available < bytesToRead) {
@@ -230,13 +231,12 @@ char* DBGReceiver::readData(long bytesToRead)
       return data;
     }
 
+    //I've never seen this code being executed....
     bytesToRead -= read;
-
+    last += read;
+    
     available = m_socket->waitForMore(-1);
-
-    long newread = m_socket->readBlock(&data[read], bytesToRead);
-
-    bytesToRead -= newread;
+    bytesToRead -= m_socket->readBlock(&data[last], available);
   }
 
   return data;
