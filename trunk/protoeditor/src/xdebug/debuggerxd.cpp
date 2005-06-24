@@ -133,12 +133,20 @@ void DebuggerXD::addBreakpoint(DebuggerBreakpoint* bp)
   }
 }
 
-void DebuggerXD::changeBreakpoint(DebuggerBreakpoint*)
+void DebuggerXD::changeBreakpoint(DebuggerBreakpoint* bp)
 {
+  if(isRunning())
+  {
+    m_net->requestBreakpointUpdate(bp);
+  }
 }
 
-void DebuggerXD::removeBreakpoint(DebuggerBreakpoint*)
+void DebuggerXD::removeBreakpoint(DebuggerBreakpoint* bp)
 {
+  if(isRunning())
+  {
+    m_net->requestBreakpointRemoval(bp->id());
+  }  
 }
 
 void DebuggerXD::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint)
@@ -265,7 +273,7 @@ void DebuggerXD::requestVars()
 void DebuggerXD::slotStepDone()
 {
   requestVars();
-  emit sigStepDone();
+  emit sigBreak();
 }
 
 void DebuggerXD::slotInternalError(const QString& msg)
@@ -327,19 +335,14 @@ void DebuggerXD::updateBreakpoint(int id, const QString& filePath, int line, con
   {
     status = DebuggerBreakpoint::ENABLED;
   }
-  
-  /*
-  switch(state)
+  else if(state == "disabled")
   {
-    case BPS_DISABLED:
-      status = DebuggerBreakpoint::DISABLED;
-      break;
-    case BPS_UNRESOLVED:
-    default:
-      status = DebuggerBreakpoint::UNRESOLVED;
-      break;
+    status = DebuggerBreakpoint::DISABLED;    
+  } else
+  {
+    status = DebuggerBreakpoint::UNRESOLVED;    
   }
-  */
+  
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(id, filePath, line, status, condition, hitcount, skiphits);
   manager()->updateBreakpoint(bp);  
 }

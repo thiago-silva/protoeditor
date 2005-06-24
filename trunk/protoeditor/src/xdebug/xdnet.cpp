@@ -27,6 +27,7 @@
 #include "debuggerstack.h"
 #include "variable.h"
 #include "debuggerbreakpoint.h"
+#include "protoeditorsettings.h"
 
 #include <qhttp.h>
 #include <kdebug.h>
@@ -76,8 +77,6 @@ void XDNet::startProfiling(const QString&, SiteSettings*)
 
 void XDNet::requestPage(const QString& filePath, SiteSettings* site)
 {
-
-  m_site = site;
   //translate remote/local path
   QString uri = filePath;
   uri = uri.remove(0, site->localBaseDir().length());
@@ -176,6 +175,7 @@ void XDNet::requestWatch(const QString& expression, int ctx_id)
   m_socket->writeBlock(property_get, property_get.length()+1);
   
 }
+#include <kmdcodec.h>
 
 void XDNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
@@ -185,12 +185,34 @@ void XDNet::requestBreakpoint(DebuggerBreakpoint* bp)
   breakpoint_set += QString::number(bp->line());
   breakpoint_set += " -h ";
   breakpoint_set += QString::number(bp->skipHits());
-//   breakpoint_set += " -- ";
-//   breakpoint_set += bp->condition();
+  breakpoint_set += " -s ";
+  breakpoint_set += bp->status()==DebuggerBreakpoint::ENABLED?"enabled":"disabled";
+  breakpoint_set += " -- ";
+  breakpoint_set += KCodecs::base64Encode(bp->condition().utf8());;
   
   m_socket->writeBlock(breakpoint_set, breakpoint_set.length()+1);
 }
 
+void XDNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
+{
+  QString breakpoint_update = "breakpoint_update -i 1 -d ";
+  breakpoint_update += QString::number(bp->id());
+  breakpoint_update += " -h ";
+  breakpoint_update += QString::number(bp->skipHits());
+  breakpoint_update += " -s ";
+  breakpoint_update += bp->status()==DebuggerBreakpoint::ENABLED?"enabled":"disabled";
+  
+  m_socket->writeBlock(breakpoint_update, breakpoint_update.length()+1);
+}
+
+void XDNet::requestBreakpointRemoval(int bpid)
+{
+  QString breakpoint_remove = "breakpoint_remove -i 1 -d ";
+  breakpoint_remove += QString::number(bpid);
+  
+  m_socket->writeBlock(breakpoint_remove, breakpoint_remove.length()+1);
+}
+  
 void XDNet::requestBreakpointList()
 {
   QString breakpoint_list = "breakpoint_list -i 1";
@@ -270,12 +292,21 @@ void XDNet::processResponse(QDomElement& root)
         (root.attribute("reason") == "ok"))
     {
       requestStack();
+      requestBreakpointList();
     }
     else
     {
       error("Unknown error.");
     }
 
+  }
+  else if(cmd == "run")
+  {
+    if(root.attribute("status") == "break")
+    {
+      requestStack();
+      requestBreakpointList();
+    }
   }
   else if(cmd == "stack_get")
   {
@@ -297,7 +328,9 @@ void XDNet::processResponse(QDomElement& root)
       }
 
       //to local filepath
-      QString localFile = m_site->localBaseDir() + file.path().remove(0, m_site->remoteBaseDir().length());
+      SiteSettings* site = ProtoeditorSettings::self()->currentSiteSettings();
+      QString localFile = site->localBaseDir()
+          + file.path().remove(0, site->remoteBaseDir().length());
                   
       stack->insert(level, localFile, line, where);
     }
@@ -310,7 +343,7 @@ void XDNet::processResponse(QDomElement& root)
     //update stack
     m_debugger->updateStack(stack);
     
-    emit sigStepDone();    
+    emit sigStepDone();
   }
   else if(cmd == "context_get")
   {
@@ -336,11 +369,11 @@ void XDNet::processResponse(QDomElement& root)
     Variable* var = p.parse(nd);
     m_debugger->updateWatch(var);
   }
-  else if((cmd == "stop") || (cmd == "run"))
+  else if((cmd == "stop") || (cmd == "breakpoint_remove"))
   {
     //nothing..
   }
-  else if(cmd == "breakpoint_set")
+  else if((cmd == "breakpoint_set") || (cmd == "breakpoint_update"))
   {
     requestBreakpointList();
   }
@@ -362,14 +395,14 @@ void XDNet::processResponse(QDomElement& root)
     {
       e = list.item(i).toElement();
       int id = e.attributeNode("id").value().toInt();
-      QString filePath = e.attributeNode("filename").value();
+      QString filePath = KURL(e.attributeNode("filename").value()).path();
       int line = e.attributeNode("lineno").value().toInt();
       QString state = e.attributeNode("state").value();
       int hitCount = e.attributeNode("hit_count").value().toInt();
       int skip = e.attributeNode("hit_value").value().toInt();
-      //QString condition = st.attributeNode("condition").value();
+      QString condition = e.attributeNode("condition").value();
       
-      m_debugger->updateBreakpoint(id, filePath, line, state, hitCount, skip, "");
+      m_debugger->updateBreakpoint(id, filePath, line, state, hitCount, skip, condition);
     }
   }
   else

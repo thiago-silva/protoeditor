@@ -62,7 +62,8 @@ public:
   void requestVariables(int scope, int id);
 
   void requestBreakpoint(DebuggerBreakpoint* bp);
-  //void requestBreakpointRemoval(int bpid);
+  void requestBreakpointUpdate(DebuggerBreakpoint* bp);
+  void requestBreakpointRemoval(int bpid);
 
 signals:
   void sigError(const QString&);
@@ -100,7 +101,6 @@ private:
 
   DebuggerXD       *m_debugger;
   Connection       *m_con;
-  SiteSettings* m_site;
 
   QHttp *m_http;
   QSocket* m_socket;
