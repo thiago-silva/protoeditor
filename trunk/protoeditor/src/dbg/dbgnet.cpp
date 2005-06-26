@@ -96,7 +96,6 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listen
 
   m_sessionId = sessid;
   m_requestor->makeHttpRequest(site->url() //http://localhost:80/~user
-//                                , site->port()
                                , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
                                , listenPort
                                , sessid);
