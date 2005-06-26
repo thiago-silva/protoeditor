@@ -426,8 +426,9 @@ void Document::slotMarkChanged()
           //We should remove both (slotMarkChanged will be recursed, so, return after removing
           //and forget about it, since all marks on this context will be invalidated and
           //the recursion will take care of the update.
+          int line = mark->line;
           removeMark(mark->line+1, KTextEditor::MarkInterface::markType02 | KTextEditor::MarkInterface::markType04);
-          emit sigBreakpointUnmarked(this, mark->line+1);
+          emit sigBreakpointUnmarked(this, line+1);
           return;
         }
 
