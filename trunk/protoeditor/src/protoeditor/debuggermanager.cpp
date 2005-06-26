@@ -172,8 +172,11 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
   connect(debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotInternalError(const QString&)));
 
-  connect(debugger, SIGNAL(sigBreak()),
-          this, SLOT(slotBreak()));
+  connect(debugger, SIGNAL(sigDebugBreak()),
+          this, SLOT(slotDebugBreak()));
+
+  connect(debugger, SIGNAL(sigDebugStarting()),
+          this, SLOT(slotDebugStarting()));
 }
 
 
@@ -401,8 +404,9 @@ void DebuggerManager::slotBreakpointCreated(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 {
-  if(!m_activeDebugger) return;
-  m_activeDebugger->changeBreakpoint(bp);
+  if(m_activeDebugger) {
+    m_activeDebugger->changeBreakpoint(bp);
+  }
 
   switch(bp->status())
   {
@@ -616,9 +620,20 @@ void DebuggerManager::debugError(const QString& msg)
   m_window->showError(msg);
 }
 
-void DebuggerManager::updateOutput(const QString& output)
+// void DebuggerManager::updateOutput(const QString& output)
+// {
+//   m_window->edOutput()->setText(output);
+// }
+
+void DebuggerManager::addOutput(const QString& output)
 {
-  m_window->edOutput()->setText(output);
+   m_window->edOutput()->append(output);
+}
+
+void DebuggerManager::slotDebugStarting()
+{
+  m_window->setLedState(MainWindow::LedWait);
+  m_window->setDebugStatusMsg("Starting...");
 }
 
 void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
@@ -644,7 +659,7 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
 
   m_window->setDebugStatusMsg("Debug started");
   m_window->setDebugStatusName(m_activeDebugger->name());
-  m_window->setLedEnabled(true);
+  m_window->setLedState(MainWindow::LedOn);
 
   m_window->actionStateChanged("debug_started");
   m_window->actionCollection()->action("debug_start")->setText("Continue");
@@ -666,7 +681,7 @@ void DebuggerManager::slotDebugEnded()
 
   m_window->actionCollection()->action("site_selection")->setEnabled(true);
   m_window->setDebugStatusMsg("Stopped");
-  m_window->setLedEnabled(false);
+  m_window->setLedState(MainWindow::LedOff);
 
   EditorTabWidget* ed = m_window->tabEditor();
 
@@ -700,7 +715,7 @@ void DebuggerManager::slotDebugEnded()
   m_window->setDebugStatusName("");
 }
 
-void DebuggerManager::slotBreak()
+void DebuggerManager::slotDebugBreak()
 {
   m_window->setDebugStatusMsg("Done");
 }

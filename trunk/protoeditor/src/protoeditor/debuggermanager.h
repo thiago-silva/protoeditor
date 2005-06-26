@@ -53,7 +53,8 @@ public:
   void updateBreakpoint(DebuggerBreakpoint* bp);
   void debugMessage(int, const QString&, const QString&, int);
   void debugError(const QString&);
-  void updateOutput(const QString&);
+//   void updateOutput(const QString&);
+  void addOutput(const QString&);
 
 public slots:
   void slotConfigurationChanged();
@@ -86,9 +87,10 @@ private slots:
 
   /* DebuggerClient - DebuggerManager */
 
+  void slotDebugStarting();
   void slotDebugStarted(AbstractDebugger*);
   void slotDebugEnded();
-  void slotBreak();
+  void slotDebugBreak();
   
   //Debugger internal error (conection, listen port, etc)
   void slotInternalError(const QString&);
