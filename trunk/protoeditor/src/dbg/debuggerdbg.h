@@ -112,7 +112,7 @@ private:
   int                     m_globalExecutionPointID;
   //DebuggerExecutionPoint *m_currentExecutionPoint; //aways the top of the stack
   //DebuggerExecutionPoint *m_globalExecutionPoint;  //aways the bottom of the stack
-  QString                 m_output;
+//   QString                 m_output;
   QValueList<QString>     m_wathcesList;
   bool                    m_firstStep;
 };
