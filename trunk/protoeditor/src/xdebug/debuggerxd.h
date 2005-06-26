@@ -29,6 +29,7 @@
 
 class XDSettings;
 class XDNet;
+class DebuggerExecutionPoint;
 
 class DebuggerXD : public AbstractDebugger
 {
@@ -71,7 +72,8 @@ public:
   void updateBreakpoint(int id, const QString& filePath, int line, const QString& state, int hitcount, int skiphits,
                         const QString& condition);
 
-//   void addOutput(const QString&);
+  void addOutput(const QString&);
+  void debugError(const QString& code, const QString& exception, const QString& data);
   
 public slots:
   void slotSettingsChanged();
@@ -102,8 +104,8 @@ private:
   QString m_name;
   bool m_isRunning;
   bool m_isJITActive;
-  int m_currentExecutionPointID;
-  int m_globalExecutionPointID;
+  DebuggerExecutionPoint* m_currentExecutionPoint;
+  DebuggerExecutionPoint* m_globalExecutionPoint;
   XDSettings* m_xdSettings;
   XDNet* m_net;
   QValueList<QString>  m_wathcesList;
