@@ -73,9 +73,10 @@ protected:
   virtual DebuggerManager* manager();
 
 signals:
+  void sigDebugStarting(); //emitted right before starting the session
   void sigDebugStarted(AbstractDebugger*);
   void sigDebugEnded();
-  void sigBreak(); //stepdone/breakpoint reached
+  void sigDebugBreak(); //stepdone/breakpoint reached
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);
