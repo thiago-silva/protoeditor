@@ -29,111 +29,7 @@
 
 class DBGRequestPack;
 class QSocket;
-class KProcess;
-class DCOPClient;
-class QHttp;
-class KURL;
-
 class Browser;
-
-//HTTPSession
-
-class BrowserRequestor : public QObject
-{
-  Q_OBJECT
-public:
-  BrowserRequestor();
-  virtual ~BrowserRequestor();
-
-  static BrowserRequestor* retrieveBrowser(int, Browser*);
-
-  virtual void doRequest(const QString&) = 0;
-  virtual int  id() = 0;
-signals:
-  void sigError(const QString&);
-
-protected:
-  void init();
-
-  static BrowserRequestor *m_browserRequestor;
-
-  KProcess         *m_browserProcess;
-  bool              m_processRunning;
-
-private slots:
-  void slotProcessExited(KProcess*);
-};
-
-class KonquerorRequestor : public BrowserRequestor
-{
-  Q_OBJECT
-public:
-  KonquerorRequestor();
-  ~KonquerorRequestor();
-  virtual void doRequest(const QString&);
-  virtual int  id();
-private:
-  void init();
-  void openNewKonqueror(const QString&);
-  DCOPClient *m_dcopClient;
-};
-
-
-class MozillaRequestor : public BrowserRequestor
-{
-  Q_OBJECT
-public:
-  MozillaRequestor();
-  ~MozillaRequestor();
-  virtual void doRequest(const QString&);
-  virtual int  id();
-};
-
-class FirefoxRequestor : public BrowserRequestor
-{
-  Q_OBJECT
-public:
-  FirefoxRequestor();
-  ~FirefoxRequestor();
-  virtual void doRequest(const QString&);
-  virtual int  id();
-};
-
-class OperaRequestor : public BrowserRequestor
-{
-  Q_OBJECT
-public:
-  OperaRequestor();
-  ~OperaRequestor();
-  virtual void doRequest(const QString&);
-  virtual int  id();
-};
-
-/**************************************************************/
-
-class Browser : public QObject
-{
-  Q_OBJECT
-public:
-  Browser();
-  ~Browser();
-  void request(const KURL&);
-
-signals:
-  void sigError(const QString& error);
-
-private slots:
-  void slotHttpDone(bool);
-private:
-  void doHTTPRequest(const KURL& url);
-  void doBrowserRequest(const KURL&);
-  void initHTTPCommunication();
-
-  QHttp            *m_http;
-  BrowserRequestor *m_browserRequestor;
-};
-
-/********************************************************************************/
 
 class DBGRequestor : public QObject
 {
@@ -162,7 +58,7 @@ public:
   void requestProfileData(int modno);
   void requestProfileFreqData(int testLoops);
   
-  void makeHttpRequest(const QString& host, /*int port, */const QString& path, int listenPort, int sessionId);
+  void makeHttpRequest(const QString& _url, /*int port, */const QString& path, int listenPort, int sessionId);
 
   void addHeaderFlags(dbgint);
   void setSocket(QSocket* socket);
