@@ -2,6 +2,9 @@
   convenience copy from Zend/zend_error.h
  */
 
+#ifndef PHPDEFS_H
+#define PHPDEFS_H
+
 enum {
   E_ERROR           = (1<<0L),
   E_WARNING         = (1<<1L),
@@ -16,4 +19,6 @@ enum {
   E_USER_NOTICE     = (1<<10L),
   E_STRICT          = (1<<11L)
 
-} PHPReport;
+};
+
+#endif
