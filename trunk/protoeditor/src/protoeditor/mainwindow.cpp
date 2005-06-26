@@ -202,7 +202,7 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-  (void)new KAction(i18n("Profile"), "math_sum", "Alt+P", m_debugger_manager,
+  (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", m_debugger_manager,
                     SLOT(slotProfile()), actionCollection(), "script_profile");
 
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
@@ -516,15 +516,19 @@ void MainWindow::setDebugStatusName(const QString& name)
   m_lbDebugName->setText(name);
 }
 
-void MainWindow::setLedEnabled(bool on)
+void MainWindow::setLedState(int state)
 {
-  if(on)
+  switch(state)
   {
-    m_lbLed->setPixmap(QPixmap(UserIcon("indicator_on")));
-  }
-  else
-  {
-    m_lbLed->setPixmap(QPixmap(UserIcon("indicator_off")));
+    case LedOn:
+      m_lbLed->setPixmap(QPixmap(UserIcon("indicator_on")));
+      break;
+    case LedWait:
+      m_lbLed->setPixmap(QPixmap(UserIcon("indicator_wait")));
+      break;
+    case LedOff:
+    default:
+      m_lbLed->setPixmap(QPixmap(UserIcon("indicator_off")));
   }
 }
 

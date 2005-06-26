@@ -58,6 +58,8 @@ class MainWindow : public KParts::MainWindow
   Q_OBJECT
 
 public:
+  enum { LedOn, LedOff, LedWait };
+  
   MainWindow(QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
   ~MainWindow();
 
@@ -87,7 +89,7 @@ public:
   void setEditorStatusMsg(const QString&);
   void setDebugStatusMsg(const QString&);
   void setDebugStatusName(const QString&);
-  void setLedEnabled(bool);
+  void setLedState(int);
 private slots:
   void slotOpenFile();
   void slotCloseFile();
