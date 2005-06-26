@@ -36,7 +36,7 @@ dnl Perform program name transformation
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(protoeditor, 0.6.2) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(protoeditor, 0.6.3) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -64,13 +64,16 @@ KDE_CREATE_SUBDIRSLIST
 AC_CONFIG_FILES([ Makefile ])
 AC_CONFIG_FILES([ data/Makefile ])
 AC_CONFIG_FILES([ data/icons/Makefile ])
+AC_CONFIG_FILES([ data/pics/Makefile ])
 AC_CONFIG_FILES([ src/Makefile ])
 AC_CONFIG_FILES([ src/common/Makefile ])
 AC_CONFIG_FILES([ src/commonphp/Makefile ])
 AC_CONFIG_FILES([ src/dbg/Makefile ])
+AC_CONFIG_FILES([ src/dbg/profiler/Makefile ])
 AC_CONFIG_FILES([ src/protoeditor/Makefile ])
 AC_CONFIG_FILES([ src/settings/Makefile ])
 AC_CONFIG_FILES([ src/settings/widgets/Makefile ])
+AC_CONFIG_FILES([ src/xdebug/Makefile ])
 AC_OUTPUT
 if test "$all_tests" = "bad"; then
   if test ! "$cache_file" = "/dev/null"; then

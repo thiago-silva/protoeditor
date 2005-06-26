@@ -21,7 +21,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>src/dbg/profiler/libdbgprofiler.la</activetarget>
+      <activetarget>src/xdebug/libxdebug.la</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -87,7 +87,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*~</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
       <showvcsfields>false</showvcsfields>
     </tree>

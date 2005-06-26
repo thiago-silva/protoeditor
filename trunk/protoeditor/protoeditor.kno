@@ -11,7 +11,7 @@
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
 <li>Add &quot;New&quot; from KstdAction<br /></li>
-<li>Add the debugger being used on the status bar.<br /></li>
+<li>Add the debugger / Site being used on the status bar.<br /></li>
 <li>Try to get default kate settings from the user's katerc<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
 <li>See the possibility to setup katepart to show line number / icon margin on the first run.<br /></li>
@@ -80,18 +80,31 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO Now
+\CurrentEntry 1 Xdebug
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Make dbl click on profile listview goto file/line.</li>
-<li>Test and release 0.6.3</li>
-<div><br />-----------------------------------------------------------------------------------------<br /><br /></div>
-<li>DBG Profiler Cleanup:<br /></li>
-<li>Make a new class intermediating DBGDebugger with the DBGNet.</li>
-<ul type="disc"><li>DBGNet has all structure to deal with processTag* and headers but it does not contain code to handle them. It only emit signals (or call an observer, or something). So we can have a DebuggerController and ProfilerController. They won't have to rewrite the network data flow, just implement what they want.<br /></li></ul>
-<div>DBGNet::requestProfile()<br />{<br />  m_handler = new ProfilerHandler(m_requestor);<br />  ....<br />}<br /><br /><br />DBGNet::processHeader()<br />{<br />   ...<br />   case DBGC_STARTUP:<br />      m_handler-&gt;handleStartSession();<br />}</div>
+<ul type="disc"><li>Could not find anything to fix the conditional breakpoint....</li>
+<li>Some times it gets &quot;HTTP closed connection&quot;...usually when a php parse error is found.</li>
+<li></li></ul>
+</body></html>
+
+
+\NewEntry 1 TODO Now
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Refactorings<br /></li>
+<li>Base:</li>
+<ul type="disc"><li>Clean DebuggerManager</li>
+<ul type="disc"><li>Create a DebugggerUI to split responsabilities<br /></li></ul>
+<li>Create more signals for the AbstractDebugger such as sigProfilerStart/end<br /><br /></li></ul>
+<li>DBG:</li>
+<ul type="disc"><li>Make a new class intermediating DBGDebugger with the DBGNet.</li>
+<ul type="disc"><li>DBGNet has all structure to deal with processTag* and headers but it does not contain code to handle them. It only emit signals (or call an observer, or something). So we can have a DebuggerController and ProfilerController. They won't have to rewrite the network data flow, just implement what they want.<br /></li></ul></ul>
+<div>DBGNet::requestProfile()<br />{<br />  m_handler = new ProfilerHandler(m_requestor);<br />  ....<br />}<br /><br />DBGNet::processHeader()<br />{<br />   ...<br />   case DBGC_STARTUP:<br />      m_handler-&gt;handleStartSession();<br />}</div>
 <div><br />DebuggerHandler::handleStartSession()<br />{<br />    emit DBGNet::sigDBGStarted();<br />    m_requestor-&gt;bla().<br />}<br /><br />class ProfilerNetHandler {<br />  virtual void processTagBreakpoint();<br />  virtual void processTag*();<br />  virtual void handleEndOfPack(); //shipStack, etc..<br />  virtual void handleStepDone();<br />  virtual void handleBreakAtPoint();<br />  virtual void handleStartSession(); //DBGC_START<br />  virtual void handle....<br />}<br /><br />DebuggerNetHandler<br />----------------------------------------------------------------------------------------------------------<br /></div>
 <li>Test the multiple views of the profiler</li>
-<li>Support profiling while debugging.<br /><br />---------------------------------------------------------------------------------------------------------------<br /><br /></li>
+<li>Support profiling while debugging.<br /><br />------------------------------<br /></li>
+<li>Cleanup wishes from the forum and bugs.<br /><br /></li>
+<li>Persistent breakpoints (close file, bp persists)<br /></li>
+<li>--------------------new stuf and more refactoring---------------------------------<br /></li>
 <li>Create Actions:</li>
 <ul type="disc"><li>Run (gear.png) / Start debug</li>
 <ul type="disc"><li>Run with args</li>
@@ -104,15 +117,13 @@
 <li>Add terminal output</li>
 <li>CGI</li></ul>
 <li>Implementation:</li>
-<ul type="disc"><li>set static objects to be deleted<br /><br /></li></ul>
-<li>Improve Profile / Start Gubed support<br /></li>
+<ul type="disc"><li>set static objects to be deleted<br /></li></ul>
 <li>-------------------------------------------------------------------<br /></li>
 <li>Create classes MessageWidget, WatchWidget, BreakpointWidget, etc. holding the listviews, then, make them responsable for buttons such as btAddWatch.</li>
 <ul type="disc"><li>Create context menus for the listviews (breakpoints/messages, etc)</li>
 <li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
 <li>Change output widget to KTExtEdit, so it can highlight HTML tags (create a wrapper class for it)</li></ul></ul>
 </body></html>
-
 
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -157,7 +168,10 @@
 <ul type="disc"><li>Substitute &quot;Host&quot; for &quot;URL&quot;, wich will be on the form &quot;http://localhost&quot; and can be &quot;http://localhost/~zz&quot;<br /><br /></li></ul></ul>
 <li>Crash:</li>
 <ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash</li>
-<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes</li></ul></ul>
+<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes<br /><br /><br /></li></ul>
+<li>Create localhost Site with default script pointing to non existing file. Open some script. Run.</li>
+<ul type="disc"><li>A message appears informing that the file doesn't exists.</li>
+<li>The debugger starts with the current opened file.</li></ul></ul>
 </body></html>
 
 \NewEntry 1 Usability issues
