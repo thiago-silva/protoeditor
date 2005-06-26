@@ -29,10 +29,10 @@ class DebuggerXD;
 class SiteSettings;
 class DebuggerBreakpoint;
 class Connection;
+class Browser;
 
 class QSocket;
 class QDomElement;
-class QHttp; 
 class QSocket;
 
 class XDNet : public QObject
@@ -50,7 +50,8 @@ public:
   void stopListener();
 
   void startDebugging(const QString& filePath, SiteSettings* site);
-  void startProfiling(const QString& filePath, SiteSettings* site);
+//   void startDebugging(const QString& filePath, SiteSettings* site);
+//   void startProfiling(const QString& filePath, SiteSettings* site);
 
   void requestContinue();
   void requestStop();
@@ -84,26 +85,43 @@ private slots:
   void slotXDClosed();
   void slotError(const QString&);
   
-  void slotHttpDone(bool error);
+//   void slotHttpDone(bool error);
   void slotReadBuffer();
 private:
- 
-  void requestPage(const QString& filePath, SiteSettings* site);
+  void makeHttpRequest(const QString& _url, const QString& path);
+//   void requestPage(const QString& filePath, SiteSettings* site);
   void requestStack();
   void requestBreakpointList();
-      
+
+  void processOutput(QDomElement&);
+  void processError(const QDomElement&);
+  
   void processXML(const QString& xml);
   
   void processInit(QDomElement& root);
   void processResponse(QDomElement& root);
-      
+
+  void processPendingData();
+  
   void error(const QString&);
 
   DebuggerXD       *m_debugger;
   Connection       *m_con;
 
-  QHttp *m_http;
+  Browser* m_browser;
+//   QHttp *m_http;
   QSocket* m_socket;
+
+  
+  class Error {
+    public:
+      bool exists;
+      QString code;
+      QString data;
+      QString exception;
+  };
+
+  Error            m_error; //php error
 };
 
 #endif
