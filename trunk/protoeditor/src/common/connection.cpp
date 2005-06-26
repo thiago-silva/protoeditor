@@ -29,11 +29,10 @@
 #include <klocale.h>
 
 Connection::Connection(QObject * parent, const char * name)
-  : QObject(parent, name),
+    : QObject(parent, name),
     m_currentClient(0), m_device(0), m_notifier(0), m_listening(false)
 
-{
-}
+{}
 
 Connection::~Connection()
 {
@@ -42,7 +41,8 @@ Connection::~Connection()
 
 void Connection::clearDevice()
 {
-  if(m_listening) {
+  if(m_listening)
+  {
     kdDebug() << "Stop listening on port " << m_device->port() << endl;
     m_device->close();
     m_listening = false;
@@ -56,7 +56,8 @@ void Connection::clearDevice()
 
 void Connection::clearSocket()
 {
-  if(m_currentClient) {
+  if(m_currentClient)
+  {
     m_currentClient->close();
     delete m_currentClient;
     m_currentClient = NULL;
@@ -83,21 +84,22 @@ void Connection::slotIncomingConnection(int)
 void Connection::slotClosed()
 {
   clearSocket();
-//   emit sigClientClosed();
+  //   emit sigClientClosed();
 }
 
 void Connection::slotError(int error)
 {
-  switch(error) {
-  case QSocket::ErrConnectionRefused:
-    emit sigError(QString("Connection refused"));
-    break;
-  case QSocket::ErrHostNotFound:
-    emit sigError(QString("Host not found"));
-    break;
-  case QSocket::ErrSocketRead:
-    emit sigError(QString("Error reading network data"));
-    break;
+  switch(error)
+  {
+    case QSocket::ErrConnectionRefused:
+      emit sigError(QString("Connection refused"));
+      break;
+    case QSocket::ErrHostNotFound:
+      emit sigError(QString("Host not found"));
+      break;
+    case QSocket::ErrSocketRead:
+      emit sigError(QString("Error reading network data"));
+      break;
   }
 }
 
@@ -109,7 +111,7 @@ bool Connection::isListening()
 void Connection::closeClient()
 {
   clearSocket();
-//   emit sigClientClosed();
+  //   emit sigClientClosed();
 }
 
 void Connection::close()
@@ -123,7 +125,7 @@ bool Connection::listenOn(int port)
   close();
 
   m_device = new QSocketDevice(QSocketDevice::Stream, QHostAddress().isIPv4Address()
-            ? QSocketDevice::IPv4 : QSocketDevice::IPv6, 0);
+                               ? QSocketDevice::IPv4 : QSocketDevice::IPv6, 0);
   m_device->setAddressReusable( TRUE );
 
   if(m_device->bind(QHostAddress(), port)
@@ -131,12 +133,49 @@ bool Connection::listenOn(int port)
   {
     m_listening = true;
     m_notifier = new QSocketNotifier(m_device->socket(), QSocketNotifier::Read,
-            this, "accepting new connections" );
+                                     this, "accepting new connections" );
 
     connect( m_notifier, SIGNAL(activated(int)),
-     this, SLOT(slotIncomingConnection(int)) );
-  } else {
+             this, SLOT(slotIncomingConnection(int)) );
+  }
+  else
+  {
     m_listening = false;
+
+    switch(m_device->error())
+    {
+      case QSocketDevice::NoError:
+        kdDebug() << "ListenOn Error: NoError" << endl;
+        break;
+      case QSocketDevice::AlreadyBound:
+        kdDebug() << "ListenOn Error: AlreadyBound" << endl;
+        break;
+      case QSocketDevice::Inaccessible:
+        kdDebug() << "ListenOn Error: Inaccessible" << endl;
+        break;
+      case QSocketDevice::NoResources:
+        kdDebug() << "ListenOn Error: NoResources" << endl;
+        break;
+      case QSocketDevice::InternalError:
+        kdDebug() << "ListenOn Error: InternalError" << endl;
+        break;
+      case QSocketDevice::Impossible:
+        kdDebug() << "ListenOn Error: Impossible" << endl;
+        break;
+      case QSocketDevice::NoFiles:
+        kdDebug() << "ListenOn Error: NoFiles" << endl;
+        break;
+      case QSocketDevice::ConnectionRefused:
+        kdDebug() << "ListenOn Error: ConnectionRefused" << endl;
+        break;
+      case QSocketDevice::NetworkFailure:
+        kdDebug() << "ListenOn Error: NetworkFailure" << endl;
+        break;
+      case QSocketDevice::UnknownError:
+        kdDebug() << "ListenOn Error: UnknownError" << endl;
+        break;
+    }
+
     delete m_device;
     m_device = 0;
   }
