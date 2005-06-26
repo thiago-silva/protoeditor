@@ -142,6 +142,8 @@ void DebuggerDBG::run(const QString& filepath)
     return;
   }
 
+  emit sigDebugStarting();
+  
   m_net->startDebugging(filepath, site, m_dbgSettings->listenPort(), sessionid);
 }
 
@@ -325,6 +327,8 @@ void DebuggerDBG::profile(const QString& filePath)
     return;
   }
 
+  emit sigDebugStarting();
+  
   m_net->startProfiling(filePath, site, m_dbgSettings->listenPort(), sessionid);
 }
 
@@ -491,8 +495,8 @@ void DebuggerDBG::debugLog(int type, const QString& msg, int line, const QString
       }
       break;
     case LT_OUTPUT:
-      m_output += msg;
-      manager()->updateOutput(m_output);
+//       m_output += msg;
+      manager()->addOutput(msg);
       break;
     case LT_FATALERROR:
       break;
@@ -531,7 +535,7 @@ void DebuggerDBG::slotDBGClosed()
   //end of debug
 
   m_isRunning = false;
-  m_output = QString::null;
+//   m_output = QString::null;
 
   if(!m_dbgSettings->enableJIT())
   {
@@ -565,7 +569,7 @@ void DebuggerDBG::processStepData()
 void DebuggerDBG::slotBreakpoint()
 {
   processStepData();
-  emit sigBreak();
+  emit sigDebugBreak();
 }
 
 void DebuggerDBG::slotStepDone()
@@ -575,7 +579,7 @@ void DebuggerDBG::slotStepDone()
   //hide the first step. Its done automatically on DBGNet::processHeader() - DBGC_STARTUP.
   if(!m_firstStep)
   {
-    emit sigBreak();
+    emit sigDebugBreak();
   }
   else
   {
