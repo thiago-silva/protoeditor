@@ -3,5 +3,5 @@ Encoding=UTF-8
 Name=Protoeditor
 Exec=protoeditor
 Type=Application
-Comment=A simple PHP debugger client
+Comment=A small PHP debugger client
 Icon=protoeditor
