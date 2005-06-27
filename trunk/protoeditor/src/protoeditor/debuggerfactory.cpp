@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -21,6 +21,7 @@
 #include "debuggerfactory.h"
 #include "debuggerdbg.h"
 #include "debuggerxd.h"
+#include "debuggergb.h"
 
 QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
   QMap<QString, AbstractDebugger*> map;
@@ -34,6 +35,10 @@ QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager
   //Xdebug
   debugger = new DebuggerXD(manager);
   map[debugger->name()] = debugger;
+
+  //Gubed
+//   debugger = new DebuggerGB(manager);
+//   map[debugger->name()] = debugger;
   
   return map;
 }

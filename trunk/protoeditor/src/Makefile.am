@@ -35,6 +35,6 @@
 # loglistview.cpp watchlistview.cpp breakpointlistview.cpp breakpointlistviewitem.cpp \
 # mainwindow.cpp protoeditor.cpp debuggersettingswidget.cpp debuggersettings.kcfgc
 
-SUBDIRS = settings commonphp common dbg xdebug protoeditor
+SUBDIRS = settings commonphp common dbg xdebug gubed protoeditor
 #protoeditor_LDADD = $(top_builddir)/src/common/libcommon.la \
 #  $(top_builddir)/src/commonphp/libcommonphp.la $(top_builddir)/src/dbg/libdbg.la -lkatepartinterfaces $(LIB_KDEUI)

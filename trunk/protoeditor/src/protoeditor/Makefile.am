@@ -1,7 +1,7 @@
 # set the include path for X, qt and KDE
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common -I$(top_srcdir)/src/dbg \
 	-I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings -I$(top_srcdir)/src/settings/widgets \
-	-I$(top_srcdir)/src/xdebug -I../settings $(all_includes)
+	-I$(top_srcdir)/src/xdebug -I$(top_srcdir)/src/gubed -I../settings $(all_includes)
 
 # these are the headers for your project
 noinst_HEADERS = editortabwidget.h debuggerfactory.h debuggermanager.h \
@@ -36,7 +36,8 @@ protoeditor_SOURCES = editortabwidget.cpp debuggerfactory.cpp \
 	mainwindow.cpp protoeditor.cpp document.cpp
 
 #SUBDIRS = commonphp common dbg protoeditor
-protoeditor_LDADD = $(top_builddir)/src/xdebug/libxdebug.la \
-	$(top_builddir)/src/settings/widgets/libsettingswidget.la $(top_builddir)/src/settings/libsettings.la \
-	$(top_builddir)/src/dbg/profiler/libdbgprofiler.la $(top_builddir)/src/commonphp/libcommonphp.la \
-	$(top_builddir)/src/common/libcommon.la $(top_builddir)/src/dbg/libdbg.la -lkatepartinterfaces $(LIB_KDEUI)
+protoeditor_LDADD = $(top_builddir)/src/gubed/libgubed.la \
+	$(top_builddir)/src/xdebug/libxdebug.la $(top_builddir)/src/settings/widgets/libsettingswidget.la \
+	$(top_builddir)/src/settings/libsettings.la $(top_builddir)/src/dbg/profiler/libdbgprofiler.la \
+	$(top_builddir)/src/commonphp/libcommonphp.la $(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/dbg/libdbg.la -lkatepartinterfaces $(LIB_KDEUI)

@@ -18,18 +18,35 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DEBUGGERFACTORY_H
-#define DEBUGGERFACTORY_H
+#ifndef GBSETTINGSWIDGET_H
+#define GBSETTINGSWIDGET_H
 
-#include <qstring.h>
-#include <qmap.h>
+#include "debuggersettingsinterface.h"
 
-class AbstractDebugger;
-class DebuggerManager;
+class QCheckBox;
+class QSpinBox;
 
-class DebuggerFactory{
+class GBSettings;
+class KLineEdit;
+
+class GBSettingsWidget : public DebuggerTab
+{
+  Q_OBJECT
 public:
-  static QMap<QString, AbstractDebugger*> buildDebuggers(DebuggerManager* manager);
+  GBSettingsWidget(GBSettings*, QWidget *parent = 0, const char *name = 0);
+  ~GBSettingsWidget();
+
+  int  listenPort();
+  bool enableJIT();
+  QString startSessionScript();
+  
+  void populate();
+private:
+  QSpinBox  *m_spListenPort;
+  QCheckBox *m_ckEnableJIT;
+  KLineEdit* m_edStartSessionScript;
+  GBSettings* m_settings;
+
 };
 
 #endif

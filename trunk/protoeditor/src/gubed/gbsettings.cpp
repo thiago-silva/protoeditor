@@ -17,19 +17,50 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "gbsettings.h"
+#include "gbsettingswidget.h"
+#include "gb_defs.h"
 
-#ifndef DEBUGGERFACTORY_H
-#define DEBUGGERFACTORY_H
+#include <qwidget.h>
 
-#include <qstring.h>
-#include <qmap.h>
+GBSettings::GBSettings(const QString& name)
+  : DebuggerSettingsInterface(), m_name(name)
+{
+  m_widget = 0;
+  
+  setCurrentGroup( QString::fromLatin1( m_name ) );
 
-class AbstractDebugger;
-class DebuggerManager;
+  KConfigSkeleton::ItemInt  *itemListenPort;
+  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, GB_DEFAULT_PORT );
+  addItem( itemListenPort, QString::fromLatin1( "ListenPort" ) );
 
-class DebuggerFactory{
-public:
-  static QMap<QString, AbstractDebugger*> buildDebuggers(DebuggerManager* manager);
-};
+  KConfigSkeleton::ItemBool  *itemEnableJIT;
+  itemEnableJIT = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "EnableJIT" ), mEnableJIT, true );
+  addItem( itemEnableJIT, QString::fromLatin1( "EnableJIT" ) );
 
-#endif
+  KConfigSkeleton::ItemString  *itemStartSessionScript;
+  itemStartSessionScript = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "StartSessionScript" ), mStartSessionScript, "/ServerScripts/StartSession.php");
+  addItem( itemStartSessionScript, QString::fromLatin1( "StartSessionScript" ) );
+
+  readConfig();
+}
+
+GBSettings::~GBSettings()
+{
+}
+
+void GBSettings::loadValuesFromWidget()
+{
+  mEnableJIT   = m_widget->enableJIT();
+  mListenPort  = m_widget->listenPort();
+  mStartSessionScript = m_widget->startSessionScript();
+}
+
+DebuggerTab* GBSettings::widget()
+{
+  if(!m_widget) {
+    m_widget = new GBSettingsWidget(this);
+  }
+  return m_widget;
+}
+
