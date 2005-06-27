@@ -6,37 +6,35 @@
 <ul type="disc"><li>Create a column for the filename only</li>
 <li>Create a column for the path of the file<br /></li></ul>
 <li>Add icons that Protoeditor uses on the distribution<br /></li>
-<li>DBGRequestor/DBGReceiver having a DBGConnection member instead of a QSocket?</li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
 <li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
 <li>Add &quot;New&quot; from KstdAction<br /></li>
-<li>Add the debugger / Site being used on the status bar.<br /></li>
 <li>Try to get default kate settings from the user's katerc<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
-<li>See the possibility to setup katepart to show line number / icon margin on the first run.<br /></li>
+<li>See the possibility to setup katepart to show line number / icon margin on the first run of protoeditor (no protoeditorrc yet).<br /></li>
 <li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
 <ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info it supports.<br /></li></ul>
 <li>Context menu for VariableListView:</li>
-<ul type="disc"><li>Copy (copy variable to clipboard)</li>
-<li>for scalars:</li>
+<ul type="disc"><li>for scalars:</li>
 <ul type="disc"><li>&quot;Modify Value&quot; (same as double click)</li>
 <li>&quot;Modify trough dialog&quot;...(for big texts)</li>
 <li>&quot;Set value to null&quot;</li></ul>
 <li>for arrays/objects</li>
-<ul type="disc"><li>-&quot;Modify array...&quot; (show dialog to modify/delete keys and values)</li>
+<ul type="disc"><li>-&quot;Modify array...&quot; (show dialog to add/modify/delete keys and values)</li>
 <li>-&quot;Modify object...&quot; (show dialog to modify the values of the members)<br /><br /></li></ul></ul>
-<li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;, &quot;run default file&quot; (like PHPEd)</li>
-<ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)<br /></li></ul>
-<li>When the state of the bottom tabs change, set an icon or something so the user know there are more info (usefull for the Message tab)<br /></li>
+<li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;</li>
+<ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)</li>
+<li>Args: Maybe a new entry on the site settings?<br /></li></ul>
+<li>Add a tab on the site settings for more than one directory mapping (requested feature)<br /></li>
 <li>Refactor, test, refactor, test...</li>
 <ul type="disc"><li>create namespaces (DBG, PHP, etc)?</li>
 <li>rename: variableparser to phpvariableparser </li>
 <li>Rename loglist to messagelist</li>
-<li>long/int variables are kindda messy. check it.</li>
+<li>long/int mix variables are kindda messy. check it.</li>
 <li>Copy constructors, memory leak check...</li>
 <li>remove unescessary includes</li>
-<li>And so on, and so on....<br /></li></ul>
+<li>Clean up / document<br /></li></ul>
 <li>Quanta idea for capabilities: </li>
 <ul type="disc"><li>Create a class to hold the capabilities supported by quanta. <br /><br /></li></ul>
 <li>Note about watches:</li>
@@ -44,13 +42,14 @@
 <li>Add HTML output tab?<br /></li>
 <li>Create a menu &quot;window&quot; with a list of opened files.</li>
 <li>use KMDI?<br /></li>
-<li>Test with a Win32 server running apache/php/dbg<br /></li>
+<li>Test with a Win32 http server! (Check path stuff)<br /></li>
 <li>Manager: Create two interfaces: one to be used by MainWindow, the other, to be used by the DebuggerClient. Do the same to DebuggerClient?<br /><br /></li>
 <li>Where-things-must-be-deleted-issue:</li>
 <ul type="disc"><li>Client shouldn't have to delete breakpoints and variables. Its up to a BpManager/VarManager/Pool or to the widgets to own the objects.</li>
 <li>Note: the VariableListViewItem shouldn't delete the Variable member. The applicatin crashes because it might be deleting a variable that was already deleted (this occurs when a item is expanded). <br /></li></ul></ul>
 <p></p>
 </body></html>
+
 
 \NewEntry 0 Site and non-implementation notes
 
@@ -80,17 +79,17 @@
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 Xdebug
+\NewEntry 1 Xdebug
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Could not find anything to fix the conditional breakpoint....</li>
 <li>Some times it gets &quot;HTTP closed connection&quot;...usually when a php parse error is found.</li>
 <li></li></ul>
 </body></html>
 
-
-\NewEntry 1 TODO Now
+\NewEntry 1 DBG and infra
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Refactorings<br /></li>
+<ul type="disc"><li>Class to represent capabilities of the AbstractDebugger subclasses, so it can configure the UI .<br /></li>
+<li>Refactorings<br /></li>
 <li>Base:</li>
 <ul type="disc"><li>Clean DebuggerManager</li>
 <ul type="disc"><li>Create a DebugggerUI to split responsabilities<br /></li></ul>
@@ -125,6 +124,7 @@
 <li>Change output widget to KTExtEdit, so it can highlight HTML tags (create a wrapper class for it)</li></ul></ul>
 </body></html>
 
+
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
 <p>Each debugger has its own QWidget to be used on the settings dialog (it will be a child of QTabWidget). Maybe they should have its own KConfigSkeleton, registered on a hipotetical ConfigManager. ConfigManager would be responsable to inform all registered KConfigSkeleton subclasses registered to read/write its configuration.<br /><br />Besides the specific options of each debugger on the QWidget, they shall have a &quot;enable JIT&quot;. When its &quot;on&quot;, it will inform the debugger client to listen for incoming connections permanently. Otherwise, listening on port is temporary, ie, when a debugger is actually running. <br /><br />When a new connection arises for some debugger, they must know wich folder mapping to use. So they inform DebuggerManager about the incoming connection, and the manager is responsable for chose the apropriate registered Site according to the debugger triggered and the remote host (<span style="color:#ff0000">can't solve the remote port to help on this</span>) connected to the client. Also it's possible for a site to have many script languages. If there are 2 Sites registered for a given host (maybe the user's Site has different folder mapping for different languages), we wouldn't know wich one to use. So maybe, one more entry (Debugger) should be added.<br /><br />Each Site has the following entries:<br /></p>
@@ -155,17 +155,9 @@
 
 \NewEntry 1 Bug reminder
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
+<ul type="disc"><li>DBG: Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
 <li>DBGnet::processProf() : Profiler calc is hardcoded. Use prof_c to get the freq (divide for freq and multip for 1000. See script).</li>
 <ul type="disc"><li> $time_max = $dbg_prof_results[&quot;tm_max&quot;][$idx] * 1000;<br /><br /></li></ul>
-<li>Unable to configure Site on some situations:</li>
-<ul type="disc"><li>url: http://localhost/~zz/teste/teste.php</li>
-<li>host: localhost</li>
-<li>Remotebase: /var/www/htdocs</li>
-<li>LocalBase:    /home/me/htdocs</li></ul>
-<div></div>
-<ul type="disc"><li>Resolution:</li>
-<ul type="disc"><li>Substitute &quot;Host&quot; for &quot;URL&quot;, wich will be on the form &quot;http://localhost&quot; and can be &quot;http://localhost/~zz&quot;<br /><br /></li></ul></ul>
 <li>Crash:</li>
 <ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash</li>
 <li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes<br /><br /><br /></li></ul>
@@ -174,7 +166,6 @@
 <li>The debugger starts with the current opened file.</li></ul></ul>
 </body></html>
 
-\NewEntry 1 Usability issues
 
 \NewEntry 0 Quanta
 
@@ -240,14 +231,15 @@
 
 \NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p>Do it slowly, sending small patches. Check if it can be done now (Something about feature freeze status)</p>
-<ul type="disc"><li>Patches</li>
-<ul type="disc"><li>Implement the toggle breakpoint on the editor margin</li>
-<li> Improve BreakpointListView</li>
+<p></p>
+<ul type="disc"><li>Todo Patches</li>
+<li>Implement the toggle breakpoint on the editor margin</li>
+<ul type="disc"><li> Improve BreakpointListView</li>
 <li>Improve VariablesListView and variable-related code/classes<br /><br /></li></ul></ul>
 </body></html>
 
-\NewEntry 0 sourceforge
+
+\CurrentEntry 0 sourceforge
 
 \NewEntry 1 backup
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
