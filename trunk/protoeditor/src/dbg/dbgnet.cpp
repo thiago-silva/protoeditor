@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -115,6 +115,7 @@ void DBGNet::requestContinue()
 void DBGNet::requestStop()
 {
   m_requestor->requestStop();
+  m_con->closeClient();
 }
 
 void DBGNet::requestStepInto()
