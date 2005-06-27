@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -23,6 +23,10 @@
 
 #include <qptrlist.h>
 #include <qstring.h>
+
+/* represents a point of execution (file/line) with extra data such as functionName...
+   Should be expanded in the future
+*/
 
 class DebuggerExecutionPoint {
 public:
@@ -50,6 +54,10 @@ private:
 
 //---------------------------------------------------------------------
 
+/* represents all data in a backtrace.
+   Its used mainly by the Stack ComboBox, and also is responsable to inform
+   where is the active point of execution.
+*/
 class DebuggerStack{
 public:
   typedef QPtrList<DebuggerExecutionPoint> DebuggerExecutionPointList_t;

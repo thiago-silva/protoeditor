@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -32,36 +32,53 @@ class DebuggerExecutionPoint;
 class DebuggerStack;
 class Variable;
 
-// class SiteSettings;
-
-class AbstractDebugger : public QObject {
-Q_OBJECT
+class AbstractDebugger : public QObject
+{
+  Q_OBJECT
 public:
   AbstractDebugger(QObject *parent, const char* name = 0);
   virtual ~AbstractDebugger();
 
-  virtual QString name()   const = 0;
-  //virtual int     id() const = 0;
+  /* Most (if not all) of those functions are meant to be called from the DebuggerManager
+  */
 
+  /* the name of the debugger */
+  virtual QString name()   const = 0;
+
+  //virtual int     id() const = 0; // might have some use in the future to have this
+
+  /* if a debug session is active */
   virtual bool isRunning()       const = 0;
 
+  /* inits the client (listen to port, inits members, order a pizza....) */
   virtual void init() = 0;
-  
+
+  /* commands commonly supported by a debugger. */
   virtual void run(const QString&) = 0;
   virtual void continueExecution() = 0;
   virtual void stop()              = 0;
   virtual void stepInto()          = 0;
   virtual void stepOver()          = 0;
   virtual void stepOut()           = 0;
+  //virtual void pause()           = 0; //TODO
 
+  /* adds a list of breakpoints.
+  Its normaly (I guess, _only_!) called when the DebuggerManager is notified with the sigDebugStarted() signal*/
   virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&) = 0;
+
+  /* DebuggerManager says: add a single breakpoint! */
   virtual void addBreakpoint(DebuggerBreakpoint*)               = 0;
-  //virtual void addBreakpoint(const QString&, int)               = 0;
+
   virtual void changeBreakpoint(DebuggerBreakpoint*) = 0;
   virtual void removeBreakpoint(DebuggerBreakpoint*) = 0;
 
-  //virtual void requestLocalVariables(DebuggerExecutionPoint*)       = 0;
+  /* Called when the user changes the execution point on the stack ComboBox.
+     What we want when this happen is to retrieve local variables and related data
+     when this happens.
+  */
   virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*) = 0;
+
+  /* The user modified a variable (probably through the VariablesListView) */
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*) = 0;
 
   virtual void addWatch(const QString& expression) = 0;
@@ -73,10 +90,19 @@ protected:
   virtual DebuggerManager* manager();
 
 signals:
-  void sigDebugStarting(); //emitted right before starting the session
+  /*
+    emitted right before starting the session. Normally, it should be emited
+    before requesting a connection with the debugger itself, so DebuggerManager can show a yello led on the MainWindow
+  */
+  void sigDebugStarting();
+
+  /* Tells the DebuggerManager that we are active on a session. */
   void sigDebugStarted(AbstractDebugger*);
+
   void sigDebugEnded();
-  void sigDebugBreak(); //stepdone/breakpoint reached
+
+  /* When a step(in/over/out) is done, or a breakpoint is reached, and so on */
+  void sigDebugBreak();
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);

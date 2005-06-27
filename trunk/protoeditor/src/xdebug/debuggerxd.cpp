@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -40,7 +40,7 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
 {
   m_currentExecutionPoint = new DebuggerExecutionPoint();
   m_globalExecutionPoint = new DebuggerExecutionPoint();
-  
+
   m_xdSettings = new XDSettings(m_name);
 
   ProtoeditorSettings::self()->registerDebuggerSettings(m_xdSettings, m_name);
@@ -50,7 +50,7 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
 
   m_net = new XDNet(this);
   connect(m_net, SIGNAL(sigXDStarted()), this, SLOT(slotXDStarted()));
-  connect(m_net, SIGNAL(sigXDClosed()), this, SLOT(slotXDClosed()));
+  connect(m_net, SIGNAL(sigXDClosed()), this, SLOT(slotXDStopped()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
@@ -83,39 +83,45 @@ void DebuggerXD::run(const QString& filepath)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
+  //we need JIT active (listening on port)
   if(!m_isJITActive && !startJIT())
   {
     return;
   }
 
   emit sigDebugStarting();
-  
+
   m_net->startDebugging(filepath, site);
 }
 
 void DebuggerXD::continueExecution()
 {
-  m_net->requestContinue();
+  if(isRunning())
+    m_net->requestContinue();
 }
 
 void DebuggerXD::stop()
 {
-  m_net->requestStop();
+  if(isRunning())
+    m_net->requestStop();
 }
 
 void DebuggerXD::stepInto()
 {
-  m_net->requestStepInto();
+  if(isRunning())
+    m_net->requestStepInto();
 }
 
 void DebuggerXD::stepOver()
 {
-  m_net->requestStepOver();
+  if(isRunning())
+    m_net->requestStepOver();
 }
 
 void DebuggerXD::stepOut()
 {
-  m_net->requestStepOut();
+  if(isRunning())
+    m_net->requestStepOut();
 }
 
 void DebuggerXD::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps)
@@ -176,9 +182,6 @@ void DebuggerXD::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoint
 
     //reload variables (global/local/watches) to get the new value.
     requestVars();
-    /*    m_net->requestVariables(m_globalExecutionPointID, true);
-        m_net->requestVariables(m_currentExecutionPointID, false);
-        requestWatches(m_currentExecutionPointID);*/
   }
 }
 
@@ -192,6 +195,7 @@ void DebuggerXD::addWatch(const QString& expression)
   }
   else
   {
+    //build a variable and send it to the manager
     PHPVariable* var = new PHPVariable(expression);
     PHPScalarValue* value = new PHPScalarValue(var);
     var->setValue(value);
@@ -206,12 +210,12 @@ void DebuggerXD::removeWatch(const QString& expression)
   if(it != m_wathcesList.end())
   {
     m_wathcesList.remove(it);
-  }  
+  }
 }
 
 void DebuggerXD::profile(const QString&)
 {
-  //
+  /**/
 }
 
 void DebuggerXD::slotSettingsChanged()
@@ -230,7 +234,6 @@ bool DebuggerXD::startJIT()
 {
   if(!m_isJITActive)
   {
-
     if(m_net->startListener(m_xdSettings->listenPort()))
     {
       m_isJITActive = true;
@@ -258,13 +261,15 @@ void DebuggerXD::stopJIT()
   m_isJITActive = false;
 }
 
+//net started
 void DebuggerXD::slotXDStarted()
 {
   m_isRunning = true;
   emit sigDebugStarted(this);
 }
 
-void DebuggerXD::slotXDClosed()
+//net stopped
+void DebuggerXD::slotXDStopped()
 {
   m_isRunning = false;
   if(!m_xdSettings->enableJIT())
@@ -277,9 +282,12 @@ void DebuggerXD::slotXDClosed()
 
 void DebuggerXD::requestVars()
 {
-  requestWatches(m_currentExecutionPoint->id());
-  m_net->requestVariables(m_globalExecutionPoint->id(), XDNet::GLOBAL_SCOPE);
-  m_net->requestVariables(m_currentExecutionPoint->id(), XDNet::LOCAL_SCOPE);
+  if(isRunning())
+  {
+    requestWatches(m_currentExecutionPoint->id());
+    m_net->requestVariables(m_globalExecutionPoint->id(), XDNet::GLOBAL_SCOPE);
+    m_net->requestVariables(m_currentExecutionPoint->id(), XDNet::LOCAL_SCOPE);
+  }
 }
 
 void DebuggerXD::slotStepDone()
@@ -310,6 +318,7 @@ void DebuggerXD::updateStack(DebuggerStack* stack)
   m_currentExecutionPoint = stack->topExecutionPoint();
   m_globalExecutionPoint  = stack->bottomExecutionPoint();
   manager()->updateStack(stack);
+
 }
 
 void DebuggerXD::updateVariables(VariablesList_t* array, bool isGlobal)
@@ -329,9 +338,11 @@ void DebuggerXD::updateWatch(Variable* var)
   if(m_wathcesList.find(var->name()) == m_wathcesList.end())
   {
     //This watch is not on our list.
-    //It might happen whe the user modifies the value of a variable (ie. "$var=123").
-    //Since we request a watch expression "$var=123", we receive "$var=123" as the name
-    //of the variable (str) and we don't want to add something like that to the watchlist
+    //It might happen whe the user modifies the value of a variable (ie. "$var=123")
+    //through the VariablesListView or through evaluation of code.
+    //Since, for evaluation and change of variable value,
+    //we request a watch expression "$var=123", we receive "$var=123" as the name
+    //of the variable and we don't want to add something like that to the watchlist
     //everytime the user modifies a variable, right? :)
     return;
   }

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -60,7 +60,10 @@ public:
   virtual bool compare(QString, int);
 
 protected:
-  int     m_id; //this is not currently used (only internaly by the debugger clients)
+  
+  //ID is not currently used (only internaly by the debugger clients that needs it)
+  
+  int     m_id; 
   QString m_filePath;
   int     m_line;
   int     m_status;

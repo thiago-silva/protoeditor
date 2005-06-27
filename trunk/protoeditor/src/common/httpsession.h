@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -27,8 +27,18 @@ class KProcess;
 class DCOPClient;
 class QHttp;
 class KURL;
-
 class Browser;
+
+/*
+  All classes here are used to make an http request (to trigger the server side debugger).
+  Options are:
+    -direct http request (via QHttp)
+    -Browser request. Supported browsers are:
+      +Konqueror (DCOP)
+      +Mozilla (command line)
+      +FireFox (command line)
+      +Opera (command line)
+*/
 
 class BrowserRequestor : public QObject
 {

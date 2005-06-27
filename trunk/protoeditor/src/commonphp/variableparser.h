@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -22,10 +22,14 @@
 #ifndef DBGVARIABLEPARSER_H
 #define DBGVARIABLEPARSER_H
 
-//#include <qmap.h>
+
 #include <qptrlist.h>
 #include <qstring.h>
 #include "phpvariable.h"
+
+/*
+  Used to parse PHP serialized text into a list of Variables 
+*/
 
 class VariableParser{
 public:

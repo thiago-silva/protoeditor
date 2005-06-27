@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -24,7 +24,7 @@
 #include <klocale.h>
 
 BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
- : KListView(parent, name)
+    : KListView(parent, name)
 {
 
   setSorting(-1);
@@ -56,27 +56,31 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
   setColumnWidth(HitCountCol,  80);
 
   connect(this, SIGNAL(clicked(QListViewItem*, const QPoint&, int)),
-    this, SLOT(slotCicked(QListViewItem*, const QPoint&, int)));
+          this, SLOT(slotCicked(QListViewItem*, const QPoint&, int)));
   connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )),
-    this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
+          this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
 
   connect(this, SIGNAL(itemRenamed(QListViewItem*, int, const QString&)),
-    this, SLOT(slotItemRenamed(QListViewItem*, int, const QString&)));
+          this, SLOT(slotItemRenamed(QListViewItem*, int, const QString&)));
 }
 
 BreakpointListView::~BreakpointListView()
-{
-}
+{}
 
-void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col) {
+void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col)
+{
   BreakpointListViewItem* item = dynamic_cast<BreakpointListViewItem*>(qitem);
 
-  if(col == StatusIconCol) {
-    if(item->breakpoint()->status() == DebuggerBreakpoint::DISABLED) {
+  if(col == StatusIconCol)
+  {
+    if(item->breakpoint()->status() == DebuggerBreakpoint::DISABLED)
+    {
       item->setUserBpStatus(DebuggerBreakpoint::ENABLED);
       item->showBreakpoint();
       emit sigBreakpointChanged(item->breakpoint());
-    } else if(item->breakpoint()->status() == DebuggerBreakpoint::ENABLED) {
+    }
+    else if(item->breakpoint()->status() == DebuggerBreakpoint::ENABLED)
+    {
       item->setUserBpStatus(DebuggerBreakpoint::DISABLED);
       item->showBreakpoint();
       emit sigBreakpointChanged(item->breakpoint());
@@ -85,10 +89,12 @@ void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col
 
 }
 
-void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, int col) {
+void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, int col)
+{
   BreakpointListViewItem* item = dynamic_cast<BreakpointListViewItem*>(qitem);
 
-  switch(col) {
+  switch(col)
+  {
     case ConditionCol:
     case SkipHitsCol:
       item->startRename(col);
@@ -104,9 +110,11 @@ void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, i
   }
 }
 
-void BreakpointListView::slotItemRenamed(QListViewItem* qitem, int col, const QString& text) {
+void BreakpointListView::slotItemRenamed(QListViewItem* qitem, int col, const QString& text)
+{
   BreakpointListViewItem* item = dynamic_cast<BreakpointListViewItem*>(qitem);
-  switch(col) {
+  switch(col)
+  {
     case StatusIconCol:
     case StatusTextCol:
     case FileNameCol:
@@ -125,20 +133,24 @@ void BreakpointListView::slotItemRenamed(QListViewItem* qitem, int col, const QS
   }
 }
 
-void BreakpointListView::resetBreakpointItems() {
+void BreakpointListView::resetBreakpointItems()
+{
   BreakpointListViewItem* item =
     dynamic_cast<BreakpointListViewItem*>(firstChild());
 
-  while(item) {
+  while(item)
+  {
     item->reset();
     item =
       dynamic_cast<BreakpointListViewItem*>(item-> nextSibling());
   }
 }
 
-void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp) {
+void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp)
+{
   BreakpointListViewItem*  item = findBreakpoint(bp);
-  if(item) {
+  if(item)
+  {
     item->setBreakpoint(bp);
   }
 }
@@ -146,9 +158,12 @@ void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp) {
 void BreakpointListView::toggleBreakpoint(const QString& filePath, int line)
 {
   BreakpointListViewItem*  item = findBreakpoint(filePath, line);
-  if(item) {
+  if(item)
+  {
     removeBreakpoint(item->breakpoint());
-  } else {
+  }
+  else
+  {
     addBreakpoint(filePath, line);
   }
 }
@@ -171,21 +186,24 @@ void BreakpointListView::removeBreakpoint(DebuggerBreakpoint* bp)
 {
   BreakpointListViewItem*  item = findBreakpoint(bp);
 
-  if(item) {
-   takeItem(item);
+  if(item)
+  {
+    takeItem(item);
   }
   emit sigBreakpointRemoved(bp);
   delete item;
 }
 
-QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints() {
+QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints()
+{
 
   QValueList<DebuggerBreakpoint*> list;
 
   BreakpointListViewItem* item =
     dynamic_cast<BreakpointListViewItem*>(firstChild());
 
-  while(item) {
+  while(item)
+  {
     list.append(item->breakpoint());
     item =
       dynamic_cast<BreakpointListViewItem*>(item-> nextSibling());
@@ -194,14 +212,17 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints() {
   return list;
 }
 
-QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QString& filePath) {
+QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QString& filePath)
+{
   QValueList<DebuggerBreakpoint*> list;
 
   BreakpointListViewItem* item =
     dynamic_cast<BreakpointListViewItem*>(firstChild());
 
-  while(item) {
-    if(item->breakpoint()->filePath() == filePath) {
+  while(item)
+  {
+    if(item->breakpoint()->filePath() == filePath)
+    {
       list.append(item->breakpoint());
     }
     item =
@@ -228,28 +249,36 @@ void BreakpointListView::addBreakpoint(DebuggerBreakpoint* bp) {
 }
 */
 
-void BreakpointListView::keyPressEvent(QKeyEvent* e) {
-  if(e->key() == Qt::Key_Delete) {
+void BreakpointListView::keyPressEvent(QKeyEvent* e)
+{
+  if(e->key() == Qt::Key_Delete)
+  {
 
     BreakpointListViewItem* item =
       dynamic_cast<BreakpointListViewItem*>(currentItem());
 
-      if(item) {
-        takeItem(item);
-        emit sigBreakpointRemoved(item->breakpoint());
-        delete item;
-      }
-  } else {
+    if(item)
+    {
+      takeItem(item);
+      emit sigBreakpointRemoved(item->breakpoint());
+      delete item;
+    }
+  }
+  else
+  {
     KListView::keyPressEvent(e);
   }
 }
 
-BreakpointListViewItem*  BreakpointListView::findBreakpoint(DebuggerBreakpoint* bp) {
+BreakpointListViewItem*  BreakpointListView::findBreakpoint(DebuggerBreakpoint* bp)
+{
   BreakpointListViewItem* item =
     dynamic_cast<BreakpointListViewItem*>(firstChild());
 
-  while(item) {
-    if(item->breakpoint()->compare(bp)) {
+  while(item)
+  {
+    if(item->breakpoint()->compare(bp))
+    {
       return item;
     }
     item =
@@ -259,12 +288,17 @@ BreakpointListViewItem*  BreakpointListView::findBreakpoint(DebuggerBreakpoint* 
   return NULL;
 }
 
-BreakpointListViewItem*  BreakpointListView::findBreakpoint(QString filePath, int line) {
+BreakpointListViewItem*  BreakpointListView::findBreakpoint(QString filePath, int line)
+{
+  //Note: we don't use the DebuggerBreakpoint::id() to verify equality!
+
   BreakpointListViewItem* item =
     dynamic_cast<BreakpointListViewItem*>(firstChild());
 
-  while(item) {
-    if(item->breakpoint()->compare(filePath, line)) {
+  while(item)
+  {
+    if(item->breakpoint()->compare(filePath, line))
+    {
       return item;
     }
     item =

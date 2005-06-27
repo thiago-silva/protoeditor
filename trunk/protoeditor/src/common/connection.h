@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -28,6 +28,8 @@ class QSocket;
 class QSocketDevice;
 class QSocketNotifier;
 
+/* General class for socket connections. */
+
 class Connection  : public QObject
 {
   Q_OBJECT
@@ -35,15 +37,13 @@ public:
   Connection(QObject * parent = 0, const char * name = 0);
   ~Connection();
 
-  //virtual void newConnection(int socket);
-
   bool isListening();
-  bool listenOn(int);
+  bool listenOn(int); 
 
   //close client only
   void closeClient();
 
-  //close everything
+  //close client and server
   void close();
 private slots:
   void slotIncomingConnection(int);

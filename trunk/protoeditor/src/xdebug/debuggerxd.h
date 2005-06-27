@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -80,7 +80,7 @@ public slots:
 
 private slots:
   void slotXDStarted();
-  void slotXDClosed(); //end of debug
+  void slotXDStopped(); //end of debug
   void slotStepDone();
   void slotInternalError(const QString&);
   

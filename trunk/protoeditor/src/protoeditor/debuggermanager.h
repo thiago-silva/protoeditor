@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -25,12 +25,17 @@
 #include <qstring.h>
 #include "variable.h"
 
-//class DebuggerConfigurations;
 class DebuggerStack;
 class AbstractDebugger;
 class DebuggerBreakpoint;
 class MainWindow;
 class DebuggerExecutionPoint;
+
+/*
+ The core of the application.
+ Most of the data flow is represented in this class.
+ The other part is the implementation-dependet handled by individual debugger clients.
+*/
 
 class DebuggerManager : public QObject
 {
@@ -44,8 +49,7 @@ public:
 
   void init();
 
-
-  /* for debugger */
+  /* for debugger to notify us */
   void updateStack(DebuggerStack*);
   void updateGlobalVars(VariablesList_t*);
   void updateLocalVars(VariablesList_t*);
@@ -61,7 +65,10 @@ public slots:
   void slotGotoLineAtFile(const QString&, int);
   
 private slots:
-  /* Application - DebuggerManager */
+  
+  /* Application (Window) to DebuggerManager
+     Those are called when the user manipulates the UI.
+  */
 
   void slotDebugStart();
   void slotDebugStop();
@@ -82,10 +89,10 @@ private slots:
   void slotNoDocument();
   
   void slotNewDocument();
-
+  
   void slotProfile();
 
-  /* DebuggerClient - DebuggerManager */
+  /* AbstractDebugger to DebuggerManager */
 
   void slotDebugStarting();
   void slotDebugStarted(AbstractDebugger*);
@@ -95,7 +102,6 @@ private slots:
   //Debugger internal error (conection, listen port, etc)
   void slotInternalError(const QString&);
 
-//   void slotProfileDialogClosed();
 private:
   void debugActiveScript();
   void debugCurrentSiteScript();
