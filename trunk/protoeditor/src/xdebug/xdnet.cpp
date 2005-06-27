@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Thiago Silva                                    *
+ *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -60,6 +60,7 @@ XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
 
 XDNet::~XDNet()
 {
+  delete m_browser;
   delete m_con;
 }
 
@@ -101,6 +102,7 @@ void XDNet::requestStop()
 {
   QString stop = "stop -i 1";
   m_socket->writeBlock(stop, stop.length()+1);
+  m_con->closeClient();
 }
 
 void XDNet::requestStepInto()
