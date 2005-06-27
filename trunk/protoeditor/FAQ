@@ -1,0 +1,53 @@
+  Q: Why another editor? Why not work directly on Quanta+, for instance?
+
+  A: Ok, a little of history:
+     I started working on this a year ago (2004) because, at the time, I needed for my job (working with php 
+     applications on GNU/Linux). We didn't want to spend money on commercial products (as a matter of fact, 
+     we didn't like the available ones). Since the free version of DBG satisfied me, I planned to implement a 
+     client into the KDE Quanta+ (http://www.kdewebdev.org) wich, at the time, Gubed (http://gubed.sourceforge.net) 
+     was beginning to be incorporated. On the mailing list, there was a discussion about incorporating many 
+     debuggers for many script languages into it.
+
+     Due to lack of time, and because I don't have knowledge of Gubed implementation, I develop this small editor
+     (the one you are reading about) so I could better understand about debug session flows and how could DBG and 
+     Gubed work togueter sharing common code (wich would be a starting point to easily implement other debuggers 
+     without all the suffering) and I could have the freedom to try new things and blow things out like a doctor 
+     on its own laboratory :)
+
+     It was fun to do it, but I had too mutch work with DBG, and took me a lot to complete 
+     its implementation by myself. So, many "todo" things are still hanging.
+
+     Now, since I had a small app here fullfiling some of my needs, I decided to release it.     
+
+
+  Q: Nothing happens when I start the debugger. What is wrong?
+
+  A: If you are trying to run the debugger and nothing happens,
+     first, make sure you can access the http server and your debugger is installed and configured
+     properly. Then, take a look at Protoeditor output on the console.
+     For DBG, it should have something like:
+
+       "protoeditor: Requesting "/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
+
+     Where the relevant data are:
+       /index.php   - the file you are running.
+       7869         - the port you typed on "Listen port" of DBG settings.
+       192.168.0.20 - the host you typed on your current Site's "Host".
+
+     This is an HTTP request, so if you see something like:
+
+       "protoeditor: Requesting "/home/me/test/index.php?DBGSESSID=753@clienthost:7869" from 192.168.0.20
+
+     unless you can access "http://192.168.0.20/home/me/test/index.php" in your browser,
+     you probably set incorrect values for local/remote base dirs on the Site settings.
+
+
+  Q: I'm having lots of problems to make this work. What should I do?
+  
+  A: Go to the forum (http://sourceforge.net/forum/forum.php?forum_id=439825) and search for related
+     problems. If there isn't any solution there, you're welcome to write a new thread :)
+
+     
+  Q: What should I do if I find a bug?
+  
+  A: Try the convenient KDE bug report, or write it on the protoeditor's sourceforge site.
