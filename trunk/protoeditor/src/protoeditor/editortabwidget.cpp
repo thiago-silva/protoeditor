@@ -68,7 +68,6 @@ bool EditorTabWidget::openDocument(const KURL& url)
   {
     if(createDocument(url))
     {
-      emit sigNewDocument();
       return true;
     }
     else
@@ -320,6 +319,7 @@ bool EditorTabWidget::createDocument(const KURL& url)
   m_docList.append(doc);
 
   setCurrentPage(count()-1);
+  emit sigNewDocument();
   return true;
 }
 

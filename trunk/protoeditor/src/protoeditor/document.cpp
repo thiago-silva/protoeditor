@@ -150,7 +150,14 @@ void Document::slotNeedTextHint(int line, int col, QString&)
 
 bool Document::close()
 {
-  return m_view->document()->closeURL();
+  //don't signal the remotion of makrs if it close
+  //(persistent breakpoints)
+  
+  m_terminating = true;
+  bool ret = m_view->document()->closeURL();
+  m_terminating = false;
+  
+  return ret;
 }
 
 bool Document::isModified()
