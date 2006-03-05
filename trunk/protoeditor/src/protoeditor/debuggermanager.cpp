@@ -85,9 +85,9 @@ void DebuggerManager::init()
 
   //connects the editor with the BREAKPOINT UI
   connect(m_window->tabEditor(),
-          SIGNAL(sigBreakpointMarked(const QString&, int )),
+          SIGNAL(sigBreakpointMarked(const QString&, int, bool)),
           m_window->breakpointListView(),
-          SLOT(slotBreakpointMarked(const QString&, int)));
+          SLOT(slotBreakpointMarked(const QString&, int, bool)));
 
   connect(m_window->tabEditor(),
           SIGNAL(sigBreakpointUnmarked(const QString&, int )),
@@ -426,8 +426,13 @@ void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
 
 void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
 {
-  m_window->tabEditor()->unmarkActiveBreakpoint(
-    bp->filePath(), bp->line());
+  if(bp->status() == DebuggerBreakpoint::ENABLED) {
+    m_window->tabEditor()->unmarkActiveBreakpoint(
+      bp->filePath(), bp->line());
+  } else {
+    m_window->tabEditor()->unmarkDisabledBreakpoint(
+      bp->filePath(), bp->line());
+  }
 
   if(m_activeDebugger)
   {
@@ -442,9 +447,12 @@ void DebuggerManager::slotGotoLineAtFile(const QString& filePath, int line)
 
 void DebuggerManager::slotWatchRemoved(Variable* var)
 {
-  if(!m_activeDebugger) return;
-
-  m_activeDebugger->removeWatch(var->name());
+  for(QMap<QString,AbstractDebugger*>::iterator it = m_debuggerMap.begin();
+      it != m_debuggerMap.end();
+      it++)
+  {
+    it.data()->removeWatch(var->name());
+  }  
 }
 
 void DebuggerManager::slotNoDocument()
@@ -613,12 +621,16 @@ void DebuggerManager::updateBreakpoint(DebuggerBreakpoint* bp)
 
 void DebuggerManager::debugMessage(int type, const QString& msg, const QString& filePath, int line)
 {
+  if(type == DebuggerManager::ErrorMsg) 
+  {
+    m_window->tabEditor()->gotoLineAtFile(filePath, line);
+  }
   m_window->logListView()->add(type, msg, line, filePath);
 }
 
 void DebuggerManager::debugError(const QString& msg)
 {
-  m_window->showError(msg);
+  m_window->showError(msg);  
 }
 
 // void DebuggerManager::updateOutput(const QString& output)
@@ -633,8 +645,8 @@ void DebuggerManager::addOutput(const QString& output)
 
 void DebuggerManager::slotDebugStarting()
 {
-  m_window->setLedState(MainWindow::LedWait);
-  m_window->setDebugStatusMsg("Starting...");
+  //m_window->setLedState(MainWindow::LedWait);
+  //m_window->setDebugStatusMsg("Starting...");
 }
 
 void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
