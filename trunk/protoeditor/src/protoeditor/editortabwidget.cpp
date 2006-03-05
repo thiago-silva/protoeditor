@@ -29,11 +29,16 @@
 #include <kiconloader.h>
 #include <kmimetype.h>
 #include <kpopupmenu.h>
+#include <kfileitem.h>
+#include <kurldrag.h>
+#include <qdragobject.h> 
 
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
     : KTabWidget(parent, name), m_terminating(false),
     m_window(window), m_currentView(0)
 {
+  setAcceptDrops(TRUE);
+  
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
 
   //reordering with middle button: need extra coding to work (it alters the index of the tabs
@@ -287,8 +292,8 @@ bool EditorTabWidget::createDocument(const KURL& url)
     return false;
   }
 
-  connect(doc, SIGNAL(sigBreakpointMarked(Document*, int )), this,
-          SLOT(slotBreakpointMarked(Document*, int)));
+  connect(doc, SIGNAL(sigBreakpointMarked(Document*, int, bool )), this,
+          SLOT(slotBreakpointMarked(Document*, int, bool)));
 
   connect(doc, SIGNAL(sigBreakpointUnmarked(Document*, int )), this,
           SLOT(slotBreakpointUnmarked(Document*, int)));
@@ -299,6 +304,9 @@ bool EditorTabWidget::createDocument(const KURL& url)
   connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
           SLOT(slotStatusMsg(const QString&)));
 
+  connect(doc->view(), SIGNAL(dropEventPass(QDropEvent*)),
+    this, SLOT(slotDropEvent(QDropEvent*)));
+    
   QIconSet mimeIcon (KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
   if (mimeIcon.isNull())
   {
@@ -363,9 +371,9 @@ void EditorTabWidget::slotCurrentChanged(QWidget*)
   }
 }
 
-void EditorTabWidget::slotBreakpointMarked(Document* doc, int line)
+void EditorTabWidget::slotBreakpointMarked(Document* doc, int line, bool enabled)
 {
-  emit sigBreakpointMarked(doc->path(), line);
+  emit sigBreakpointMarked(doc->path(), line, enabled);
 }
 
 void EditorTabWidget::slotBreakpointUnmarked(Document* doc, int line)
@@ -498,6 +506,34 @@ void EditorTabWidget::slotMenuAboutToShow()
 void EditorTabWidget::slotAddWatch()
 {
   emit sigAddWatch(currentDocument()->wordUnderCursor());
+}
+
+void EditorTabWidget::dragEnterEvent(QDragEnterEvent* e)
+{
+  if(KURLDrag::canDecode(e)) {
+    e->accept(rect());
+  }
+}
+
+void EditorTabWidget::dragMoveEvent( QDragMoveEvent *e )
+{
+   e->accept();
+}
+    
+void EditorTabWidget::dropEvent(QDropEvent* e)
+{
+  slotDropEvent(e);
+}
+
+void EditorTabWidget::slotDropEvent(QDropEvent* e) {
+  KURL::List list;
+  if(KURLDrag::decode(e, list)) {
+    int size  = list.size();
+    for(int i = 0; i < size; i++)
+    {
+      m_window->openFile(list[i]);
+    }
+  }  
 }
 
 #include "editortabwidget.moc"

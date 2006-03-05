@@ -79,7 +79,7 @@ public:
   void terminate();
 
 signals:
-  void sigBreakpointMarked(const QString&, int);
+  void sigBreakpointMarked(const QString&, int, bool);
   void sigBreakpointUnmarked(const QString&, int);
   void sigNewDocument();
   void sigNoDocument();
@@ -91,16 +91,24 @@ public slots:
 protected slots:
   virtual void   closeRequest(int);
   virtual void   contextMenu(int, const QPoint &);
-  
+
 private slots:
   void slotCurrentChanged(QWidget*);
-  void slotBreakpointMarked(Document* doc, int line);
+  void slotBreakpointMarked(Document* doc, int line, bool enabled);
   void slotBreakpointUnmarked(Document* doc, int line);
 
   void slotTextChanged();
   void slotStatusMsg(const QString&);
 
   void slotMenuAboutToShow();
+  
+  void slotDropEvent(QDropEvent*);
+
+protected:
+  void dragEnterEvent(QDragEnterEvent*);
+  void dragMoveEvent( QDragMoveEvent *);
+  void dropEvent(QDropEvent*);
+
 private:
   bool                        closeDocument(int);
   Document*                   document(uint);
