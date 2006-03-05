@@ -70,7 +70,7 @@ public:
   QString wordUnderCursor();
 signals:
   void sigBreakpointUnmarked(Document*, int);
-  void sigBreakpointMarked(Document*, int);
+  void sigBreakpointMarked(Document*, int, bool enabled);
   void sigStatusMsg(const QString&);
   void sigTextChanged();
   

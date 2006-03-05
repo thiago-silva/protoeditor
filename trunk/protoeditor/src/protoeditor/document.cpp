@@ -118,10 +118,11 @@ bool Document::open(const KURL& url)
     kdoc->setFileChangedDialogsActivated(true);
 
   m_tab = new QWidget(dynamic_cast<QWidget*>(parent()));
+  
   QVBoxLayout *lay = new QVBoxLayout(m_tab, 1, 1);
 
   KTextEditor::View * view = doc->createView(m_tab);
-
+  
   lay->addWidget(view);
 
   m_path = url.path();
@@ -458,8 +459,8 @@ void Document::slotMarkChanged()
   for (mark = marks.first(); mark; mark = marks.next())
   {
     //skip if is not a breakpoint mark
-    if(!(mark->type & KTextEditor::MarkInterface::markType02) ||
-        (mark->type & KTextEditor::MarkInterface::markType04))
+    if(!((mark->type & KTextEditor::MarkInterface::markType02) ||
+         (mark->type & KTextEditor::MarkInterface::markType04)))    
     {
       continue;
     }
@@ -474,8 +475,9 @@ void Document::slotMarkChanged()
     }
 
     if (!found && !m_userMarkedGuard)
-    {
-      emit sigBreakpointMarked(this, mark->line+1);
+    {      
+      emit sigBreakpointMarked(this, mark->line+1, 
+        mark->type & KTextEditor::MarkInterface::markType02?true:false);
     }
     found = false;
   }
