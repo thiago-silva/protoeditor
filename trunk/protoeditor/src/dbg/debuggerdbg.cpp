@@ -477,7 +477,7 @@ void DebuggerDBG::debugLog(int type, const QString& msg, int line, const QString
         case E_PARSE:
         case E_COMPILE_ERROR:
         case E_USER_ERROR:
-          manager()->debugMessage(DebuggerManager::ErrorMsg, message, filePath, line);
+          manager()->debugMessage(DebuggerManager::ErrorMsg, message, filePath, line-1);
           manager()->debugError(message);
           break;
 
