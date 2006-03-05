@@ -173,12 +173,23 @@ QString SiteSettingsDialog::url()
 
 QString SiteSettingsDialog::remoteBaseDir()
 {
-  return m_edRemoteBaseDir->text();
+  QString str = m_edRemoteBaseDir->text();
+  if(str.at(str.length()-1) == '/')
+  {
+    str = str.left(str.length()-1);
+  }
+  
+  return str;
 }
 
 QString SiteSettingsDialog::localBaseDir()
 {
-  return m_edLocalBaseDir->url();
+  QString str = m_edLocalBaseDir->url();
+  if(str.at(str.length()-1) == '/')
+  {
+    str = str.left(str.length()-1);
+  }
+  return str;
 }
 
 QString SiteSettingsDialog::defaultFile()
