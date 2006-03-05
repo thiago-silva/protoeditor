@@ -32,7 +32,7 @@ class BreakpointListView : public KListView
 {
 Q_OBJECT
 public:
-  enum { StatusIconCol = 0, StatusTextCol, FileNameCol
+  enum { StatusIconCol = 0, StatusTextCol, FileNameCol, FilePathCol
        , LineCol, ConditionCol, SkipHitsCol, HitCountCol, };
 
   BreakpointListView(QWidget *parent = 0, const char *name = 0);
@@ -40,7 +40,7 @@ public:
 
   void updateBreakpoint(DebuggerBreakpoint*);
 
-  void toggleBreakpoint(const QString&, int);
+  void toggleBreakpoint(const QString&, int, bool enabled = true);
 
   void resetBreakpointItems();
 
@@ -60,7 +60,7 @@ signals:
 
 public slots:
   //connection with KTextEditor
-  void slotBreakpointMarked(const QString&, int);
+  void slotBreakpointMarked(const QString&, int, bool);
   void slotBreakpointUnmarked(const QString&, int);
 
 private slots:
@@ -72,7 +72,7 @@ protected:
   virtual void keyPressEvent(QKeyEvent* e);
 
 private:
-  void addBreakpoint(const QString&, int);
+  void addBreakpoint(const QString&, int, bool);
   void removeBreakpoint(DebuggerBreakpoint*);
 
   BreakpointListViewItem*  findBreakpoint(DebuggerBreakpoint*);

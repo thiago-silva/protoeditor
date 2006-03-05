@@ -32,7 +32,8 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
 
   addColumn(tr2i18n(""));
   addColumn(tr2i18n("Status"));
-  addColumn(tr2i18n("File Path"));
+  addColumn(tr2i18n("File name"));
+  addColumn(tr2i18n("File path"));  
   addColumn(tr2i18n("Line"));
   addColumn(tr2i18n("Condition"));
   addColumn(tr2i18n("Skip hits"));
@@ -41,6 +42,7 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
   setColumnWidthMode(StatusIconCol, Manual);
   setColumnWidthMode(StatusTextCol, Manual);
   setColumnWidthMode(FileNameCol,  Manual);
+  setColumnWidthMode(FilePathCol,  Manual);
   setColumnWidthMode(LineCol,      Manual);
   setColumnWidthMode(ConditionCol, Manual);
   setColumnWidthMode(SkipHitsCol,  Manual);
@@ -49,9 +51,10 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
 
   setColumnWidth(StatusIconCol, 25);
   setColumnWidth(StatusTextCol, 100);
-  setColumnWidth(FileNameCol,  250);
+  setColumnWidth(FileNameCol,  170);
+  setColumnWidth(FilePathCol,  220);
   setColumnWidth(LineCol,      40);
-  setColumnWidth(ConditionCol, 150);
+  setColumnWidth(ConditionCol, 90);
   setColumnWidth(SkipHitsCol,  80);
   setColumnWidth(HitCountCol,  80);
 
@@ -103,6 +106,7 @@ void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, i
     case StatusIconCol:
     case StatusTextCol:
     case FileNameCol:
+    case FilePathCol:
     case LineCol:
     case HitCountCol:
       emit sigDoubleClick(item->breakpoint()->filePath(), item->breakpoint()->line());
@@ -118,6 +122,7 @@ void BreakpointListView::slotItemRenamed(QListViewItem* qitem, int col, const QS
     case StatusIconCol:
     case StatusTextCol:
     case FileNameCol:
+    case FilePathCol:
     case LineCol:
     case HitCountCol:
       break;
@@ -155,7 +160,7 @@ void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp)
   }
 }
 
-void BreakpointListView::toggleBreakpoint(const QString& filePath, int line)
+void BreakpointListView::toggleBreakpoint(const QString& filePath, int line, bool enabled)
 {
   BreakpointListViewItem*  item = findBreakpoint(filePath, line);
   if(item)
@@ -164,16 +169,18 @@ void BreakpointListView::toggleBreakpoint(const QString& filePath, int line)
   }
   else
   {
-    addBreakpoint(filePath, line);
+    addBreakpoint(filePath, line, enabled);
   }
 }
 
-void BreakpointListView::addBreakpoint(const QString& filePath, int line)
+void BreakpointListView::addBreakpoint(const QString& filePath, int line, bool enabled)
 {
   //note: TextEditor lines are 0 based
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(0, filePath, line);
   //addBreakpoint(bp);
-
+  if(!enabled) {
+    bp->setStatus(DebuggerBreakpoint::DISABLED);
+  }  
   BreakpointListViewItem* item = new BreakpointListViewItem(this, bp);
 
   //insert new item to the bottom of the list
@@ -232,9 +239,9 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QStrin
   return list;
 }
 
-void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line)
+void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line, bool enabled)
 {
-  toggleBreakpoint(filePath, line);
+  toggleBreakpoint(filePath, line, enabled);
 }
 
 void BreakpointListView::slotBreakpointUnmarked(const QString& filePath, int line)
