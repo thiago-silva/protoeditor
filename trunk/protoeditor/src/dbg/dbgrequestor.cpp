@@ -212,6 +212,10 @@ void DBGRequestor::makeHttpRequest(const QString& _url, /*int port,*/ const QStr
 //                    + "@clienthost:"
 //                    + QString::number(listenPort);
 
+  if(url.port() == 0) 
+  {
+    url.setPort(80);    
+  }
   m_browser->request(url);
 }
 
