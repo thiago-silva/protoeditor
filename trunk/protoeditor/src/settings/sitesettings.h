@@ -23,6 +23,8 @@
 
 #include <kconfigskeleton.h>
 
+#include <kurl.h>
+
 class SiteSettings : public KConfigSkeleton
 {
 public:
@@ -50,9 +52,17 @@ public:
     mUrl = url;
   }
 
-  QString url() const
-  {
+  QString url() {
     return mUrl;
+  }
+
+  KURL effectiveURL() const
+  {
+    KURL url(mUrl);
+    if(url.port() == 0) {
+      url.setPort(80);
+    }
+    return url;
   }
 
   void setLocalBaseDir(const QString& localBaseDir)
@@ -106,6 +116,7 @@ public:
   }
 
 protected:
+  
   QString mParamnumber;
 
   // Site_$(number)
