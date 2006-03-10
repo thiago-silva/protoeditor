@@ -38,11 +38,15 @@ public:
 
   int  listenPort();
   bool enableJIT();
+  bool sendSuperGlobals();
+  bool breakOnLoad();
 
   void populate();
 private:
   QSpinBox  *m_spListenPort;
   QCheckBox *m_ckEnableJIT;
+  QCheckBox *m_ckBreakOnLoad;
+  QCheckBox *m_ckSendSuperGlobals;
 
   XDSettings* m_settings;
 

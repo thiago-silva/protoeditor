@@ -39,6 +39,15 @@ XDSettings::XDSettings(const QString& name)
   itemEnableJIT = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "EnableJIT" ), mEnableJIT, true );
   addItem( itemEnableJIT, QString::fromLatin1( "EnableJIT" ) );
 
+  
+  KConfigSkeleton::ItemBool  *itemSendSuperGlobals;
+  itemSendSuperGlobals = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendSuperGlobals" ), mSendSuperGlobals, false);
+  addItem( itemSendSuperGlobals, QString::fromLatin1( "SendSuperGlobals" ) );
+  
+  KConfigSkeleton::ItemBool  *itemBreakOnLoad;
+  itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, false);
+  addItem( itemBreakOnLoad, QString::fromLatin1( "BreakOnLoad" ) );
+
   readConfig();
 }
 
@@ -48,8 +57,10 @@ XDSettings::~XDSettings()
 
 void XDSettings::loadValuesFromWidget()
 {
-  mEnableJIT   = m_widget->enableJIT();
-  mListenPort  = m_widget->listenPort();
+  mEnableJIT        = m_widget->enableJIT();
+  mListenPort       = m_widget->listenPort();
+  mSendSuperGlobals = m_widget->sendSuperGlobals();
+  mBreakOnLoad      = m_widget->breakOnLoad();
 }
 
 DebuggerTab* XDSettings::widget()

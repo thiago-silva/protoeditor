@@ -41,6 +41,14 @@ class XDSettings : public DebuggerSettingsInterface
       return mEnableJIT;
     }
 
+    bool sendSuperGlobals() const {
+      return mSendSuperGlobals;
+    }
+
+    bool breakOnLoad() const {
+      return mBreakOnLoad;
+    }
+
     virtual QString name() {
       return m_name;
     }
@@ -52,6 +60,8 @@ class XDSettings : public DebuggerSettingsInterface
     // Xdebug
     int  mListenPort;
     bool mEnableJIT;
+    bool mSendSuperGlobals;
+    bool mBreakOnLoad;
 
     QString m_name;
   private:

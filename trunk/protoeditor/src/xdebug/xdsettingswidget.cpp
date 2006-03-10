@@ -55,6 +55,21 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
 
   mainLayout->addLayout(jitbox);
 
+  QHBoxLayout* breakbox = new QHBoxLayout(0, -1, 16);
+  m_ckBreakOnLoad = new QCheckBox(this);
+  m_ckBreakOnLoad->setText("Break on load");
+  breakbox->addWidget(m_ckBreakOnLoad);
+
+  mainLayout->addLayout(breakbox);
+
+  QHBoxLayout* varbox = new QHBoxLayout(0, -1, 16);
+    
+  m_ckSendSuperGlobals = new QCheckBox(this);
+  m_ckSendSuperGlobals->setText("Send super global variables");
+  varbox->addWidget(m_ckSendSuperGlobals);
+
+  mainLayout->addLayout(varbox);
+
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
@@ -70,11 +85,20 @@ bool XDSettingsWidget::enableJIT()
   return m_ckEnableJIT->isChecked();
 }
 
+bool XDSettingsWidget::sendSuperGlobals() {
+  return m_ckSendSuperGlobals->isChecked();
+}
+
+bool XDSettingsWidget::breakOnLoad() {
+  return m_ckBreakOnLoad->isChecked();
+}
 
 void XDSettingsWidget::populate()
 {
   m_spListenPort->setValue(m_settings->listenPort());
   m_ckEnableJIT->setChecked(m_settings->enableJIT());
+  m_ckSendSuperGlobals->setChecked(m_settings->sendSuperGlobals());
+  m_ckBreakOnLoad->setChecked(m_settings->breakOnLoad());
 }
 
 #include "xdsettingswidget.moc"
