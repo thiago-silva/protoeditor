@@ -68,6 +68,7 @@ public:
 
   void updateStack(DebuggerStack* stack);
   void updateVariables(VariablesList_t*, bool);
+
   void updateWatch(Variable*);
   void updateBreakpoint(int id, const QString& filePath, int line, const QString& state, int hitcount, int skiphits,
                         const QString& condition);
@@ -75,6 +76,7 @@ public:
   void addOutput(const QString&);
   void debugError(const QString& code, const QString& exception, const QString& data);
   
+  XDSettings* settings();
 public slots:
   void slotSettingsChanged();
 

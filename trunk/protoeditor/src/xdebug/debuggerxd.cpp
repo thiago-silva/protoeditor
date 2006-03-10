@@ -69,6 +69,10 @@ QString DebuggerXD::name() const
   return m_name;
 }
 
+XDSettings* DebuggerXD::settings() {
+  return m_xdSettings;
+}
+
 bool DebuggerXD::isRunning() const
 {
   return m_isRunning;
@@ -165,7 +169,7 @@ void DebuggerXD::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint)
   m_currentExecutionPoint = execPoint;
   if(isRunning())
   {
-    m_net->requestVariables(m_currentExecutionPoint->id(), XDNet::LOCAL_SCOPE);
+    m_net->requestVariables(m_currentExecutionPoint->id(), XDNet::LocalScopeId);
   }
 }
 
@@ -285,8 +289,8 @@ void DebuggerXD::requestVars()
   if(isRunning())
   {
     requestWatches(m_currentExecutionPoint->id());
-    m_net->requestVariables(m_globalExecutionPoint->id(), XDNet::GLOBAL_SCOPE);
-    m_net->requestVariables(m_currentExecutionPoint->id(), XDNet::LOCAL_SCOPE);
+    m_net->requestVariables(m_currentExecutionPoint->id(), XDNet::LocalScopeId);
+    m_net->requestVariables(m_globalExecutionPoint->id(), XDNet::GlobalScopeId);
   }
 }
 

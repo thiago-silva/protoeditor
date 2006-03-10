@@ -41,7 +41,7 @@ class PHPSettings : public KConfigSkeleton
 
   protected:
 
-    // PHP Debugger
+    // PHP Debugger    
     QString mDefaultDebugger;
 
   private:
