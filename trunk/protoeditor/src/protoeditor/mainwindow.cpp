@@ -100,23 +100,19 @@ void MainWindow::loadSites()
   QValueList<SiteSettings*> sitesList = ProtoeditorSettings::self()->siteSettingsList();
   QValueList<SiteSettings*>::iterator it;
 
+  int i = 0;
+  int curr = 0;
   for(it = sitesList.begin(); it != sitesList.end(); ++it)
   {
     strsites << (*it)->name();
+    if((*it)->name() == ProtoeditorSettings::self()->currentSiteName()) {
+      curr = i;
+    }
+    i++;
   }
+  
   m_siteAction->setItems(strsites);
-
-  if(strsites.count())
-  {
-
-    m_siteAction->setCurrentItem(0);
-    //note 1: KSelectAction doesn't emit activated() when calling setCurrentItem()
-
-    ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());
-  }
-
-  //note 2: KSelectAction doesn't updates its combo width, so we have to call this
-  m_siteAction->setComboWidth(150);
+  m_siteAction->setCurrentItem(curr);
 }
 
 void MainWindow::setupStatusBar()
@@ -170,9 +166,11 @@ void MainWindow::setupActions()
   KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
   m_siteAction     = new KSelectAction("Site", 0, actionCollection(), "site_selection");
+  m_siteAction->setComboWidth(150);
 
   connect(m_siteAction, SIGNAL(activated(const QString&)),
           ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+  
 
   m_defaultScriptAction = new KSelectAction("Default script", 0, actionCollection(), "default_script");
   QStringList l;
@@ -319,7 +317,8 @@ void MainWindow::createWidgets()
 
 MainWindow::~MainWindow()
 {
-  /* TODO: delete all widgets? */
+  ProtoeditorSettings::self()->writeConfig(true);
+
   delete m_debugger_manager;
 }
 
