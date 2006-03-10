@@ -90,7 +90,7 @@ void GBNet::requestStepOut()
 {}
 
 
-void GBNet::sendRunMode(int mode)
+void GBNet::sendRunMode(int)
 {
   /*
   switch(mode)
@@ -377,6 +377,8 @@ QString GBNet::getField(int* idx, QString text)
   
     return num;
   }
+
+  return QString::null;
 }
 
 #include "gbnet.moc"
