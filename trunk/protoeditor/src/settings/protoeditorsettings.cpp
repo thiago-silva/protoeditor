@@ -29,9 +29,16 @@
 
 ProtoeditorSettings* ProtoeditorSettings::m_self = 0;
 
-ProtoeditorSettings::ProtoeditorSettings(QObject* parent, const char* name)
-  : QObject(parent, name)
+ProtoeditorSettings::ProtoeditorSettings()
+  :  QObject(), KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
 {
+  KConfigSkeleton::ItemString  *itemCurrentSite;
+  itemCurrentSite = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "CurrentSite" ), m_currentSiteName);
+  addItem( itemCurrentSite, QString::fromLatin1( "CurrentSite" ) );
+
+  readConfig();
+  //--
+
   m_phpSettings = new PHPSettings();
   m_extOutputSettings = new ExtOutputSettings();
 
@@ -64,6 +71,10 @@ ProtoeditorSettings* ProtoeditorSettings::self()
   }
 
   return m_self;
+}
+
+QString ProtoeditorSettings::currentSiteName() {
+  return m_currentSiteName;
 }
 
 void ProtoeditorSettings::registerDebuggerSettings(DebuggerSettingsInterface* dsettings, const QString& name)
@@ -131,15 +142,19 @@ void ProtoeditorSettings::addSite(int number, const QString& name, const QString
   m_siteSettingsMap[s->name()] = s;
 }
 
-void ProtoeditorSettings::writeConfig()
+void ProtoeditorSettings::writeConfig(bool silent)
 {
+  KConfigSkeleton::writeConfig();
+
   m_phpSettings->writeConfig();
   m_extOutputSettings->writeConfig();
 
   writeDebuggersConf();
   writeSiteConf();
 
-  emit sigSettingsChanged();
+  if(!silent) {
+    emit sigSettingsChanged();
+  }
 }
 
 void ProtoeditorSettings::writeDebuggersConf()
@@ -160,7 +175,7 @@ void ProtoeditorSettings::writeSiteConf()
 
 void ProtoeditorSettings::slotCurrentSiteChanged(const QString& sitename)
 {
-  m_currentSiteName = sitename;
+  m_currentSiteName = sitename;  
 }
 
 #include "protoeditorsettings.moc"

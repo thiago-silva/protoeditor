@@ -22,6 +22,7 @@
 #define PROTOEDITORSETTINGS_H
 
 #include <qobject.h>
+#include <kconfigskeleton.h>
 #include <qstring.h>
 
 #include <qmap.h>
@@ -33,7 +34,7 @@ class SiteSettings;
 class PHPSettings;
 class ExtOutputSettings;
 
-class ProtoeditorSettings  : public QObject {
+class ProtoeditorSettings  : public QObject, KConfigSkeleton  {
   Q_OBJECT
 public:
   ~ProtoeditorSettings();
@@ -44,6 +45,7 @@ public:
 
   DebuggerSettingsInterface*             debuggerSettings(const QString& name);
   QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
+  QString                                currentSiteName();
   SiteSettings*                          siteSettings(const QString& name);
   SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
@@ -54,7 +56,8 @@ public:
   void addSite(int number, const QString& name, const QString& url,
                const QString& remoteBaseDir, const QString& localBaseDir,
               const QString& defaultFile, const QString& debuggerClient);
-  void writeConfig();
+
+  void writeConfig(bool silent = false);
 
 signals:
   void sigSettingsChanged();
@@ -62,7 +65,7 @@ signals:
 public slots:
   void slotCurrentSiteChanged(const QString&);
 private:
-  ProtoeditorSettings(QObject* parent = 0, const char* name = 0);
+  ProtoeditorSettings();
 
   void loadSites();
 
