@@ -21,6 +21,7 @@
 #include "xdnet.h"
 #include "debuggerxd.h"
 #include "xdvariableparser.h"
+#include "xdsettings.h"
 
 #include "connection.h"
 #include "sitesettings.h"
@@ -39,9 +40,6 @@
 #include <qdom.h>
 #include <kurl.h>
 #include <kmdcodec.h>
-
-const int XDNet::GLOBAL_SCOPE = 1;
-const int XDNet::LOCAL_SCOPE  = 0;
 
 XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
   : QObject(parent, name), m_debugger(debugger), m_con(0), /*m_http(0)*/ m_browser(0), m_socket(0)
@@ -80,15 +78,15 @@ void XDNet::startDebugging(const QString& filePath, SiteSettings* site)
   QString uri = filePath;
   uri = uri.remove(0, site->localBaseDir().length());
   
-  makeHttpRequest(site->url(), uri);
+  makeHttpRequest(site->effectiveURL(), uri);
 }
   
-void XDNet::makeHttpRequest(const QString& _url, const QString& path)
+void XDNet::makeHttpRequest(KURL url, const QString& path)
 {
-  KURL url(_url);
+//   KURL url(_url);
   url.setPath(url.path() + path);
-  url.setQuery("XDEBUG_START_SESSION=web_key");
-  
+  url.setQuery("XDEBUG_SESSION_START=web_key");
+
   m_browser->request(url);
 }
 
@@ -100,32 +98,37 @@ void XDNet::requestContinue()
 
 void XDNet::requestStop()
 {
-  QString stop = "stop -i 1";
+  QString stop = "stop -i ";
+  stop += QString::number(GeneralId);
   m_socket->writeBlock(stop, stop.length()+1);
   m_con->closeClient();
 }
 
 void XDNet::requestStepInto()
 {
-  QString step_into = "step_into -i 1";
+  QString step_into = "step_into -i ";
+  step_into += QString::number(GeneralId);
   m_socket->writeBlock(step_into, step_into.length()+1);
 }
 
 void XDNet::requestStepOver()
 {
-  QString step_over = "step_over -i 1";
+  QString step_over = "step_over -i ";
+  step_over += QString::number(GeneralId);
   m_socket->writeBlock(step_over, step_over.length()+1);
 }
 
 void XDNet::requestStepOut()
 {
-  QString step_out = "step_out -i 1";
+  QString step_out = "step_out -i ";
+  step_out += QString::number(GeneralId);
   m_socket->writeBlock(step_out, step_out.length()+1);
 }
 
 void XDNet::requestStack()
 {
-  QString stack_get = "stack_get -i 1";
+  QString stack_get = "stack_get -i ";
+  stack_get += QString::number(GeneralId);
   m_socket->writeBlock(stack_get, stack_get.length()+1);
 }
 
@@ -137,23 +140,49 @@ void XDNet::requestVariables(int scope, int id)
   context_get += QString::number(id);
 
   m_socket->writeBlock(context_get, context_get.length()+1);
+
+  
+  if(id == GlobalScopeId && m_debugger->settings()->sendSuperGlobals()) {
+    requestSuperGlobals(scope);
+  }
 }
 
-void XDNet::requestWatch(const QString& expression, int ctx_id)
+void XDNet::requestSuperGlobals(int scope) {
+  //total global vars: 9
+  m_superglobalsCount = 9;
+
+  requestProperty("$GLOBALS", scope, SuperGlobalId);
+  requestProperty("$_ENV", scope, SuperGlobalId);
+  requestProperty("$_POST", scope, SuperGlobalId);
+  requestProperty("$_GET", scope, SuperGlobalId);
+  requestProperty("$_COOKIE", scope, SuperGlobalId);
+  requestProperty("$_SERVER", scope, SuperGlobalId);
+  requestProperty("$_FILES", scope, SuperGlobalId);
+  requestProperty("$_REQUEST", scope, SuperGlobalId);
+  requestProperty("$_SESSION", scope, SuperGlobalId);  
+}
+
+void XDNet::requestWatch(const QString& expression, int ctx_id) {
+  requestProperty(expression, ctx_id, 1);
+}
+
+void XDNet::requestProperty(const QString& expression, int ctx_id, int id)
 {
   QString property_get = "property_get -n ";
   property_get += expression;
   property_get += " -d ";
   property_get += QString::number(ctx_id);
-  property_get += " -i 1";
+  property_get += " -i ";
+  property_get += QString::number(id);
   m_socket->writeBlock(property_get, property_get.length()+1);
-
 }
 
 void XDNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
-  QString breakpoint_set = "breakpoint_set -i 1 -t line -f ";
+  QString breakpoint_set = "breakpoint_set -t line -f ";
   breakpoint_set += bp->filePath().section('/', -1);
+  breakpoint_set += " -i ";
+  breakpoint_set += QString::number(GeneralId);
   breakpoint_set += " -n ";
   breakpoint_set += QString::number(bp->line());
   breakpoint_set += " -h ";
@@ -170,6 +199,8 @@ void XDNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
 {
   QString breakpoint_update = "breakpoint_update -i 1 -d ";
   breakpoint_update += QString::number(bp->id());
+  breakpoint_update += " -i ";
+  breakpoint_update += QString::number(GeneralId);
   breakpoint_update += " -h ";
   breakpoint_update += QString::number(bp->skipHits());
   breakpoint_update += " -s ";
@@ -182,15 +213,18 @@ void XDNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
 
 void XDNet::requestBreakpointRemoval(int bpid)
 {
-  QString breakpoint_remove = "breakpoint_remove -i 1 -d ";
+  QString breakpoint_remove = "breakpoint_remove -d ";
   breakpoint_remove += QString::number(bpid);
+  breakpoint_remove += " -i ";
+  breakpoint_remove += QString::number(GeneralId);
 
   m_socket->writeBlock(breakpoint_remove, breakpoint_remove.length()+1);
 }
 
 void XDNet::requestBreakpointList()
 {
-  QString breakpoint_list = "breakpoint_list -i 1";
+  QString breakpoint_list = "breakpoint_list -i ";
+  breakpoint_list += QString::number(GeneralId);
   m_socket->writeBlock(breakpoint_list, breakpoint_list.length()+1);
 }
 
@@ -202,12 +236,15 @@ void XDNet::slotIncomingConnection(QSocket* socket)
   emit sigXDStarted();
 }
 
+#include <iostream>
+
 void XDNet::slotReadBuffer()
 {
   long xmlSize;
   QString buffer;
   char ch;
-  long read;
+  long read = 0;
+  long totalread;
   QString str;
 
   do
@@ -219,10 +256,32 @@ void XDNet::slotReadBuffer()
       buffer += ch;
     }
 
-    xmlSize = buffer.toLong()+1;//\0
-    char data[xmlSize];
+    xmlSize = buffer.toLong();
+    char data[xmlSize+1];
 
-    read = m_socket->readBlock(data, xmlSize);
+    totalread = 0;
+    int aa;
+    while(totalread != xmlSize) {
+      aa = m_socket->bytesAvailable();
+      read = m_socket->readBlock(&data[totalread], xmlSize-totalread);
+
+      if(read == -1) {
+        return;
+      }
+
+//       if(read == 0) break;
+      if(read == 0) {
+        m_socket->waitForMore (-1, 0L);
+      }
+      
+      totalread += read;
+    }    
+    
+
+    data[xmlSize] = 0;
+//     if(m_superglobalsCount == 9) {
+//       std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+//     }
 
     str.setAscii(data,xmlSize);
     processXML(str);
@@ -300,9 +359,11 @@ void XDNet::processInit(QDomElement& init)
   QString stderr = "stderr -i 1 -c 1";//copy stderr to IDE
   m_socket->writeBlock(stderr, stderr.length()+1);
 
-  //request the first step
-  requestStepInto();
-
+  if(m_debugger->settings()->breakOnLoad()) {
+    requestStepInto();
+  } else {
+    requestContinue();
+  }
 }
 
 void XDNet::processResponse(QDomElement& root)
@@ -381,13 +442,18 @@ void XDNet::processResponse(QDomElement& root)
 
     VariablesList_t* array = p.parse(list);
 
-    if(root.attributeNode("transaction_id").value().toInt() == XDNet::LOCAL_SCOPE)
+    if(root.attributeNode("transaction_id").value().toInt() == LocalScopeId)
     {
       m_debugger->updateVariables(array, false);
     }
-    else if(root.attributeNode("transaction_id").value().toInt() == XDNet::GLOBAL_SCOPE)
+    else if(root.attributeNode("transaction_id").value().toInt() == GlobalScopeId)
     {
-      m_debugger->updateVariables(array, true);
+      if(root.attributeNode("transaction_id").value().toInt() == 
+         GlobalScopeId && m_debugger->settings()->sendSuperGlobals()) {
+        m_globalVars = array;
+      } else {
+        m_debugger->updateVariables(array, true);
+      }
     }
   }
   else if(cmd == "property_get")
@@ -396,7 +462,16 @@ void XDNet::processResponse(QDomElement& root)
     XDVariableParser p;
 
     Variable* var = p.parse(nd);
-    m_debugger->updateWatch(var);
+    if(root.attributeNode("transaction_id").value().toInt() == SuperGlobalId) {
+      m_globalVars->append(var);
+      m_superglobalsCount--;
+
+      if(m_superglobalsCount == 0) {
+        m_debugger->updateVariables(m_globalVars, true);
+      }
+    } else {      
+      m_debugger->updateWatch(var);
+    }
   }
   else if((cmd == "stop") ||
           (cmd == "breakpoint_remove") ||

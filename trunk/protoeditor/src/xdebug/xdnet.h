@@ -21,6 +21,8 @@
 #ifndef XDNET_H
 #define XDNET_H
 
+#include "variable.h"
+
 #include <qobject.h>
 #include <qstring.h>
 
@@ -33,13 +35,19 @@ class Browser;
 class QSocket;
 class QDomElement;
 class QSocket;
+class KURL;
 
 class XDNet : public QObject
 {
   Q_OBJECT
 public:
-  static const int GLOBAL_SCOPE;
-  static const int LOCAL_SCOPE;
+  //transaction id's
+  enum {
+    GeneralId,
+    LocalScopeId,
+    GlobalScopeId,
+    SuperGlobalId    
+  };
 
   XDNet(DebuggerXD* debugger, QObject *parent = 0, const char *name = 0);
   ~XDNet();
@@ -60,6 +68,7 @@ public:
 
   void requestWatch(const QString& expression, int ctx_id = 0);
   void requestVariables(int scope, int id);
+  void requestSuperGlobals(int scope);
 
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointUpdate(DebuggerBreakpoint* bp);
@@ -87,7 +96,9 @@ private slots:
 //   void slotHttpDone(bool error);
   void slotReadBuffer();
 private:
-  void makeHttpRequest(const QString& _url, const QString& path);
+  void requestProperty(const QString& expression, int ctx_id, int id);
+
+  void makeHttpRequest(KURL _url, const QString& path);
 //   void requestPage(const QString& filePath, SiteSettings* site);
   void requestStack();
   void requestBreakpointList();
@@ -111,6 +122,8 @@ private:
 //   QHttp *m_http;
   QSocket* m_socket;
 
+  VariablesList_t* m_globalVars;
+  int m_superglobalsCount;
   
   class Error {
     public:
@@ -120,7 +133,7 @@ private:
       QString exception;
   };
 
-  Error            m_error; //php error
+  Error            m_error; //php error  
 };
 
 #endif
