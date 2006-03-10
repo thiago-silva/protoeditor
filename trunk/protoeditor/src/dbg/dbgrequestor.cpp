@@ -196,26 +196,19 @@ void DBGRequestor::requestProfileFreqData(int testLoops)
   delete requestPack;
 }
 
-void DBGRequestor::makeHttpRequest(const QString& _url, /*int port,*/ const QString& path, int listenPort, int sessionId)
+void DBGRequestor::makeHttpRequest(KURL url, /*int port,*/ const QString& path, int listenPort, int sessionId)
 {
-  KURL url(_url);
-//   url.setPort(port);
+  
+//   KURL url(_url);
   url.setPath(url.path() + path);
   url.setQuery(QString("DBGSESSID=")
               + QString::number(sessionId)
               + "@clienthost:"
               + QString::number(listenPort));
-      
-//   QString reqUrl = QString("http://") + host + ":" + QString::number(port)
-//                    + path + "?DBGSESSID="
-//                    + QString::number(sessionId)
-//                    + "@clienthost:"
-//                    + QString::number(listenPort);
-
-  if(url.port() == 0) 
-  {
-    url.setPort(80);    
-  }
+//   if(url.port() == 0) 
+//   {
+//     url.setPort(80);    
+//   }
   m_browser->request(url);
 }
 

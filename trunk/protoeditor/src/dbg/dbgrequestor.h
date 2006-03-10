@@ -30,6 +30,7 @@
 class DBGRequestPack;
 class QSocket;
 class Browser;
+class KURL;
 
 class DBGRequestor : public QObject
 {
@@ -58,7 +59,7 @@ public:
   void requestProfileData(int modno);
   void requestProfileFreqData(int testLoops);
   
-  void makeHttpRequest(const QString& _url, /*int port, */const QString& path, int listenPort, int sessionId);
+  void makeHttpRequest(KURL _url, /*int port, */const QString& path, int listenPort, int sessionId);
 
   void addHeaderFlags(dbgint);
   void setSocket(QSocket* socket);
