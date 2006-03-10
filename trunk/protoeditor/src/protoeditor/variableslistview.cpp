@@ -295,13 +295,21 @@ void VariablesListView::addVariable(Variable* variable, VariablesListViewItem* p
   {
     item = new VariablesListViewItem(this, variable);
     //add new item to the bottom of the list
-    item->moveItem(lastItem());
+    item->moveItem(lastRootItem());
   }
   else
   {
     item = new VariablesListViewItem(parent, variable);
     item->moveItem(item->lastItem());
   }
+}
+
+VariablesListViewItem* VariablesListView::lastRootItem() {
+  QListViewItem* item = lastItem();
+  while(item->parent()) {
+    item = item->parent();
+  }
+  return dynamic_cast<VariablesListViewItem*>(item);
 }
 
 

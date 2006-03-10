@@ -54,6 +54,8 @@ protected slots:
   void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
 
 protected:
+  VariablesListViewItem* lastRootItem();
+
   void markExpanded(VariablesListViewItem* item);
   void markColapsed(VariablesListViewItem* item);
 
