@@ -109,7 +109,7 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
 
   enableButtonSeparator(true);
 
-  setMinimumWidth(400);
+  resize(600, 250);  
 }
 
 
