@@ -23,46 +23,58 @@
 
 #include <kconfigskeleton.h>
 
-//TODO: add a Console output!
-
-class ExtOutputSettings : public KConfigSkeleton
+class ExtAppSettings : public KConfigSkeleton
 {
   public:
-    class EnumBrowser
+    class EnumExtApp
     {
       public:
-      enum { Konqueror, Mozilla, Firefox, Opera, COUNT };
+      enum { Konqueror, Mozilla, Firefox, Opera, Console, COUNT };
     };
 
-    ExtOutputSettings( );
-    ~ExtOutputSettings();
+    ExtAppSettings( );
+    ~ExtAppSettings();
 
-    void setUseExternalBrowser(bool value)
+    void setUseExternalApp(bool value)
     {
-      mUseExternalBrowser = value;
+      mUseExternalApp = value;
     }
 
-    bool useExternalBrowser() const
+    bool useExternalApp() const
     {
-      return mUseExternalBrowser;
+      return mUseExternalApp;
     }
 
-    void setBrowser(int value)
+    void setExternalApp(int value)
     {
-      mBrowser = value;
+      mExternalApp = value;
     }
 
-    int browser() const
+    int externalApp() const
     {
-      return mBrowser;
+      return mExternalApp;
     }
+
+    void setConsole(const QString& console) {
+      mConsole = console;
+    }
+
+    QString console() const {
+      return mConsole;
+    }    
+
+//     QString shellExec() const {
+//       return mShellExec;
+//     }
 
   protected:
 
     // ExternalOutput
-    bool mUseExternalBrowser;
-    int mBrowser;
-
+    bool mUseExternalApp;
+    int mExternalApp;
+    QString mConsole;
+//     QString mShellExec;
+    
   private:
 };
 

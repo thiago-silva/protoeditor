@@ -39,10 +39,19 @@ class PHPSettings : public KConfigSkeleton
       return mDefaultDebugger;
     }
 
+    void setPHPCommand(const QString& cmd) {
+      mPHPCommand = cmd;
+    }
+
+    QString PHPCommand() const {
+      return mPHPCommand ;
+    }
+
   protected:
 
     // PHP Debugger    
     QString mDefaultDebugger;
+    QString mPHPCommand;
 
   private:
 };

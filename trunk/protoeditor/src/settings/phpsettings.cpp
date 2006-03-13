@@ -23,11 +23,15 @@
 PHPSettings::PHPSettings(  )
   : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
 {
-  setCurrentGroup( QString::fromLatin1( "PHP Debugger" ) );
+  setCurrentGroup( QString::fromLatin1( "PHP" ) );
 
   KConfigSkeleton::ItemString  *itemDefaultDebugger;
   itemDefaultDebugger = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DefaultDebugger" ), mDefaultDebugger );
   addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
+
+  KConfigSkeleton::ItemString  *itemPHPCommand;
+  itemPHPCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PHPCommand" ), mPHPCommand, "php %1");
+  addItem( itemPHPCommand, QString::fromLatin1( "PHPCommand" ) );
 
   readConfig();
 }

@@ -26,7 +26,6 @@
 #include "dbgnetdata.h"
 #include "dbgrequestpack.h"
 #include "dbgrequestpackbuilder.h"
-#include "httpsession.h"
 
 #include <qsocket.h>
 #include <kurl.h>
@@ -34,15 +33,11 @@
 DBGRequestor::DBGRequestor()
     : QObject(), m_socket(NULL)/*, m_http(0)*/, m_headerFlags(0) /*, m_terminating(false)*/
 {
-  m_browser = new Browser();
-
-  connect(m_browser, SIGNAL(sigError(const QString&)),
-          this, SIGNAL(sigError(const QString&)));
 }
 
 DBGRequestor::~DBGRequestor()
 {
-  delete m_browser;
+
 }
 
 void DBGRequestor::requestContinue()
@@ -194,22 +189,6 @@ void DBGRequestor::requestProfileFreqData(int testLoops)
   requestPack->header()->setFlags(m_headerFlags);
   requestPack->send(m_socket);
   delete requestPack;
-}
-
-void DBGRequestor::makeHttpRequest(KURL url, /*int port,*/ const QString& path, int listenPort, int sessionId)
-{
-  
-//   KURL url(_url);
-  url.setPath(url.path() + path);
-  url.setQuery(QString("DBGSESSID=")
-              + QString::number(sessionId)
-              + "@clienthost:"
-              + QString::number(listenPort));
-//   if(url.port() == 0) 
-//   {
-//     url.setPort(80);    
-//   }
-  m_browser->request(url);
 }
 
 void DBGRequestor::addHeaderFlags(dbgint flags)

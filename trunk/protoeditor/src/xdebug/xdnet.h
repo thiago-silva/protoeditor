@@ -30,7 +30,6 @@ class DebuggerXD;
 class SiteSettings;
 class DebuggerBreakpoint;
 class Connection;
-class Browser;
 
 class QSocket;
 class QDomElement;
@@ -56,7 +55,7 @@ public:
   bool startListener(int port);
   void stopListener();
 
-  void startDebugging(const QString& filePath, SiteSettings* site);
+  void startDebugging(const QString& filePath, SiteSettings* site, bool local);
 //   void startDebugging(const QString& filePath, SiteSettings* site);
 //   void startProfiling(const QString& filePath, SiteSettings* site);
 
@@ -98,8 +97,6 @@ private slots:
 private:
   void requestProperty(const QString& expression, int ctx_id, int id);
 
-  void makeHttpRequest(KURL _url, const QString& path);
-//   void requestPage(const QString& filePath, SiteSettings* site);
   void requestStack();
   void requestBreakpointList();
 
@@ -118,8 +115,6 @@ private:
   DebuggerXD       *m_debugger;
   Connection       *m_con;
 
-  Browser* m_browser;
-//   QHttp *m_http;
   QSocket* m_socket;
 
   VariablesList_t* m_globalVars;

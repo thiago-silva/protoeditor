@@ -62,8 +62,11 @@ public:
   bool startListener(int port);
   void stopListener();
 
-  void startDebugging(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid);
-  void startProfiling(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid);
+  void startDebugging(const QString& filePath, SiteSettings* site, bool local, 
+      int listenPort, dbgint sessid);
+
+  void startProfiling(const QString& filePath, SiteSettings* site, bool local,
+      int listenPort, dbgint sessid);
   
   void requestOptions(dbgint options);
 
@@ -114,7 +117,9 @@ private slots:
   void slotError(const QString&);
 
 private:
-  void requestPage(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid);
+  void requestPage(const QString& filePath, SiteSettings* site, bool local, 
+      int listenPort, dbgint sessid);
+
   void processStepData();
   void processProfileData();
   bool processHeader(DBGHeader* header);

@@ -24,22 +24,24 @@
 
 class QCheckBox;
 class QComboBox;
+class KLineEdit;
 
-class ExtOutputSettingsWidget : public QWidget
+class ExtAppSettingsWidget : public QWidget
 {
   Q_OBJECT
 public:
-  ExtOutputSettingsWidget(QWidget *parent = 0, const char *name = 0);
-  ~ExtOutputSettingsWidget();
+  ExtAppSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  ~ExtAppSettingsWidget();
 
-  QCheckBox *m_ckUseExternalBrowser;
+  QCheckBox *m_ckUseExternalApp;
+  QComboBox *m_cbExtApp;
 
-  QComboBox *m_cbBrowser;
+  KLineEdit* m_edConsole;
 
   void populate();
   void updateSettings();
 private slots:
-  void slotUseBrowser(int);
+  void slotUseExtApp(int);
 };
 
 #endif

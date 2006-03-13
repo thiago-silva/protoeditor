@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include "extoutputsettingswidget.h"
 #include "protoeditorsettings.h"
 #include "extoutputsettings.h"
@@ -25,63 +26,71 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
+#include <klineedit.h>
 
 
 
-ExtOutputSettingsWidget::ExtOutputSettingsWidget(QWidget *parent, const char *name)
+ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
  : QWidget(parent, name)
 {
-  QVBoxLayout* vbox = new QVBoxLayout(this, 0, 10);
-  QHBoxLayout* hbox = new QHBoxLayout(this, 0, 3);
+  QVBoxLayout* vbox = new QVBoxLayout(this, 10, 10);
+  QGridLayout* grid = new QGridLayout(this, 2, 2, 3, 10);
 
-  m_ckUseExternalBrowser = new QCheckBox(this);
-  m_ckUseExternalBrowser->setText("Use external browser");
+  m_ckUseExternalApp = new QCheckBox(this);
+  m_ckUseExternalApp->setText("Use external browser");
 
-  QLabel* lbBrowserCmd = new QLabel(this);
-  lbBrowserCmd->setText("Browser:");
+  m_cbExtApp = new QComboBox(this);
+  m_cbExtApp->insertItem("Konqueror");
+  m_cbExtApp->insertItem("Mozilla");
+  m_cbExtApp->insertItem("Firefox");
+  m_cbExtApp->insertItem("Opera");
+  m_cbExtApp->setEnabled(false);
 
-  m_cbBrowser = new QComboBox(this);
-  m_cbBrowser->insertItem("Konqueror");
-  m_cbBrowser->insertItem("Mozilla");
-  m_cbBrowser->insertItem("Firefox");
-  m_cbBrowser->insertItem("Opera");
-  m_cbBrowser->setEnabled(false);
+  grid->addWidget(m_ckUseExternalApp, 0, 0);
+  grid->addWidget(m_cbExtApp, 0, 1);
+  
+  connect(m_ckUseExternalApp, SIGNAL(stateChanged(int)), this, SLOT(slotUseExtApp(int)));
 
-  hbox->addWidget(lbBrowserCmd);
-  hbox->addWidget(m_cbBrowser);
+  QLabel* lb = new QLabel(this);
+  lb->setText("External console:");
+  grid->addWidget(lb, 1, 0);
 
-  vbox->addWidget(m_ckUseExternalBrowser);
-  vbox->addLayout(hbox);
-  vbox->addItem(new QSpacerItem(0,0));
+  m_edConsole = new KLineEdit(this);
+  grid->addWidget(m_edConsole, 1, 1);
 
-  connect(m_ckUseExternalBrowser, SIGNAL(stateChanged(int)), this, SLOT(slotUseBrowser(int)));
+  vbox->addLayout(grid);
+  vbox->addItem(new QSpacerItem(0,0));  
 }
 
-void ExtOutputSettingsWidget::populate()
+void ExtAppSettingsWidget::populate()
 {
-  m_cbBrowser->setCurrentItem(ProtoeditorSettings::self()->extOutputSettings()->browser());
-  m_ckUseExternalBrowser->setChecked(ProtoeditorSettings::self()->extOutputSettings()->useExternalBrowser());
+  m_cbExtApp->setCurrentItem(ProtoeditorSettings::self()->extAppSettings()->externalApp());
+  m_ckUseExternalApp->setChecked(ProtoeditorSettings::self()->extAppSettings()->useExternalApp());
+  m_edConsole->setText(ProtoeditorSettings::self()->extAppSettings()->console());
 }
 
-void ExtOutputSettingsWidget::slotUseBrowser(int value)
+void ExtAppSettingsWidget::slotUseExtApp(int value)
 {
   if(QButton::On == value) {
-    m_cbBrowser->setEnabled(true);
+    m_cbExtApp->setEnabled(true);
   } else {
-    m_cbBrowser->setEnabled(false);
+    m_cbExtApp->setEnabled(false);
   }
 }
 
-ExtOutputSettingsWidget::~ExtOutputSettingsWidget()
+ExtAppSettingsWidget::~ExtAppSettingsWidget()
 {
 }
 
 
-void ExtOutputSettingsWidget::updateSettings()
+void ExtAppSettingsWidget::updateSettings()
 {
-  ProtoeditorSettings::self()->extOutputSettings()->setBrowser(m_cbBrowser->currentItem());
-  ProtoeditorSettings::self()->extOutputSettings()->setUseExternalBrowser(
-    m_ckUseExternalBrowser->isChecked());
+  ProtoeditorSettings::self()->extAppSettings()->setExternalApp(m_cbExtApp->currentItem());
+  ProtoeditorSettings::self()->extAppSettings()->setUseExternalApp(
+    m_ckUseExternalApp->isChecked());
+
+  ProtoeditorSettings::self()->extAppSettings()->setConsole(
+    m_edConsole->text());
 }
 
 #include "extoutputsettingswidget.moc"

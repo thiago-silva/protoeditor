@@ -24,7 +24,7 @@
 
 class PHPSettingsWidget;
 class SiteSettingsWidget;
-class ExtOutputSettingsWidget;
+class ExtAppSettingsWidget;
 
 class ConfigDlg : public KDialogBase
 {
@@ -34,8 +34,6 @@ public:
   ~ConfigDlg();
 
   static void showDialog();
-signals:
-  void settingsChanged();
 
 protected slots:
   void slotOk();
@@ -45,7 +43,7 @@ private:
 
   PHPSettingsWidget     *m_phpSettingsWidget;
   SiteSettingsWidget    *m_siteSettingsWidget;
-  ExtOutputSettingsWidget *m_extOutputSettingsWidget;
+  ExtAppSettingsWidget  *m_extAppSettingsWidget;
 };
 
 #endif

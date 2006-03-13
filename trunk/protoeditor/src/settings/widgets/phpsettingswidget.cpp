@@ -36,26 +36,19 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
 {
   QVBoxLayout* mainLayout = new QVBoxLayout(this, 3, 10);
 
-  /*
-  QHBoxLayout* phpbox = new QHBoxLayout(0, 3, 10);
+  QGridLayout* grid = new QGridLayout(0, 2,2, 3, 10);
 
   QLabel* lbPhp= new QLabel(this);
-  lbPhp->setText("PHP binary path:");
-  phpbox->addWidget(lbPhp);
+  lbPhp->setText("PHP command:");
+  grid->addWidget(lbPhp, 0, 0);
 
 
-  m_edPHPBinaryPath = new KLineEdit(this);
-  m_edPHPBinaryPath->setText("/usr/local/bin/php");
-  phpbox->addWidget(m_edPHPBinaryPath);
+  m_edPHPCommand = new KLineEdit(this);
+  grid->addWidget(m_edPHPCommand, 0, 1);
   
-  mainLayout->addLayout(phpbox);
-  */
-  
-  QHBoxLayout* debuggerbox = new QHBoxLayout(0, 3, 10);
-
   QLabel* lbDefaultDebugger = new QLabel(this);
   lbDefaultDebugger->setText("Default debugger:");
-  debuggerbox->addWidget(lbDefaultDebugger);
+  grid->addWidget(lbDefaultDebugger, 1, 0);
 
   m_cbDefaultDebugger = new QComboBox(this);
   QValueList<DebuggerSettingsInterface*> list =
@@ -64,9 +57,9 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   for(QValueList<DebuggerSettingsInterface*>::iterator it = list.begin(); it != list.end(); it++) {
     m_cbDefaultDebugger->insertItem((*it)->name());
   }  
-  debuggerbox->addWidget(m_cbDefaultDebugger);
+  grid->addWidget(m_cbDefaultDebugger,1, 1);
 
-  mainLayout->addLayout(debuggerbox);
+  mainLayout->addLayout(grid);
 
   QTabWidget* debuggersTabWidget = new QTabWidget(this);
 
@@ -94,6 +87,7 @@ void PHPSettingsWidget::populate()
     m_cbDefaultDebugger->setCurrentText(settings->defaultDebugger());
   }
   
+  m_edPHPCommand->setText(settings->PHPCommand());
   
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
@@ -104,7 +98,9 @@ void PHPSettingsWidget::populate()
 void PHPSettingsWidget::updateSettings()
 {
   PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
+
   settings->setDefaultDebugger(m_cbDefaultDebugger->currentText());
+  settings->setPHPCommand(m_edPHPCommand->text());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {

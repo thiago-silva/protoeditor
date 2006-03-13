@@ -45,7 +45,7 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
 
   QStringList path;
   path << i18n("Debuggers");
-  setFolderIcon(path, BarIcon("debugger", KIcon::SizeSmall));
+  setFolderIcon(path, BarIcon("debug", KIcon::SizeSmall));
 
   QVBox *frame;
 
@@ -64,11 +64,11 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
   m_siteSettingsWidget = new SiteSettingsWidget(frame);//->reparent(((QWidget*)frame), 0, QPoint());
 
   path.clear();
-  path << i18n("External output");
-  frame = addVBoxPage(path, i18n("Browsers"), BarIcon("konqueror", KIcon::SizeSmall));
+  path << i18n("External Applications");
+  frame = addVBoxPage(path, i18n("External Applications"), BarIcon("konqueror", KIcon::SizeSmall));
   frame->setSpacing(0);
   frame->setMargin(0);
-  m_extOutputSettingsWidget = new ExtOutputSettingsWidget(frame, "External output");//->reparent(((QWidget*)frame), 0, QPoint());
+  m_extAppSettingsWidget = new ExtAppSettingsWidget(frame, "External Applications");//->reparent(((QWidget*)frame), 0, QPoint());
 
   //(void)new DebuggerSettingsWidget(f, "Debugger");
   //(void) new BrowserSettingsWidget(f, "Browser");
@@ -100,7 +100,7 @@ void ConfigDlg::showDialog()
 
 void ConfigDlg::populateWidgets()
 {
-  m_extOutputSettingsWidget->populate();
+  m_extAppSettingsWidget->populate();
   m_phpSettingsWidget->populate();
   m_siteSettingsWidget->populate();
 }
@@ -111,12 +111,10 @@ void ConfigDlg::slotOk()
 
 
   m_siteSettingsWidget->updateSettings();
-  m_extOutputSettingsWidget->updateSettings();
+  m_extAppSettingsWidget->updateSettings();
   m_phpSettingsWidget->updateSettings();
 
   ProtoeditorSettings::self()->writeConfig();
-
-  emit settingsChanged();
 }
 
 

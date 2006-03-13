@@ -38,7 +38,7 @@ public:
 
   void updateSettings();
 private:
-  KLineEdit         *m_edPHPBinaryPath;
+  KLineEdit         *m_edPHPCommand;
   QComboBox         *m_cbDefaultDebugger;
 
   QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;

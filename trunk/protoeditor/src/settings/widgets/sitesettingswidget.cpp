@@ -99,8 +99,11 @@ void SiteSettingsWidget::slotAdd()
   SiteSettingsDialog* dialog = new SiteSettingsDialog(this);
 
   while(dialog->exec() == QDialog::Accepted) {
-    if(m_sitesListBox->findItem(dialog->name()) != 0) {
+
+    if((m_sitesListBox->findItem(dialog->name()) != 0) ||
+       (dialog->name() == ProtoeditorSettings::LocalSiteName)) {
       KMessageBox::sorry(this, QString("Site \"") + dialog->name() + "\" already exists.");
+
     } else {
       addSite(dialog->name(), dialog->url(),
               dialog->remoteBaseDir(), dialog->localBaseDir(), dialog->defaultFile(),dialog->debuggerClient());

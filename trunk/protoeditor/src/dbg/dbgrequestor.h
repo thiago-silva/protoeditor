@@ -29,7 +29,6 @@
 
 class DBGRequestPack;
 class QSocket;
-class Browser;
 class KURL;
 
 class DBGRequestor : public QObject
@@ -59,8 +58,6 @@ public:
   void requestProfileData(int modno);
   void requestProfileFreqData(int testLoops);
   
-  void makeHttpRequest(KURL _url, /*int port, */const QString& path, int listenPort, int sessionId);
-
   void addHeaderFlags(dbgint);
   void setSocket(QSocket* socket);
   void clear();
@@ -75,8 +72,6 @@ signals:
 private:
 
   QSocket      *m_socket;
-  Browser      *m_browser;
-  //QHttp        *m_http;
   dbgint        m_headerFlags;
 
 };

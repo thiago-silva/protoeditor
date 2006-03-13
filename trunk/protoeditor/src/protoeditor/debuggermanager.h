@@ -30,6 +30,7 @@ class AbstractDebugger;
 class DebuggerBreakpoint;
 class MainWindow;
 class DebuggerExecutionPoint;
+class SiteSettings;
 
 /*
  The core of the application.
@@ -70,7 +71,11 @@ private slots:
      Those are called when the user manipulates the UI.
   */
 
+  void slotScriptRun();
+
   void slotDebugStart();
+  void slotProfile();
+
   void slotDebugStop();
   void slotDebugStepInto();
   void slotDebugStepOver();
@@ -88,9 +93,7 @@ private slots:
   void slotWatchRemoved(Variable*);
   void slotNoDocument();
   
-  void slotNewDocument();
-  
-  void slotProfile();
+  void slotNewDocument();  
 
   /* AbstractDebugger to DebuggerManager */
 
@@ -100,13 +103,11 @@ private slots:
   void slotDebugBreak();
   
   //Debugger internal error (conection, listen port, etc)
-  void slotInternalError(const QString&);
+  void slotError(const QString&);
 
 private:
-  void debugActiveScript();
-  void debugCurrentSiteScript();
-  void profileActiveScript();
-  void profileCurrentSiteScript();
+  QString sessionPrologue(bool isProfiling);
+  void processSession(const QString& filePath, bool local, bool isProfiling);
     
   void connectDebugger(AbstractDebugger*);
 

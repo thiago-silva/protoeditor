@@ -46,9 +46,14 @@
 #include <kdialogbase.h>
 #include <kdebug.h>
 
+#include "httpsession.h"
+
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
     : QObject(parent, name), m_activeDebugger(0), m_window(window)/*, m_showProfileDialog(false)*/
-{}
+{
+  connect(AppSession::self(), SIGNAL(sigError(const QString&)),
+      this, SLOT(slotError(const QString&)));
+}
 
 /******************************* internal functions ******************************************/
 
@@ -168,7 +173,7 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
           this, SLOT(slotDebugEnded()));
 
   connect(debugger, SIGNAL(sigInternalError(const QString&)),
-          this, SLOT(slotInternalError(const QString&)));
+          this, SLOT(slotError(const QString&)));
 
   connect(debugger, SIGNAL(sigDebugBreak()),
           this, SLOT(slotDebugBreak()));
@@ -185,49 +190,8 @@ void DebuggerManager::slotConfigurationChanged()
   loadDebuggers();
 }
 
-void DebuggerManager::slotDebugStart()
+void DebuggerManager::slotScriptRun()
 {
-  //User pressed "run" button
-  
-  if(m_activeDebugger && m_activeDebugger->isRunning())
-  {
-    m_activeDebugger->continueExecution();
-    m_window->setDebugStatusMsg("Continuing...");
-    return;
-  }
-
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  if(!currentSite)
-  {
-    m_window->showSorry("No site configured.");
-    return;
-  }
-
-  switch(m_window->preferredScript())
-  {
-    case MainWindow::ActiveScript:
-      debugActiveScript();
-      break;
-    case MainWindow::SiteScript:
-      debugCurrentSiteScript();
-      break;
-    default:
-      kdDebug() << "+++ Bug: undefined preferredScript" << endl;
-      m_window->showError("Undefined preferred script");
-      return;
-  }
-}
-
-void DebuggerManager::debugActiveScript()
-{
-  m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
-
-  if(!m_activeDebugger)
-  {
-    m_window->showError("Unknown client.");
-    return;
-  }
-
   if(m_window->tabEditor()->count() == 0)
   {
     m_window->openFile();
@@ -238,43 +202,105 @@ void DebuggerManager::debugActiveScript()
     }
   }
 
-  QString filepath = m_window->tabEditor()->currentDocumentPath();
+  QString filePath = m_window->tabEditor()->currentDocumentPath();
 
-  m_activeDebugger->run(filepath);
+  //AppSession::self()->start(ProtoeditorSettings::self()->phpSettings()->PHPCommand(), filePath);
+  AppSession::self()->start(filePath, true);
 }
 
-void DebuggerManager::debugCurrentSiteScript()
+QString DebuggerManager::sessionPrologue(bool isProfiling) 
 {
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  if(!currentSite)
+  //1: check if there is a debug session running
+  //  -if yes, send a continueExecution()
+  //2: check the current Site
+  //  -if exists, extract the debugger and default file
+  //  -else, active debugger is the default debugger in settings
+  //3: if no active debugger so far, emit error
+  //4: check if filePath (from got from site) is empty
+  //  if yes, get filePath from current document / or open a fileDialog
+  //  if no filePath so far, return and and we are done.
+  //5: debugger->start(siteSettings, filePath);
+  
+  if(isProfiling) 
   {
-    m_window->showSorry("Can't use default site script. No site configured.");
-    return;
+    m_activeDebugger->stop();
+  }
+  else
+  {
+    if(m_activeDebugger && m_activeDebugger->isRunning())
+    {
+      m_activeDebugger->continueExecution();
+      m_window->setDebugStatusMsg("Continuing...");
+      return QString::null;
+    }
   }
 
-  m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];
+  
+  QString filePath;
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  if(currentSite)
+  {
+    m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];   
+ 
+    if(!m_window->useActiveScript())
+    {
+      filePath = currentSite->defaultFile();
+    }
+  }
+  else
+  {
+    m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
+  }
+  
+  
   if(!m_activeDebugger)
   {
-    m_window->showError("Unknown client.");
-    return;
+    m_window->showSorry("Error loading debugger.");
+    return QString::null;
   }
-
-  QString filePath = currentSite->defaultFile();
 
   if(filePath.isEmpty())
   {
-    m_window->showSorry("Current site has no default script.");
-    return;
+    if(m_window->tabEditor()->count() == 0)
+    {
+      m_window->openFile();
+      if(m_window->tabEditor()->count() == 0)
+      {
+        //couldn't open the file for some reason
+        return QString::null;
+      }
+    }
+    filePath = m_window->tabEditor()->currentDocumentPath();
   }
-  m_window->openFile(filePath);
-  if(m_window->tabEditor()->count() == 0)
+  return filePath;
+}
+
+void DebuggerManager::processSession(const QString& filePath, bool local, bool isProfiling)
+{
+  if(isProfiling)
   {
-    //couldn't open the file for some reason
-    return;
+    m_activeDebugger->profile(filePath, local);
   }
+  else
+  {
+    m_activeDebugger->start(filePath, local);
+  }
+}
 
+void DebuggerManager::slotDebugStart()
+{
+  QString filePath = sessionPrologue(false);
+  if(!filePath.isEmpty()) {
+    processSession(filePath, ProtoeditorSettings::self()->currentSiteSettings()?false:true, false);
+  }
+}
 
-  m_activeDebugger->run(filePath);
+void DebuggerManager::slotProfile()
+{
+  QString filePath = sessionPrologue(true);
+  if(!filePath.isEmpty()) {
+    processSession(filePath, ProtoeditorSettings::self()->currentSiteSettings()?false:true, true);
+  }
 }
 
 void DebuggerManager::slotDebugStop()
@@ -478,81 +504,6 @@ void DebuggerManager::slotNewDocument()
   }
 }
 
-void DebuggerManager::slotProfile()
-{
-  switch(m_window->preferredScript())
-  {
-    case MainWindow::ActiveScript:
-      profileActiveScript();
-      break;
-    case MainWindow::SiteScript:
-      profileCurrentSiteScript();
-      break;
-    default:
-      kdDebug() << "+++ Bug: undefined preferredScript" << endl;
-      m_window->showError("Undefined preferred script");
-      return;
-  }
-}
-
-void DebuggerManager::profileCurrentSiteScript()
-{
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  if(!currentSite)
-  {
-    m_window->showSorry("Can't use default site script. No site configured.");
-    return;
-  }
-  
-  m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];
-  if(!m_activeDebugger)
-  {
-    m_window->showError("Unknown client.");
-    return;
-  }
-
-  QString filePath = currentSite->defaultFile();
-  if(filePath.isEmpty())
-  {
-    m_window->showSorry("Current site has no default script.");
-    return;
-  }
-  m_window->openFile(filePath);
-  if(m_window->tabEditor()->count() == 0)
-  {
-    //couldn't open the file for some reason
-    return;
-  }
-
-  QString filepath = m_window->tabEditor()->currentDocumentPath();
-  m_activeDebugger->profile(filepath);
-}
-
-void DebuggerManager::profileActiveScript()
-{
-  m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
-  if(!m_activeDebugger)
-  {
-    m_window->showError("Unknown client.");
-    return;
-  }
-
-  if(m_window->tabEditor()->count() == 0)
-  {
-    m_window->openFile();
-    if(m_window->tabEditor()->count() == 0)
-    {
-      //couldn't open the file for some reason
-      return;
-    }
-  }
-
-  QString filepath = m_window->tabEditor()->currentDocumentPath();
-
-  m_window->setDebugStatusMsg("Profiling...");
-  m_activeDebugger->profile(filepath);
-
-}
 
 /******************************* Debugger interface ******************************************/
 
@@ -744,7 +695,7 @@ void DebuggerManager::slotDebugBreak()
   m_window->setDebugStatusMsg("Done");
 }
 
-void DebuggerManager::slotInternalError(const QString& message)
+void DebuggerManager::slotError(const QString& message)
 {
   m_window->showError(message);
 }

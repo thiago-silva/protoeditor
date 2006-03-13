@@ -31,6 +31,7 @@
 #include "protoeditorsettings.h"
 #include "httpsession.h"
 
+#include <kapplication.h>
 #include <qhttp.h>
 #include <kdebug.h>
 #include <kurl.h>
@@ -42,13 +43,12 @@
 #include <kmdcodec.h>
 
 XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
-  : QObject(parent, name), m_debugger(debugger), m_con(0), /*m_http(0)*/ m_browser(0), m_socket(0)
+    : QObject(parent, name), m_debugger(debugger), m_con(0), /*m_http(0)*/ m_socket(0)
 {
   m_error.exists = false;
 
-  m_browser = new Browser();
-  connect(m_browser, SIGNAL(sigError(const QString&)),
-          this, SIGNAL(sigError(const QString&)));
+  connect(AppSession::self(), SIGNAL(sigError(const QString&)),
+      this, SLOT(slotError(const QString&)));
 
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
@@ -58,7 +58,6 @@ XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
 
 XDNet::~XDNet()
 {
-  delete m_browser;
   delete m_con;
 }
 
@@ -72,22 +71,33 @@ void XDNet::stopListener()
   m_con->close();
 }
 
-void XDNet::startDebugging(const QString& filePath, SiteSettings* site)
+void XDNet::startDebugging(const QString& filePath, SiteSettings* site, bool local)
 {
-  //translate remote/local path
-  QString uri = filePath;
-  uri = uri.remove(0, site->localBaseDir().length());
-  
-  makeHttpRequest(site->effectiveURL(), uri);
-}
-  
-void XDNet::makeHttpRequest(KURL url, const QString& path)
-{
-//   KURL url(_url);
-  url.setPath(url.path() + path);
-  url.setQuery("XDEBUG_SESSION_START=web_key");
+  int id = kapp->random();
+  if(local) 
+  {
+    QStringList env;
+    env << "XDEBUG_CONFIG"
+        << ("remote_port=" 
+            + QString::number(m_debugger->settings()->listenPort())
+            + "\\ remote_host=localhost"
+           )
+        << "XDEBUG_SESSION_START"
+        << QString::number(id);
 
-  m_browser->request(url);
+    AppSession::self()->start(filePath, env, true);
+  } 
+  else
+  {
+    QString uri = filePath;
+    uri = uri.remove(0, site->localBaseDir().length());
+
+    KURL url = site->effectiveURL();
+    url.setPath(url.path() + uri);
+    url.setQuery(QString("XDEBUG_SESSION_START=")+QString::number(id));
+  
+    AppSession::self()->start(url);    
+  }
 }
 
 void XDNet::requestContinue()
@@ -141,13 +151,15 @@ void XDNet::requestVariables(int scope, int id)
 
   m_socket->writeBlock(context_get, context_get.length()+1);
 
-  
-  if(id == GlobalScopeId && m_debugger->settings()->sendSuperGlobals()) {
+
+  if(id == GlobalScopeId && m_debugger->settings()->sendSuperGlobals())
+  {
     requestSuperGlobals(scope);
   }
 }
 
-void XDNet::requestSuperGlobals(int scope) {
+void XDNet::requestSuperGlobals(int scope)
+{
   //total global vars: 9
   m_superglobalsCount = 9;
 
@@ -159,10 +171,11 @@ void XDNet::requestSuperGlobals(int scope) {
   requestProperty("$_SERVER", scope, SuperGlobalId);
   requestProperty("$_FILES", scope, SuperGlobalId);
   requestProperty("$_REQUEST", scope, SuperGlobalId);
-  requestProperty("$_SESSION", scope, SuperGlobalId);  
+  requestProperty("$_SESSION", scope, SuperGlobalId);
 }
 
-void XDNet::requestWatch(const QString& expression, int ctx_id) {
+void XDNet::requestWatch(const QString& expression, int ctx_id)
+{
   requestProperty(expression, ctx_id, 1);
 }
 
@@ -261,27 +274,30 @@ void XDNet::slotReadBuffer()
 
     totalread = 0;
     int aa;
-    while(totalread != xmlSize) {
+    while(totalread != xmlSize)
+    {
       aa = m_socket->bytesAvailable();
       read = m_socket->readBlock(&data[totalread], xmlSize-totalread);
 
-      if(read == -1) {
+      if(read == -1)
+      {
         return;
       }
 
-//       if(read == 0) break;
-      if(read == 0) {
+      //       if(read == 0) break;
+      if(read == 0)
+      {
         m_socket->waitForMore (-1, 0L);
       }
-      
+
       totalread += read;
-    }    
-    
+    }
+
 
     data[xmlSize] = 0;
-//     if(m_superglobalsCount == 9) {
-//       std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
-//     }
+    //     if(m_superglobalsCount == 9) {
+    //       std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+    //     }
 
     str.setAscii(data,xmlSize);
     processXML(str);
@@ -330,7 +346,9 @@ void XDNet::processOutput(QDomElement& output)
   if(type == "stdout")
   {
     m_debugger->addOutput(data);
-  } else {
+  }
+  else
+  {
     error(QString("todo: ") + type);
   }
 }
@@ -344,24 +362,27 @@ void XDNet::processInit(QDomElement& init)
   QDomElement copyright = init.namedItem("copyright").toElement();
 
   kdDebug() << engine.text()
-            << ": "
-            << url.text()
-            << " "
-            << copyright.text()
-            << endl;
+  << ": "
+  << url.text()
+  << " "
+  << copyright.text()
+  << endl;
 
-  
+
   //setup stdout/sterr:
-  
+
   QString stdout = "stdout -i 1 -c 1";//copy stdout to IDE
   m_socket->writeBlock(stdout, stdout.length()+1);
 
   QString stderr = "stderr -i 1 -c 1";//copy stderr to IDE
   m_socket->writeBlock(stderr, stderr.length()+1);
 
-  if(m_debugger->settings()->breakOnLoad()) {
+  if(m_debugger->settings()->breakOnLoad())
+  {
     requestStepInto();
-  } else {
+  }
+  else
+  {
     requestContinue();
   }
 }
@@ -381,7 +402,7 @@ void XDNet::processResponse(QDomElement& root)
       {
         processError(root.firstChild().toElement());
       }
-      
+
       requestStack();
       requestBreakpointList();
     }
@@ -416,10 +437,18 @@ void XDNet::processResponse(QDomElement& root)
       }
 
       //to local filepath
-      SiteSettings* site = ProtoeditorSettings::self()->currentSiteSettings();
-      QString localFile = site->localBaseDir()
-                          + file.path().remove(0, site->remoteBaseDir().length());
+      QString localFile;
 
+      SiteSettings* site = ProtoeditorSettings::self()->currentSiteSettings();
+      if(site) 
+      {
+        localFile = site->localBaseDir()
+                            + file.path().remove(0, site->remoteBaseDir().length());
+      }
+      else
+      {
+        localFile = file.path();
+      }
       stack->insert(level, localFile, line, where);
     }
 
@@ -448,10 +477,13 @@ void XDNet::processResponse(QDomElement& root)
     }
     else if(root.attributeNode("transaction_id").value().toInt() == GlobalScopeId)
     {
-      if(root.attributeNode("transaction_id").value().toInt() == 
-         GlobalScopeId && m_debugger->settings()->sendSuperGlobals()) {
+      if(root.attributeNode("transaction_id").value().toInt() ==
+          GlobalScopeId && m_debugger->settings()->sendSuperGlobals())
+      {
         m_globalVars = array;
-      } else {
+      }
+      else
+      {
         m_debugger->updateVariables(array, true);
       }
     }
@@ -462,14 +494,18 @@ void XDNet::processResponse(QDomElement& root)
     XDVariableParser p;
 
     Variable* var = p.parse(nd);
-    if(root.attributeNode("transaction_id").value().toInt() == SuperGlobalId) {
+    if(root.attributeNode("transaction_id").value().toInt() == SuperGlobalId)
+    {
       m_globalVars->append(var);
       m_superglobalsCount--;
 
-      if(m_superglobalsCount == 0) {
+      if(m_superglobalsCount == 0)
+      {
         m_debugger->updateVariables(m_globalVars, true);
       }
-    } else {      
+    }
+    else
+    {
       m_debugger->updateWatch(var);
     }
   }
@@ -520,13 +556,13 @@ void XDNet::processResponse(QDomElement& root)
 
 void XDNet::processError(const QDomElement& error)
 {
-/*
-  <response command="step_into" transaction_id="1" status="break" reason="error">
-  <error code="2" exception="Warning">
-  <![CDATA[array_push() [<a href='function.array-push'>function.array-push</a>]: First argument should be an array]]>
-  </error></response>
-*/
-    
+  /*
+    <response command="step_into" transaction_id="1" status="break" reason="error">
+    <error code="2" exception="Warning">
+    <![CDATA[array_push() [<a href='function.array-push'>function.array-push</a>]: First argument should be an array]]>
+    </error></response>
+  */
+
   m_error.code = error.attribute("code");
   m_error.exception = error.attribute("exception");
 
@@ -538,13 +574,13 @@ void XDNet::processError(const QDomElement& error)
   {
     m_error.data  = error.text();
   }
-  
+
   m_error.exists = true;
-  
-/* error will be sent to m_debugger after stack is updated. See processPendingData()
-   reason: so the error can be sync with the currentExecutionPoint (wich is the one that tells where
-   the error ocurred
-*/
+
+  /* error will be sent to m_debugger after stack is updated. See processPendingData()
+     reason: so the error can be sync with the currentExecutionPoint (wich is the one that tells where
+     the error ocurred
+  */
 }
 
 void XDNet::processPendingData()

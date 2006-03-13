@@ -54,12 +54,12 @@ public:
   virtual void init() = 0;
 
   /* commands commonly supported by a debugger. */
-  virtual void run(const QString&) = 0;
-  virtual void continueExecution() = 0;
-  virtual void stop()              = 0;
-  virtual void stepInto()          = 0;
-  virtual void stepOver()          = 0;
-  virtual void stepOut()           = 0;
+  virtual void start(const QString&, bool local)  = 0;
+  virtual void continueExecution()                = 0;
+  virtual void stop()                             = 0;
+  virtual void stepInto()                         = 0;
+  virtual void stepOver()                         = 0;
+  virtual void stepOut()                          = 0;
   //virtual void pause()           = 0; //TODO
 
   /* adds a list of breakpoints.
@@ -84,7 +84,7 @@ public:
   virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
 
-  virtual void profile(const QString&) = 0;
+  virtual void profile(const QString&, bool local) = 0;
 
 protected:
   virtual DebuggerManager* manager();

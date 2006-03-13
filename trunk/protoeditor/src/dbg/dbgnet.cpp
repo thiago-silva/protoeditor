@@ -33,6 +33,7 @@
 #include "dbgfileinfo.h"
 
 #include "sitesettings.h"
+#include "httpsession.h"
 
 #include <kdebug.h>
 #include <knotifyclient.h>
@@ -52,6 +53,9 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
 
   connect(m_requestor, SIGNAL(sigError(const QString&)),
           this, SLOT(slotError(const QString&)));
+
+  connect(AppSession::self(), SIGNAL(sigError(const QString&)),
+      this, SLOT(slotError(const QString&)));
 
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
@@ -79,26 +83,46 @@ void DBGNet::stopListener()
   m_con->close();
 }
 
-void DBGNet::startDebugging(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
+void DBGNet::startDebugging(const QString& filePath, SiteSettings* site, bool local, int listenPort, dbgint sessid)
 {
-  requestPage(filePath, site, listenPort, sessid);
+  requestPage(filePath, site, local, listenPort, sessid);
 }
   
-void DBGNet::startProfiling(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
+void DBGNet::startProfiling(const QString& filePath, SiteSettings* site, bool local, int listenPort, dbgint sessid)
 {
   m_isProfiling = true;
-  requestPage(filePath, site, listenPort, sessid);
+  requestPage(filePath, site, local, listenPort, sessid);
 }
 
-void DBGNet::requestPage(const QString& filePath, SiteSettings* site, int listenPort, dbgint sessid)
+void DBGNet::requestPage(const QString& filePath, SiteSettings* site, bool local, int listenPort, dbgint sessid)
 {
   m_dbgFileInfo->setSite(site);
 
   m_sessionId = sessid;
-  m_requestor->makeHttpRequest(site->effectiveURL() //http://localhost:80/~user
-                               , m_dbgFileInfo->toURI(filePath) /* /foo/bar.php */
-                               , listenPort
-                               , sessid);
+
+  if(local)
+  {
+    QString cmd =  filePath + " DBGSESSID="
+                + QString::number(m_sessionId)
+                + "@clienthost:"
+                + QString::number(listenPort);
+    AppSession::self()->start(cmd , true);
+  }
+  else
+  {
+
+    QString uri = filePath;
+    uri = uri.remove(0, site->localBaseDir().length());
+
+    KURL url = site->effectiveURL();
+    url.setPath(url.path() + uri);
+
+    url.setQuery(QString("DBGSESSID=")
+                + QString::number(m_sessionId)
+                + "@clienthost:"
+                + QString::number(listenPort));
+    AppSession::self()->start(url);
+  }  
 }
 
 void DBGNet::requestOptions(dbgint options)
