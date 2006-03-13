@@ -24,7 +24,7 @@
 #include "connection.h"
 #include "sitesettings.h"
 #include "gbsettings.h"
-#include "httpsession.h"
+#include "session.h"
 
 #include <qsocket.h>
 #include <kdebug.h>
@@ -250,7 +250,7 @@ void GBNet::makeHttpRequest(const QString& _url, const QString& path)
   url.setQuery(QString("gbdScript=") + path);
 
   kdDebug() << url << endl;
-  AppSession::self()->start(url);
+  Session::self()->start(url);
 }
 
 void GBNet::error(const QString& msg)

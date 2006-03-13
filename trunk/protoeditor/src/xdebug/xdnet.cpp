@@ -29,7 +29,7 @@
 #include "variable.h"
 #include "debuggerbreakpoint.h"
 #include "protoeditorsettings.h"
-#include "httpsession.h"
+#include "session.h"
 
 #include <kapplication.h>
 #include <qhttp.h>
@@ -47,7 +47,7 @@ XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
 {
   m_error.exists = false;
 
-  connect(AppSession::self(), SIGNAL(sigError(const QString&)),
+  connect(Session::self(), SIGNAL(sigError(const QString&)),
       this, SLOT(slotError(const QString&)));
 
   m_con = new Connection();
@@ -85,7 +85,7 @@ void XDNet::startDebugging(const QString& filePath, SiteSettings* site, bool loc
         << "XDEBUG_SESSION_START"
         << QString::number(id);
 
-    AppSession::self()->start(filePath, env, true);
+    Session::self()->start(filePath, env, true);
   } 
   else
   {
@@ -96,7 +96,7 @@ void XDNet::startDebugging(const QString& filePath, SiteSettings* site, bool loc
     url.setPath(url.path() + uri);
     url.setQuery(QString("XDEBUG_SESSION_START=")+QString::number(id));
   
-    AppSession::self()->start(url);    
+    Session::self()->start(url);    
   }
 }
 

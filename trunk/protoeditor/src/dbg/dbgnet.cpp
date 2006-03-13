@@ -33,7 +33,7 @@
 #include "dbgfileinfo.h"
 
 #include "sitesettings.h"
-#include "httpsession.h"
+#include "session.h"
 
 #include <kdebug.h>
 #include <knotifyclient.h>
@@ -54,7 +54,7 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
   connect(m_requestor, SIGNAL(sigError(const QString&)),
           this, SLOT(slotError(const QString&)));
 
-  connect(AppSession::self(), SIGNAL(sigError(const QString&)),
+  connect(Session::self(), SIGNAL(sigError(const QString&)),
       this, SLOT(slotError(const QString&)));
 
   m_con = new Connection();
@@ -106,7 +106,7 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, bool local
                 + QString::number(m_sessionId)
                 + "@clienthost:"
                 + QString::number(listenPort);
-    AppSession::self()->start(cmd , true);
+    Session::self()->start(cmd , true);
   }
   else
   {
@@ -121,7 +121,7 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, bool local
                 + QString::number(m_sessionId)
                 + "@clienthost:"
                 + QString::number(listenPort));
-    AppSession::self()->start(url);
+    Session::self()->start(url);
   }  
 }
 

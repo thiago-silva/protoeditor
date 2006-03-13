@@ -46,12 +46,12 @@
 #include <kdialogbase.h>
 #include <kdebug.h>
 
-#include "httpsession.h"
+#include "session.h"
 
 DebuggerManager::DebuggerManager(MainWindow* window, QObject *parent, const char* name)
     : QObject(parent, name), m_activeDebugger(0), m_window(window)/*, m_showProfileDialog(false)*/
 {
-  connect(AppSession::self(), SIGNAL(sigError(const QString&)),
+  connect(Session::self(), SIGNAL(sigError(const QString&)),
       this, SLOT(slotError(const QString&)));
 }
 
@@ -204,8 +204,8 @@ void DebuggerManager::slotScriptRun()
 
   QString filePath = m_window->tabEditor()->currentDocumentPath();
 
-  //AppSession::self()->start(ProtoeditorSettings::self()->phpSettings()->PHPCommand(), filePath);
-  AppSession::self()->start(filePath, true);
+  //Session::self()->start(ProtoeditorSettings::self()->phpSettings()->PHPCommand(), filePath);
+  Session::self()->start(filePath, true);
 }
 
 QString DebuggerManager::sessionPrologue(bool isProfiling) 

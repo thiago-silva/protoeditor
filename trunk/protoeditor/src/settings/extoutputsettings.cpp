@@ -56,7 +56,7 @@ ExtAppSettings::ExtAppSettings(  )
 //   }
   KConfigSkeleton::ItemEnum  *itemExtApp;
   itemExtApp = new KConfigSkeleton::ItemEnum( currentGroup(), QString::fromLatin1( "App" ), mExternalApp, valuesApp, EnumExtApp::Konqueror );
-  addItem( itemExtApp, QString::fromLatin1( "AppSession" ) );
+  addItem( itemExtApp, QString::fromLatin1( "Session" ) );
 
   KConfigSkeleton::ItemString  *itemConsole;
   itemConsole = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "Console" ), mConsole, "konsole -e %1");

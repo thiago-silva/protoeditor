@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef HTTPSESSION_H
-#define HTTPSESSION_H
+#ifndef SESSION_H
+#define SESSION_H
 
 #include <qobject.h>
 #include <qstringlist.h> 
@@ -34,14 +34,14 @@ class Browser;
 class ExternalAppRequestor;
 class ConsoleRequestor;
 
-class AppSession : public QObject
+class Session : public QObject
 {
   Q_OBJECT
   public:
-    ~AppSession();
+    ~Session();
 
     static void dispose();
-    static AppSession* self();
+    static Session* self();
     
     void start(const KURL& url, bool forceConsoleMode = false);
     void start(const KURL& url, const QStringList& env, bool forceConsoleMode = false);
@@ -53,12 +53,12 @@ class AppSession : public QObject
   private slots:
     void slotHttpDone(bool);
   private:
-    AppSession();
+    Session();
     void doHTTPRequest(const KURL& url);
     void doExternalRequest(const KURL&);    
     void initHTTPCommunication();
 
-    static AppSession* m_self;
+    static Session* m_self;
 
     QHttp                *m_http;
     ExternalAppRequestor *m_extAppRequestor;
@@ -72,7 +72,7 @@ class ExternalAppRequestor : public QObject
     ExternalAppRequestor();
     virtual ~ExternalAppRequestor();
 
-    static ExternalAppRequestor* retrieveExternalApp(int, AppSession*);
+    static ExternalAppRequestor* retrieveExternalApp(int, Session*);
 
     virtual void doRequest(const KURL&) = 0;
     virtual int  id() = 0;
@@ -95,7 +95,7 @@ class KonquerorRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    KonquerorRequestor(AppSession*);
+    KonquerorRequestor(Session*);
     ~KonquerorRequestor();
     virtual void doRequest(const KURL&);
     virtual int  id();
@@ -110,7 +110,7 @@ class MozillaRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    MozillaRequestor(AppSession*);
+    MozillaRequestor(Session*);
     ~MozillaRequestor();
     virtual void doRequest(const KURL&);
     virtual int  id();
@@ -120,7 +120,7 @@ class FirefoxRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    FirefoxRequestor(AppSession*);
+    FirefoxRequestor(Session*);
     ~FirefoxRequestor();
     virtual void doRequest(const KURL&);
     virtual int  id();
@@ -130,7 +130,7 @@ class OperaRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    OperaRequestor(AppSession*);
+    OperaRequestor(Session*);
     ~OperaRequestor();
     virtual void doRequest(const KURL&);
     virtual int  id();
@@ -140,7 +140,7 @@ class ConsoleRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    ConsoleRequestor(AppSession*);
+    ConsoleRequestor(Session*);
     ~ConsoleRequestor();
     virtual void doRequest(const KURL&);
     virtual int  id();

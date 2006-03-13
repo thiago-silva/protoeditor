@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "httpsession.h"
+#include "session.h"
 #include "protoeditorsettings.h"
 #include "extoutputsettings.h"
 #include "phpsettings.h"
@@ -32,33 +32,33 @@
 #include <klocale.h>
 
 
-AppSession* AppSession::m_self = 0;
+Session* Session::m_self = 0;
 
-AppSession::AppSession()
+Session::Session()
     : m_http(0), m_extAppRequestor(0)
 {}
 
-AppSession::~AppSession()
+Session::~Session()
 {
   delete m_extAppRequestor;
   delete m_http;
 }
 
-void AppSession::dispose()
+void Session::dispose()
 {
-  delete AppSession::m_self;
+  delete Session::m_self;
 }
 
-AppSession* AppSession::self()  
+Session* Session::self()  
 {
-  if(!AppSession::m_self)
+  if(!Session::m_self)
   {
-    AppSession::m_self = new AppSession();
+    Session::m_self = new Session();
   }
   return m_self;
 }
 
-void AppSession::start(const KURL& url, bool forceConsoleMode)
+void Session::start(const KURL& url, bool forceConsoleMode)
 {
   if(forceConsoleMode)
   {
@@ -76,13 +76,13 @@ void AppSession::start(const KURL& url, bool forceConsoleMode)
   m_env.clear();
 }
 
-void AppSession::start(const KURL& url, const QStringList& env, bool forceConsoleMode)
+void Session::start(const KURL& url, const QStringList& env, bool forceConsoleMode)
 {
   m_env = env;
   start(url, forceConsoleMode);
 }
 
-void AppSession::initHTTPCommunication()
+void Session::initHTTPCommunication()
 {
   if(!m_http)
   {
@@ -91,7 +91,7 @@ void AppSession::initHTTPCommunication()
   }
 }
 
-void AppSession::doHTTPRequest(const KURL& url)
+void Session::doHTTPRequest(const KURL& url)
 {
   initHTTPCommunication();
 
@@ -109,7 +109,7 @@ void AppSession::doHTTPRequest(const KURL& url)
   m_http->get(url.path() + url.query());
 }
 
-void AppSession::slotHttpDone(bool error)
+void Session::slotHttpDone(bool error)
 {
   if(error && (m_http->error() != QHttp::Aborted))
   {
@@ -119,7 +119,7 @@ void AppSession::slotHttpDone(bool error)
   kdDebug() << "HTTP closed connection!" << endl;
 }
 
-void AppSession::doExternalRequest(const KURL& url)
+void Session::doExternalRequest(const KURL& url)
 {
   m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(
                         ProtoeditorSettings::self()->extAppSettings()->externalApp(), this);
@@ -127,7 +127,7 @@ void AppSession::doExternalRequest(const KURL& url)
   m_extAppRequestor->doRequest(url);
 }
 
-const QStringList& AppSession::environment()
+const QStringList& Session::environment()
 {
   return m_env;
 }
@@ -146,7 +146,7 @@ ExternalAppRequestor::~ExternalAppRequestor()
   delete m_process;
 }
 
-ExternalAppRequestor* ExternalAppRequestor::retrieveExternalApp(int extApp, AppSession* session)
+ExternalAppRequestor* ExternalAppRequestor::retrieveExternalApp(int extApp, Session* session)
 {
   switch(extApp)
   {
@@ -215,7 +215,7 @@ void ExternalAppRequestor::slotProcessExited(KProcess*)
 
 /***************************** KONQUEROR *****************************************/
 
-KonquerorRequestor::KonquerorRequestor(AppSession*)
+KonquerorRequestor::KonquerorRequestor(Session*)
     : ExternalAppRequestor(), m_dcopClient(0)
 {}
 KonquerorRequestor::~KonquerorRequestor()
@@ -293,7 +293,7 @@ void KonquerorRequestor::init()
 
 
 /******************* MOZILLA *********************************/
-MozillaRequestor::MozillaRequestor(AppSession*)
+MozillaRequestor::MozillaRequestor(Session*)
     : ExternalAppRequestor()
 {}
 MozillaRequestor::~MozillaRequestor()
@@ -349,7 +349,7 @@ int MozillaRequestor::id()
 
 
 /************************ FIREFOX ***********************************************/
-FirefoxRequestor::FirefoxRequestor(AppSession*)
+FirefoxRequestor::FirefoxRequestor(Session*)
     : ExternalAppRequestor()
 {}
 FirefoxRequestor::~FirefoxRequestor()
@@ -406,7 +406,7 @@ int FirefoxRequestor::id()
 
 /**************************** Opera **********************************************/
 
-OperaRequestor::OperaRequestor(AppSession*)
+OperaRequestor::OperaRequestor(Session*)
     : ExternalAppRequestor()
 {}
 OperaRequestor::~OperaRequestor()
@@ -448,7 +448,7 @@ int OperaRequestor::id()
 
 /**************************** Console **********************************************/
 
-ConsoleRequestor::ConsoleRequestor(AppSession* session)
+ConsoleRequestor::ConsoleRequestor(Session* session)
     : ExternalAppRequestor()
 {
   m_env = session->environment();
@@ -506,4 +506,4 @@ int ConsoleRequestor::id()
   return ExtAppSettings::EnumExtApp::Console;
 }
 
-#include "httpsession.moc"
+#include "session.moc"

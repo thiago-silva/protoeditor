@@ -28,7 +28,7 @@
 #include <config.h>
 
 #include "protoeditorsettings.h"
-#include "httpsession.h"
+#include "session.h"
 
 static const char description[] =
   I18N_NOOP("A small KDE PHP Debugger client");
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
   delete window;
 
-  AppSession::dispose();
+  Session::dispose();
   ProtoeditorSettings::dispose();
 
   return ret;

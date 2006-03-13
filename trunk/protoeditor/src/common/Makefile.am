@@ -4,8 +4,8 @@ METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libcommon.la
 libcommon_la_SOURCES = abstractdebugger.cpp debuggerbreakpoint.cpp variable.cpp \
-			debuggerstack.cpp connection.cpp httpsession.cpp
+			debuggerstack.cpp connection.cpp session.cpp
 noinst_HEADERS = abstractdebugger.h debuggerbreakpoint.h variable.h \
-			debuggerstack.h connection.h httpsession.h
+			debuggerstack.h connection.h session.h
 
 libcommon_la_LDFLAGS = $(all_libraries)
