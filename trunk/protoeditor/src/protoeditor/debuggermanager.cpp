@@ -221,20 +221,20 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
   //  if no filePath so far, return and and we are done.
   //5: debugger->start(siteSettings, filePath);
   
-  if(isProfiling) 
+
+  if(m_activeDebugger && m_activeDebugger->isRunning())
   {
-    m_activeDebugger->stop();
-  }
-  else
-  {
-    if(m_activeDebugger && m_activeDebugger->isRunning())
+    if(isProfiling)
+    {
+      m_activeDebugger->stop();
+    }
+    else
     {
       m_activeDebugger->continueExecution();
       m_window->setDebugStatusMsg("Continuing...");
       return QString::null;
     }
   }
-
   
   QString filePath;
   SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
