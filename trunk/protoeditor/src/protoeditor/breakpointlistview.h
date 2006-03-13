@@ -67,6 +67,7 @@ private slots:
   void slotCicked(QListViewItem*, const QPoint&, int);
   void slotDoubleClick(QListViewItem *, const QPoint &, int );
   void slotItemRenamed(QListViewItem *, int col, const QString& );
+  void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
 
 protected:
   virtual void keyPressEvent(QKeyEvent* e);

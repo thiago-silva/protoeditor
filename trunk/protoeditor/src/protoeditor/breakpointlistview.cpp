@@ -22,6 +22,7 @@
 #include "breakpointlistviewitem.h"
 #include "debuggerbreakpoint.h"
 #include <klocale.h>
+#include <kpopupmenu.h>
 
 BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
     : KListView(parent, name)
@@ -65,10 +66,50 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
 
   connect(this, SIGNAL(itemRenamed(QListViewItem*, int, const QString&)),
           this, SLOT(slotItemRenamed(QListViewItem*, int, const QString&)));
+
+  connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& , int)),
+          this, SLOT(slotContextMenuRequested(QListViewItem *, const QPoint &, int)));
+
 }
 
 BreakpointListView::~BreakpointListView()
 {}
+
+void BreakpointListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int)
+{
+  enum { ToggleBP, DeleteBP };  
+  
+  KPopupMenu* menu = new KPopupMenu(this);
+  menu->insertItem("Toggle State", ToggleBP);
+  menu->insertItem("Delete", DeleteBP);
+ 
+  int selection = menu->exec(p);
+  if(selection == -1)
+  {
+    delete menu;
+    return;
+  }
+  
+  BreakpointListViewItem* converted =
+      dynamic_cast<BreakpointListViewItem*>(item);
+  
+  switch(selection)
+  {
+    case ToggleBP:
+      if(converted->breakpoint()->status() == DebuggerBreakpoint::DISABLED) {
+        converted->breakpoint()->setStatus(DebuggerBreakpoint::ENABLED);
+      } else {
+        converted->breakpoint()->setStatus(DebuggerBreakpoint::DISABLED);
+      }
+      converted->showBreakpoint();
+      break;
+    case DeleteBP:
+      removeBreakpoint(converted->breakpoint());
+      break;
+  }
+
+  delete menu;      
+}
 
 void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col)
 {
