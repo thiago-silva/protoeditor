@@ -23,7 +23,7 @@
     <Menu name="menu_script" noMerge="1">
       <text>S&amp;cript</text>
       <Action name="site_selection"/>
-      <Action name="use_active_script"/>
+      <Action name="use_current_script"/>
       <Separator />      
       <Action name="script_run"/>
       <Separator />            
@@ -69,7 +69,7 @@
   <ToolBar name="debug_toolbar" noMerge="1" newline="true">
     <text>Debug Toolbar</text>
     <Action name="site_selection"/>
-    <Action name="use_active_script"/>
+    <Action name="use_current_script"/>
     <Separator />
     <Action name="script_run"/>
     <Separator />

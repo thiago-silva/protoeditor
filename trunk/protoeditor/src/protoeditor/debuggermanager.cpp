@@ -242,7 +242,7 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
   {
     m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];   
  
-    if(!m_window->useActiveScript())
+    if(!m_window->useCurrentScript())
     {
       filePath = currentSite->defaultFile();
     }

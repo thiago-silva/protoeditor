@@ -83,7 +83,7 @@ public:
   void openFile(const KURL& url);
   void actionStateChanged(const QString&);
   
-  bool useActiveScript();
+  bool useCurrentScript();
 
   void setEditorStatusMsg(const QString&);
   void setDebugStatusMsg(const QString&);
