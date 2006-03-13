@@ -21,7 +21,7 @@
 #include "protoeditorsettings.h"
 #include "phpsettings.h"
 #include "sitesettings.h"
-#include "extoutputsettings.h"
+#include "extappsettings.h"
 #include "debuggersettingsinterface.h"
 
 #include <kglobal.h>

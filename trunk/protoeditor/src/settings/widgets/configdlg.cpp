@@ -30,7 +30,7 @@
 
 #include "phpsettingswidget.h"
 #include "sitesettingswidget.h"
-#include "extoutputsettingswidget.h"
+#include "extappsettingswidget.h"
 
 #include "protoeditorsettings.h"
 

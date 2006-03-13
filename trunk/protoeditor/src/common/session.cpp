@@ -20,7 +20,7 @@
 
 #include "session.h"
 #include "protoeditorsettings.h"
-#include "extoutputsettings.h"
+#include "extappsettings.h"
 #include "phpsettings.h"
 
 #include <qhttp.h>

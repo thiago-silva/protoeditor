@@ -11,8 +11,8 @@ libsettings_la_LDFLAGS = $(all_libraries)
 
 
 SUBDIRS = widgets
-libsettings_la_SOURCES = protoeditorsettings.cpp extoutputsettings.cpp \
+libsettings_la_SOURCES = protoeditorsettings.cpp extappsettings.cpp \
   phpsettings.cpp sitesettings.cpp
 noinst_HEADERS = debuggersettingsinterface.h protoeditorsettings.h \
-  extoutputsettings.h phpsettings.h sitesettings.h
+  extappsettings.h phpsettings.h sitesettings.h
 

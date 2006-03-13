@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "extoutputsettingswidget.h"
+#include "extappsettingswidget.h"
 #include "protoeditorsettings.h"
-#include "extoutputsettings.h"
+#include "extappsettings.h"
 
 #include <qlayout.h>
 #include <qcombobox.h>
@@ -93,4 +93,4 @@ void ExtAppSettingsWidget::updateSettings()
     m_edConsole->text());
 }
 
-#include "extoutputsettingswidget.moc"
+#include "extappsettingswidget.moc"
