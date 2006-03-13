@@ -96,6 +96,8 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
 void MainWindow::loadSites()
 {
+  QString currentSiteName = m_siteAction->currentText();
+
   QStringList strsites;
 
   strsites << ProtoeditorSettings::LocalSiteName;
@@ -108,18 +110,16 @@ void MainWindow::loadSites()
   for(it = sitesList.begin(); it != sitesList.end(); ++it)
   {
     strsites << (*it)->name();
-    if((*it)->name() == ProtoeditorSettings::self()->currentSiteName()) {
-      curr = i;
+    if((*it)->name() == currentSiteName) {
+      curr = i+1; //LocalSiteName already inserted
     }
     i++;
   }
-  
+    
   m_siteAction->setItems(strsites);
   m_siteAction->setCurrentItem(curr);
-
-  if(sitesList.size() > 0) {
-    ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());
-  }
+  
+  ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());
 }
 
 void MainWindow::setupStatusBar()
@@ -178,11 +178,8 @@ void MainWindow::setupActions()
   connect(m_siteAction, SIGNAL(activated(const QString&)),
       ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
   
-  connect(m_siteAction, SIGNAL(activated(const QString&)),
-      ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
 
-
-  m_activeScriptAction = new KToggleAction("Use Active Script", "attach", 0, actionCollection(), "use_active_script");
+  m_activeScriptAction = new KToggleAction("Use Current Script", "attach", 0, actionCollection(), "use_current_script");
 //   QStringList l;
 //   l << "Site Script" << "Active Script";
 //   m_defaultScriptAction->setItems(l);
@@ -332,7 +329,7 @@ MainWindow::~MainWindow()
   delete m_debugger_manager;
 }
 
-bool MainWindow::useActiveScript()
+bool MainWindow::useCurrentScript()
 {
   return m_activeScriptAction->isChecked();
 }
