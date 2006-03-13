@@ -564,15 +564,18 @@ void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
                              contextName,
                              proftag->lineNo(),
                              proftag->hitCount(),
-                             (((double)(proftag->minLo() | (proftag->minHi() << 32)) / m_profFreq) * 1000),
+                             (((double)proftag->minLo() ) / m_profFreq) * 1000,
+                             (((double)proftag->maxLo() ) / m_profFreq) * 1000,
+                             (((double)proftag->sumLo() ) / m_profFreq) * 1000);
+
+/*                             (((double)(proftag->minLo() | (proftag->minHi() << 32)) / m_profFreq) * 1000),
                              (((double)(proftag->maxLo() | (proftag->maxHi() << 32)) / m_profFreq) * 1000),
-                             (((double)(proftag->sumLo() | (proftag->sumHi() << 32)) / m_profFreq) * 1000));
+                             (((double)(proftag->sumLo() | (proftag->sumHi() << 32)) / m_profFreq) * 1000));*/
 }
 
 void DBGNet::processProfC(const DBGResponseTagProfC* prof, DBGResponsePack*)
 {
-  //NOTE: I'm not very confident about those bit << conversions
-  m_profFreq = prof->freqlo() | (prof->freqhi() << 32);
+  m_profFreq = prof->freqlo();
 }
 
 void DBGNet::shipStack()
