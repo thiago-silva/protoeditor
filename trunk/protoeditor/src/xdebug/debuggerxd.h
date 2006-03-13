@@ -42,7 +42,7 @@ public:
   virtual bool isRunning() const;
   virtual void init();
 
-  virtual void run(const QString&);
+  virtual void start(const QString&, bool local);
   virtual void continueExecution();
   virtual void stop();
   virtual void stepInto();
@@ -62,7 +62,7 @@ public:
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
-  virtual void profile(const QString&);
+  virtual void profile(const QString&, bool local);
 
   //Communication with XDNet
 
@@ -84,8 +84,7 @@ private slots:
   void slotXDStarted();
   void slotXDStopped(); //end of debug
   void slotStepDone();
-  void slotInternalError(const QString&);
-  
+ 
 private:
   void requestVars();
   void requestWatches(int ctx_id);
@@ -106,10 +105,11 @@ private:
   QString m_name;
   bool m_isRunning;
   bool m_isJITActive;
+  int m_listenPort;
   DebuggerExecutionPoint* m_currentExecutionPoint;
   DebuggerExecutionPoint* m_globalExecutionPoint;
   XDSettings* m_xdSettings;
-  XDNet* m_net;
+  XDNet* m_net;  
   QValueList<QString>  m_wathcesList;
 };
 

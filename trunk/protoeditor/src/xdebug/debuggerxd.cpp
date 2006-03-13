@@ -36,7 +36,8 @@
 
 DebuggerXD::DebuggerXD(DebuggerManager* manager)
     : AbstractDebugger(manager), m_name("Xdebug"), m_isRunning(false), m_isJITActive(false),
-    m_currentExecutionPoint(0), m_globalExecutionPoint(0), m_xdSettings(0), m_net(0)
+      m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
+      m_xdSettings(0), m_net(0)
 {
   m_currentExecutionPoint = new DebuggerExecutionPoint();
   m_globalExecutionPoint = new DebuggerExecutionPoint();
@@ -51,7 +52,7 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
   m_net = new XDNet(this);
   connect(m_net, SIGNAL(sigXDStarted()), this, SLOT(slotXDStarted()));
   connect(m_net, SIGNAL(sigXDClosed()), this, SLOT(slotXDStopped()));
-  connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
+  connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
 }
@@ -83,7 +84,7 @@ void DebuggerXD::init()
   slotSettingsChanged();
 }
 
-void DebuggerXD::run(const QString& filepath)
+void DebuggerXD::start(const QString& filepath, bool local)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -95,7 +96,7 @@ void DebuggerXD::run(const QString& filepath)
 
   emit sigDebugStarting();
 
-  m_net->startDebugging(filepath, site);
+  m_net->startDebugging(filepath, site, local);
 }
 
 void DebuggerXD::continueExecution()
@@ -217,7 +218,7 @@ void DebuggerXD::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerXD::profile(const QString&)
+void DebuggerXD::profile(const QString&, bool)
 {
   /**/
 }
@@ -226,7 +227,11 @@ void DebuggerXD::slotSettingsChanged()
 {
   if(m_xdSettings->enableJIT())
   {
-    startJIT();
+    //do not try to restart if we are already listening on the given port
+    if(!m_isJITActive || (m_listenPort != m_xdSettings->listenPort()))
+    {
+      startJIT();
+    }
   }
   else
   {
@@ -236,21 +241,23 @@ void DebuggerXD::slotSettingsChanged()
 
 bool DebuggerXD::startJIT()
 {
-  if(!m_isJITActive)
+  if(m_isJITActive)
   {
-    if(m_net->startListener(m_xdSettings->listenPort()))
-    {
-      m_isJITActive = true;
-      kdDebug() << "Xdebug: Listening on port " << m_xdSettings->listenPort() << endl;
-    }
-    else
-    {
-      emit sigInternalError(i18n("Unable to listen on port: %1").arg(
-                              m_xdSettings->listenPort()));
-      return false;
-    }
+    stopJIT();
   }
 
+  if(m_net->startListener(m_xdSettings->listenPort()))
+  {
+    m_isJITActive = true;
+    kdDebug() << "Xdebug: Listening on port " << m_xdSettings->listenPort() << endl;
+    m_listenPort = m_xdSettings->listenPort();
+  }
+  else
+  {
+    emit sigInternalError(i18n("Unable to listen on port: %1").arg(
+                            m_xdSettings->listenPort()));
+    return false;
+  }
   return true;
 }
 
@@ -298,11 +305,6 @@ void DebuggerXD::slotStepDone()
 {
   requestVars();
   emit sigDebugBreak();
-}
-
-void DebuggerXD::slotInternalError(const QString& msg)
-{
-  emit sigInternalError(msg);
 }
 
 void DebuggerXD::requestWatches(int ctx_id)
