@@ -24,6 +24,7 @@
 #include <qspinbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qgroupbox.h>
 
 #include "xdsettings.h"
 
@@ -33,6 +34,27 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
 
+  QGroupBox* groupbox = new QGroupBox(this);
+  groupbox->setTitle("Options");
+  groupbox->setColumnLayout(0, Qt::Vertical );
+  QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
+  groupboxLayout->setAlignment(Qt::AlignTop);
+
+  QVBoxLayout* hbox = new QVBoxLayout(0, 3, 6);
+  m_ckBreakOnLoad = new QCheckBox(groupbox);
+  m_ckBreakOnLoad->setText("Break on load");
+  hbox->addWidget(m_ckBreakOnLoad);
+  
+    
+  m_ckSendSuperGlobals = new QCheckBox(groupbox);
+  m_ckSendSuperGlobals->setText("Send super global variables");
+  hbox->addWidget(m_ckSendSuperGlobals);
+
+  groupboxLayout->addLayout(hbox);
+
+  mainLayout->addWidget(groupbox);
+
+  
   QHBoxLayout* portbox = new QHBoxLayout(0, -1, 16);
 
   QLabel* lblistenPort = new QLabel(this);
@@ -55,20 +77,6 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
 
   mainLayout->addLayout(jitbox);
 
-  QHBoxLayout* breakbox = new QHBoxLayout(0, -1, 16);
-  m_ckBreakOnLoad = new QCheckBox(this);
-  m_ckBreakOnLoad->setText("Break on load");
-  breakbox->addWidget(m_ckBreakOnLoad);
-
-  mainLayout->addLayout(breakbox);
-
-  QHBoxLayout* varbox = new QHBoxLayout(0, -1, 16);
-    
-  m_ckSendSuperGlobals = new QCheckBox(this);
-  m_ckSendSuperGlobals->setText("Send super global variables");
-  varbox->addWidget(m_ckSendSuperGlobals);
-
-  mainLayout->addLayout(varbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
