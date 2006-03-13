@@ -82,5 +82,7 @@ int main(int argc, char **argv)
 
   AppSession::dispose();
   ProtoeditorSettings::dispose();
+
+  return ret;
 }
 
