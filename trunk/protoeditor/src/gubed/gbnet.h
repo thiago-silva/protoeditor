@@ -27,7 +27,6 @@
 class DebuggerGB;
 class SiteSettings;
 class Connection;
-class Browser;
 class QSocket;
 
 class GBNet : public QObject
@@ -104,7 +103,6 @@ private:
   DebuggerGB       *m_debugger;
   Connection       *m_con;
 
-  Browser* m_browser;
   QSocket* m_socket;
 };
 

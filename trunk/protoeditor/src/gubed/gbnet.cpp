@@ -33,12 +33,8 @@
 
 
 GBNet::GBNet(DebuggerGB* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_debugger(debugger), m_con(0), m_browser(0), m_socket(0)
+    : QObject(parent, name), m_debugger(debugger), m_con(0), m_socket(0)
 {
-  m_browser = new Browser();
-  connect(m_browser, SIGNAL(sigError(const QString&)),
-          this, SIGNAL(sigError(const QString&)));
-
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
   connect(m_con, SIGNAL(sigClientClosed()), this, SLOT(slotGBClosed()));
@@ -47,7 +43,6 @@ GBNet::GBNet(DebuggerGB* debugger, QObject *parent, const char *name)
 
 GBNet::~GBNet()
 {
-  delete m_browser;
   delete m_con;
 }
 
@@ -255,7 +250,7 @@ void GBNet::makeHttpRequest(const QString& _url, const QString& path)
   url.setQuery(QString("gbdScript=") + path);
 
   kdDebug() << url << endl;
-  m_browser->request(url);
+  AppSession::self()->start(url);
 }
 
 void GBNet::error(const QString& msg)

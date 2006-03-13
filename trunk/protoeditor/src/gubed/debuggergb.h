@@ -43,7 +43,7 @@ public:
   virtual bool isRunning() const;
   virtual void init();
 
-  virtual void run(const QString&);
+  virtual void start(const QString&, bool remote);
   virtual void continueExecution();
   virtual void stop();
   virtual void stepInto();
@@ -74,8 +74,6 @@ public:
     void slotGBStarted();
     void slotGBClosed();
 //     void slotStepDone();
-    void slotInternalError(const QString&);
-
   
   private:
     bool startJIT();

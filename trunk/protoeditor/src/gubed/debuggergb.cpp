@@ -45,7 +45,7 @@ DebuggerGB::DebuggerGB(DebuggerManager* manager)
   m_net = new GBNet(this);
   connect(m_net, SIGNAL(sigGBStarted()), this, SLOT(slotGBStarted()));
   connect(m_net, SIGNAL(sigGBClosed()), this, SLOT(slotGBClosed()));
-  connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
+  connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   //   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
 }
 
@@ -69,7 +69,7 @@ void DebuggerGB::init()
 }
 
 
-void DebuggerGB::run(const QString& filepath)
+void DebuggerGB::start(const QString& filepath, bool remote)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -80,7 +80,7 @@ void DebuggerGB::run(const QString& filepath)
 
   emit sigDebugStarting();
 
-  m_net->startDebugging(filepath, site);
+//   m_net->startDebugging(filepath, site, remote);
 }
 
 GBSettings* DebuggerGB::settings()
@@ -170,11 +170,6 @@ void DebuggerGB::slotGBClosed()
   }
 
   emit sigDebugEnded();  
-}
-
-void DebuggerGB::slotInternalError(const QString& msg)
-{
-  emit sigInternalError(msg);
 }
 
 bool DebuggerGB::startJIT()
