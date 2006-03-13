@@ -33,7 +33,7 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
 
   QGroupBox* groupbox = new QGroupBox(this);
-  groupbox->setTitle("DBG Options");
+  groupbox->setTitle("Options");
   groupbox->setColumnLayout(0, Qt::Vertical );
   QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
   groupboxLayout->setAlignment(Qt::AlignTop);
