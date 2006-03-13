@@ -27,7 +27,7 @@
 #include "debuggercombostack.h"
 #include "variableslistview.h"
 #include "watchlistview.h"
-#include "loglistview.h"
+#include "messagelistview.h"
 #include "debuggerbreakpoint.h"
 #include "breakpointlistview.h"
 
@@ -121,7 +121,7 @@ void DebuggerManager::init()
           this, SLOT(slotGotoLineAtFile(const QString&, int)));
 
   //connects the LOG UI to us
-  connect(m_window->logListView(), SIGNAL(sigDoubleClick(const QString&, int)),
+  connect(m_window->messageListView(), SIGNAL(sigDoubleClick(const QString&, int)),
           this, SLOT(slotGotoLineAtFile(const QString&, int)));
 
   loadDebuggers();
@@ -576,7 +576,7 @@ void DebuggerManager::debugMessage(int type, const QString& msg, const QString& 
   {
     m_window->tabEditor()->gotoLineAtFile(filePath, line);
   }
-  m_window->logListView()->add(type, msg, line, filePath);
+  m_window->messageListView()->add(type, msg, line, filePath);
 }
 
 void DebuggerManager::debugError(const QString& msg)
@@ -621,7 +621,7 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
   //clear everyone
   m_window->globalVarList()->clear();
   m_window->localVarList()->clear();
-  m_window->logListView()->clear();
+  m_window->messageListView()->clear();
   m_window->stackCombo()->clear();
   m_window->edOutput()->clear();
 

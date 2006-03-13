@@ -22,7 +22,7 @@
 #include "editortabwidget.h"
 #include "variableslistview.h"
 #include "watchlistview.h"
-#include "loglistview.h"
+#include "messagelistview.h"
 #include "debuggercombostack.h"
 #include "breakpointlistview.h"
 #include "sitesettings.h"
@@ -297,8 +297,8 @@ void MainWindow::createWidgets()
   QWidget* logTab = new QWidget(tabDebug);
   QVBoxLayout* logTabLayout = new QVBoxLayout(logTab, 1, 1);
 
-  m_logListView = new LogListView(logTab);
-  logTabLayout->addWidget(m_logListView);
+  m_messageListView = new MessageListView(logTab);
+  logTabLayout->addWidget(m_messageListView);
   tabDebug->insertTab(logTab, QString("Messages"));
 
   QWidget* outputTab = new QWidget(tabDebug);
@@ -588,9 +588,9 @@ BreakpointListView* MainWindow::breakpointListView()
   return m_breakpointList;
 }
 
-LogListView* MainWindow::logListView()
+MessageListView* MainWindow::messageListView()
 {
-  return m_logListView;
+  return m_messageListView;
 }
 
 KTextEdit* MainWindow::edOutput()

@@ -18,12 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "loglistview.h"
+#include "messagelistview.h"
 #include <klocale.h>
 #include <kiconloader.h>
 #include "debuggermanager.h"
 
-LogListView::LogListView(QWidget *parent, const char *name)
+MessageListView::MessageListView(QWidget *parent, const char *name)
  : KListView(parent, name)
 {
   setSorting(-1);
@@ -34,8 +34,8 @@ LogListView::LogListView(QWidget *parent, const char *name)
   addColumn(tr2i18n("Line"));
   addColumn(tr2i18n("File"));
 
-  setColumnWidth(LogListView::MessageCol, 350);
-  setColumnWidth(LogListView::FileCol, 200);
+  setColumnWidth(MessageListView::MessageCol, 350);
+  setColumnWidth(MessageListView::FileCol, 200);
 
   setColumnWidthMode (0, QListView::Manual);
   setColumnWidthMode (1, QListView::Manual);
@@ -47,39 +47,39 @@ LogListView::LogListView(QWidget *parent, const char *name)
 
 }
 
-LogListView::~LogListView()
+MessageListView::~MessageListView()
 {
 }
 
-void LogListView::add(int type, QString message, int line, QString file) {
+void MessageListView::add(int type, QString message, int line, QString file) {
   QListViewItem* item = new QListViewItem(this);
   item->setSelectable(true);
 
   switch(type) {
     case DebuggerManager::InfoMsg:
-      item->setPixmap(LogListView::TypeCol, SmallIcon("info"));
+      item->setPixmap(MessageListView::TypeCol, SmallIcon("info"));
       break;
     case DebuggerManager::WarningMsg:
-      item->setPixmap(LogListView::TypeCol, SmallIcon("messagebox_warning"));
+      item->setPixmap(MessageListView::TypeCol, SmallIcon("messagebox_warning"));
       break;
     case DebuggerManager::ErrorMsg:
-      item->setPixmap(LogListView::TypeCol, SmallIcon("cancel"));
+      item->setPixmap(MessageListView::TypeCol, SmallIcon("cancel"));
       break;
   }
 
-  item->setText(LogListView::MessageCol, message);
-  item->setText(LogListView::LineCol, QString::number(line));
-  item->setText(LogListView::FileCol, file);
+  item->setText(MessageListView::MessageCol, message);
+  item->setText(MessageListView::LineCol, QString::number(line));
+  item->setText(MessageListView::FileCol, file);
 
   //add new item to the bottom of the list
   item->moveItem(lastItem());
 }
 
-void LogListView::slotDoubleClick(QListViewItem * item, const QPoint &, int)
+void MessageListView::slotDoubleClick(QListViewItem * item, const QPoint &, int)
 {
-  emit sigDoubleClick(item->text(LogListView::FileCol)
-                    , item->text(LogListView::LineCol).toLong());
+  emit sigDoubleClick(item->text(MessageListView::FileCol)
+                    , item->text(MessageListView::LineCol).toLong());
 }
 
 
-#include "loglistview.moc"
+#include "messagelistview.moc"

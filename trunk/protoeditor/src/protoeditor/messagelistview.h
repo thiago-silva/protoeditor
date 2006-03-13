@@ -23,12 +23,12 @@
 
 #include <klistview.h>
 
-class LogListView : public KListView
+class MessageListView : public KListView
 {
 Q_OBJECT
 public:
-  LogListView(QWidget *parent = 0, const char *name = 0);
-  ~LogListView();
+  MessageListView(QWidget *parent = 0, const char *name = 0);
+  ~MessageListView();
 
   void add(int type, QString message, int line, QString file);
 

@@ -5,7 +5,7 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common -I$(top_srcdir)/src/dbg 
 
 # these are the headers for your project
 noinst_HEADERS = editortabwidget.h debuggerfactory.h debuggermanager.h \
-	variableslistview.h debuggercombostack.h variableslistviewitem.h loglistview.h \
+	variableslistview.h debuggercombostack.h variableslistviewitem.h messagelistview.h \
 	watchlistview.h breakpointlistview.h breakpointlistviewitem.h mainwindow.h document.h
 
 # let automoc handle all of the meta source files (moc)
@@ -32,7 +32,7 @@ bin_PROGRAMS = protoeditor
 protoeditor_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 protoeditor_SOURCES = editortabwidget.cpp debuggerfactory.cpp \
 	debuggermanager.cpp variableslistview.cpp debuggercombostack.cpp variableslistviewitem.cpp \
-	loglistview.cpp watchlistview.cpp breakpointlistview.cpp breakpointlistviewitem.cpp \
+	messagelistview.cpp watchlistview.cpp breakpointlistview.cpp breakpointlistviewitem.cpp \
 	mainwindow.cpp protoeditor.cpp document.cpp
 
 #SUBDIRS = commonphp common dbg protoeditor

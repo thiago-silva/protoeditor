@@ -32,7 +32,7 @@ class KLineEdit;
 class KPushButton;
 class WatchListView;
 class BreakpointListView;
-class LogListView;
+class MessageListView;
 class KTextEdit;
 class KPushButton;
 class KStatusBar;
@@ -72,7 +72,7 @@ public:
   KPushButton*        btAddWatch();
   WatchListView*      watchList();
   BreakpointListView* breakpointListView();
-  LogListView*        logListView();
+  MessageListView*        messageListView();
   KTextEdit*          edOutput();
   //KTextEditor::EditInterface*  edOutput();
 
@@ -138,7 +138,7 @@ private:
   KPushButton* m_btAddWatch;
   WatchListView* m_watchList;
   BreakpointListView* m_breakpointList;
-  LogListView* m_logListView;
+  MessageListView* m_messageListView;
   KTextEdit* m_edOutput;
   //KTextEditor::EditInterface *m_edOutput;
 
