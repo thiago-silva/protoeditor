@@ -43,7 +43,7 @@
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     : AbstractDebugger(parent), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
-    /*m_isProfilingEnabled(false),*/ m_dbgSettings(0), m_net(0), m_profileDialog(0),
+    m_listenPort(-1), m_dbgSettings(0), m_net(0), m_profileDialog(0),
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
   m_dbgSettings = new DBGSettings(m_name);
@@ -58,7 +58,7 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
 
   connect(m_net, SIGNAL(sigDBGStarted()), this, SLOT(slotDBGStarted()));
   connect(m_net, SIGNAL(sigDBGClosed()), this, SLOT(slotDBGClosed()));
-  connect(m_net, SIGNAL(sigError(const QString&)), this, SLOT(slotInternalError(const QString&)));
+  connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
 }
@@ -89,7 +89,11 @@ void DebuggerDBG::slotSettingsChanged()
 {
   if(m_dbgSettings->enableJIT())
   {
-    startJIT();
+    //do not try to restart if we are already listening on the given port
+    if(!m_isJITActive || (m_listenPort != m_dbgSettings->listenPort()))
+    {
+      startJIT();
+    }
   }
   else
   {
@@ -101,22 +105,23 @@ void DebuggerDBG::slotSettingsChanged()
 
 bool  DebuggerDBG::startJIT()
 {
-  if(!m_isJITActive)
+  if(m_isJITActive)
   {
-
-    if(m_net->startListener(m_dbgSettings->listenPort()))
-    {
-      m_isJITActive = true;
-      kdDebug() << "DBG: Listening on port " << m_dbgSettings->listenPort() << endl;
-    }
-    else
-    {
-      emit sigInternalError(i18n("Unable to listen on port: %1").arg(
-                              m_dbgSettings->listenPort()));
-      return false;
-    }
+    stopJIT();
   }
 
+  if(m_net->startListener(m_dbgSettings->listenPort()))
+  {
+    m_isJITActive = true;
+    kdDebug() << "DBG: Listening on port " << m_dbgSettings->listenPort() << endl;
+    m_listenPort = m_dbgSettings->listenPort();
+  }
+  else
+  {
+    emit sigInternalError(i18n("Unable to listen on port: %1").arg(
+                            m_dbgSettings->listenPort()));
+    return false;
+  }
   return true;
 }
 
@@ -131,7 +136,7 @@ void DebuggerDBG::stopJIT()
   m_isJITActive = false;
 }
 
-void DebuggerDBG::run(const QString& filepath)
+void DebuggerDBG::start(const QString& filePath, bool local)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -144,7 +149,7 @@ void DebuggerDBG::run(const QString& filepath)
 
   emit sigDebugStarting();
   
-  m_net->startDebugging(filepath, site, m_dbgSettings->listenPort(), sessionid);
+  m_net->startDebugging(filePath, site, local, m_dbgSettings->listenPort(), sessionid);
 }
 
 void DebuggerDBG::continueExecution()
@@ -311,12 +316,9 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::profile(const QString& filePath)
+void DebuggerDBG::profile(const QString& filePath, bool local)
 {
-  //   m_isProfilingEnabled = value;
-
   profileDialog()->clear();
-  //   profileDialog()->show();
 
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -329,7 +331,7 @@ void DebuggerDBG::profile(const QString& filePath)
 
   emit sigDebugStarting();
   
-  m_net->startProfiling(filePath, site, m_dbgSettings->listenPort(), sessionid);
+  m_net->startProfiling(filePath, site, local, m_dbgSettings->listenPort(), sessionid);
 }
 
 DBGProfileDialog* DebuggerDBG::profileDialog()
@@ -518,10 +520,6 @@ void DebuggerDBG::checkDBGVersion(int major, int minor, const QString& desc)
 
 /***************************** SLOTS *********************************/
 
-void DebuggerDBG::slotInternalError(const QString& msg)
-{
-  emit sigInternalError(msg);
-}
 
 void DebuggerDBG::slotDBGStarted()
 {
