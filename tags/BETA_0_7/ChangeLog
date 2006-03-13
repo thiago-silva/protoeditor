@@ -1,0 +1,697 @@
+2006-03-13 15:34  
+
+	* trunk/protoeditor/src/common/session.cpp, 
+	  trunk/protoeditor/src/settings/Makefile.am, 
+	  trunk/protoeditor/src/settings/extappsettings.cpp, 
+	  trunk/protoeditor/src/settings/extappsettings.h, 
+	  trunk/protoeditor/src/settings/extoutputsettings.cpp, 
+	  trunk/protoeditor/src/settings/extoutputsettings.h, 
+	  trunk/protoeditor/src/settings/protoeditorsettings.cpp, 
+	  trunk/protoeditor/src/settings/widgets/Makefile.am, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.cpp, 
+	  trunk/protoeditor/src/settings/widgets/extappsettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/widgets/extappsettingswidget.h, 
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.cpp,
+	   
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.h:
+	  -extoutputsettings -> extappsettings
+	  
+
+2006-03-13 15:05  
+
+	* trunk/protoeditor/src/common/Makefile.am, 
+	  trunk/protoeditor/src/common/httpsession.cpp, 
+	  trunk/protoeditor/src/common/httpsession.h, 
+	  trunk/protoeditor/src/common/session.cpp, 
+	  trunk/protoeditor/src/common/session.h, 
+	  trunk/protoeditor/src/dbg/dbgnet.cpp, 
+	  trunk/protoeditor/src/gubed/gbnet.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/protoeditor.cpp, 
+	  trunk/protoeditor/src/settings/extoutputsettings.cpp, 
+	  trunk/protoeditor/src/xdebug/xdnet.cpp:
+	  -httpsession -> session
+	  
+
+2006-03-13 02:53  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/dbgnet.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnet.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h, 
+	  trunk/protoeditor/src/protoeditor/protoeditorui.rc, 
+	  trunk/protoeditor/src/settings/extoutputsettings.cpp, 
+	  trunk/protoeditor/src/settings/extoutputsettings.h, 
+	  trunk/protoeditor/src/settings/phpsettings.cpp, 
+	  trunk/protoeditor/src/settings/phpsettings.h, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.cpp, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.h, 
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.cpp,
+	   
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.h,
+	   trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/widgets/phpsettingswidget.h, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp, 
+	  trunk/protoeditor/src/xdebug/xdnet.cpp, 
+	  trunk/protoeditor/src/xdebug/xdnet.h:
+	  NEW:
+	  -support for local execution/debug
+	  
+
+2006-03-13 02:50  
+
+	* trunk/protoeditor/src/common/httpsession.cpp, 
+	  trunk/protoeditor/src/common/httpsession.h:
+	  -Changing to AppSession
+	  -Now in charge of execution/trigerring applications/processes 
+	  beyond
+	  browser/htpp request
+	  -Support for console execution
+	  NEW:
+	  -support for local execution/debug
+	  
+
+2005-06-27 23:16  
+
+	* trunk/protoeditor/src/common/abstractdebugger.cpp, 
+	  trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/common/connection.cpp, 
+	  trunk/protoeditor/src/common/connection.h, 
+	  trunk/protoeditor/src/common/debuggerbreakpoint.cpp, 
+	  trunk/protoeditor/src/common/debuggerbreakpoint.h, 
+	  trunk/protoeditor/src/common/debuggerstack.cpp, 
+	  trunk/protoeditor/src/common/debuggerstack.h, 
+	  trunk/protoeditor/src/common/httpsession.cpp, 
+	  trunk/protoeditor/src/common/httpsession.h, 
+	  trunk/protoeditor/src/common/variable.cpp, 
+	  trunk/protoeditor/src/common/variable.h, 
+	  trunk/protoeditor/src/commonphp/phpvariable.cpp, 
+	  trunk/protoeditor/src/commonphp/phpvariable.h, 
+	  trunk/protoeditor/src/commonphp/variableparser.cpp, 
+	  trunk/protoeditor/src/commonphp/variableparser.h, 
+	  trunk/protoeditor/src/dbg/dbg_defs.h, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.cpp, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.h, 
+	  trunk/protoeditor/src/dbg/dbgnet.h, 
+	  trunk/protoeditor/src/dbg/dbgnetdata.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnetdata.h, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.cpp, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpack.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.h, 
+	  trunk/protoeditor/src/dbg/dbgresponsepack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgresponsepack.h, 
+	  trunk/protoeditor/src/dbg/dbgsettingswidget.cpp, 
+	  trunk/protoeditor/src/dbg/dbgsettingswidget.h, 
+	  trunk/protoeditor/src/dbg/dbgstack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgstack.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofiledata.cpp, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofiledata.h, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofiledialog.cpp, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofiledialog.h, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofilelistview.cpp, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofilelistview.h, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofilelocation.cpp, 
+	  trunk/protoeditor/src/dbg/profiler/dbgprofilelocation.h, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistview.h, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistviewitem.cpp, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistviewitem.h, 
+	  trunk/protoeditor/src/protoeditor/debuggercombostack.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggercombostack.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h, 
+	  trunk/protoeditor/src/protoeditor/document.cpp, 
+	  trunk/protoeditor/src/protoeditor/document.h, 
+	  trunk/protoeditor/src/protoeditor/editortabwidget.cpp, 
+	  trunk/protoeditor/src/protoeditor/editortabwidget.h, 
+	  trunk/protoeditor/src/protoeditor/loglistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/loglistview.h, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.cpp, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.h, 
+	  trunk/protoeditor/src/protoeditor/protoeditor.cpp, 
+	  trunk/protoeditor/src/protoeditor/variableslistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/variableslistview.h, 
+	  trunk/protoeditor/src/protoeditor/variableslistviewitem.cpp, 
+	  trunk/protoeditor/src/protoeditor/variableslistviewitem.h, 
+	  trunk/protoeditor/src/protoeditor/watchlistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/watchlistview.h, 
+	  trunk/protoeditor/src/settings/debuggersettingsinterface.h, 
+	  trunk/protoeditor/src/settings/extoutputsettings.cpp, 
+	  trunk/protoeditor/src/settings/extoutputsettings.h, 
+	  trunk/protoeditor/src/settings/phpsettings.cpp, 
+	  trunk/protoeditor/src/settings/phpsettings.h, 
+	  trunk/protoeditor/src/settings/protoeditorsettings.cpp, 
+	  trunk/protoeditor/src/settings/protoeditorsettings.h, 
+	  trunk/protoeditor/src/settings/sitesettings.cpp, 
+	  trunk/protoeditor/src/settings/sitesettings.h, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.cpp, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.h, 
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.cpp,
+	   
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.h,
+	   trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/widgets/phpsettingswidget.h, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingswidget.h, 
+	  trunk/protoeditor/src/xdebug/debuggerxd.cpp, 
+	  trunk/protoeditor/src/xdebug/debuggerxd.h, 
+	  trunk/protoeditor/src/xdebug/xdnet.h, 
+	  trunk/protoeditor/src/xdebug/xdsettings.cpp, 
+	  trunk/protoeditor/src/xdebug/xdsettings.h, 
+	  trunk/protoeditor/src/xdebug/xdsettingswidget.cpp, 
+	  trunk/protoeditor/src/xdebug/xdsettingswidget.h, 
+	  trunk/protoeditor/src/xdebug/xdvariableparser.cpp, 
+	  trunk/protoeditor/src/xdebug/xdvariableparser.h:
+	  *** empty log message ***
+	  
+
+2005-06-26 23:22  
+
+	* trunk/protoeditor/src/common/Makefile.am, 
+	  trunk/protoeditor/src/protoeditor/protoeditor.desktop:
+	  *** empty log message ***
+	  
+	* trunk/protoeditor/src/common/connection.cpp:
+	  -Added debug output for listening errors
+	  
+
+2005-06-26 22:38  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h:
+	  -name change (sigBreak) for uniformity
+	  -new signal to inform the user that the session is starting 
+	  (might be useful when browsers are loading...or profiling is 
+	  taking too long)
+	  
+
+2005-06-26 22:35  
+
+	* trunk/protoeditor/src/common/httpsession.cpp, 
+	  trunk/protoeditor/src/common/httpsession.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h:
+	  -Removed Browser (http request) related code to independent 
+	  files: httpsession
+	  
+
+2005-06-24 18:49  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/common/debuggerbreakpoint.h, 
+	  trunk/protoeditor/src/common/debuggerstack.cpp, 
+	  trunk/protoeditor/src/common/debuggerstack.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	  *** empty log message ***
+	  
+
+2005-06-24 17:24  
+
+	* trunk/protoeditor/src/common/connection.cpp, 
+	  trunk/protoeditor/src/common/connection.h, 
+	  trunk/protoeditor/src/dbg/dbgconnection.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconnection.h:
+	  -Connection can be used for XDebug. Putting it on "common" folder
+	  
+
+2005-04-01 18:38  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	  -Improving profile feature (acts like a debug request).
+	  
+
+2005-03-20 15:41  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h:
+	  -Debugger hides implementation of profile dialog
+	  -Profile is implemented as a toggle (enable/disable) feature
+	  
+
+2005-03-20 06:34  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h:
+	  -Added sigBreakpointReached()
+	  
+
+2005-03-20 05:33  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+	  -Notify when step done.
+	  
+
+2005-03-19 18:35  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h:
+	  -Removed SiteSettings from "run" prototype.
+	  
+
+2005-03-19 14:00  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h:
+	  FIX:
+	  -JIT is not started when Protoeditor starts
+	  
+
+2005-03-15 01:09  
+
+	* trunk/protoeditor/src/common/Makefile.am, 
+	  trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/Makefile.am, 
+	  trunk/protoeditor/src/dbg/dbg_defs.h, 
+	  trunk/protoeditor/src/dbg/dbgnet.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnet.h, 
+	  trunk/protoeditor/src/dbg/dbgnetdata.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnetdata.h, 
+	  trunk/protoeditor/src/dbg/dbgprofile.cpp, 
+	  trunk/protoeditor/src/dbg/dbgprofile.h, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.cpp, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.h, 
+	  trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	  NEW:
+	  -Front end for the dbg profiler.
+	  
+
+2005-03-09 21:37  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h:
+	  -Added continueExecution()
+	  
+
+2005-02-25 20:31  
+
+	* trunk/protoeditor/src/common/variable.cpp, 
+	  trunk/protoeditor/src/common/variable.h, 
+	  trunk/protoeditor/src/commonphp/phpvariable.cpp, 
+	  trunk/protoeditor/src/commonphp/phpvariable.h:
+	  -Improved toString()
+	  
+
+2005-02-25 18:41  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h:
+	  -Removed DebuggerSession related functions
+	  -Removed Settings related functions
+	  
+
+2005-02-25 01:55  
+
+	* trunk/protoeditor/configure.in, 
+	  trunk/protoeditor/protoeditor.kdevelop, 
+	  trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/Makefile.am, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.h, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.cpp, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.h, 
+	  trunk/protoeditor/src/dbg/dbgnet.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnet.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h, 
+	  trunk/protoeditor/src/dbg/dbgsettings.cpp, 
+	  trunk/protoeditor/src/dbg/dbgsettings.h, 
+	  trunk/protoeditor/src/dbg/dbgsettingswidget.cpp, 
+	  trunk/protoeditor/src/dbg/dbgsettingswidget.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/protoeditor/Makefile.am, 
+	  trunk/protoeditor/src/protoeditor/debuggerfactory.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggerfactory.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.cpp, 
+	  trunk/protoeditor/src/settings/Makefile.am, 
+	  trunk/protoeditor/src/settings/browsersettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/browsersettingswidget.h, 
+	  trunk/protoeditor/src/settings/debuggersettingsinterface.h, 
+	  trunk/protoeditor/src/settings/debuggersettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/debuggersettingswidget.h, 
+	  trunk/protoeditor/src/settings/extoutputsettings.cpp, 
+	  trunk/protoeditor/src/settings/extoutputsettings.h, 
+	  trunk/protoeditor/src/settings/phpsettings.cpp, 
+	  trunk/protoeditor/src/settings/phpsettings.h, 
+	  trunk/protoeditor/src/settings/protoeditorsettings.cpp, 
+	  trunk/protoeditor/src/settings/protoeditorsettings.h, 
+	  trunk/protoeditor/src/settings/settings.kcfg, 
+	  trunk/protoeditor/src/settings/settings.kcfgc, 
+	  trunk/protoeditor/src/settings/sitesettings.cpp, 
+	  trunk/protoeditor/src/settings/sitesettings.h, 
+	  trunk/protoeditor/src/settings/widgets, 
+	  trunk/protoeditor/src/settings/widgets/Makefile.am, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.cpp, 
+	  trunk/protoeditor/src/settings/widgets/configdlg.h, 
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.cpp,
+	   
+	  trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.h,
+	   trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/widgets/phpsettingswidget.h, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp, 
+	  trunk/protoeditor/src/settings/widgets/sitesettingswidget.h:
+	  -Major changes on the way settings are handled.
+	  -Using manual KConfigSkeleton files all the way (removed kcfg 
+	  files to have a uniform settings impl).
+	  -Beginning of sites implementation.
+	  -Debugger are responsable to register their own settings on the 
+	  global application settings and provide a QWidget that represent 
+	  those settings.
+	  
+
+2005-02-23 23:06  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h:
+	  -Outsiders cannot request variables anymore.
+	  -Added function to inform the debugger that the user changed the 
+	  current execution point
+	  
+
+2005-02-21 19:15  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	  FIX: #1145284
+	  
+
+2005-02-13 02:01  
+
+	* trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/dbg/Makefile.am, 
+	  trunk/protoeditor/src/dbg/dbg_defs.h, 
+	  trunk/protoeditor/src/protoeditor/watchlistview.cpp:
+	  *** empty log message ***
+	  
+
+2005-02-13 01:58  
+
+	* trunk/protoeditor/src/common/debuggerstack.cpp, 
+	  trunk/protoeditor/src/common/debuggerstack.h:
+	  -Added convenience function to access bottom context
+	  
+
+2005-02-09 00:55  
+
+	* trunk/protoeditor/src/common/abstractdebugger.cpp, 
+	  trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/common/debuggerstack.cpp, 
+	  trunk/protoeditor/src/common/debuggerstack.h, 
+	  trunk/protoeditor/src/dbg/Makefile.am, 
+	  trunk/protoeditor/src/dbg/dbg_defs.h, 
+	  trunk/protoeditor/src/dbg/dbgabstractdatarequest.cpp, 
+	  trunk/protoeditor/src/dbg/dbgabstractdatarequest.h, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.h, 
+	  trunk/protoeditor/src/dbg/dbgconnection.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconnection.h, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.cpp, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.h, 
+	  trunk/protoeditor/src/dbg/dbgframe.cpp, 
+	  trunk/protoeditor/src/dbg/dbgframe.h, 
+	  trunk/protoeditor/src/dbg/dbgheader.cpp, 
+	  trunk/protoeditor/src/dbg/dbgheader.h, 
+	  trunk/protoeditor/src/dbg/dbgnet.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnet.h, 
+	  trunk/protoeditor/src/dbg/dbgnetdata.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnetdata.h, 
+	  trunk/protoeditor/src/dbg/dbgnethelper.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnethelper.h, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.cpp, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpack.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.h, 
+	  trunk/protoeditor/src/dbg/dbgresponsepack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgresponsepack.h, 
+	  trunk/protoeditor/src/dbg/dbgstack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgstack.h, 
+	  trunk/protoeditor/src/dbg/dbgtags.cpp, 
+	  trunk/protoeditor/src/dbg/dbgtags.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h:
+	  -changed ExecutionLine to ExecutionPoint
+	  -new implementation of DBG client / AbstractDebugger.
+	  -New implementation of data transmission using Tags to process 
+	  incoming data.
+	  -Improved handling of header data.
+	  -Improved inheritance of DBGTags.
+	  -renaming dbgtags file to dbgnetdata, including frames and 
+	  headers on it.
+	  -Removed client responsability on data transmission to new class 
+	  DBGNet
+	  
+
+2005-02-06 21:11  
+
+	* trunk/protoeditor/data/Makefile.am, 
+	  trunk/protoeditor/data/icons/16x16, 
+	  trunk/protoeditor/data/icons/22x22, 
+	  trunk/protoeditor/data/icons/Makefile.am, 
+	  trunk/protoeditor/data/icons/hi16-action-activebreakpoint.png, 
+	  trunk/protoeditor/data/icons/hi16-action-checkboxoff.png, 
+	  trunk/protoeditor/data/icons/hi16-action-checkboxon.png, 
+	  trunk/protoeditor/data/icons/hi16-action-disabledbreakpoint.png, 
+	  trunk/protoeditor/data/icons/hi16-action-executionline.png, 
+	  trunk/protoeditor/data/icons/hi16-action-preexecutionline.png, 
+	  trunk/protoeditor/data/icons/hi22-action-dbgnext.png, 
+	  trunk/protoeditor/data/icons/hi22-action-dbgrun.png, 
+	  trunk/protoeditor/data/icons/hi22-action-dbgstep.png, 
+	  trunk/protoeditor/data/icons/hi22-action-dbgstepout.png, 
+	  trunk/protoeditor/protoeditor.kdevelop, 
+	  trunk/protoeditor/src/common/Makefile.am, 
+	  trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/commonphp/Makefile.am, 
+	  trunk/protoeditor/src/dbg/Makefile.am, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.h, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/protoeditor, 
+	  trunk/protoeditor/src/protoeditor/Makefile.am, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistview.h, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistviewitem.cpp, 
+	  trunk/protoeditor/src/protoeditor/breakpointlistviewitem.h, 
+	  trunk/protoeditor/src/protoeditor/debuggercombostack.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggercombostack.h, 
+	  trunk/protoeditor/src/protoeditor/debuggerfactory.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggerfactory.h, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.cpp, 
+	  trunk/protoeditor/src/protoeditor/debuggermanager.h, 
+	  trunk/protoeditor/src/protoeditor/editortabwidget.cpp, 
+	  trunk/protoeditor/src/protoeditor/editortabwidget.h, 
+	  trunk/protoeditor/src/protoeditor/loglistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/loglistview.h, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.cpp, 
+	  trunk/protoeditor/src/protoeditor/mainwindow.h, 
+	  trunk/protoeditor/src/protoeditor/protoeditor.cpp, 
+	  trunk/protoeditor/src/protoeditor/protoeditor.desktop, 
+	  trunk/protoeditor/src/protoeditor/protoeditorui.rc, 
+	  trunk/protoeditor/src/protoeditor/variableslistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/variableslistview.h, 
+	  trunk/protoeditor/src/protoeditor/variableslistviewitem.cpp, 
+	  trunk/protoeditor/src/protoeditor/variableslistviewitem.h, 
+	  trunk/protoeditor/src/protoeditor/watchlistview.cpp, 
+	  trunk/protoeditor/src/protoeditor/watchlistview.h:
+	  project tree modification:
+	  -src/* goes to src/protoeditor except settings files. They go to 
+	  src/settings
+	  
+	  -Settings improvement
+	  -Debugger KActions added
+	  -Toolbar added
+	  -DebuggerManager and EditorTabWidget handling the menu/toolbar 
+	  Actions state
+	  -DebuggerConfigurations is out. Using kcfg settings gobally
+	  -Changed the way icons are installed (using rule 
+	  protoeditoricon_ICON)
+	  -other little things I can't remember :/
+	  
+
+2005-01-28 00:43  
+
+	* trunk/protoeditor, trunk/protoeditor/AUTHORS, 
+	  trunk/protoeditor/COPYING, trunk/protoeditor/ChangeLog, 
+	  trunk/protoeditor/INSTALL, trunk/protoeditor/Makefile.am, 
+	  trunk/protoeditor/Makefile.cvs, trunk/protoeditor/NEWS, 
+	  trunk/protoeditor/README, trunk/protoeditor/TODO, 
+	  trunk/protoeditor/admin, trunk/protoeditor/admin/ChangeLog, 
+	  trunk/protoeditor/admin/Doxyfile.am, 
+	  trunk/protoeditor/admin/Doxyfile.global, 
+	  trunk/protoeditor/admin/Makefile.common, 
+	  trunk/protoeditor/admin/acinclude.m4.in, 
+	  trunk/protoeditor/admin/am_edit, 
+	  trunk/protoeditor/admin/bcheck.pl, 
+	  trunk/protoeditor/admin/compile, 
+	  trunk/protoeditor/admin/conf.change.pl, 
+	  trunk/protoeditor/admin/config.guess, 
+	  trunk/protoeditor/admin/config.pl, 
+	  trunk/protoeditor/admin/config.sub, 
+	  trunk/protoeditor/admin/configure.in.bot.end, 
+	  trunk/protoeditor/admin/configure.in.min, 
+	  trunk/protoeditor/admin/cvs-clean.pl, 
+	  trunk/protoeditor/admin/cvs.sh, 
+	  trunk/protoeditor/admin/debianrules, 
+	  trunk/protoeditor/admin/depcomp, 
+	  trunk/protoeditor/admin/detect-autoconf.sh, 
+	  trunk/protoeditor/admin/install-sh, 
+	  trunk/protoeditor/admin/libtool.m4.in, 
+	  trunk/protoeditor/admin/ltmain.sh, 
+	  trunk/protoeditor/admin/missing, 
+	  trunk/protoeditor/admin/mkinstalldirs, 
+	  trunk/protoeditor/admin/nmcheck, trunk/protoeditor/admin/ylwrap, 
+	  trunk/protoeditor/configure.files, 
+	  trunk/protoeditor/configure.in, 
+	  trunk/protoeditor/configure.in.in, trunk/protoeditor/data, 
+	  trunk/protoeditor/data/Makefile.am, 
+	  trunk/protoeditor/data/icons, 
+	  trunk/protoeditor/data/icons/16x16, 
+	  trunk/protoeditor/data/icons/16x16/Makefile.am, 
+	  trunk/protoeditor/data/icons/16x16/checkboxoff.png, 
+	  trunk/protoeditor/data/icons/16x16/checkboxon.png, 
+	  trunk/protoeditor/data/icons/16x16/debugger-activebreakpoint.png,
+	   trunk/protoeditor/data/icons/16x16/debugger-currentline.png, 
+	  trunk/protoeditor/data/icons/16x16/debugger-inactivebreakpoint.png,
+	   
+	  trunk/protoeditor/data/icons/16x16/debugger-invalidbreakpoint.png,
+	   trunk/protoeditor/data/icons/16x16/debugger-run.png, 
+	  trunk/protoeditor/data/icons/16x16/debugger-stackcontext.png, 
+	  trunk/protoeditor/data/icons/16x16/debugger-stepinto.png, 
+	  trunk/protoeditor/data/icons/16x16/debugger-stepout.png, 
+	  trunk/protoeditor/data/icons/16x16/debugger-stepover.png, 
+	  trunk/protoeditor/data/icons/16x16/error.png, 
+	  trunk/protoeditor/data/icons/16x16/info.png, 
+	  trunk/protoeditor/data/icons/16x16/interrogation.png, 
+	  trunk/protoeditor/data/icons/16x16/warning.png, 
+	  trunk/protoeditor/data/icons/22x22, 
+	  trunk/protoeditor/data/icons/22x22/Makefile.am, 
+	  trunk/protoeditor/data/icons/Makefile.am, 
+	  trunk/protoeditor/protoeditor.kdevelop, 
+	  trunk/protoeditor/protoeditor.kdevelop.pcs, 
+	  trunk/protoeditor/protoeditor.kdevses, trunk/protoeditor/src, 
+	  trunk/protoeditor/src/Makefile.am, 
+	  trunk/protoeditor/src/breakpointlistview.cpp, 
+	  trunk/protoeditor/src/breakpointlistview.h, 
+	  trunk/protoeditor/src/breakpointlistviewitem.cpp, 
+	  trunk/protoeditor/src/breakpointlistviewitem.h, 
+	  trunk/protoeditor/src/common, 
+	  trunk/protoeditor/src/common/Makefile.am, 
+	  trunk/protoeditor/src/common/abstractdebugger.cpp, 
+	  trunk/protoeditor/src/common/abstractdebugger.h, 
+	  trunk/protoeditor/src/common/debuggerbreakpoint.cpp, 
+	  trunk/protoeditor/src/common/debuggerbreakpoint.h, 
+	  trunk/protoeditor/src/common/debuggerstack.cpp, 
+	  trunk/protoeditor/src/common/debuggerstack.h, 
+	  trunk/protoeditor/src/common/variable.cpp, 
+	  trunk/protoeditor/src/common/variable.h, 
+	  trunk/protoeditor/src/commonphp, 
+	  trunk/protoeditor/src/commonphp/Makefile.am, 
+	  trunk/protoeditor/src/commonphp/phpdefs.h, 
+	  trunk/protoeditor/src/commonphp/phpvariable.cpp, 
+	  trunk/protoeditor/src/commonphp/phpvariable.h, 
+	  trunk/protoeditor/src/commonphp/variableparser.cpp, 
+	  trunk/protoeditor/src/commonphp/variableparser.h, 
+	  trunk/protoeditor/src/dbg, 
+	  trunk/protoeditor/src/dbg/Makefile.am, 
+	  trunk/protoeditor/src/dbg/dbg_defs.h, 
+	  trunk/protoeditor/src/dbg/dbgabstractdatarequest.cpp, 
+	  trunk/protoeditor/src/dbg/dbgabstractdatarequest.h, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconfiguration.h, 
+	  trunk/protoeditor/src/dbg/dbgconnection.cpp, 
+	  trunk/protoeditor/src/dbg/dbgconnection.h, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.cpp, 
+	  trunk/protoeditor/src/dbg/dbgfileinfo.h, 
+	  trunk/protoeditor/src/dbg/dbgframe.cpp, 
+	  trunk/protoeditor/src/dbg/dbgframe.h, 
+	  trunk/protoeditor/src/dbg/dbgheader.cpp, 
+	  trunk/protoeditor/src/dbg/dbgheader.h, 
+	  trunk/protoeditor/src/dbg/dbgnethelper.cpp, 
+	  trunk/protoeditor/src/dbg/dbgnethelper.h, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.cpp, 
+	  trunk/protoeditor/src/dbg/dbgreceiver.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestor.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpack.h, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.cpp, 
+	  trunk/protoeditor/src/dbg/dbgrequestpackbuilder.h, 
+	  trunk/protoeditor/src/dbg/dbgresponsepack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgresponsepack.h, 
+	  trunk/protoeditor/src/dbg/dbgstack.cpp, 
+	  trunk/protoeditor/src/dbg/dbgstack.h, 
+	  trunk/protoeditor/src/dbg/dbgtags.cpp, 
+	  trunk/protoeditor/src/dbg/dbgtags.h, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.cpp, 
+	  trunk/protoeditor/src/dbg/debuggerdbg.h, 
+	  trunk/protoeditor/src/dbugrconfigform.cpp, 
+	  trunk/protoeditor/src/dbugrconfigform.h, 
+	  trunk/protoeditor/src/dbugrconfigformbase.ui, 
+	  trunk/protoeditor/src/debuggercombostack.cpp, 
+	  trunk/protoeditor/src/debuggercombostack.h, 
+	  trunk/protoeditor/src/debuggerconfigform_interface.h, 
+	  trunk/protoeditor/src/debuggerconfigurations.cpp, 
+	  trunk/protoeditor/src/debuggerconfigurations.h, 
+	  trunk/protoeditor/src/debuggerfactory.cpp, 
+	  trunk/protoeditor/src/debuggerfactory.h, 
+	  trunk/protoeditor/src/debuggermanager.cpp, 
+	  trunk/protoeditor/src/debuggermanager.h, 
+	  trunk/protoeditor/src/editortabwidget.cpp, 
+	  trunk/protoeditor/src/editortabwidget.h, 
+	  trunk/protoeditor/src/loglistview.cpp, 
+	  trunk/protoeditor/src/loglistview.h, 
+	  trunk/protoeditor/src/main.cpp, 
+	  trunk/protoeditor/src/mainwindow.cpp, 
+	  trunk/protoeditor/src/mainwindow.h, 
+	  trunk/protoeditor/src/mainwindowbase.cpp, 
+	  trunk/protoeditor/src/mainwindowbase.h, 
+	  trunk/protoeditor/src/protoeditor.cpp, 
+	  trunk/protoeditor/src/protoeditor.h, 
+	  trunk/protoeditor/src/variableslistview.cpp, 
+	  trunk/protoeditor/src/variableslistview.h, 
+	  trunk/protoeditor/src/variableslistviewitem.cpp, 
+	  trunk/protoeditor/src/variableslistviewitem.h, 
+	  trunk/protoeditor/src/watchlistview.cpp, 
+	  trunk/protoeditor/src/watchlistview.h, 
+	  trunk/protoeditor/subdirs, trunk/protoeditor/ui, 
+	  trunk/protoeditor/ui/mainwindow.ui, 
+	  trunk/protoeditor/ui/mainwindow.ui.h, 
+	  trunk/protoeditor/ui/varstackwidget.ui:
+	  Initial revision
+	  
+
