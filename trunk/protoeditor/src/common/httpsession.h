@@ -22,6 +22,7 @@
 #define HTTPSESSION_H
 
 #include <qobject.h>
+#include <qstringlist.h> 
 
 class KProcess;
 class DCOPClient;
@@ -29,27 +30,51 @@ class QHttp;
 class KURL;
 class Browser;
 
-/*
-  All classes here are used to make an http request (to trigger the server side debugger).
-  Options are:
-    -direct http request (via QHttp)
-    -Browser request. Supported browsers are:
-      +Konqueror (DCOP)
-      +Mozilla (command line)
-      +FireFox (command line)
-      +Opera (command line)
-*/
 
-class BrowserRequestor : public QObject
+class ExternalAppRequestor;
+class ConsoleRequestor;
+
+class AppSession : public QObject
 {
   Q_OBJECT
   public:
-    BrowserRequestor();
-    virtual ~BrowserRequestor();
+    ~AppSession();
 
-    static BrowserRequestor* retrieveBrowser(int, Browser*);
+    static void dispose();
+    static AppSession* self();
+    
+    void start(const KURL& url, bool forceConsoleMode = false);
+    void start(const KURL& url, const QStringList& env, bool forceConsoleMode = false);
 
-    virtual void doRequest(const QString&) = 0;
+    const QStringList& environment();
+  signals:
+    void sigError(const QString& error);
+
+  private slots:
+    void slotHttpDone(bool);
+  private:
+    AppSession();
+    void doHTTPRequest(const KURL& url);
+    void doExternalRequest(const KURL&);    
+    void initHTTPCommunication();
+
+    static AppSession* m_self;
+
+    QHttp                *m_http;
+    ExternalAppRequestor *m_extAppRequestor;
+    QStringList m_env;
+};
+
+class ExternalAppRequestor : public QObject
+{
+  Q_OBJECT
+  public:
+    ExternalAppRequestor();
+    virtual ~ExternalAppRequestor();
+
+    static ExternalAppRequestor* retrieveExternalApp(int, AppSession*);
+
+    virtual void doRequest(const KURL&) = 0;
     virtual int  id() = 0;
   signals:
     void sigError(const QString&);
@@ -57,82 +82,72 @@ class BrowserRequestor : public QObject
   protected:
     void init();
 
-    static BrowserRequestor *m_browserRequestor;
+    static ExternalAppRequestor *m_extAppRequestor;
 
-    KProcess         *m_browserProcess;
+    KProcess         *m_process;
     bool              m_processRunning;
 
   private slots:
     void slotProcessExited(KProcess*);
 };
 
-class KonquerorRequestor : public BrowserRequestor
+class KonquerorRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    KonquerorRequestor();
+    KonquerorRequestor(AppSession*);
     ~KonquerorRequestor();
-    virtual void doRequest(const QString&);
+    virtual void doRequest(const KURL&);
     virtual int  id();
   private:
     void init();
-    void openNewKonqueror(const QString&);
+    void openNewKonqueror(const KURL&);
     DCOPClient *m_dcopClient;
 };
 
 
-class MozillaRequestor : public BrowserRequestor
+class MozillaRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    MozillaRequestor();
+    MozillaRequestor(AppSession*);
     ~MozillaRequestor();
-    virtual void doRequest(const QString&);
+    virtual void doRequest(const KURL&);
     virtual int  id();
 };
 
-class FirefoxRequestor : public BrowserRequestor
+class FirefoxRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    FirefoxRequestor();
+    FirefoxRequestor(AppSession*);
     ~FirefoxRequestor();
-    virtual void doRequest(const QString&);
+    virtual void doRequest(const KURL&);
     virtual int  id();
 };
 
-class OperaRequestor : public BrowserRequestor
+class OperaRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    OperaRequestor();
+    OperaRequestor(AppSession*);
     ~OperaRequestor();
-    virtual void doRequest(const QString&);
+    virtual void doRequest(const KURL&);
     virtual int  id();
 };
 
-/**************************************************************/
-
-class Browser : public QObject
+class ConsoleRequestor : public ExternalAppRequestor
 {
   Q_OBJECT
   public:
-    Browser();
-    ~Browser();
-    void request(const KURL&);
+    ConsoleRequestor(AppSession*);
+    ~ConsoleRequestor();
+    virtual void doRequest(const KURL&);
+    virtual int  id();
 
-  signals:
-    void sigError(const QString& error);
-
-  private slots:
-    void slotHttpDone(bool);
   private:
-    void doHTTPRequest(const KURL& url);
-    void doBrowserRequest(const KURL&);
-    void initHTTPCommunication();
-
-    QHttp            *m_http;
-    BrowserRequestor *m_browserRequestor;
+    QStringList m_env;
 };
+
 
 #endif

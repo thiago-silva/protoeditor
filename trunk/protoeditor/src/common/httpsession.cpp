@@ -21,6 +21,8 @@
 #include "httpsession.h"
 #include "protoeditorsettings.h"
 #include "extoutputsettings.h"
+#include "phpsettings.h"
+
 #include <qhttp.h>
 #include <kurl.h>
 #include <kapplication.h>
@@ -29,254 +31,311 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-Browser::Browser()
-  : m_http(0), m_browserRequestor(0)
+
+AppSession* AppSession::m_self = 0;
+
+AppSession::AppSession()
+    : m_http(0), m_extAppRequestor(0)
 {}
 
-Browser::~Browser()
+AppSession::~AppSession()
 {
-  delete m_browserRequestor;
+  delete m_extAppRequestor;
   delete m_http;
 }
 
-void Browser::request(const KURL& url)
+void AppSession::dispose()
 {
-  if(ProtoeditorSettings::self()->extOutputSettings()->useExternalBrowser()) {
-    doBrowserRequest(url);
-  } else {
+  delete AppSession::m_self;
+}
+
+AppSession* AppSession::self()  
+{
+  if(!AppSession::m_self)
+  {
+    AppSession::m_self = new AppSession();
+  }
+  return m_self;
+}
+
+void AppSession::start(const KURL& url, bool forceConsoleMode)
+{
+  if(forceConsoleMode)
+  {
+    m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(ExtAppSettings::EnumExtApp::Console, this);
+    m_extAppRequestor->doRequest(url);
+  }
+  else if(ProtoeditorSettings::self()->extAppSettings()->useExternalApp())
+  {
+    doExternalRequest(url);
+  }
+  else
+  {
     doHTTPRequest(url);
   }
+  m_env.clear();
 }
 
-void Browser::doHTTPRequest(const KURL& url)
+void AppSession::start(const KURL& url, const QStringList& env, bool forceConsoleMode)
 {
-  initHTTPCommunication();
-
-  kdDebug() << "HTTP request \""
-      << url.protocol()
-      << "://"
-      << url.host()
-      << ":"
-      << url.port()
-      << url.path() + url.query()
-      << "\""
-      << endl;
-
-  m_http->setHost(url.host(), url.port());
-  m_http->get(url.path() + url.query());
+  m_env = env;
+  start(url, forceConsoleMode);
 }
 
-void Browser::initHTTPCommunication()
+void AppSession::initHTTPCommunication()
 {
-  if(!m_http) {
+  if(!m_http)
+  {
     m_http = new QHttp;
     connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
   }
 }
 
-void Browser::slotHttpDone(bool error)
+void AppSession::doHTTPRequest(const KURL& url)
 {
-  if(error && (m_http->error() != QHttp::Aborted)) {
+  initHTTPCommunication();
+
+  kdDebug() << "HTTP request \""
+  << url.protocol()
+  << "://"
+  << url.host()
+  << ":"
+  << url.port()
+  << url.path() + url.query()
+  << "\""
+  << endl;
+
+  m_http->setHost(url.host(), url.port());
+  m_http->get(url.path() + url.query());
+}
+
+void AppSession::slotHttpDone(bool error)
+{
+  if(error && (m_http->error() != QHttp::Aborted))
+  {
     emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
   }
   m_http->abort();
   kdDebug() << "HTTP closed connection!" << endl;
 }
 
-void Browser::doBrowserRequest(const KURL& url)
+void AppSession::doExternalRequest(const KURL& url)
 {
-  m_browserRequestor = BrowserRequestor::retrieveBrowser(
-      ProtoeditorSettings::self()->extOutputSettings()->browser(), this);
-  //TODO: assert-me
-  m_browserRequestor->doRequest(url.prettyURL());
+  m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(
+                        ProtoeditorSettings::self()->extAppSettings()->externalApp(), this);
+
+  m_extAppRequestor->doRequest(url);
 }
 
-/***************************** BROWSER REQUESTOR *****************************************/
+const QStringList& AppSession::environment()
+{
+  return m_env;
+}
 
-BrowserRequestor* BrowserRequestor::m_browserRequestor = 0;
+/***************************** ExternalAppRequestor *****************************************/
 
-BrowserRequestor::BrowserRequestor()
-  : m_browserProcess(0), m_processRunning(false)
+ExternalAppRequestor* ExternalAppRequestor::m_extAppRequestor = 0;
+
+ExternalAppRequestor::ExternalAppRequestor()
+    : m_process(0), m_processRunning(false)
 
 {}
 
-BrowserRequestor::~BrowserRequestor()
+ExternalAppRequestor::~ExternalAppRequestor()
 {
-  delete m_browserProcess;
+  delete m_process;
 }
 
-BrowserRequestor* BrowserRequestor::retrieveBrowser(int browser, Browser* br)
+ExternalAppRequestor* ExternalAppRequestor::retrieveExternalApp(int extApp, AppSession* session)
 {
-  switch(browser) {
-    case ExtOutputSettings::EnumBrowser::Konqueror:
-      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Konqueror)) {
-        return m_browserRequestor;
+  switch(extApp)
+  {
+    case ExtAppSettings::EnumExtApp::Konqueror:
+      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Konqueror))
+      {
+        return m_extAppRequestor;
       }
-      delete m_browserRequestor;
-      m_browserRequestor = new KonquerorRequestor();
-      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
-              SIGNAL(sigError(const QString&)));
+      delete m_extAppRequestor;
+      m_extAppRequestor = new KonquerorRequestor(session);
       break;
-    case ExtOutputSettings::EnumBrowser::Mozilla:
-      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Mozilla)) {
-        return m_browserRequestor;
+    case ExtAppSettings::EnumExtApp::Mozilla:
+      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Mozilla))
+      {
+        return m_extAppRequestor;
       }
-      delete m_browserRequestor;
-      m_browserRequestor = new MozillaRequestor();
-      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
-              SIGNAL(sigError(const QString&)));
+      delete m_extAppRequestor;
+      m_extAppRequestor = new MozillaRequestor(session);
       break;
-    case ExtOutputSettings::EnumBrowser::Firefox:
-      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Firefox)) {
-        return m_browserRequestor;
+    case ExtAppSettings::EnumExtApp::Firefox:
+      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Firefox))
+      {
+        return m_extAppRequestor;
       }
-      delete m_browserRequestor;
-      m_browserRequestor = new FirefoxRequestor();
-      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
-              SIGNAL(sigError(const QString&)));
+      delete m_extAppRequestor;
+      m_extAppRequestor = new FirefoxRequestor(session);
       break;
-    case ExtOutputSettings::EnumBrowser::Opera:
-      if(m_browserRequestor && (m_browserRequestor->id() == ExtOutputSettings::EnumBrowser::Opera)) {
-        return m_browserRequestor;
+    case ExtAppSettings::EnumExtApp::Opera:
+      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Opera))
+      {
+        return m_extAppRequestor;
       }
-      delete m_browserRequestor;
-      m_browserRequestor = new OperaRequestor();
-      connect(m_browserRequestor, SIGNAL(sigError(const QString&)), br,
-              SIGNAL(sigError(const QString&)));
+      delete m_extAppRequestor;
+      m_extAppRequestor = new OperaRequestor(session);
+      break;
+    case ExtAppSettings::EnumExtApp::Console:
+      delete m_extAppRequestor;
+      m_extAppRequestor = new ConsoleRequestor(session);
       break;
   }
-  return m_browserRequestor;
+
+  connect(m_extAppRequestor, SIGNAL(sigError(const QString&)), session,
+          SIGNAL(sigError(const QString&)));
+
+  return m_extAppRequestor;
 }
 
-void BrowserRequestor::init()
+void ExternalAppRequestor::init()
 {
-  if(!m_processRunning) {
+  if(!m_processRunning)
+  {
 
-    delete m_browserProcess;
+    delete m_process;
 
-    m_browserProcess = new KProcess;
-    connect(m_browserProcess, SIGNAL(processExited(KProcess*)),
+    m_process = new KProcess;
+    connect(m_process, SIGNAL(processExited(KProcess*)),
             this, SLOT(slotProcessExited(KProcess*)));
   }
 }
 
-void BrowserRequestor::slotProcessExited(KProcess*)
+void ExternalAppRequestor::slotProcessExited(KProcess*)
 {
-  //proc->kill();
   m_processRunning = false;
 }
 
 
 /***************************** KONQUEROR *****************************************/
 
-KonquerorRequestor::KonquerorRequestor()
-  : BrowserRequestor(), m_dcopClient(0)
-{
-}
+KonquerorRequestor::KonquerorRequestor(AppSession*)
+    : ExternalAppRequestor(), m_dcopClient(0)
+{}
 KonquerorRequestor::~KonquerorRequestor()
-{
-}
+{}
 
-void KonquerorRequestor::doRequest(const QString& url)
+void KonquerorRequestor::doRequest(const KURL& url)
 {
   init();
 
-  if(!m_processRunning) {
+  if(!m_processRunning)
+  {
     openNewKonqueror(url);
     return;
   }
 
   QByteArray data;
   QDataStream arg(data, IO_WriteOnly);
-  arg << url;
+  arg << url.prettyURL();
 
   kdDebug() << "asking for konqueror ("
-      << m_browserProcess->pid()
-      << ") to open URL: "
-      << url
-      << endl;
+  << m_process->pid()
+  << ") to open URL: "
+  << url
+  << endl;
 
   QString cmd = "konqueror";
 
   if(!m_dcopClient->send(
-      (cmd + "-" + QString::number(m_browserProcess->pid())).ascii()
-      , "konqueror-mainwindow#1", "openURL(QString)"
-      , data)) {
-        emit sigError("Error opening browser");
-      }
+        (cmd + "-" + QString::number(m_process->pid())).ascii()
+        , "konqueror-mainwindow#1", "openURL(QString)"
+        , data))
+  {
+    emit sigError("Error opening browser");
+  }
 }
 
-void KonquerorRequestor::openNewKonqueror(const QString& url)
+void KonquerorRequestor::openNewKonqueror(const KURL& url)
 {
   QString cmd = "konqueror";
-  *m_browserProcess << cmd;
-  *m_browserProcess << url;
+  *m_process << cmd;
+  *m_process << url.prettyURL();
 
-  kdDebug() << "creating new Konqueror window for: " << url << endl;
+  kdDebug() << "creating new Konqueror window for: " << url.prettyURL() << endl;
 
-  if(!m_browserProcess->start()) {
-    emit sigError("Error opening Konqueror");
-  } else {
-    kdDebug() << "New konqueror PID: " << m_browserProcess->pid() << endl;
+  if(!m_process->start())
+  {
+    emit sigError("Error opening Konqueror.");
+  }
+  else
+  {
+    kdDebug() << "New konqueror PID: " << m_process->pid() << endl;
     m_processRunning = true;
   }
 }
 
 int KonquerorRequestor::id()
 {
-  return ExtOutputSettings::EnumBrowser::Konqueror;
+  return ExtAppSettings::EnumExtApp::Konqueror;
 }
 
 void KonquerorRequestor::init()
 {
-  BrowserRequestor::init();
+  ExternalAppRequestor::init();
 
-  if(!m_dcopClient) {
+  if(!m_dcopClient)
+  {
     m_dcopClient = KApplication::dcopClient();
 
-    if(!m_dcopClient->attach()) {
-      emit sigError("Could not init browser communication");
+    if(!m_dcopClient->attach())
+    {
+      emit sigError("Could not init external application.");
     }
   }
 }
 
 
 /******************* MOZILLA *********************************/
-MozillaRequestor::MozillaRequestor()
-  : BrowserRequestor()
-{
-}
+MozillaRequestor::MozillaRequestor(AppSession*)
+    : ExternalAppRequestor()
+{}
 MozillaRequestor::~MozillaRequestor()
-{
-}
+{}
 
-void MozillaRequestor::doRequest(const QString& url)
+void MozillaRequestor::doRequest(const KURL& url)
 {
   init();
 
-  QString arg = "openURL(" + url + ")";
+  QString arg = "openURL(" + url.prettyURL() + ")";
 
-  if(m_processRunning) {
-    m_browserProcess->detach();
+  if(m_processRunning)
+  {
+    m_process->detach();
   }
 
-  m_browserProcess->clearArguments();
-  *m_browserProcess  << "mozilla";
-  *m_browserProcess  << "-remote";
-  *m_browserProcess << arg;
+  kdDebug() << "executing \"" << "mozilla -remote " << arg << "\"\n";
+
+  m_process->clearArguments();
+  *m_process  << "mozilla";
+  *m_process  << "-remote";
+  *m_process << arg;
 
 
-  if(!m_browserProcess->start(KProcess::Block)) {
-    emit sigError("Error executing remote Mozilla");
-  } else {
-    if(m_browserProcess->exitStatus() != 0) {
+  if(!m_process->start(KProcess::Block))
+  {
+    emit sigError("Error executing remote Mozilla.");
+  }
+  else
+  {
+    if(m_process->exitStatus() != 0)
+    {
       //no mozilla instance? Create new one
-      m_browserProcess->clearArguments();
-      *m_browserProcess  << "mozilla";
-      *m_browserProcess  << url;
-      if(!m_browserProcess->start()) {
-        emit sigError("Error executing Mozilla");
-      } else {
+      m_process->clearArguments();
+      *m_process  << "mozilla";
+      *m_process  << url.prettyURL();
+      if(!m_process->start())
+      {
+        emit sigError("Error executing Mozilla.");
+      }
+      else
+      {
         m_processRunning = true;
       }
     }
@@ -285,46 +344,54 @@ void MozillaRequestor::doRequest(const QString& url)
 
 int MozillaRequestor::id()
 {
-  return ExtOutputSettings::EnumBrowser::Mozilla;
+  return ExtAppSettings::EnumExtApp::Mozilla;
 }
 
 
 /************************ FIREFOX ***********************************************/
-FirefoxRequestor::FirefoxRequestor()
-  : BrowserRequestor()
-{
-}
+FirefoxRequestor::FirefoxRequestor(AppSession*)
+    : ExternalAppRequestor()
+{}
 FirefoxRequestor::~FirefoxRequestor()
-{
-}
+{}
 
-void FirefoxRequestor::doRequest(const QString& url)
+void FirefoxRequestor::doRequest(const KURL& url)
 {
   init();
 
-  QString arg = "openURL(" + url + ")";
+  QString arg = "openURL(" + url.prettyURL() + ")";
 
-  if(m_processRunning) {
-    m_browserProcess->detach();
+  if(m_processRunning)
+  {
+    m_process->detach();
   }
 
-  m_browserProcess->clearArguments();
-  *m_browserProcess  << "firefox";
-  *m_browserProcess  << "-remote";
-  *m_browserProcess << arg;
+  kdDebug() << "executing \"" << "firefox -remote " << arg << "\"\n";
+
+  m_process->clearArguments();
+  *m_process  << "firefox";
+  *m_process  << "-remote";
+  *m_process << arg;
 
 
-  if(!m_browserProcess->start(KProcess::Block)) {
-    emit sigError("Error executing remote Firefox");
-  } else {
-    if(m_browserProcess->exitStatus() != 0) {
+  if(!m_process->start(KProcess::Block))
+  {
+    emit sigError("Error executing Firefox.");
+  }
+  else
+  {
+    if(m_process->exitStatus() != 0)
+    {
       //no firefox instance? Create new one
-      m_browserProcess->clearArguments();
-      *m_browserProcess  << "firefox";
-      *m_browserProcess  << url;
-      if(!m_browserProcess->start()) {
-        emit sigError("Error executing Firefox");
-      } else {
+      m_process->clearArguments();
+      *m_process  << "firefox";
+      *m_process  << url.prettyURL();
+      if(!m_process->start())
+      {
+        emit sigError("Error executing Firefox.");
+      }
+      else
+      {
         m_processRunning = true;
       }
     }
@@ -333,47 +400,110 @@ void FirefoxRequestor::doRequest(const QString& url)
 
 int FirefoxRequestor::id()
 {
-  return ExtOutputSettings::EnumBrowser::Firefox;
+  return ExtAppSettings::EnumExtApp::Firefox;
 }
 
 
 /**************************** Opera **********************************************/
 
-OperaRequestor::OperaRequestor()
-  : BrowserRequestor()
-{
-}
+OperaRequestor::OperaRequestor(AppSession*)
+    : ExternalAppRequestor()
+{}
 OperaRequestor::~OperaRequestor()
-{
-}
+{}
 
-void OperaRequestor::doRequest(const QString& url)
+void OperaRequestor::doRequest(const KURL& url)
 {
   init();
 
-  QString arg = "openURL(" + url + ")";
+  QString arg = "openURL(" + url.prettyURL() + ")";
 
-  if(m_processRunning) {
-    m_browserProcess->detach();
+  if(m_processRunning)
+  {
+    m_process->detach();
   }
 
-  m_browserProcess->clearArguments();
-  *m_browserProcess  << "opera";
-  *m_browserProcess  << "-remote";
-  *m_browserProcess << arg;
+  kdDebug() << "executing \"" << "opera -remote " << arg << "\"\n";
+
+  m_process->clearArguments();
+  *m_process  << "opera";
+  *m_process  << "-remote";
+  *m_process << arg;
 
 
-  if(!m_browserProcess->start()) {
-    emit sigError("Error executing remote Opera");
-  } else {
+  if(!m_process->start())
+  {
+    emit sigError("Error executing Opera.");
+  }
+  else
+  {
     m_processRunning = true;
   }
 }
 
 int OperaRequestor::id()
 {
-  return ExtOutputSettings::EnumBrowser::Opera;
+  return ExtAppSettings::EnumExtApp::Opera;
 }
 
+/**************************** Console **********************************************/
+
+ConsoleRequestor::ConsoleRequestor(AppSession* session)
+    : ExternalAppRequestor()
+{
+  m_env = session->environment();
+}
+ConsoleRequestor::~ConsoleRequestor()
+{}
+
+void ConsoleRequestor::doRequest(const KURL& url)
+{
+  init();
+
+  if(m_processRunning)
+  {
+    m_process->detach();
+  }
+
+  m_process->clearArguments();
+
+  //find the mimetype of filePath, and use the proper interpreter
+  QString cmd = ProtoeditorSettings::self()->phpSettings()->PHPCommand();
+
+  QString consoleApp = ProtoeditorSettings::self()->extAppSettings()->console();
+
+  kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "
+            << m_env.join(" ") << " " 
+            << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read" << endl;
+
+  QStringList::Iterator it = m_env.begin();
+  QString name;
+  QString val;
+  while(it != m_env.end()) {
+    name = (*it);
+    ++it;
+    val = (*it);
+    ++it;
+    m_process->setEnvironment(name, val);
+  }
+
+  //KProcess::quote(filePath)
+  *m_process << QStringList::split(' ',consoleApp.arg("/bin/sh")) << "-c"
+    <<  (cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read");
+
+  if(!m_process->start())
+  {
+    emit sigError("Error executing console.");
+  }
+  else
+  {
+    m_processRunning = true;
+  }  
+}
+
+int ConsoleRequestor::id()
+{
+  return ExtAppSettings::EnumExtApp::Console;
+}
 
 #include "httpsession.moc"
