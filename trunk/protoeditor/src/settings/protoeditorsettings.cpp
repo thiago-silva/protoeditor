@@ -27,6 +27,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 
+QString ProtoeditorSettings::LocalSiteName = "-- Local --";
 ProtoeditorSettings* ProtoeditorSettings::m_self = 0;
 
 ProtoeditorSettings::ProtoeditorSettings()
@@ -40,7 +41,7 @@ ProtoeditorSettings::ProtoeditorSettings()
   //--
 
   m_phpSettings = new PHPSettings();
-  m_extOutputSettings = new ExtOutputSettings();
+  m_extApptSettings = new ExtAppSettings();
 
   //load all Sites
   loadSites();
@@ -64,6 +65,11 @@ ProtoeditorSettings::~ProtoeditorSettings()
 {
 }
 
+void ProtoeditorSettings::dispose()
+{
+  delete ProtoeditorSettings::m_self;
+}
+
 ProtoeditorSettings* ProtoeditorSettings::self()
 {
   if(!m_self) {
@@ -84,13 +90,19 @@ void ProtoeditorSettings::registerDebuggerSettings(DebuggerSettingsInterface* ds
 
 DebuggerSettingsInterface*  ProtoeditorSettings::debuggerSettings(const QString& name)
 {
-  return m_debuggerSettingsMap[name];
+  if(m_debuggerSettingsMap.contains(name))
+  {
+    return m_debuggerSettingsMap[name];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 QValueList<DebuggerSettingsInterface*> ProtoeditorSettings::debuggerSettingsList()
 {
   return m_debuggerSettingsMap.values();
-
 }
 
 SiteSettings* ProtoeditorSettings::currentSiteSettings()
@@ -100,7 +112,14 @@ SiteSettings* ProtoeditorSettings::currentSiteSettings()
 
 SiteSettings* ProtoeditorSettings::siteSettings(const QString& name)
 {
-  return m_siteSettingsMap[name];
+  if(m_siteSettingsMap.contains(name))
+  {
+    return m_siteSettingsMap[name];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 QValueList<SiteSettings*> ProtoeditorSettings::siteSettingsList()
@@ -112,9 +131,9 @@ PHPSettings* ProtoeditorSettings::phpSettings()
   return m_phpSettings;
 }
 
-ExtOutputSettings* ProtoeditorSettings::extOutputSettings()
+ExtAppSettings* ProtoeditorSettings::extAppSettings()
 {
-  return m_extOutputSettings;
+  return m_extApptSettings;
 }
 
 void ProtoeditorSettings::clearSites()
@@ -147,7 +166,7 @@ void ProtoeditorSettings::writeConfig(bool silent)
   KConfigSkeleton::writeConfig();
 
   m_phpSettings->writeConfig();
-  m_extOutputSettings->writeConfig();
+  m_extApptSettings->writeConfig();
 
   writeDebuggersConf();
   writeSiteConf();
@@ -175,7 +194,14 @@ void ProtoeditorSettings::writeSiteConf()
 
 void ProtoeditorSettings::slotCurrentSiteChanged(const QString& sitename)
 {
-  m_currentSiteName = sitename;  
+  if(sitename == ProtoeditorSettings::LocalSiteName) 
+  {
+    m_currentSiteName = "";
+  }
+  else
+  {
+    m_currentSiteName = sitename;  
+  }
 }
 
 #include "protoeditorsettings.moc"

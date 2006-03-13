@@ -32,13 +32,17 @@ class DebuggerSettingsInterface;
 class DebuggerSettings;
 class SiteSettings;
 class PHPSettings;
-class ExtOutputSettings;
+class ExtAppSettings;
 
 class ProtoeditorSettings  : public QObject, KConfigSkeleton  {
   Q_OBJECT
 public:
+
+  static QString LocalSiteName;
+
   ~ProtoeditorSettings();
 
+  static void dispose();
   static ProtoeditorSettings* self();
 
   void registerDebuggerSettings(DebuggerSettingsInterface*, const QString& name);
@@ -50,7 +54,7 @@ public:
   SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
   PHPSettings*                           phpSettings();
-  ExtOutputSettings*                     extOutputSettings();
+  ExtAppSettings*                        extAppSettings();
 
   void clearSites();
   void addSite(int number, const QString& name, const QString& url,
@@ -75,7 +79,7 @@ private:
   static ProtoeditorSettings *m_self;
 
   PHPSettings              *m_phpSettings;
-  ExtOutputSettings        *m_extOutputSettings;
+  ExtAppSettings           *m_extApptSettings;
 
   QString                   m_currentSiteName;
 
