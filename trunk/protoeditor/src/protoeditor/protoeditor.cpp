@@ -27,6 +27,9 @@
 
 #include <config.h>
 
+#include "protoeditorsettings.h"
+#include "httpsession.h"
+
 static const char description[] =
   I18N_NOOP("A small KDE PHP Debugger client");
 
@@ -52,7 +55,7 @@ int main(int argc, char **argv)
   KApplication app;
   //ProtoEditor *protoeditor = 0;
   //ProtoEditor protoeditor;
-  MainWindow window;
+  MainWindow *window = new MainWindow;
 
 
   if (app.isRestored())
@@ -67,15 +70,17 @@ int main(int argc, char **argv)
 
     //protoeditor = new ProtoEditor();
     //QWidget* mainWin = protoeditor.mainWindow();
-    app.setMainWidget(&window);
-    window.show();
+    app.setMainWidget(window);
+    window->show();
 
     args->clear();
   }
 
-  // mainWin has WDestructiveClose flag by default, so it will delete itself.
-  return app.exec();
+  int ret = app.exec();  
 
-  //delete protoeditor;
+  delete window;
+
+  AppSession::dispose();
+  ProtoeditorSettings::dispose();
 }
 
