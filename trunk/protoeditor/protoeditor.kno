@@ -1,5 +1,5 @@
 \NewEntry 0 Mental Notes / Random ideas
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
 <li>Take a look at http://www.enginsite.com/php-editor.htm<br /></li>
 <li>Change the colums of breakpoint and message listviews.</li>
@@ -12,8 +12,8 @@
 <li>Add &quot;New&quot; from KstdAction<br /></li>
 <li>Try to get default kate settings from the user's katerc<br /></li>
 <li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
-<li>See the possibility to setup katepart to show line number / icon margin on the first run of protoeditor (no protoeditorrc yet).<br /></li>
-<li>Quicknote: A debgger manager shouldn't make requests like this:<br />	m_debugger-&gt;step();<br />              m_debugger-&gt;getGlobalVariables();<br />              m_debugger-&gt;getBreakpoints();<br />              ...<br /></li>
+<li>See the possibility to setup katepart to show line number / icon margin on the first run of protoeditor (no protoeditorrc yet).</li>
+<li></li>
 <ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info it supports.<br /></li></ul>
 <li>Context menu for VariableListView:</li>
 <ul type="disc"><li>for scalars:</li>
@@ -50,7 +50,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -67,24 +66,42 @@
 </body></html>
 
 \NewEntry 1 TODO
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
 <li>Add to menu: &quot;Bugs&quot;, &quot;Forum&quot;, &quot;CVSWeb&quot;....</li>
 <li>Create a logo for the site</li>
-<li>Create Doxygen documentation</li>
 <li>Create user documentation</li>
-<li>Backup sourceforge contents.</li>
 <li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
 </body></html>
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 Xdebug
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Could not find anything to fix the conditional breakpoint....</li>
-<li>Some times it gets &quot;HTTP closed connection&quot;...usually when a php parse error is found.</li>
-<li></li></ul>
+\CurrentEntry 1 TODO
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Commit changes!!!<br /><br /></li>
+<li>Rever:</li>
+<ul type="disc"><li>DBGNet::processProf()  about &lt;&lt; 32</li>
+<li>re-test profile<br /></li></ul>
+<li>svn move loglistview -&gt; messagelistview</li>
+<li>svn move httpsession -&gt; appsession</li>
+<li>svn move extoutputsettings -&gt; extappsettings</li>
+<li>stretch horizontally Site dialog</li>
+<li>&quot;File-&gt;new&quot; support</li>
+<li>ContextMenu for BreakpointList (disable/delete)</li>
+<li>release it!</li>
+<ul type="disc"><li>Create tutorials stepbystep to install modules and run!</li>
+<li>Create Help docbook</li>
+<li>strings i18n aware<br /></li></ul>
+<li>Gubed!<br /></li>
+<li>Doc:</li>
+<ul type="disc"><li>Add note about console debuging (only cgi SAPI supported by DBG)<br /></li></ul>
+<li>latter:</li>
+<ul type="disc"><li>Implement directory mapping (for default include paths, etc) by Site</li>
+<li>ExternalApps by Site (maybe)</li></ul></ul>
 </body></html>
+
+
+\NewEntry 1 Xdebug
 
 \NewEntry 1 DBG and infra
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -123,7 +140,6 @@
 <li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
 <li>Change output widget to KTExtEdit, so it can highlight HTML tags (create a wrapper class for it)</li></ul></ul>
 </body></html>
-
 
 \NewEntry 1 new Settings notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
@@ -165,7 +181,6 @@
 <ul type="disc"><li>A message appears informing that the file doesn't exists.</li>
 <li>The debugger starts with the current opened file.</li></ul></ul>
 </body></html>
-
 
 \NewEntry 0 Quanta
 
@@ -238,8 +253,7 @@
 <li>Improve VariablesListView and variable-related code/classes<br /><br /></li></ul></ul>
 </body></html>
 
-
-\CurrentEntry 0 sourceforge
+\NewEntry 0 sourceforge
 
 \NewEntry 1 backup
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
