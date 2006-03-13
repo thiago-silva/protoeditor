@@ -30,6 +30,7 @@
 #include "configdlg.h"
 #include "protoeditorsettings.h"
 
+
 #include <kapplication.h>
 #include <kstatusbar.h>
 #include <kaction.h>
@@ -97,6 +98,8 @@ void MainWindow::loadSites()
 {
   QStringList strsites;
 
+  strsites << ProtoeditorSettings::LocalSiteName;
+
   QValueList<SiteSettings*> sitesList = ProtoeditorSettings::self()->siteSettingsList();
   QValueList<SiteSettings*>::iterator it;
 
@@ -113,6 +116,10 @@ void MainWindow::loadSites()
   
   m_siteAction->setItems(strsites);
   m_siteAction->setCurrentItem(curr);
+
+  if(sitesList.size() > 0) {
+    ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());
+  }
 }
 
 void MainWindow::setupStatusBar()
@@ -169,21 +176,24 @@ void MainWindow::setupActions()
   m_siteAction->setComboWidth(150);
 
   connect(m_siteAction, SIGNAL(activated(const QString&)),
-          ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+      ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
   
+  connect(m_siteAction, SIGNAL(activated(const QString&)),
+      ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
 
-  m_defaultScriptAction = new KSelectAction("Default script", 0, actionCollection(), "default_script");
-  QStringList l;
-  l << "Site Script" << "Active Script";
-  m_defaultScriptAction->setItems(l);
-  m_defaultScriptAction->setCurrentItem(0);
 
-  //   connect(m_defaultScriptAction, SIGNAL(activated(int)),
-  //           this, SLOT(slotDefaultScriptChanged(int)));
+  m_activeScriptAction = new KToggleAction("Use Active Script", "attach", 0, actionCollection(), "use_active_script");
+//   QStringList l;
+//   l << "Site Script" << "Active Script";
+//   m_defaultScriptAction->setItems(l);
+//   m_defaultScriptAction->setCurrentItem(0);
 
 
   //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
   //                     SLOT(slotDebugStart()), actionCollection(), "script_run_current_script");
+
+  (void)new KAction(i18n("Run in Console"), "gear", "F9", m_debugger_manager,
+                    SLOT(slotScriptRun()), actionCollection(), "script_run");
 
   (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", m_debugger_manager,
                     SLOT(slotDebugStart()), actionCollection(), "debug_start");
@@ -322,9 +332,9 @@ MainWindow::~MainWindow()
   delete m_debugger_manager;
 }
 
-int MainWindow::preferredScript()
+bool MainWindow::useActiveScript()
 {
-  return m_defaultScriptAction->currentItem();
+  return m_activeScriptAction->isChecked();
 }
 
 void MainWindow::slotSettingsChanged()
@@ -362,7 +372,7 @@ void MainWindow::slotOpenFile()
   {
     for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it )
     {
-      openFile(*it);
+      openFile(KURL::fromPathOrURL(*it));
     }
   }
 }
@@ -522,9 +532,9 @@ void MainWindow::setLedState(int state)
     case LedOn:
       m_lbLed->setPixmap(QPixmap(UserIcon("indicator_on")));
       break;
-    case LedWait:
+/*    case LedWait:
       m_lbLed->setPixmap(QPixmap(UserIcon("indicator_wait")));
-      break;
+      break;*/
     case LedOff:
     default:
       m_lbLed->setPixmap(QPixmap(UserIcon("indicator_off")));

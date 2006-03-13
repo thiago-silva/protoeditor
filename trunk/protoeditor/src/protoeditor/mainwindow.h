@@ -42,6 +42,7 @@ class BrowserSettingsWidget;
 class KRecentFilesAction;
 class KURL;
 class KSelectAction;
+class KToggleAction;
 class KDialogBase;
 class QLabel;
 
@@ -57,7 +58,7 @@ class MainWindow : public KParts::MainWindow
   Q_OBJECT
 
 public:
-  enum { LedOn, LedOff, LedWait };
+  enum { LedOn, LedOff /*, LedWait */};
   
   MainWindow(QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
   ~MainWindow();
@@ -81,14 +82,14 @@ public:
   void openFile();
   void openFile(const KURL& url);
   void actionStateChanged(const QString&);
-
-  enum { SiteScript, ActiveScript };
-  int preferredScript();
+  
+  bool useActiveScript();
 
   void setEditorStatusMsg(const QString&);
   void setDebugStatusMsg(const QString&);
   void setDebugStatusName(const QString&);
   void setLedState(int);
+
 private slots:
   void slotOpenFile();
   void slotCloseFile();
@@ -142,7 +143,7 @@ private:
   //KTextEditor::EditInterface *m_edOutput;
 
   KSelectAction      *m_siteAction;
-  KSelectAction      *m_defaultScriptAction;
+  KToggleAction      *m_activeScriptAction;
   KStatusBar         *m_statusBar;
   KRecentFilesAction *m_actionRecent;
 
