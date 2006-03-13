@@ -39,7 +39,7 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   QGridLayout* grid = new QGridLayout(0, 2,2, 3, 10);
 
   QLabel* lbPhp= new QLabel(this);
-  lbPhp->setText("PHP command:");
+  lbPhp->setText("PHP binary path:");
   grid->addWidget(lbPhp, 0, 0);
 
 
