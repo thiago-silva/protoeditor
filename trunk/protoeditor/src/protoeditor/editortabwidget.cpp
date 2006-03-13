@@ -144,7 +144,7 @@ void EditorTabWidget::setCurrentDocumentTab(const QString& filePath, bool forceO
   }
   else if(forceOpen)
   {
-    createDocument(KURL(filePath));
+    createDocument(KURL::fromPathOrURL(filePath));
   }
 }
 
