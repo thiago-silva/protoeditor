@@ -25,6 +25,7 @@
 class KLineEdit;
 class QSpinBox;
 class KURLRequester;
+class QComboBox;
 
 class SiteSettingsDialog : public KDialogBase
 {
