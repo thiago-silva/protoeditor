@@ -79,9 +79,11 @@ Project site: http://protoeditor.sourceforge.net/
 
       -Site name        : a simple name to identify this site
       -URL              : the URL of the http server
-      -Remote base dir  : the remote directory of the site (eg. /var/www/htdocs/mysite)
+      -Remote base dir  : the remote directory of the site (eg.
+                          /var/www/htdocs/mysite)
       -Local base dir   : the local directory of the site (eg. /home/me/mysite)
-      -Default file     : the default script to be debuged when this site is selected.
+      -Default file     : the default script to be debuged when this site is
+                          selected.
       -Debugger         : the debugger you are using to debug this site.
 
       (other entries might appear in future versions)
@@ -114,12 +116,14 @@ Project site: http://protoeditor.sourceforge.net/
 
       Variales list:
 
-        -Expanded array/object childs remains expanded through step-in/step-out/break,
+        -Expanded array/object childs remains expanded through
+         step-in/step-out/break,
 
-        -To modify a variable value on the fly, simply double click on it's value and
-        edit it.
+        -To modify a variable value on the fly, simply double click on it's
+         value and edit it.
 
-        -Right button on a variable popup a menu to copy the variable to the clipboard.
+        -Right button on a variable popup a menu to copy the variable to the
+         clipboard.
 
       Breakpoints:
 
@@ -137,14 +141,13 @@ Project site: http://protoeditor.sourceforge.net/
 
     Currently, DBG Profiler is supported. Be sure to have it enabled on php.ini
     settings. It still very basic, but matches the main features of other IDE's
-    that uses DBG profiler. Also, there are plans to go further on
-    profile analysis and statistics.
+    that uses DBG profiler.
 
 3.0 Future plans
 
   - Improve profiling.
   - Support Gubed debugger (http://gubed.sourceforge.net)
-  - Support other languages such as Ruby, python, perl and so on.
+  - Support other languages such as Ruby, Python, Perl and so on.
   - Hope I live for that ;)
 
 ------------------------------------------

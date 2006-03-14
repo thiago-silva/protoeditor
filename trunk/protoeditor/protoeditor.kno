@@ -79,10 +79,9 @@
 \CurrentEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>make Console execution optional (checkbox).</li>
-<li>release it!</li>
 <ul type="disc"><li>Create tutorials stepbystep to install modules and run!</li>
 <li>Create Help docbook</li>
-<li>strings i18n aware<br /><br /></li></ul>
+<li>strings i18n aware<br /></li></ul>
 <li>&quot;File-&gt;new&quot; support</li>
 <ul type="disc"><li>Normalize use of KURL/QString filePath</li>
 <ul type="disc"><li>Start on Document class</li>
@@ -91,7 +90,10 @@
 <li>DebuggerManager</li>
 <li>Breakpoint/BreakpointListView</li>
 <li>etc<br /></li></ul></ul>
-<li>Gubed!<br /></li>
+<li>Gubed!</li>
+<li>ruby</li>
+<li>python</li>
+<li>perl<br /></li>
 <li>Doc:</li>
 <ul type="disc"><li>Add note about console debuging (only cgi SAPI supported by DBG)<br /></li></ul>
 <li>latter:</li>
