@@ -24,6 +24,7 @@
 #include "variableslistview.h"
 
 class Variable;
+class QStringList;
 
 class WatchListView : public VariablesListView
 {
@@ -33,7 +34,11 @@ public:
   virtual ~WatchListView();
 
   void addWatch(Variable*);
+  void addWatch(const QString&);
 
+  QStringList watches();
+
+  void reset();
 signals:
   void sigWatchRemoved(Variable*);
 

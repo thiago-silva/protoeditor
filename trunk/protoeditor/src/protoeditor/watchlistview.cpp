@@ -33,14 +33,55 @@ WatchListView::~WatchListView()
 }
 
 void WatchListView::addWatch(Variable* var) {
-  QListViewItem* item =
-    findItem(var->name(), VariablesListView::NameCol);
+  VariablesListViewItem* item = dynamic_cast<VariablesListViewItem*>(
+      findItem(var->name(), VariablesListView::NameCol));
 
   if(item) {
-    takeItem(item);
-    delete item;
+    bool opened = item->isOpen();
+    item->clearChilds();
+    item->setVariable(var);
+    if(!var->value()->isScalar())
+    {
+      item->setOpen(opened);
+    }
   }
-  addVariable(var);
+  else
+  {
+    addVariable(var);
+  }
+}
+
+void WatchListView::addWatch(const QString& expression)
+{
+  Variable* var = new Variable(expression);
+  VariableScalarValue* value = new VariableScalarValue(var);
+  var->setValue(value);
+  addWatch(var); 
+}
+
+QStringList WatchListView::watches()
+{
+  QStringList list;
+  VariablesListViewItem* item = dynamic_cast<VariablesListViewItem*>(firstChild());
+
+  while(item)
+  {
+    list << item->variable()->name();
+    item = dynamic_cast<VariablesListViewItem*>(item->nextSibling());
+  }
+  return list;
+}
+
+void WatchListView::reset() 
+{
+  QStringList list = watches();
+  clear();
+
+  QStringList::iterator it;
+  for(it = list.begin(); it != list.end(); it++) 
+  {
+    addWatch(*it);
+  }
 }
 
 void WatchListView::keyPressEvent(QKeyEvent* e) {
@@ -50,7 +91,7 @@ void WatchListView::keyPressEvent(QKeyEvent* e) {
       dynamic_cast<VariablesListViewItem*>(currentItem());
 
       if(item) {
-        takeItem(item);
+//         takeItem(item);
         emit sigWatchRemoved(item->variable());
         delete item;
       }
