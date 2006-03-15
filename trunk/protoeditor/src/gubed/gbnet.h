@@ -40,7 +40,7 @@ public:
   bool startListener(int port);
   void stopListener();
 
-  void startDebugging(const QString& filePath, SiteSettings* site);
+  void startDebugging(const QString& filePath, SiteSettings* site, bool local);
 
   void requestContinue();
   void requestStop();
@@ -55,12 +55,6 @@ public:
   //   void requestBreakpointUpdate(DebuggerBreakpoint* bp);
   //   void requestBreakpointRemoval(int bpid);
 
-  void sendRunMode(int mode);
-  void sendErrorSettings(int errorno);
-  void sendHaveSource(bool have, const QString& file);
-  void requestBacktrace();
-  void sendWait();
-  void sendNext();
 signals:
   void sigError(const QString&);
   void sigGBStarted();
@@ -74,36 +68,26 @@ private slots:
 
   void slotReadBuffer();
 private:
-  QString readSocket();
-      
-  typedef QMap<QString,QString> StringMap_t;
-  
-  void sendCommand(const QString&, const StringMap_t& = StringMap_t());
-  QString serialize(const StringMap_t&);
-  StringMap_t unserialize(const QString& text);
-  QString getField(int* idx, QString text);
+//   QString getField(int* idx, QString text);
             
-  void makeHttpRequest(const QString& _url, const QString& path);
-
-  /*    void requestStack();
-      void requestBreakpointList();
-   
-      void processOutput(QDomElement&);
-      void processError(const QDomElement&);
-    
-      void processXML(const QString& xml);
-    
-      void processInit(QDomElement& root);
-      void processResponse(QDomElement& root);
-   
-      void processPendingData();*/
-
   void error(const QString&);
 
-  DebuggerGB       *m_debugger;
-  Connection       *m_con;
+  void processCommand(const QString& datas);
+  QMap<QString,QString> parseArgs(const QString &args);
+  bool sendCommand(const QString& command, QMap<QString, QString> args);
+  bool sendCommand(const QString& command, char * firstarg, ...);
+  QString phpSerialize(QMap<QString, QString> args);
 
+
+  void processBacktrace(const QString& bt);
+  void processVariables(const QString& vars);
+
+  DebuggerGB       *m_debugger;
+  Connection       *m_con;  
   QSocket* m_socket;
+  long             m_datalen;
+
+  QString m_command;
 };
 
 #endif

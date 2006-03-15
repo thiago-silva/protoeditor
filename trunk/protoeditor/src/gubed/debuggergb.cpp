@@ -30,11 +30,18 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#include "phpvariable.h"
+#include "variableparser.h"
+
 
 DebuggerGB::DebuggerGB(DebuggerManager* manager)
     : AbstractDebugger(manager), m_name("Gubed"), m_isRunning(false), m_isJITActive(false),
-    m_gbSettings(0)
+      m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
+      m_gbSettings(0), m_net(0)
 {
+  m_currentExecutionPoint = new DebuggerExecutionPoint();
+  m_globalExecutionPoint = new DebuggerExecutionPoint();
+
   m_gbSettings = new GBSettings(m_name);
 
   ProtoeditorSettings::self()->registerDebuggerSettings(m_gbSettings, m_name);
@@ -51,7 +58,10 @@ DebuggerGB::DebuggerGB(DebuggerManager* manager)
 
 
 DebuggerGB::~DebuggerGB()
-{}
+{
+  delete m_gbSettings;
+  delete m_net;
+}
 
 QString DebuggerGB::name() const
 {
@@ -69,10 +79,11 @@ void DebuggerGB::init()
 }
 
 
-void DebuggerGB::start(const QString& filepath, bool remote)
+void DebuggerGB::start(const QString& filePath, bool local)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
+  //we need JIT active (listening on port)
   if(!m_isJITActive && !startJIT())
   {
     return;
@@ -80,7 +91,7 @@ void DebuggerGB::start(const QString& filepath, bool remote)
 
   emit sigDebugStarting();
 
-//   m_net->startDebugging(filepath, site, remote);
+  m_net->startDebugging(filePath, site, local);
 }
 
 GBSettings* DebuggerGB::settings()
@@ -90,28 +101,32 @@ GBSettings* DebuggerGB::settings()
 
 void DebuggerGB::continueExecution()
 {
-  m_net->requestContinue();
+  if(isRunning())
+    m_net->requestContinue();
 }
-
 
 void DebuggerGB::stop()
 {
-  m_net->requestStop();
+  if(isRunning())
+    m_net->requestStop();
 }
 
 void DebuggerGB::stepInto()
 {
-  m_net->requestStepInto();
+  if(isRunning())
+    m_net->requestStepInto();
 }
 
 void DebuggerGB::stepOver()
 {
-  m_net->requestStepOver();
+  if(isRunning())
+    m_net->requestStepOver();
 }
 
 void DebuggerGB::stepOut()
 {
-  m_net->requestStepOut();
+  if(isRunning())
+    m_net->requestStepOut();
 }
 
 void DebuggerGB::addBreakpoints(const QValueList<DebuggerBreakpoint*>&)
@@ -139,7 +154,7 @@ void DebuggerGB::addWatch(const QString& )
 void DebuggerGB::removeWatch(const QString& )
 {}
 
-void DebuggerGB::profile(const QString&)
+void DebuggerGB::profile(const QString&, bool)
 {}
 
 
@@ -147,7 +162,11 @@ void DebuggerGB::slotSettingsChanged()
 {
   if(m_gbSettings->enableJIT())
   {
-    startJIT();
+    //do not try to restart if we are already listening on the given port
+    if(!m_isJITActive || (m_listenPort != m_gbSettings->listenPort()))
+    {
+      startJIT();
+    }
   }
   else
   {
@@ -174,22 +193,23 @@ void DebuggerGB::slotGBClosed()
 
 bool DebuggerGB::startJIT()
 {
-  if(!m_isJITActive)
+  if(m_isJITActive)
   {
-
-    if(m_net->startListener(m_gbSettings->listenPort()))
-    {
-      m_isJITActive = true;
-      kdDebug() << "Gubed: Listening on port " << m_gbSettings->listenPort() << endl;
-    }
-    else
-    {
-      emit sigInternalError(i18n("Unable to listen on port: %1").arg(
-                              m_gbSettings->listenPort()));
-      return false;
-    }
+    stopJIT();
   }
 
+  if(m_net->startListener(m_gbSettings->listenPort()))
+  {
+    m_isJITActive = true;
+    kdDebug() << "Gubed: Listening on port " << m_gbSettings->listenPort() << endl;
+    m_listenPort = m_gbSettings->listenPort();
+  }
+  else
+  {
+    emit sigInternalError(i18n("Unable to listen on port: %1").arg(
+                            m_gbSettings->listenPort()));
+    return false;
+  }
   return true;
 }
 
@@ -204,126 +224,34 @@ void DebuggerGB::stopJIT()
   m_isJITActive = false;
 }
 
-void DebuggerGB::processInput(const QString& cmd, const QMap<QString, QString>& serialData)
+void DebuggerGB::updateStack(DebuggerStack* stack)
 {
-  if(cmd == "sendbreakpoints")
-  {
-    //will be commanded from DebuggerManager when we emit sigDebugStarted
-  }
-  else if (cmd == "getrunmode")
-  {
-    m_net->sendRunMode(/*m_gbSettings->executionMode()*/ 0);
+//   m_currentExecutionPoint = stack->topExecutionPoint();
+//   m_globalExecutionPoint  = stack->bottomExecutionPoint();
+  manager()->updateStack(stack);
 
-   //send hardcoded default error handling
-    m_net->sendErrorSettings(/*m_gbSettings->errorSettings()*/ E_WARNING  &  E_USER_ERROR &  E_USER_WARNING);
-  }
-  else if(cmd == "initialize")
-  {
-    //skipping checksum
-    //skipping protocolversion check : m_net->sendCommand("sendprotocolversion");
-
-    //assuminig we have source
-    m_net->sendHaveSource(true, serialData["filename"]);
-  }
-  else if(cmd == "commandme")
-  {
-    QString file = serialData["filename"];
-    QString line = serialData["line"];
-    
-    /*
-    m_currentExecutionPoint->setLine(serialData["line"].toInt());
-
-    //TODO! missing translation
-    m_currentExecutionPoint->setFilePath(serialData["filename"].toInt());
-    */
-    
-    requestWatches();
-    
-    m_net->requestBacktrace();
-
-    /*
-    if(m_gbSettings->executionMode() == GBSettings::PauseMode)
-    {
-      m_net->sendWait();
-    }
-
-    if(m_gbSettings->executionMode() == GBSettings::Trace)
-    {
-      m_net->sendNext();
-    }*/
-    m_net->sendWait();
-  } else if(cmd == "backtrace")
-  {
-    /*
-    DebuggerStack* st = new DebuggerStack();
-    
-    QString bt = serialData["backtrace"];
-
-    int frame;
-    while(bt.Length() > 0)
-    {
-      QString tmp, arg;
-      tmp = bt.mid(0, bt.find(';'));
-      frame = tmp.AfterFirst(':'));
-    
-      bt = bt.AfterFirst('{');
-     
-      while(bt.Mid(0, 1) != wxT("}") && bt.Length() > 0)
-      {
-        int len = wxAtoi(bt.AfterFirst(':').BeforeFirst(':'));
-        arg = bt.AfterFirst('"').Mid(0, len);
-        bt = bt.AfterFirst(';');
-      
-        tmp = wxT("");
-        if(bt.Mid(0, 1) == wxT("s"))
-        {
-          int len = wxAtoi(bt.AfterFirst(':').BeforeFirst(':'));
-          bt = bt.AfterFirst('"');
-          tmp = bt.Mid(0, len);
-          bt = bt.Mid(len + 2);
-        }
-        else
-        {
-          tmp = bt.BeforeFirst(';').AfterFirst(':');
-          bt = bt.AfterFirst(';');
-        }
-    
-        if(arg == wxT("function"))
-          m_backtracelist->SetCellValue(frame, BacktraceColumns::Function, tmp + wxT(" "));
-        else if(arg == wxT("class"))
-          m_backtracelist->SetCellValue(frame, BacktraceColumns::Class, tmp + wxT(" "));
-        else if(arg == wxT("file"))
-        {
-          m_backtracelist->SetCellValue(frame, BacktraceColumns::Filename, tmp + wxT(" "));
-          m_backtracelist->SetCellAlignment(wxALIGN_RIGHT, frame, BacktraceColumns::Filename);
-        }
-        else if(arg == wxT("line"))
-        {
-          m_backtracelist->SetCellValue(frame, BacktraceColumns::Line, tmp + wxT(" "));
-          m_backtracelist->SetCellAlignment(wxALIGN_RIGHT, frame, BacktraceColumns::Line);
-        }
-      }
-    }
-      
-  //  i:0;a:4:{s:4:"file";s:82:"classes/baseclass.php";s:5:"class";s:9:"baseclass";s:8:"function";s:5:"func1";s:4:"line";i:16;}i:1;a:4:{s:4:"file";s:77:"/classes/...
-  
-  //wxString asdf   
-  
-    m_backtracelist->EndBatch();
-    */
-  }
+  emit sigDebugBreak(); 
 }
 
-void DebuggerGB::requestWatches()
+void DebuggerGB::updateVars(const QString& scope, const QString& vars) 
 {
-  if(isRunning())
-  {
-    QValueList<QString>::iterator it;
-    for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
-    {
-      //m_net->requestWatch(*it);
-    }
+  if(scope == "Current Scope") {
+    VariableParser p(vars);
+    VariablesList_t* array = p.parseAnonymousArray();    
+    manager()->updateGlobalVars(array);
   }
 }
+// void DebuggerGB::requestWatches()
+// {
+//   if(isRunning())
+//   {
+//     QValueList<QString>::iterator it;
+//     for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
+//     {
+//       //m_net->requestWatch(*it);
+//     }
+//   }
+// }
+
 
 #include "debuggergb.moc"

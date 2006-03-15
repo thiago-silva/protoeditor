@@ -37,8 +37,8 @@ QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager
   map[debugger->name()] = debugger;
 
   //Gubed
-//   debugger = new DebuggerGB(manager);
-//   map[debugger->name()] = debugger;
-  
+  debugger = new DebuggerGB(manager);
+  map[debugger->name()] = debugger;
+
   return map;
 }

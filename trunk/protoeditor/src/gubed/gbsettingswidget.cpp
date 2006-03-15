@@ -35,40 +35,29 @@ GBSettingsWidget::GBSettingsWidget(GBSettings* settings, QWidget *parent, const 
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
 
-  QHBoxLayout* portbox = new QHBoxLayout(0, -1, 16);
+  QGridLayout* grid = new QGridLayout(0, 3, 3, -1, 16);
 
   QLabel* lblistenPort = new QLabel(this);
   lblistenPort->setText("Listen on port:");
-  portbox->addWidget(lblistenPort);
+  grid->addWidget(lblistenPort,0 ,0);
 
   m_spListenPort = new QSpinBox(this);
   m_spListenPort->setMaxValue(99999);
-  portbox->addWidget(m_spListenPort);
-  portbox->addItem(new QSpacerItem( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
+  grid->addWidget(m_spListenPort, 0, 1);  
 
-  mainLayout->addLayout(portbox);
-
-  QHBoxLayout* scriptsLayout = new QHBoxLayout(0, -1, 16);
   QLabel* lbScripts = new QLabel(this);
   lbScripts->setText("StartSession.php path:");
   
-  scriptsLayout->addWidget(lbScripts);
+  grid->addWidget(lbScripts, 1, 0);
     
   m_edStartSessionScript = new KLineEdit(this);
-  scriptsLayout->addWidget(m_edStartSessionScript);
-  scriptsLayout->addItem(new QSpacerItem( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
-
-  mainLayout->addLayout(scriptsLayout);
-
-  QHBoxLayout* jitbox = new QHBoxLayout(0, -1, 16);
+  grid->addWidget(m_edStartSessionScript, 1, 1);
 
   m_ckEnableJIT = new QCheckBox(this);
   m_ckEnableJIT->setText("Enable JIT");
-  jitbox->addWidget(m_ckEnableJIT);
-  jitbox->addItem(new QSpacerItem( 324, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
+  grid->addWidget(m_ckEnableJIT, 2, 0);
 
-  mainLayout->addLayout(jitbox);
-
+  mainLayout->addLayout(grid);
         
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
@@ -88,10 +77,10 @@ bool GBSettingsWidget::enableJIT()
 QString GBSettingsWidget::startSessionScript()
 {
   QString str = m_edStartSessionScript->text();
-  if(str[str.length()-1] == '/')
-  {
-    str.remove(str.length()-1, 1);
-  }
+//   if(str[str.length()-1] == '/')
+//   {
+//     str.remove(str.length()-1, 1);
+//   }
   return str;
 }
   

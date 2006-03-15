@@ -28,10 +28,6 @@ class DebuggerManager;
 class GBSettings;
 class GBNet;
 
-/*
-  NOTE: this is a very VERY experimental code.
-*/
-
 class DebuggerGB : public AbstractDebugger
 {
   Q_OBJECT
@@ -43,7 +39,7 @@ public:
   virtual bool isRunning() const;
   virtual void init();
 
-  virtual void start(const QString&, bool remote);
+  virtual void start(const QString&, bool local);
   virtual void continueExecution();
   virtual void stop();
   virtual void stepInto();
@@ -61,33 +57,37 @@ public:
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
-  virtual void profile(const QString&);
+  virtual void profile(const QString&, bool local);
 
 
   GBSettings* settings();
 
-  void processInput(const QString&, const QMap<QString, QString>& );
-    
-  public slots:
-    void slotSettingsChanged();
-  private slots:
-    void slotGBStarted();
-    void slotGBClosed();
-//     void slotStepDone();
+  void updateStack(DebuggerStack* stack);
+  void updateVars(const QString& scope, const QString& vars);
+
+public slots:
+  void slotSettingsChanged();
+private slots:
+  void slotGBStarted();
+  void slotGBClosed();
+
+private:
+  bool startJIT();
+  void stopJIT();
+
+  void requestWatches();
   
-  private:
-    bool startJIT();
-    void stopJIT();
+  QString m_name;
+  bool m_isRunning;
+  bool m_isJITActive;
+  int m_listenPort;
 
-    void requestWatches();
-    
-    QString m_name;
-    bool m_isRunning;
-    bool m_isJITActive;
+  DebuggerExecutionPoint* m_currentExecutionPoint;
+  DebuggerExecutionPoint* m_globalExecutionPoint;
 
-    GBNet* m_net;
-    GBSettings* m_gbSettings;
-    QValueList<QString>  m_wathcesList;
+  GBSettings* m_gbSettings;
+  GBNet* m_net;
+  QValueList<QString>  m_wathcesList;
 };
 
 #endif
