@@ -41,11 +41,11 @@ XDSettings::XDSettings(const QString& name)
 
   
   KConfigSkeleton::ItemBool  *itemSendSuperGlobals;
-  itemSendSuperGlobals = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendSuperGlobals" ), mSendSuperGlobals, false);
+  itemSendSuperGlobals = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "SendSuperGlobals" ), mSendSuperGlobals, true);
   addItem( itemSendSuperGlobals, QString::fromLatin1( "SendSuperGlobals" ) );
   
   KConfigSkeleton::ItemBool  *itemBreakOnLoad;
-  itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, false);
+  itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, true);
   addItem( itemBreakOnLoad, QString::fromLatin1( "BreakOnLoad" ) );
 
   readConfig();
