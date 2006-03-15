@@ -35,8 +35,9 @@ public:
 
   virtual ~VariablesListViewItem();
 
-  virtual void takeItem(QListViewItem *item);
-  virtual void insertItem(QListViewItem *item);
+  void setVariable(Variable* variable);
+  void clearChilds();
+
   virtual void insertItem(VariablesListViewItem *item);
 
   QString stringPath();
@@ -46,10 +47,14 @@ public:
 
   virtual void setRenameEnabled( int col, bool b );
 
-private:
-  void loadVariable();
+  void showVariable();
+
+private:  
+  void deleteVar();
+
   Variable* m_variable;
   bool m_isRenameable;
+  bool m_isRoot;
 };
 
 #endif

@@ -63,6 +63,9 @@ void ProtoeditorSettings::loadSites()
 
 ProtoeditorSettings::~ProtoeditorSettings()
 {
+  delete m_phpSettings;
+  delete m_extApptSettings;
+
 }
 
 void ProtoeditorSettings::dispose()

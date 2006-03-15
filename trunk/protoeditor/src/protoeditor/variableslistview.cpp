@@ -41,13 +41,13 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   addColumn(tr2i18n("Value"));
   addColumn(tr2i18n("Type"));
 
-  setColumnWidthMode(NameCol,  Manual);
-  setColumnWidthMode(ValueCol, Manual);
-  setColumnWidthMode(TypeCol,  Manual);
+  setColumnWidthMode(VariablesListView::NameCol,  Manual);
+  setColumnWidthMode(VariablesListView::ValueCol, Manual);
+  setColumnWidthMode(VariablesListView::TypeCol,  Manual);
 
-  setColumnWidth(NameCol,  150);
-  setColumnWidth(ValueCol, 150);
-  setColumnWidth(TypeCol,  150);
+  setColumnWidth(VariablesListView::NameCol,  150);
+  setColumnWidth(VariablesListView::ValueCol, 150);
+  setColumnWidth(VariablesListView::TypeCol,  150);
 
   connect(this, SIGNAL(expanded(QListViewItem*)),
           this, SLOT(slotItemExpanded(QListViewItem*)));
@@ -64,6 +64,8 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
 
   connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& , int)),
           this, SLOT(slotContextMenuRequested(QListViewItem *, const QPoint &, int)));
+
+  m_variables = new VariablesList_t;
 }
 
 void VariablesListView::setReadOnly(bool readOnly)
@@ -73,7 +75,7 @@ void VariablesListView::setReadOnly(bool readOnly)
   QListViewItem* item = firstChild();
   while(item)
   {
-    item->setRenameEnabled(ValueCol, !m_isReadOnly);
+    item->setRenameEnabled(VariablesListView::ValueCol, !m_isReadOnly);
     item = item->nextSibling();
   }
 }
@@ -90,15 +92,15 @@ bool VariablesListView::isReadOnly()
  */
 void VariablesListView::slotDoubleClick( QListViewItem *item, const QPoint &, int col)
 {
-  if(col == ValueCol)
+  if(col == VariablesListView::ValueCol)
   {
-    item->startRename(ValueCol);
+    item->startRename(VariablesListView::ValueCol);
   }
 }
 
 VariablesListView::~VariablesListView()
 {
-  //clear();
+  delete m_variables;
 }
 
 void VariablesListView::slotItemRenamed(QListViewItem * item, int, const QString & text)
@@ -209,7 +211,6 @@ void VariablesListView::setVariables(VariablesList_t* vars)
   }
 
   clear();
-  deleteVars();
 
   /* finally, add the new ones
    */
@@ -223,7 +224,7 @@ void VariablesListView::setVariables(VariablesList_t* vars)
    */
   setContentsPos(contentX, contentY);
 
-  m_variables = vars;
+  delete vars;
 }
 
 void VariablesListView::addVariables(VariablesList_t* vars, VariablesListViewItem* parent)
@@ -261,7 +262,7 @@ VariablesListViewItem* VariablesListView::getItemFromPath(QString path)
   do
   {
     if((!item) || (index >= sections)) break;
-    s = item->text(0);
+    s = item->text(VariablesListView::NameCol);
     comp = path.section('/', index, index);
     if(item->text(VariablesListView::NameCol) == path.section('/', index, index))
     {
@@ -302,6 +303,8 @@ void VariablesListView::addVariable(Variable* variable, VariablesListViewItem* p
     item = new VariablesListViewItem(parent, variable);
     item->moveItem(item->lastItem());
   }
+
+  m_variables->append(variable);
 }
 
 VariablesListViewItem* VariablesListView::lastRootItem() {
@@ -312,17 +315,5 @@ VariablesListViewItem* VariablesListView::lastRootItem() {
   return dynamic_cast<VariablesListViewItem*>(item);
 }
 
-
-void VariablesListView::deleteVars()
-{
-  if(!m_variables) return;
-
-  for(VariablesList_t::iterator it = m_variables->begin(); it != m_variables->end(); ++it)
-  {
-    delete *it;
-  }
-
-  delete m_variables;
-}
 
 #include "variableslistview.moc"

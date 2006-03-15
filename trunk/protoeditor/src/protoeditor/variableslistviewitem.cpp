@@ -25,47 +25,59 @@
 #include <kiconloader.h>
 
 VariablesListViewItem::VariablesListViewItem(KListView *parent)
-  : KListViewItem(parent), m_variable(NULL), m_isRenameable(false)
+  : KListViewItem(parent), m_variable(NULL), m_isRenameable(false), m_isRoot(true)
 {
-  //setMultiLinesEnabled(true);
+
 }
 
 VariablesListViewItem::VariablesListViewItem(KListViewItem *parent)
-  : KListViewItem(parent), m_variable(NULL), m_isRenameable(false)
+  : KListViewItem(parent), m_variable(NULL), m_isRenameable(false), m_isRoot(false)
 {
-  //setMultiLinesEnabled(true);
+
 }
 
 VariablesListViewItem::VariablesListViewItem(KListView *parent, Variable* variable)
-  : KListViewItem(parent), m_variable(variable), m_isRenameable(false)
+  : KListViewItem(parent), m_variable(variable), m_isRenameable(false), m_isRoot(true)
 {
-  //setMultiLinesEnabled(true);
-  loadVariable();
+  showVariable();
 }
 
 VariablesListViewItem::VariablesListViewItem(KListViewItem *parent, Variable* variable)
-  : KListViewItem(parent), m_variable(variable),m_isRenameable(false)
+  : KListViewItem(parent), m_variable(variable),m_isRenameable(false), m_isRoot(false)
 {
   //setMultiLinesEnabled(true);
-  loadVariable();
+  showVariable();
 }
 
 VariablesListViewItem::~VariablesListViewItem()
+{  
+  deleteVar();  
+}
+
+void VariablesListViewItem::deleteVar() 
 {
-  //deleteVar();
-  //delete m_variable;
+  if(m_isRoot) //if its root, delete var (if not, the root item already deleted the var and its value list)
+  {
+    delete m_variable;
+    m_variable = 0;
+  }
 }
 
-/*void VariablesListViewItem::deleteVar() {
+void VariablesListViewItem::setVariable(Variable* variable)
+{
   delete m_variable;
+  m_variable = variable;
+  showVariable();
 }
-*/
 
-void VariablesListViewItem::takeItem(QListViewItem *item) {
-  KListViewItem::takeItem(item);
-}
-void VariablesListViewItem::insertItem(QListViewItem *item) {
-  KListViewItem::insertItem(item);
+void VariablesListViewItem::clearChilds()
+{  
+  QListViewItem* item = firstChild();
+  while(item) {    
+    delete item;
+    item = firstChild();    
+  }
+  setOpen(false);
 }
 
 void VariablesListViewItem::insertItem(VariablesListViewItem *item) {
@@ -112,7 +124,7 @@ void VariablesListViewItem::setRenameEnabled( int col, bool b ) {
   }
 }
 
-void VariablesListViewItem::loadVariable() {
+void VariablesListViewItem::showVariable() {
   setText(VariablesListView::NameCol, m_variable->name());
 
   VariablesListView* lv = dynamic_cast<VariablesListView*>(listView());
@@ -120,6 +132,7 @@ void VariablesListViewItem::loadVariable() {
   if(m_variable->value()->isScalar()) {
     setText(VariablesListView::ValueCol, m_variable->value()->toString());
     setRenameEnabled(VariablesListView::ValueCol, !lv->isReadOnly());
+    setExpandable(false);
   } else {
     //setText(VariablesListView::Value, m_variable->value()->typeName());
     setExpandable(true);

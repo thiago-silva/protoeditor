@@ -56,19 +56,17 @@ protected slots:
 protected:
   VariablesListViewItem* lastRootItem();
 
+  void addVariables(VariablesList_t* vars, VariablesListViewItem* parent = NULL);
+  void addVariable(Variable* variable, VariablesListViewItem* parent = NULL);
+  
+  VariablesListViewItem* getItemFromPath(QString path);
+private:
   void markExpanded(VariablesListViewItem* item);
   void markColapsed(VariablesListViewItem* item);
 
   void populateChildren(VariablesListViewItem* item);
-
-  void addVariables(VariablesList_t* vars, VariablesListViewItem* parent = NULL);
-  void addVariable(Variable* variable, VariablesListViewItem* parent = NULL);
-
   void reexpandItems();
-  VariablesListViewItem* getItemFromPath(QString path);
-  void deleteVars();
 
-//   KPopupMenu* m_menu;
   QValueList<QString> m_expanded;
   VariablesList_t*    m_variables;
   bool m_isReadOnly;
