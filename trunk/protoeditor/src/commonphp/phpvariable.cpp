@@ -89,9 +89,8 @@ QString PHPScalarValue::typeName()
     /*case Reference:
       return QString("reference");*/
     case Undefined:
-      return QString("Undefined");
     default:
-      return QString::null;
+      return VariableValue::UndefinedType;    
   }
 }
 
@@ -104,7 +103,6 @@ int PHPScalarValue::type()
 {
   return m_type;
 }
-
 
 //----------------------------------------------------------------
 
