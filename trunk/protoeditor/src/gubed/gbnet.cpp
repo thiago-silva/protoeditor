@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/*  Much of this code is based on Linus McCabe's work on Quanta+ 
+*/
+
 #include "gbnet.h"
 #include "debuggergb.h"
 
@@ -111,21 +114,24 @@ void GBNet::requestStepOut()
   sendCommand("stepout", 0);
 }
 
+void GBNet::requestWatches(const QStringList& list)
+{
+  QStringList::const_iterator it;
+  for(it = list.begin(); it != list.end(); it++)
+  {
+    requestWatch(*it);
+  }  
+}
 
-// void GBNet::sendErrorSettings(int errorno)
-// {
-//   QMap<QString,QString> data;
-//   data["errormask"] =   QString::number(errorno);
-//   sendCommand("seterrormask",data);
-// }
-
+void GBNet::requestWatch(const QString& expression)
+{
+  sendCommand("getwatch", "variable", expression.ascii(), 0);
+}
 
 void GBNet::slotIncomingConnection(QSocket* socket)
 {
   connect(socket, SIGNAL(readyRead()), this, SLOT(slotReadBuffer()));
   m_socket = socket;
-
-  emit sigGBStarted();
 
   sendCommand("wait", 0);
 //   sendCommand("next");
@@ -144,8 +150,6 @@ void GBNet::slotError(const QString& msg)
   error(msg);
 }
 
-
-#include <iostream>
 
 void GBNet::slotReadBuffer()
 {
@@ -177,7 +181,7 @@ void GBNet::slotReadBuffer()
 
       QRegExp rx;
       rx.setPattern("([^:]*):(\\d*);");  
-      int ret = rx.search(buff, idx);
+      rx.search(buff, idx);
   
       int dsize = rx.cap(2).toLong();
       int idx = rx.matchedLength();
@@ -224,23 +228,20 @@ void GBNet::processCommand(const QString& datas)
 {
 //   kdDebug() << k_lineinfo << ", received " << m_command << " with data: " << datas << endl;
 
-  QMap<QString,QString> args = parseArgs(datas);
+  StringMap args = parseArgs(datas);
 
   // See what command we got and act accordingly..
   if(m_command == "commandme")
   {
-    //sendCommand("sendactiveline", 0);    
-    //debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), args["line"].toLong());
-//     sendWatches();
-//     sendCommand("wait", 0);
     sendCommand("sendbacktrace",0);
     sendCommand("sendallvariables",0);
+    emit sigStepDone();
   }
   else if(m_command == "initialize")
   {
+    emit sigGBStarted();
+    sendCommand("havesource", 0);
     requestStepInto();
-//     debuggerInterface()->setActiveLine(mapServerPathToLocal(args["filename"]), 0);
-//     sendCommand("havesource", 0);
   }
   else if(m_command == "backtrace") 
   {
@@ -256,9 +257,14 @@ void GBNet::processCommand(const QString& datas)
   }
   else if(m_command == "variable")
   {
-//     kdDebug() << "received : " << datas << endl;
     processVariables(args["variable"]);
   }
+  // Show the contents of a watched variable
+  else if(m_command == "watch")
+  {
+    processVariable(args["variable"]);
+  }
+
   // Just some status info, display on status line
   else if(m_command == "status")
   {
@@ -338,12 +344,6 @@ void GBNet::processCommand(const QString& datas)
   {
 
   }
-  // Show the contents of a watched variable
-  else if(m_command == "watch")
-  {
-//     showWatch(args["variable"]);
-  }
-  // Show the contents of a variable
   // Show the contents of a variable
   else if(m_command == "showcondition")
   {
@@ -375,13 +375,13 @@ void GBNet::processCommand(const QString& datas)
   {}
   else
     // Unimplemented command - log to debug output
-    kdDebug() << "Gubed: unknown " << m_command << ":" << datas << endl;
+    kdDebug() << "Gubed: unknown/unsupported " << m_command << ":" << datas << endl;
 }
 
 
-QMap<QString,QString> GBNet::parseArgs(const QString &args)
+StringMap GBNet::parseArgs(const QString &args)
 {
-  QMap<QString,QString> ca;
+  StringMap ca;
   long cnt, length;
 
   // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
@@ -456,7 +456,7 @@ bool GBNet::sendCommand(const QString& command, QMap<QString, QString> args)
 
 bool GBNet::sendCommand(const QString& command, char * firstarg, ...)
 {
-  QMap<QString,QString> ca;
+  StringMap ca;
   char *next;
 
   va_list l_Arg;
@@ -477,7 +477,7 @@ bool GBNet::sendCommand(const QString& command, char * firstarg, ...)
 
 QString GBNet::phpSerialize(QMap<QString, QString> args)
 {
-  QMap<QString,QString>::Iterator it;
+  StringMap::Iterator it;
   // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
   QString ret = QString("a:%1:{").arg(args.size());
   for( it = args.begin(); it != args.end(); ++it )
@@ -496,7 +496,6 @@ QString GBNet::phpSerialize(QMap<QString, QString> args)
                     .arg(it.key())
                     .arg(it.data().length())
                     .arg(it.data());
-
   }
 
   ret += "}";
@@ -572,9 +571,22 @@ void GBNet::processBacktrace(const QString& bt)
   m_debugger->updateStack(stack);
 }
 
+void GBNet::processVariable(const QString& var)
+{
+  QRegExp rx;
+  rx.setPattern("s:\\d*:\"([^;]*)\";(.*)");  
+  if(rx.search(var, 0) == -1)
+  {
+    //error!
+    return;
+  }
+
+//   kdDebug() << var << endl;
+  m_debugger->updateWatch(rx.cap(1), rx.cap(2));
+}
+
 void GBNet::processVariables(const QString& vars)
 {
-
   QRegExp rx;
   rx.setPattern("s:\\d*:\"([^;]*)\";");  
   if(rx.search(vars, 0) == -1) {

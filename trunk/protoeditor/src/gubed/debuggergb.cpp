@@ -53,7 +53,7 @@ DebuggerGB::DebuggerGB(DebuggerManager* manager)
   connect(m_net, SIGNAL(sigGBStarted()), this, SLOT(slotGBStarted()));
   connect(m_net, SIGNAL(sigGBClosed()), this, SLOT(slotGBClosed()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
-  //   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
+  connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
 }
 
 
@@ -148,8 +148,25 @@ void DebuggerGB::modifyVariable(Variable*, DebuggerExecutionPoint*)
 {}
 
 
-void DebuggerGB::addWatch(const QString& )
-{}
+void DebuggerGB::addWatches(const QStringList& list)
+{
+  m_wathcesList = list;  
+
+  if(isRunning())
+  {
+    m_net->requestWatches(list);
+  }
+}
+
+void DebuggerGB::addWatch(const QString& expression)
+{
+  m_wathcesList.append(expression);
+
+  if(isRunning())
+  {
+    m_net->requestWatch(expression);
+  }
+}
 
 void DebuggerGB::removeWatch(const QString& )
 {}
@@ -224,6 +241,11 @@ void DebuggerGB::stopJIT()
   m_isJITActive = false;
 }
 
+void DebuggerGB::slotStepDone()
+{
+  m_net->requestWatches(m_wathcesList);
+}
+
 void DebuggerGB::updateStack(DebuggerStack* stack)
 {
 //   m_currentExecutionPoint = stack->topExecutionPoint();
@@ -238,20 +260,27 @@ void DebuggerGB::updateVars(const QString& scope, const QString& vars)
   if(scope == "Current Scope") {
     VariableParser p(vars);
     VariablesList_t* array = p.parseAnonymousArray();    
-    manager()->updateGlobalVars(array);
+    manager()->updateLocalVars(array);
   }
 }
-// void DebuggerGB::requestWatches()
-// {
-//   if(isRunning())
-//   {
-//     QValueList<QString>::iterator it;
-//     for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
-//     {
-//       //m_net->requestWatch(*it);
-//     }
-//   }
-// }
+
+void DebuggerGB::updateWatch(const QString& name, const QString& value)
+{
+  PHPVariable* var;
+  if(value == "-") 
+  {
+    var = new PHPVariable(name);
+    PHPScalarValue* val = new PHPScalarValue(var);
+    var->setValue(val);
+  }
+  else
+  {
+    VariableParser p(value);
+    var = p.parseVariable();
+    var->setName(name);
+  }
+  manager()->updateWatch(var);
+}
 
 
 #include "debuggergb.moc"

@@ -54,6 +54,7 @@ public:
   virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*);
 
+  virtual void addWatches(const QStringList&);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
@@ -64,12 +65,14 @@ public:
 
   void updateStack(DebuggerStack* stack);
   void updateVars(const QString& scope, const QString& vars);
+  void updateWatch(const QString&, const QString&);
 
 public slots:
   void slotSettingsChanged();
 private slots:
   void slotGBStarted();
   void slotGBClosed();
+  void slotStepDone();
 
 private:
   bool startJIT();

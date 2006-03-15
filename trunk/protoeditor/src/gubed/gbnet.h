@@ -29,6 +29,8 @@ class SiteSettings;
 class Connection;
 class QSocket;
 
+typedef QMap<QString,QString> StringMap;
+
 class GBNet : public QObject
 {
   Q_OBJECT
@@ -48,7 +50,8 @@ public:
   void requestStepOver();
   void requestStepOut();
 
-  //   void requestWatch(const QString& expression, int ctx_id = 0);
+  void requestWatches(const QStringList&);
+  void requestWatch(const QString& expression);
   //   void requestVariables(int scope, int id);
   //
   //   void requestBreakpoint(DebuggerBreakpoint* bp);
@@ -59,7 +62,7 @@ signals:
   void sigError(const QString&);
   void sigGBStarted();
   void sigGBClosed();
-  //     void sigStepDone();
+  void sigStepDone();
 
 private slots:
   void slotIncomingConnection(QSocket*);
@@ -73,14 +76,15 @@ private:
   void error(const QString&);
 
   void processCommand(const QString& datas);
-  QMap<QString,QString> parseArgs(const QString &args);
+  StringMap parseArgs(const QString &args);
   bool sendCommand(const QString& command, QMap<QString, QString> args);
   bool sendCommand(const QString& command, char * firstarg, ...);
   QString phpSerialize(QMap<QString, QString> args);
 
 
   void processBacktrace(const QString& bt);
-  void processVariables(const QString& vars);
+  void processVariable(const QString& var);
+  void processVariables(const QString& vars);  
 
   DebuggerGB       *m_debugger;
   Connection       *m_con;  
