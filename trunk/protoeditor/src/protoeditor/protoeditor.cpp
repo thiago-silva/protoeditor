@@ -31,7 +31,7 @@
 #include "session.h"
 
 static const char description[] =
-  I18N_NOOP("A small KDE PHP Debugger client");
+  I18N_NOOP("A small PHP Debugger client");
 
 static const char version[] = VERSION;
 //static const char version[] = "0.5.3-2";
