@@ -24,7 +24,7 @@ Variable::Variable(Variable* parent)
     : m_parent(parent), m_name(""), m_value(NULL), m_isShared(false), m_isReference(false) {}
 
 Variable::Variable(QString name)
-    : m_parent(0), m_name(name), m_value(NULL), m_isReference(false) {}
+    : m_parent(0), m_name(name), m_value(NULL), m_isShared(false), m_isReference(false) {}
 
 Variable::~Variable()
 {
@@ -41,6 +41,11 @@ void Variable::setName(QString name)
 QString Variable::name()
 {
   return m_name;
+}
+
+QString Variable::compositeName()
+{
+  return name();
 }
 
 void Variable::setValue(VariableValue* value)
@@ -98,6 +103,7 @@ Variable* Variable::parent()
 
 //--------------------------------------------------------------
 
+QString VariableValue::UndefinedType = "Undefined";
 
 VariableValue::VariableValue(Variable* owner)
     : m_varOwner(owner), m_isScalar(true) {}
@@ -129,6 +135,11 @@ VariableScalarValue::~VariableScalarValue() {}
 void VariableScalarValue::set(QString value)
 {
   m_value = value;
+}
+
+QString VariableScalarValue::typeName()
+{
+  return VariableValue::UndefinedType;
 }
 
 QString VariableScalarValue::toString(int)

@@ -31,12 +31,14 @@ typedef QPtrList<Variable> VariablesList_t;
 
 class Variable {
 public:
+  Variable(QString name);
   virtual ~Variable();
 
   void setName(QString);
   QString name();                       /* ie. type */
 
-  virtual QString compositeName() = 0;  /* ie. house[type], where:
+  virtual QString compositeName();
+                                       /* ie. "house[type]", where:
                                          type is this->name()
                                          house is this->parent->name()
                                         */
@@ -58,7 +60,6 @@ public:
   Variable* parent();
 protected:
   Variable(Variable* parent);
-  Variable(QString name);
 private:
   Variable*      m_parent;
   QString        m_name;
@@ -69,6 +70,9 @@ private:
 
 class VariableValue {
 public:
+  static QString UndefinedType;
+
+  VariableValue(Variable* owner);
   virtual ~VariableValue();
 
   void setScalar(bool);
@@ -77,8 +81,6 @@ public:
 
   virtual QString typeName() = 0;
   virtual QString toString(int indent = 0) = 0;
-protected:
-  VariableValue(Variable* owner);
 private:
   Variable* m_varOwner;
   bool      m_isScalar;
@@ -87,20 +89,21 @@ private:
 
 class VariableScalarValue : public VariableValue {
 public:
+  VariableScalarValue(Variable* owner);
+
   virtual ~VariableScalarValue();
 
   virtual void set(QString);
 
-  virtual QString toString(int indent = 0);
-
-  virtual QString typeName() = 0;
-protected:
-  VariableScalarValue(Variable* owner);
+  virtual QString typeName();
+  virtual QString toString(int indent = 0);  
+protected:  
   QString m_value;
 };
 
 class VariableListValue : public VariableValue {
 public:
+  VariableListValue(Variable* owner);
   virtual ~VariableListValue();
 
   void setList(VariablesList_t*);
@@ -108,8 +111,7 @@ public:
 
   virtual QString toString(int indent = 0) = 0;
   virtual QString typeName() = 0;
-protected:
-  VariableListValue(Variable* owner);
+protected:  
   VariablesList_t* m_list;
 };
 
