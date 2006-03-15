@@ -117,7 +117,6 @@ private:
   QMap<QString, AbstractDebugger*> m_debuggerMap;
   AbstractDebugger* m_activeDebugger;
   MainWindow       *m_window;
-//   bool             m_showProfileDialog;
 };
 
 #endif

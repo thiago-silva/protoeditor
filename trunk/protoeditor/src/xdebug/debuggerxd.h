@@ -24,12 +24,13 @@
 #include "abstractdebugger.h"
 #include "variable.h"
 
-#include <qvaluelist.h>
 #include <qstring.h>
+#include <qstringlist.h>
 
 class XDSettings;
 class XDNet;
 class DebuggerExecutionPoint;
+
 
 class DebuggerXD : public AbstractDebugger
 {
@@ -57,6 +58,7 @@ public:
   virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*);
 
+  virtual void addWatches(const QStringList&);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
@@ -109,7 +111,7 @@ private:
   DebuggerExecutionPoint* m_globalExecutionPoint;
   XDSettings* m_xdSettings;
   XDNet* m_net;  
-  QValueList<QString>  m_wathcesList;
+  QStringList  m_wathcesList;
 };
 
 #endif

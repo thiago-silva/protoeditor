@@ -39,6 +39,7 @@
 #include <klocale.h>
 #include <kapplication.h>
 
+
 #include <qregexp.h>
 
 DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
@@ -292,6 +293,20 @@ void DebuggerDBG::changeCurrentExecutionPoint(DebuggerExecutionPoint* execPoint)
 }
 
 
+void DebuggerDBG::addWatches(const QStringList& list)
+{
+  m_wathcesList = list;  
+
+  if(isRunning())
+  {
+    QStringList::iterator it;
+    for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
+    {
+      m_net->requestWatch(*it, m_currentExecutionPointID);
+    }
+  }
+}
+
 void DebuggerDBG::addWatch(const QString& expression)
 {
   m_wathcesList.append(expression);
@@ -300,15 +315,11 @@ void DebuggerDBG::addWatch(const QString& expression)
   {
     m_net->requestWatch(expression, m_currentExecutionPointID);
   }
-  else
-  {
-    updateWatch(QString::null, expression);
-  }
 }
 
 void DebuggerDBG::removeWatch(const QString& expression)
 {
-  QValueList<QString>::iterator it = m_wathcesList.find(expression);
+  QStringList::iterator it = m_wathcesList.find(expression);
 
   if(it != m_wathcesList.end())
   {
@@ -351,7 +362,7 @@ void DebuggerDBG::requestWatches(int scopeid)
 {
   if(isRunning())
   {
-    QValueList<QString>::iterator it;
+    QStringList::iterator it;
     for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
     {
       m_net->requestWatch(*it, scopeid);

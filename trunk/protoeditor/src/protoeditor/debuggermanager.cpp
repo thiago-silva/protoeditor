@@ -222,7 +222,7 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
   //5: debugger->start(siteSettings, filePath);
   
 
-  if(m_activeDebugger && m_activeDebugger->isRunning())
+  if(m_activeDebugger)
   {
     if(isProfiling)
     {
@@ -358,11 +358,11 @@ void DebuggerManager::slotAddWatch()
   QString expression = m_window->edAddWatch()->text();
   m_window->edAddWatch()->clear();
 
-  for(QMap<QString,AbstractDebugger*>::iterator it = m_debuggerMap.begin();
-      it != m_debuggerMap.end();
-      it++)
+  m_window->watchList()->addWatch(expression);
+
+  if(m_activeDebugger) 
   {
-    it.data()->addWatch(expression);
+    m_activeDebugger->addWatch(expression);
   }
 }
 
@@ -370,11 +370,11 @@ void DebuggerManager::slotAddWatch(const QString& expression)
 {
   m_window->edAddWatch()->clear();
 
-  for(QMap<QString,AbstractDebugger*>::iterator it = m_debuggerMap.begin();
-      it != m_debuggerMap.end();
-      it++)
+  m_window->watchList()->addWatch(expression);
+
+  if(m_activeDebugger) 
   {
-    it.data()->addWatch(expression);
+    m_activeDebugger->addWatch(expression);
   }
 }
 
@@ -606,19 +606,15 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
   
   m_activeDebugger = debugger;
   
-  m_window->actionCollection()->action("site_selection")->setEnabled(false);
-
-  
-  //send all breakpoints to the debugger 
-  m_activeDebugger->addBreakpoints(
-    m_window->breakpointListView()->breakpoints());
-
   //let the user change the variables 
   m_window->globalVarList()->setReadOnly(false);
   m_window->localVarList()->setReadOnly(false);
   m_window->watchList()->setReadOnly(false);
 
-  //clear everyone
+  //reset all watches values
+  m_window->watchList()->reset();
+
+  //clear everyone  
   m_window->globalVarList()->clear();
   m_window->localVarList()->clear();
   m_window->messageListView()->clear();
@@ -632,13 +628,15 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
   //setup the actions stuff
   m_window->actionStateChanged("debug_started");
   m_window->actionCollection()->action("debug_start")->setText("Continue");
-  
-  /*
-  m_window->actionCollection()->action("debug_stop")->setEnabled(true);
-  m_window->actionCollection()->action("debug_step_into")->setEnabled(true);
-  m_window->actionCollection()->action("debug_step_over")->setEnabled(true);
-  m_window->actionCollection()->action("debug_step_out")->setEnabled(true);
-  */
+
+  m_window->actionCollection()->action("site_selection")->setEnabled(false);
+
+  //send all breakpoints to the debugger 
+  m_activeDebugger->addBreakpoints(
+    m_window->breakpointListView()->breakpoints());
+
+  //send all watches to the debugger
+  m_activeDebugger->addWatches(m_window->watchList()->watches());
 }
 
 void DebuggerManager::slotDebugEnded()
@@ -649,7 +647,7 @@ void DebuggerManager::slotDebugEnded()
   //do not let the user change variables anymore
   m_window->globalVarList()->setReadOnly(true);
   m_window->localVarList()->setReadOnly(true);
-  m_window->watchList()->setReadOnly(true);
+  m_window->watchList()->setReadOnly(true);  
 
   //setup the actions stuff
   m_window->actionCollection()->action("site_selection")->setEnabled(true);

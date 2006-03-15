@@ -189,6 +189,20 @@ void DebuggerXD::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoint
   }
 }
 
+void DebuggerXD::addWatches(const QStringList& list)
+{
+  m_wathcesList = list;  
+
+  if(isRunning())
+  {
+    QStringList::iterator it;
+    for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
+    {
+      m_net->requestWatch(*it);
+    }
+  }
+}
+
 void DebuggerXD::addWatch(const QString& expression)
 {
   m_wathcesList.append(expression);
@@ -197,19 +211,11 @@ void DebuggerXD::addWatch(const QString& expression)
   {
     m_net->requestWatch(expression);
   }
-  else
-  {
-    //build a variable and send it to the manager
-    PHPVariable* var = new PHPVariable(expression);
-    PHPScalarValue* value = new PHPScalarValue(var);
-    var->setValue(value);
-    updateWatch(var);
-  }
 }
 
 void DebuggerXD::removeWatch(const QString& expression)
 {
-  QValueList<QString>::iterator it = m_wathcesList.find(expression);
+  QStringList::iterator it = m_wathcesList.find(expression);
 
   if(it != m_wathcesList.end())
   {
@@ -310,7 +316,7 @@ void DebuggerXD::requestWatches(int ctx_id)
 {
   if(isRunning())
   {
-    QValueList<QString>::iterator it;
+    QStringList::iterator it;
     for(it = m_wathcesList.begin(); it != m_wathcesList.end(); ++it)
     {
       m_net->requestWatch(*it, ctx_id);

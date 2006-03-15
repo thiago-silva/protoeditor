@@ -22,7 +22,7 @@
 #define DEBUGGERDBG_H
 
 #include "abstractdebugger.h"
-#include <qvaluelist.h>
+#include <qstringlist.h>
 
 class DebuggerManager;
 class DBGSettings;
@@ -30,6 +30,7 @@ class DBGNet;
 class DebuggerStack;
 class PHPVariable;
 class DBGProfileDialog;
+
 
 class DebuggerDBG : public AbstractDebugger
 {
@@ -60,6 +61,8 @@ public:
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint* execPoint);
 
   virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
+
+  virtual void addWatches(const QStringList&);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
@@ -113,7 +116,7 @@ private:
   //DebuggerExecutionPoint *m_currentExecutionPoint; //aways the top of the stack
   //DebuggerExecutionPoint *m_globalExecutionPoint;  //aways the bottom of the stack
 //   QString                 m_output;
-  QValueList<QString>     m_wathcesList;
+  QStringList             m_wathcesList;
   bool                    m_firstStep;
 };
 
