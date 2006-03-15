@@ -249,7 +249,7 @@ void XDNet::slotIncomingConnection(QSocket* socket)
   emit sigXDStarted();
 }
 
-#include <iostream>
+
 
 void XDNet::slotReadBuffer()
 {
@@ -326,6 +326,8 @@ void XDNet::processXML(const QString& xml)
   {
     processOutput(root);
   }
+
+  delete d;
 }
 
 void XDNet::processOutput(QDomElement& output)
@@ -428,12 +430,12 @@ void XDNet::processResponse(QDomElement& root)
       int level = st.attributeNode("level").value().toInt();
       int line = st.attributeNode("lineno").value().toInt();
 
-      QString file = st.attributeNode("filename").value();
+      KURL file = KURL::fromPathOrURL(st.attributeNode("filename").value());
       QString where = st.attributeNode("where").value();
 
       if((where == "{main}") || (where == "include"))
       {
-        where = file + "::main()";
+        where = file.path() + "::main()";
       }
 
       //to local filepath
@@ -443,11 +445,11 @@ void XDNet::processResponse(QDomElement& root)
       if(site) 
       {
         localFile = site->localBaseDir()
-                            + file.remove(0, site->remoteBaseDir().length());
+                  + file.path().remove(0, site->remoteBaseDir().length());
       }
       else
       {
-        localFile = file;
+        localFile = file.path();
       }
       stack->insert(level, localFile, line, where);
     }
