@@ -39,7 +39,7 @@ GBSettings::GBSettings(const QString& name)
   addItem( itemEnableJIT, QString::fromLatin1( "EnableJIT" ) );
 
   KConfigSkeleton::ItemString  *itemStartSessionScript;
-  itemStartSessionScript = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "StartSessionScript" ), mStartSessionScript, "/ServerScripts/StartSession.php");
+  itemStartSessionScript = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "StartSessionScript" ), mStartSessionScript, "/Gubed/ServerScripts/StartSession.php");
   addItem( itemStartSessionScript, QString::fromLatin1( "StartSessionScript" ) );
 
   readConfig();
