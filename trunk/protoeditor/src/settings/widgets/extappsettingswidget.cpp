@@ -51,11 +51,14 @@ ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
   
   connect(m_ckUseExternalApp, SIGNAL(stateChanged(int)), this, SLOT(slotUseExtApp(int)));
 
-  QLabel* lb = new QLabel(this);
-  lb->setText("External console:");
-  grid->addWidget(lb, 1, 0);
+  m_ckUseConsole = new QCheckBox(this);
+  m_ckUseConsole->setText("External console:");
+  grid->addWidget(m_ckUseConsole, 1, 0);
+
+  connect(m_ckUseConsole, SIGNAL(stateChanged(int)), this, SLOT(slotUseConsole(int)));
 
   m_edConsole = new KLineEdit(this);
+  m_edConsole->setEnabled(false);
   grid->addWidget(m_edConsole, 1, 1);
 
   vbox->addLayout(grid);
@@ -66,6 +69,7 @@ void ExtAppSettingsWidget::populate()
 {
   m_cbExtApp->setCurrentItem(ProtoeditorSettings::self()->extAppSettings()->externalApp());
   m_ckUseExternalApp->setChecked(ProtoeditorSettings::self()->extAppSettings()->useExternalApp());
+  m_ckUseConsole->setChecked(ProtoeditorSettings::self()->extAppSettings()->useConsole());
   m_edConsole->setText(ProtoeditorSettings::self()->extAppSettings()->console());
 }
 
@@ -78,16 +82,28 @@ void ExtAppSettingsWidget::slotUseExtApp(int value)
   }
 }
 
+void ExtAppSettingsWidget::slotUseConsole(int value)
+{
+  if(QButton::On == value) {
+    m_edConsole->setEnabled(true);
+  } else {
+    m_edConsole->setEnabled(false);
+  }
+}
+
 ExtAppSettingsWidget::~ExtAppSettingsWidget()
 {
 }
 
-
 void ExtAppSettingsWidget::updateSettings()
 {
   ProtoeditorSettings::self()->extAppSettings()->setExternalApp(m_cbExtApp->currentItem());
+
   ProtoeditorSettings::self()->extAppSettings()->setUseExternalApp(
     m_ckUseExternalApp->isChecked());
+
+  ProtoeditorSettings::self()->extAppSettings()->setUseConsole(
+    m_ckUseConsole->isChecked());
 
   ProtoeditorSettings::self()->extAppSettings()->setConsole(
     m_edConsole->text());

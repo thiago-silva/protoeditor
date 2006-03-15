@@ -55,6 +55,16 @@ class ExtAppSettings : public KConfigSkeleton
       return mExternalApp;
     }
 
+    void setUseConsole(bool value) 
+    {
+      mUseConsole = value;
+    }
+
+    bool useConsole() 
+    {
+      return mUseConsole;
+    }
+
     void setConsole(const QString& console) {
       mConsole = console;
     }
@@ -72,6 +82,7 @@ class ExtAppSettings : public KConfigSkeleton
     // ExternalOutput
     bool mUseExternalApp;
     int mExternalApp;
+    bool mUseConsole;
     QString mConsole;
 //     QString mShellExec;
     

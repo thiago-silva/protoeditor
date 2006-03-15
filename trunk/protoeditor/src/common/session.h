@@ -38,13 +38,14 @@ class Session : public QObject
 {
   Q_OBJECT
   public:
+    
     ~Session();
 
     static void dispose();
     static Session* self();
     
-    void start(const KURL& url, bool forceConsoleMode = false);
-    void start(const KURL& url, const QStringList& env, bool forceConsoleMode = false);
+    void start(const KURL& url, bool local = false);
+    void start(const KURL& url, const QStringList& env, bool local = false);
 
     const QStringList& environment();
   signals:

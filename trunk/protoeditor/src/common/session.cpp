@@ -58,9 +58,9 @@ Session* Session::self()
   return m_self;
 }
 
-void Session::start(const KURL& url, bool forceConsoleMode)
+void Session::start(const KURL& url, bool local)
 {
-  if(forceConsoleMode)
+  if(local)
   {
     m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(ExtAppSettings::EnumExtApp::Console, this);
     m_extAppRequestor->doRequest(url);
@@ -76,10 +76,10 @@ void Session::start(const KURL& url, bool forceConsoleMode)
   m_env.clear();
 }
 
-void Session::start(const KURL& url, const QStringList& env, bool forceConsoleMode)
+void Session::start(const KURL& url, const QStringList& env, bool local)
 {
   m_env = env;
-  start(url, forceConsoleMode);
+  start(url, local);
 }
 
 void Session::initHTTPCommunication()
@@ -472,10 +472,6 @@ void ConsoleRequestor::doRequest(const KURL& url)
 
   QString consoleApp = ProtoeditorSettings::self()->extAppSettings()->console();
 
-  kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "
-            << m_env.join(" ") << " " 
-            << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read" << endl;
-
   QStringList::Iterator it = m_env.begin();
   QString name;
   QString val;
@@ -487,9 +483,27 @@ void ConsoleRequestor::doRequest(const KURL& url)
     m_process->setEnvironment(name, val);
   }
 
-  //KProcess::quote(filePath)
-  *m_process << QStringList::split(' ',consoleApp.arg("/bin/sh")) << "-c"
-    <<  (cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read");
+  if(ProtoeditorSettings::self()->extAppSettings()->useConsole()) 
+  {
+    //use external console
+
+    kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "
+              << m_env.join(" ") << " " 
+              << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read" << endl;
+  
+    //KProcess::quote(filePath)
+    *m_process << QStringList::split(' ',consoleApp.arg("/bin/sh")) << "-c"
+      <<  (cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read");
+  }
+  else
+  {
+    //use current terminal
+
+    kdDebug() << "executing : " << "/bin/sh" << " -c " << cmd.arg(url.path()) << endl;
+  
+    //KProcess::quote(filePath)
+    *m_process << "/bin/sh" << "-c" << cmd.arg(url.path());
+  }
 
   if(!m_process->start())
   {
