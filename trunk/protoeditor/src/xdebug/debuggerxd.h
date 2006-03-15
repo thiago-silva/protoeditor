@@ -51,11 +51,9 @@ public:
 
   virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
   virtual void addBreakpoint(DebuggerBreakpoint*);
-  //virtual void addBreakpoint(const QString&, int);
   virtual void changeBreakpoint(DebuggerBreakpoint*);
   virtual void removeBreakpoint(DebuggerBreakpoint*);
 
-  //virtual void requestLocalVariables(DebuggerExecutionPoint*);
   virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*);
 
@@ -106,6 +104,7 @@ private:
   bool m_isRunning;
   bool m_isJITActive;
   int m_listenPort;
+
   DebuggerExecutionPoint* m_currentExecutionPoint;
   DebuggerExecutionPoint* m_globalExecutionPoint;
   XDSettings* m_xdSettings;

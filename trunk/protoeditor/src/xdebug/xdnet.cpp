@@ -428,12 +428,12 @@ void XDNet::processResponse(QDomElement& root)
       int level = st.attributeNode("level").value().toInt();
       int line = st.attributeNode("lineno").value().toInt();
 
-      KURL file = st.attributeNode("filename").value();
+      QString file = st.attributeNode("filename").value();
       QString where = st.attributeNode("where").value();
 
       if((where == "{main}") || (where == "include"))
       {
-        where = file.path() + "::main()";
+        where = file + "::main()";
       }
 
       //to local filepath
@@ -443,11 +443,11 @@ void XDNet::processResponse(QDomElement& root)
       if(site) 
       {
         localFile = site->localBaseDir()
-                            + file.path().remove(0, site->remoteBaseDir().length());
+                            + file.remove(0, site->remoteBaseDir().length());
       }
       else
       {
-        localFile = file.path();
+        localFile = file;
       }
       stack->insert(level, localFile, line, where);
     }

@@ -60,7 +60,6 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
 DebuggerXD::~DebuggerXD()
 {
   delete m_xdSettings;
-  //  delete m_profileDialog;
   delete m_net;
 }
 
