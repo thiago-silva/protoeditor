@@ -64,7 +64,8 @@ public:
   GBSettings* settings();
 
   void updateStack(DebuggerStack* stack);
-  void updateVars(const QString& scope, const QString& vars);
+  void updateGlobalVariables(const QString&);
+  void updateLocalVariables(const QString&, const QString&);  
   void updateWatch(const QString&, const QString&);
 
 public slots:

@@ -88,9 +88,8 @@ private:
 
   DebuggerGB       *m_debugger;
   Connection       *m_con;  
-  QSocket* m_socket;
-  long             m_datalen;
-
+  QSocket          *m_socket;
+  bool             m_watchingGlobal;
   QString m_command;
 };
 

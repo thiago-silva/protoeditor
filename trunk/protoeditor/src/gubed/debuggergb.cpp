@@ -168,8 +168,15 @@ void DebuggerGB::addWatch(const QString& expression)
   }
 }
 
-void DebuggerGB::removeWatch(const QString& )
-{}
+void DebuggerGB::removeWatch(const QString& expression)
+{
+  QStringList::iterator it = m_wathcesList.find(expression);
+
+  if(it != m_wathcesList.end())
+  {
+    m_wathcesList.remove(it);
+  }
+}
 
 void DebuggerGB::profile(const QString&, bool)
 {}
@@ -244,6 +251,7 @@ void DebuggerGB::stopJIT()
 void DebuggerGB::slotStepDone()
 {
   m_net->requestWatches(m_wathcesList);
+  m_net->requestWatch("$GLOBALS");
 }
 
 void DebuggerGB::updateStack(DebuggerStack* stack)
@@ -255,7 +263,14 @@ void DebuggerGB::updateStack(DebuggerStack* stack)
   emit sigDebugBreak(); 
 }
 
-void DebuggerGB::updateVars(const QString& scope, const QString& vars) 
+void DebuggerGB::updateGlobalVariables(const QString& vars)
+{
+  VariableParser p(vars);
+  VariablesList_t* array = p.parseAnonymousArray();    
+  manager()->updateGlobalVars(array);
+}
+
+void DebuggerGB::updateLocalVariables(const QString& scope, const QString& vars)
 {
   if(scope == "Current Scope") {
     VariableParser p(vars);

@@ -42,7 +42,7 @@
 #define GBD_PROTOCOL_VERSION "0.0.12"
 
 GBNet::GBNet(DebuggerGB* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_debugger(debugger), m_con(0), m_socket(0), m_datalen(-1)
+    : QObject(parent, name), m_debugger(debugger), m_con(0), m_socket(0), m_watchingGlobal(false)
 {
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
@@ -116,9 +116,15 @@ void GBNet::requestStepOut()
 
 void GBNet::requestWatches(const QStringList& list)
 {
+  m_watchingGlobal = false;
+
   QStringList::const_iterator it;
   for(it = list.begin(); it != list.end(); it++)
   {
+    if(*it == "$GLOBALS") 
+    {
+      m_watchingGlobal = true;
+    }
     requestWatch(*it);
   }  
 }
@@ -581,8 +587,20 @@ void GBNet::processVariable(const QString& var)
     return;
   }
 
-//   kdDebug() << var << endl;
-  m_debugger->updateWatch(rx.cap(1), rx.cap(2));
+  QString name = rx.cap(1);
+ 
+  if(name == "$GLOBALS")
+  {
+    if(m_watchingGlobal)
+    {
+      m_debugger->updateWatch(name, rx.cap(2));
+    }
+    m_debugger->updateGlobalVariables(rx.cap(2));
+  }
+  else
+  {
+    m_debugger->updateWatch(name, rx.cap(2));
+  }
 }
 
 void GBNet::processVariables(const QString& vars)
@@ -596,7 +614,7 @@ void GBNet::processVariables(const QString& vars)
 
   int idx = rx.matchedLength();
 
-  m_debugger->updateVars(rx.cap(1), vars.mid(idx));
+  m_debugger->updateLocalVariables(rx.cap(1), vars.mid(idx));
 }
 
 #include "gbnet.moc"
