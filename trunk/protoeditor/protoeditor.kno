@@ -5,57 +5,29 @@
 <li>Change the colums of breakpoint and message listviews.</li>
 <ul type="disc"><li>Create a column for the filename only</li>
 <li>Create a column for the path of the file<br /></li></ul>
-<li>Add icons that Protoeditor uses on the distribution<br /></li>
 <li>Change QSocket to KSocket (or similar)?<br /></li>
-<li>Find out how to request DBG for the complete output (with http header, and everything)<br /></li>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
-<li>Add &quot;New&quot; from KstdAction<br /></li>
-<li>Try to get default kate settings from the user's katerc<br /></li>
-<li>Create a pool for variables and breakpoints, so it is accessed (not owned) by VariableListView and BreakpointListView?<br /></li>
-<li>See the possibility to setup katepart to show line number / icon margin on the first run of protoeditor (no protoeditorrc yet).</li>
-<li></li>
-<ul type="disc"><li>All it should do is request a step. The client should be responsable for feeding the manager with all the info it supports.<br /></li></ul>
-<li>Context menu for VariableListView:</li>
-<ul type="disc"><li>for scalars:</li>
-<ul type="disc"><li>&quot;Modify Value&quot; (same as double click)</li>
-<li>&quot;Modify trough dialog&quot;...(for big texts)</li>
-<li>&quot;Set value to null&quot;</li></ul>
-<li>for arrays/objects</li>
-<ul type="disc"><li>-&quot;Modify array...&quot; (show dialog to add/modify/delete keys and values)</li>
-<li>-&quot;Modify object...&quot; (show dialog to modify the values of the members)<br /><br /></li></ul></ul>
+<li>Try to get default kate settings from the user's katerc</li>
+<ul type="disc"><li>See the possibility to setup katepart to show line number / icon margin on the first run of protoeditor (no protoeditorrc yet).<br /></li></ul>
 <li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;</li>
 <ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)</li>
 <li>Args: Maybe a new entry on the site settings?<br /></li></ul>
 <li>Add a tab on the site settings for more than one directory mapping (requested feature)<br /></li>
-<li>Refactor, test, refactor, test...</li>
-<ul type="disc"><li>create namespaces (DBG, PHP, etc)?</li>
-<li>rename: variableparser to phpvariableparser </li>
-<li>Rename loglist to messagelist</li>
-<li>long/int mix variables are kindda messy. check it.</li>
-<li>Copy constructors, memory leak check...</li>
-<li>remove unescessary includes</li>
-<li>Clean up / document<br /></li></ul>
-<li>Quanta idea for capabilities: </li>
-<ul type="disc"><li>Create a class to hold the capabilities supported by quanta. <br /><br /></li></ul>
-<li>Note about watches:</li>
-<ul type="disc"><li>When there is no debugger loadded, there is no way to add a watch using a Variable object (since Variable class is abstract and can't be contructed)<br /></li></ul>
-<li>Add HTML output tab?<br /></li>
-<li>Create a menu &quot;window&quot; with a list of opened files.</li>
-<li>use KMDI?<br /></li>
-<li>Test with a Win32 http server! (Check path stuff)<br /></li>
-<li>Manager: Create two interfaces: one to be used by MainWindow, the other, to be used by the DebuggerClient. Do the same to DebuggerClient?<br /><br /></li>
-<li>Where-things-must-be-deleted-issue:</li>
-<ul type="disc"><li>Client shouldn't have to delete breakpoints and variables. Its up to a BpManager/VarManager/Pool or to the widgets to own the objects.</li>
-<li>Note: the VariableListViewItem shouldn't delete the Variable member. The applicatin crashes because it might be deleting a variable that was already deleted (this occurs when a item is expanded). <br /></li></ul></ul>
+<li></li>
+<ul type="disc"><li>rename: variableparser to phpvariableparser </li>
+<li>long/int mix variables are kindda messy. check it.<br /></li></ul>
+<li>Create a menu &quot;window&quot; with a list of opened files.<br /></li>
+<li>Test with a Win32 http server! (Check path stuff)</li></ul>
 <p></p>
 </body></html>
+
 
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>1: Test current CVS version on other distro/KDE versions</li>
-<li>2: Change version on kdevelop file, configure.in/configure.in.in and protoeditor.cpp</li>
+<li>2: Change version on kdevelop file, configure.in/configure.in.in</li>
 <li>3: Create NEWS file</li>
 <li>4: Create ChangeLog file</li>
 <li>5: Update README version</li>
@@ -65,22 +37,31 @@
 <p></p>
 </body></html>
 
+
 \NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
 <li>Add to menu: &quot;Bugs&quot;, &quot;Forum&quot;, &quot;CVSWeb&quot;....</li>
-<li>Create a logo for the site</li>
 <li>Create user documentation</li>
 <li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
 </body></html>
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO
+\NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>make Console execution optional (checkbox).</li>
-<ul type="disc"><li>Create tutorials stepbystep to install modules and run!</li>
-<li>Create Help docbook</li>
+<ul type="disc"><li>Gubed:</li>
+<ul type="disc"><li>Request $GLOBALS and use it as global vars</li>
+<li>Watches</li>
+<li>Breakpoints</li>
+<li>Messages</li>
+<li>Update settings:</li>
+<ul type="disc"><li>Send super globals [x]</li>
+<li>Break on load [x]<br /></li></ul></ul>
+<li>Xdebug:</li>
+<ul type="disc"><li>See if it send messages (errors/notices etc)<br /></li></ul>
+<li>Create tutorials stepbystep to install modules and run!</li>
+<ul type="disc"><li>Create Help docbook</li>
 <li>strings i18n aware<br /></li></ul>
 <li>&quot;File-&gt;new&quot; support</li>
 <ul type="disc"><li>Normalize use of KURL/QString filePath</li>
@@ -89,8 +70,11 @@
 <li>MainWindow</li>
 <li>DebuggerManager</li>
 <li>Breakpoint/BreakpointListView</li>
-<li>etc<br /></li></ul></ul>
-<li>Gubed!</li>
+<li>etc<br /><br /></li></ul></ul>
+<li>runtocursor</li>
+<li>Breakpoints: clear button</li>
+<li>Watches: clear button</li>
+<li>-bug: run, change the stack (so the green icon appears on text border), run another file (or JIT session). The icon remains<br /><br /></li>
 <li>ruby</li>
 <li>python</li>
 <li>perl<br /></li>
@@ -101,86 +85,23 @@
 <li>ExternalApps by Site (maybe)</li></ul></ul>
 </body></html>
 
-
-\NewEntry 1 Xdebug
-
 \NewEntry 1 DBG and infra
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Class to represent capabilities of the AbstractDebugger subclasses, so it can configure the UI .<br /></li>
-<li>Refactorings<br /></li>
-<li>Base:</li>
-<ul type="disc"><li>Clean DebuggerManager</li>
-<ul type="disc"><li>Create a DebugggerUI to split responsabilities<br /></li></ul>
-<li>Create more signals for the AbstractDebugger such as sigProfilerStart/end<br /><br /></li></ul>
-<li>DBG:</li>
-<ul type="disc"><li>Make a new class intermediating DBGDebugger with the DBGNet.</li>
-<ul type="disc"><li>DBGNet has all structure to deal with processTag* and headers but it does not contain code to handle them. It only emit signals (or call an observer, or something). So we can have a DebuggerController and ProfilerController. They won't have to rewrite the network data flow, just implement what they want.<br /></li></ul></ul>
-<div>DBGNet::requestProfile()<br />{<br />  m_handler = new ProfilerHandler(m_requestor);<br />  ....<br />}<br /><br />DBGNet::processHeader()<br />{<br />   ...<br />   case DBGC_STARTUP:<br />      m_handler-&gt;handleStartSession();<br />}</div>
-<div><br />DebuggerHandler::handleStartSession()<br />{<br />    emit DBGNet::sigDBGStarted();<br />    m_requestor-&gt;bla().<br />}<br /><br />class ProfilerNetHandler {<br />  virtual void processTagBreakpoint();<br />  virtual void processTag*();<br />  virtual void handleEndOfPack(); //shipStack, etc..<br />  virtual void handleStepDone();<br />  virtual void handleBreakAtPoint();<br />  virtual void handleStartSession(); //DBGC_START<br />  virtual void handle....<br />}<br /><br />DebuggerNetHandler<br />----------------------------------------------------------------------------------------------------------<br /></div>
-<li>Test the multiple views of the profiler</li>
-<li>Support profiling while debugging.<br /><br />------------------------------<br /></li>
-<li>Cleanup wishes from the forum and bugs.<br /><br /></li>
-<li>Persistent breakpoints (close file, bp persists)<br /></li>
-<li>--------------------new stuf and more refactoring---------------------------------<br /></li>
-<li>Create Actions:</li>
-<ul type="disc"><li>Run (gear.png) / Start debug</li>
-<ul type="disc"><li>Run with args</li>
-<li>Run to the cursor</li></ul>
-<li>Pause<br /></li></ul>
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Cleanup wishes from the forum and bugs.</li>
 <li>Better handling of Site settings (see problem posted on forum)</li>
 <div></div>
 <li>Features / Usability:</li>
-<ul type="disc"><li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings</li>
-<li>Add terminal output</li>
-<li>CGI</li></ul>
-<li>Implementation:</li>
-<ul type="disc"><li>set static objects to be deleted<br /></li></ul>
-<li>-------------------------------------------------------------------<br /></li>
-<li>Create classes MessageWidget, WatchWidget, BreakpointWidget, etc. holding the listviews, then, make them responsable for buttons such as btAddWatch.</li>
-<ul type="disc"><li>Create context menus for the listviews (breakpoints/messages, etc)</li>
-<li>Add Breakpoint/Watches buttons (add, clear, disable..). </li>
-<li>Change output widget to KTExtEdit, so it can highlight HTML tags (create a wrapper class for it)</li></ul></ul>
+<ul type="disc"><li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings<br /></li></ul>
+<li>-------------------------------------------------------------------</li></ul>
 </body></html>
 
-\NewEntry 1 new Settings notes
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p>Each debugger has its own QWidget to be used on the settings dialog (it will be a child of QTabWidget). Maybe they should have its own KConfigSkeleton, registered on a hipotetical ConfigManager. ConfigManager would be responsable to inform all registered KConfigSkeleton subclasses registered to read/write its configuration.<br /><br />Besides the specific options of each debugger on the QWidget, they shall have a &quot;enable JIT&quot;. When its &quot;on&quot;, it will inform the debugger client to listen for incoming connections permanently. Otherwise, listening on port is temporary, ie, when a debugger is actually running. <br /><br />When a new connection arises for some debugger, they must know wich folder mapping to use. So they inform DebuggerManager about the incoming connection, and the manager is responsable for chose the apropriate registered Site according to the debugger triggered and the remote host (<span style="color:#ff0000">can't solve the remote port to help on this</span>) connected to the client. Also it's possible for a site to have many script languages. If there are 2 Sites registered for a given host (maybe the user's Site has different folder mapping for different languages), we wouldn't know wich one to use. So maybe, one more entry (Debugger) should be added.<br /><br />Each Site has the following entries:<br /></p>
-<ul type="disc"><li>name</li>
-<li>Host</li>
-<li>Port</li>
-<li>RemoteDir</li>
-<li>LocalDir</li>
-<li>Match file path in lower case (for win32 servers)</li>
-<li>Debugger &lt;combobox&gt; [DBG|...]<br /></li></ul>
-<p>	Site s = retrieveSite(remoteHost,debuggerName);<br />	useSite(s);<br /><br />If a debugger is triggered on a JIT, and no Site is found for it, a message should inform the user, showing the remote host/file called to be debuged.<br /><br />-----------------------------------------<br /><br /><br />Settings Dialog modules:<br /><br />[Debugger]<br />   |--[PHP]<br />   |--[Other]<br />[Site]<br />[Browser]<br />[Editor]<br /><br /><br />------------------------------------------------<br /><br />PHP Debugger<br />=========<br /><br />Default : &lt;combobox&gt; //if no site is selected, run in CGI/bin mode using this debugger<br /><br />[DBG] [Other]<br />           -----------------------------<br />                                              |<br />Listen on port: &lt;lineedit&gt;      |<br />other options....                     |<br />                                              |<br />-------------------------------------|<br /><br />-----------------------------------------------------------<br />Site configuration<br />===========<br /><br />Site name | Host | port | Remote base dir | Local base dir<br />Somesite   | host | 80   | /foo                    | /bar                <br /><br /><br />&lt;button add&gt;<br />&lt;button modify&gt;<br />&lt;buttom remove&gt;<br /><br /><br />*See KMAil identify configuration.<br />** If no site is selected to debug, run using local binary w/o directory mapping.<br /><br /><br />-------------------------------------------------------------------------------------------------------------------------------------------------------<br />MainWindow:<br /><br />use a combobox on toolbar with the list of sites to use (KSelectAction or something like that)<br /><br />*Local                 //use local binary application (ie. php, python...)<br />*&lt;separator&gt;<br />*Site1<br />*Site2<br /><br /><br />&quot;Run/Debug/Start session&quot; buttom has a dropdown menu with the debuggers associated with the current file's language (if no extension, show all debuggers on a multilevel menu with &quot;language&quot; as top level items) so the user can quickly change the debugger instead of changing default values on the settings.<br />	*<span style="color:#ff0000">This might not be good. Since we'll end up with 2+ toolbar buttons with the same dropdown menu. Maybe is better having another combobox on toolbar to hold the debuggers. Or, maybe, no combobox: just 2 menus, one for the site, other for the debugger (the last, I think would be a sub menu of the current 'Debug' menu)</span><br /></p>
-</body></html>
-
-\NewEntry 1 DBG Profiler
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p>See http://dd.cron.ru/dbg/download.php?h=prof_sample2<br /><br /><br />PHPEdit views:<br /><br />moduleView:</p>
-<p>	filepath | hitcount | time/hit | totaltime | chart</p>
-<p></p>
-<p>contextView</p>
-<p>	context | hitcount | time/hit | totalTime | chart</p>
-<p></p>
-<p>detailView</p>
-<p>	file(lineno) | hitcount | time/hit | totalTime | chart</p>
-<p></p>
-<p>DBG script:</p>
-<p>	filepath | line | hits | (time_avg_hit) time/hit (ms) | totaltime (ms) | min time (ms)  | maxtime (ms) | context</p>
-</body></html>
 
 \NewEntry 1 Bug reminder
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>DBG: Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /><br /></li>
-<li>DBGnet::processProf() : Profiler calc is hardcoded. Use prof_c to get the freq (divide for freq and multip for 1000. See script).</li>
-<ul type="disc"><li> $time_max = $dbg_prof_results[&quot;tm_max&quot;][$idx] * 1000;<br /><br /></li></ul>
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>DBG: Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /></li>
 <li>Crash:</li>
 <ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash</li>
-<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes<br /><br /><br /></li></ul>
-<li>Create localhost Site with default script pointing to non existing file. Open some script. Run.</li>
-<ul type="disc"><li>A message appears informing that the file doesn't exists.</li>
-<li>The debugger starts with the current opened file.</li></ul></ul>
+<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes</li></ul></ul>
 </body></html>
 
 \NewEntry 0 Quanta
@@ -243,22 +164,6 @@
 <p></p>
 <p>Last, but not least read the howto's and faq's on http://developer.kde.org</p>
 <p></p>
-</body></html>
-
-\NewEntry 1 TODO
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p></p>
-<ul type="disc"><li>Todo Patches</li>
-<li>Implement the toggle breakpoint on the editor margin</li>
-<ul type="disc"><li> Improve BreakpointListView</li>
-<li>Improve VariablesListView and variable-related code/classes<br /><br /></li></ul></ul>
-</body></html>
-
-\NewEntry 0 sourceforge
-
-\NewEntry 1 backup
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p>Remind your developers to backup their data. <br />Backup your file release data. <br />Backup your project web space. <br />Backup the contents of your MySQL database. <br />Backup your CVS repository content regularly.</p>
 </body></html>
 
 \NewEntry 0 KDE faqs, howtos, standards
@@ -778,10 +683,11 @@
 <p></p>
 </body></html>
 
-\NewEntry 1 profile
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p>After client send<br />TAG:  name:  CLIENT_tag_dbg_prof_c_request, <br />    test_loops: 1000, <br /><br />DBG (won windows) responded with :<br /><br />TAG:  name:  DBG_tag_dbg_prof_c_body, <br />     tm_freq_lo: 3579545, <br />     tm_freq_hi: 0, <br />     tm_diff_min: 2, <br />     tm_diff_max: 52, <br />     tm_diff_m: 2</p>
+\CurrentEntry 1 profile
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<p>After client send<br />TAG:  name:  CLIENT_tag_dbg_prof_c_request, <br />    test_loops: 1000, <br /><br />DBG (on windows) responded with :<br /><br />TAG:  name:  DBG_tag_dbg_prof_c_body, <br />     tm_freq_lo: 3579545, <br />     tm_freq_hi: 0, <br />     tm_diff_min: 2, <br />     tm_diff_max: 52, <br />     tm_diff_m: 2</p>
 <p><br />Looking at the source code:<br /><br />---request:<br /><br />test_loops: how many loops to do to calculate the diffs and med.<br /><br />----response<br /><br />tm_freq_lo/hi:<br /><br />is the frequency (cycles per second).<br />&quot;This value is our measurement of how many &quot;ticks&quot; or &quot;cycles&quot; per second this machine can do. The value returned isn't a relative value, so don't expect it to return 100 000 000, if the CPU its being run on is 100mhz. Its just a value we will use to base our calculations on. &quot;<br /><br />Diffs:<br /><br />From the given code looped &lt;test_llops&gt; times:<br /><br />	llong t = dbgTimeTicks();<br />	a = dbgTimeTicks() - t;<br /><br />tm_diff_min: is the smaller &quot;a&quot; value found.<br /><br />tm_diff_max: is the bigger &quot;a&quot; value found<br /><br />tm_diff_m: some kind of med value.<br /><br />----------------------------------------------------------------------------<br />code snaps:<br /><br />inline llong dbgTimeTicks() {<br />	struct timeval tv;<br />	gettimeofday(&amp;tv, NULL);<br />	return tv.tv_usec + ((llong)tv.tv_sec) * 1000000;<br />}</p>
 <p>inline llong dbgTimeFreq() {<br />	return 1000000;<br />}<br /></p>
 </body></html>
+
 
