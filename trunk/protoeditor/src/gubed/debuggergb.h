@@ -68,6 +68,8 @@ public:
   void updateLocalVariables(const QString&, const QString&);  
   void updateWatch(const QString&, const QString&);
 
+  void debugLog(int type, const QString& msg, const QString& file, int line);
+
 public slots:
   void slotSettingsChanged();
 private slots:

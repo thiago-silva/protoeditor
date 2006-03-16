@@ -232,7 +232,7 @@ void GBNet::slotReadBuffer()
 // Process a gubed command
 void GBNet::processCommand(const QString& datas)
 {
-//   kdDebug() << k_lineinfo << ", received " << m_command << " with data: " << datas << endl;
+  kdDebug() << k_lineinfo << ", command " << m_command << " with data: " << datas << endl;
 
   StringMap args = parseArgs(datas);
 
@@ -270,7 +270,15 @@ void GBNet::processCommand(const QString& datas)
   {
     processVariable(args["variable"]);
   }
-
+  else if(m_command == "error")
+  {
+    QString msg = args["errmsg"];
+    QString filename = args["filename"];
+    QString line = args["line"];
+    // Filter to get error code only and match it with out mask
+    //long error = args["errnum"].toLong();
+    processLog(datas);    
+  }
   // Just some status info, display on status line
   else if(m_command == "status")
   {
@@ -306,25 +314,6 @@ void GBNet::processCommand(const QString& datas)
   else if(m_command == "debuggingoff")
   {
 //     debuggingState(false);
-  }
-  // We stumbled upon an error
-  else if(m_command == "error")
-  {
-    // Put the line number first so double clicking will jump to the corrrect line
-/*    debuggerInterface()->showStatus(i18n("Error occurred: Line %1, Code %2 (%3) in  %4").arg(args["line"]).arg(args["errnum"]).arg(args["errmsg"]).arg(args["filename"]), true);
-
-    // Filter to get error code only and match it with out mask
-    long error = args["errnum"].toLong();
-    if(m_errormask & error)
-      setExecutionState(Pause);
-    else if(m_executionState == Trace)
-      setExecutionState(Trace);
-    else if(m_executionState == Run)
-      setExecutionState(Run);
-    else
-      setExecutionState(Pause);
-
-    emit updateStatus(DebuggerUI::HaltedOnError);*/
   }
   // We came across  a hard coded breakpoint
   else if(m_command == "forcebreak")
@@ -615,6 +604,20 @@ void GBNet::processVariables(const QString& vars)
   int idx = rx.matchedLength();
 
   m_debugger->updateLocalVariables(rx.cap(1), vars.mid(idx));
+}
+
+
+void GBNet::processLog(const QString& log)
+{
+//a:4:{s:8:\"filename\";N;s:4:\"line\";i:3;s:6:\"errnum\";i:2048;s:6:\"errmsg\";s:66:\"var: Deprecated. Please "" }
+  QRegExp rx;
+  rx.setPattern("a:4:\\{s:\\d*:\"filename\";([^;]*);s:\\d*:\"line\";i:(\\d*);s:\\d*:\"errnum\";i:(\\d*);s:\\d*:\"errmsg\";s:\\d*:\"([^;]*)\";");
+  if(rx.search(log, 0) == -1) {
+    //error!
+    return;
+  }
+
+  m_debugger->debugLog(rx.cap(3).toInt(), rx.cap(4), rx.cap(1), rx.cap(2).toInt());
 }
 
 #include "gbnet.moc"

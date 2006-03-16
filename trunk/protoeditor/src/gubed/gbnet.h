@@ -86,6 +86,8 @@ private:
   void processVariable(const QString& var);
   void processVariables(const QString& vars);  
 
+  void processLog(const QString& log);
+
   DebuggerGB       *m_debugger;
   Connection       *m_con;  
   QSocket          *m_socket;

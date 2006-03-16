@@ -297,5 +297,36 @@ void DebuggerGB::updateWatch(const QString& name, const QString& value)
   manager()->updateWatch(var);
 }
 
+void DebuggerGB::debugLog(int type, const QString& msg, const QString& filePath, int line)
+{
+  QString fpath;
+  if(filePath != "N") {
+    fpath = filePath;
+  }
+
+  switch(type)
+  {
+    case E_ERROR:
+    case E_CORE_ERROR:
+    case E_PARSE:
+    case E_COMPILE_ERROR:
+    case E_USER_ERROR:
+      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, fpath, line-1);
+      manager()->debugError(msg);
+      break;
+
+    case E_WARNING:
+    case E_CORE_WARNING:
+    case E_COMPILE_WARNING:
+    case E_USER_WARNING:
+      manager()->debugMessage(DebuggerManager::WarningMsg, msg, fpath, line);
+      break;
+    case E_NOTICE:
+    case E_USER_NOTICE:
+    case E_STRICT:
+      manager()->debugMessage(DebuggerManager::InfoMsg, msg, fpath, line);
+      break;
+  }
+}
 
 #include "debuggergb.moc"

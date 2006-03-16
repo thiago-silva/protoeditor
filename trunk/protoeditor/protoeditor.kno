@@ -21,7 +21,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
@@ -37,7 +36,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
@@ -48,11 +46,10 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO
+\CurrentEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Gubed:</li>
-<ul type="disc"><li>Request $GLOBALS and use it as global vars</li>
-<li>Watches</li>
+<ul type="disc"><li>Fix the stop/run again issue</li>
 <li>Breakpoints</li>
 <li>Messages</li>
 <li>Update settings:</li>
@@ -85,6 +82,7 @@
 <li>ExternalApps by Site (maybe)</li></ul></ul>
 </body></html>
 
+
 \NewEntry 1 DBG and infra
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Cleanup wishes from the forum and bugs.</li>
@@ -94,7 +92,6 @@
 <ul type="disc"><li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings<br /></li></ul>
 <li>-------------------------------------------------------------------</li></ul>
 </body></html>
-
 
 \NewEntry 1 Bug reminder
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
@@ -683,11 +680,10 @@
 <p></p>
 </body></html>
 
-\CurrentEntry 1 profile
+\NewEntry 1 profile
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <p>After client send<br />TAG:  name:  CLIENT_tag_dbg_prof_c_request, <br />    test_loops: 1000, <br /><br />DBG (on windows) responded with :<br /><br />TAG:  name:  DBG_tag_dbg_prof_c_body, <br />     tm_freq_lo: 3579545, <br />     tm_freq_hi: 0, <br />     tm_diff_min: 2, <br />     tm_diff_max: 52, <br />     tm_diff_m: 2</p>
 <p><br />Looking at the source code:<br /><br />---request:<br /><br />test_loops: how many loops to do to calculate the diffs and med.<br /><br />----response<br /><br />tm_freq_lo/hi:<br /><br />is the frequency (cycles per second).<br />&quot;This value is our measurement of how many &quot;ticks&quot; or &quot;cycles&quot; per second this machine can do. The value returned isn't a relative value, so don't expect it to return 100 000 000, if the CPU its being run on is 100mhz. Its just a value we will use to base our calculations on. &quot;<br /><br />Diffs:<br /><br />From the given code looped &lt;test_llops&gt; times:<br /><br />	llong t = dbgTimeTicks();<br />	a = dbgTimeTicks() - t;<br /><br />tm_diff_min: is the smaller &quot;a&quot; value found.<br /><br />tm_diff_max: is the bigger &quot;a&quot; value found<br /><br />tm_diff_m: some kind of med value.<br /><br />----------------------------------------------------------------------------<br />code snaps:<br /><br />inline llong dbgTimeTicks() {<br />	struct timeval tv;<br />	gettimeofday(&amp;tv, NULL);<br />	return tv.tv_usec + ((llong)tv.tv_sec) * 1000000;<br />}</p>
 <p>inline llong dbgTimeFreq() {<br />	return 1000000;<br />}<br /></p>
 </body></html>
-
 
