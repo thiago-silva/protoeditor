@@ -58,7 +58,6 @@ void Connection::clearSocket()
 {
   if(m_currentClient)
   {
-    m_currentClient->close();
     delete m_currentClient;
     m_currentClient = NULL;
     emit sigClientClosed();
