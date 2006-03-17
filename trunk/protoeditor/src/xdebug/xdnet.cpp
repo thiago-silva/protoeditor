@@ -37,16 +37,15 @@
 #include <kurl.h>
 #include <klocale.h>
 
+#include <qregexp.h>
 #include <qsocket.h>
 #include <qdom.h>
 #include <kurl.h>
 #include <kmdcodec.h>
 
 XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_debugger(debugger), m_con(0), /*m_http(0)*/ m_socket(0)
+    : QObject(parent, name), m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
 {
-  m_error.exists = false;
-
   connect(Session::self(), SIGNAL(sigError(const QString&)),
       this, SLOT(slotError(const QString&)));
 
@@ -135,10 +134,10 @@ void XDNet::requestStepOut()
   m_socket->writeBlock(step_out, step_out.length()+1);
 }
 
-void XDNet::requestStack()
+void XDNet::requestStack(int id)
 {
   QString stack_get = "stack_get -i ";
-  stack_get += QString::number(GeneralId);
+  stack_get += QString::number(id);
   m_socket->writeBlock(stack_get, stack_get.length()+1);
 }
 
@@ -244,7 +243,10 @@ void XDNet::requestBreakpointList()
 void XDNet::slotIncomingConnection(QSocket* socket)
 {
   connect(socket, SIGNAL(readyRead()), this, SLOT(slotReadBuffer()));
+
   m_socket = socket;
+  
+  m_site = ProtoeditorSettings::self()->currentSiteSettings();
 
   emit sigXDStarted();
 }
@@ -388,8 +390,10 @@ void XDNet::processInit(QDomElement& init)
 }
 
 void XDNet::processResponse(QDomElement& root)
-{
+{  
   QString cmd = root.attribute("command");
+
+//   kdDebug() << "process response for cmd: " << cmd << ", status: " << root.attribute("status") << endl;
 
   if((cmd == "step_into") ||
       (cmd == "step_over") ||
@@ -398,13 +402,18 @@ void XDNet::processResponse(QDomElement& root)
   {
     if((root.attribute("status") == "break"))
     {
+//       kdDebug() << "break for reason: " << root.attribute("reason") << endl;
       if(root.attribute("reason") == "error")
-      {
+      {        
         processError(root.firstChild().toElement());
+        requestStack(ErrorStackId); //see processErrorData() for why this is here
+        requestContinue();
       }
-
-      requestStack();
-      requestBreakpointList();
+      else
+      {        
+        requestStack(GeneralId);
+        requestBreakpointList();
+      }
     }
     else if(root.attribute("status") == "stopped")
     {
@@ -439,11 +448,10 @@ void XDNet::processResponse(QDomElement& root)
       //to local filepath
       QString localFile;
 
-      SiteSettings* site = ProtoeditorSettings::self()->currentSiteSettings();
-      if(site) 
+      if(m_site) 
       {
-        localFile = site->localBaseDir()
-                  + file.path().remove(0, site->remoteBaseDir().length());
+        localFile = m_site->localBaseDir()
+                  + file.path().remove(0, m_site->remoteBaseDir().length());
       }
       else
       {
@@ -458,11 +466,17 @@ void XDNet::processResponse(QDomElement& root)
 
 
     //update stack
-    m_debugger->updateStack(stack);
-
-    emit sigStepDone();
-
-    processPendingData();
+    if(root.attributeNode("transaction_id").value().toInt() == ErrorStackId)
+    {
+      m_error.filePath = stack->topExecutionPoint()->filePath();
+      m_error.line     = stack->topExecutionPoint()->line();
+      dispatchErrorData();
+    }
+    else
+    {    
+      m_debugger->updateStack(stack);
+      emit sigStepDone();
+    }    
   }
   else if(cmd == "context_get")
   {
@@ -486,6 +500,10 @@ void XDNet::processResponse(QDomElement& root)
       {
         m_debugger->updateVariables(array, true);
       }
+    } 
+    else 
+    {
+      error("XDebug client: Internal error");
     }
   }
   else if(cmd == "property_get")
@@ -538,7 +556,10 @@ void XDNet::processResponse(QDomElement& root)
     {
       e = list.item(i).toElement();
       int id = e.attributeNode("id").value().toInt();
-      QString filePath = KURL(e.attributeNode("filename").value()).path();
+      QString filePath = KURL::fromPathOrURL(e.attributeNode("filename").value()).path();
+
+      filePath = m_site->localBaseDir() + filePath.remove(0, m_site->remoteBaseDir().length());
+
       int line = e.attributeNode("lineno").value().toInt();
       QString state = e.attributeNode("state").value();
       int hitCount = e.attributeNode("hit_count").value().toInt();
@@ -575,38 +596,25 @@ void XDNet::processError(const QDomElement& error)
     m_error.data  = error.text();
   }
 
-  m_error.exists = true;
-
-  /* error will be sent to m_debugger after stack is updated. See processPendingData()
+  /* error will be sent to m_debugger after stack is updated. See processErrorData()
      reason: so the error can be sync with the currentExecutionPoint (wich is the one that tells where
      the error ocurred
   */
 }
 
-void XDNet::processPendingData()
+void XDNet::dispatchErrorData()
 {
-  if(m_error.exists)
-  {
-    m_debugger->debugError(m_error.code, m_error.exception, m_error.data);
-    m_error.exists = false;
-  }
+  QRegExp rx;
+
+  rx.setPattern("\\[[^\\]]*\\]");
+  m_error.data.remove(rx);
+
+  m_debugger->debugError(m_error.code.toInt(), m_error.filePath, m_error.line, m_error.data);
 }
 
 void XDNet::slotXDClosed()
 {
-  //stoping the debugger (not the session!!)
-
   emit sigXDClosed();
-
-  //   m_receiver->clear();
-  //   m_requestor->clear();
-
-  //   m_dbgStack->clear();
-  //   m_dbgFileInfo->clear();
-  //   m_varScopeRequestList.clear();
-
-  //   m_isProfiling = false;
-  //   m_setupProfile = false;
 }
 
 void XDNet::slotError(const QString& msg)
