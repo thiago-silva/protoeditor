@@ -25,6 +25,7 @@
 #include "gbsettings.h"
 #include "gbnet.h"
 #include "phpdefs.h"
+#include "debuggerbreakpoint.h"
 #include "debuggerstack.h"
 
 #include <kdebug.h>
@@ -129,23 +130,51 @@ void DebuggerGB::stepOut()
     m_net->requestStepOut();
 }
 
-void DebuggerGB::addBreakpoints(const QValueList<DebuggerBreakpoint*>&)
-{}
+void DebuggerGB::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps)
+{
+  if(isRunning())
+  {
+    QValueList<DebuggerBreakpoint*>::const_iterator it;
+    for(it = bps.begin(); it != bps.end(); ++it)
+    {
+      m_net->requestBreakpoint(*it);
+    }
+  }
+}
 
-void DebuggerGB::addBreakpoint(DebuggerBreakpoint*)
-{}
+void DebuggerGB::addBreakpoint(DebuggerBreakpoint* bp)
+{
+  if(isRunning())
+  {
+    m_net->requestBreakpoint(bp);
+  }
+}
 
-void DebuggerGB::changeBreakpoint(DebuggerBreakpoint*)
-{}
+void DebuggerGB::changeBreakpoint(DebuggerBreakpoint* bp)
+{
+  if(isRunning())
+  {
+    m_net->requestBreakpointUpdate(bp);
+  }
+}
 
-void DebuggerGB::removeBreakpoint(DebuggerBreakpoint*)
-{}
+void DebuggerGB::removeBreakpoint(DebuggerBreakpoint* bp)
+{
+  if(isRunning())
+  {
+    m_net->requestBreakpointRemoval(bp);
+  }
+}
 
 void DebuggerGB::changeCurrentExecutionPoint(DebuggerExecutionPoint*)
-{}
+{
+  //
+}
 
 void DebuggerGB::modifyVariable(Variable*, DebuggerExecutionPoint*)
-{}
+{
+
+}
 
 
 void DebuggerGB::addWatches(const QStringList& list)
@@ -297,7 +326,7 @@ void DebuggerGB::updateWatch(const QString& name, const QString& value)
   manager()->updateWatch(var);
 }
 
-void DebuggerGB::debugLog(int type, const QString& msg, const QString& filePath, int line)
+void DebuggerGB::updateMessage(int type, const QString& msg, const QString& filePath, int line)
 {
   QString fpath;
   if(filePath != "N") {
@@ -311,8 +340,7 @@ void DebuggerGB::debugLog(int type, const QString& msg, const QString& filePath,
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, fpath, line-1);
-      manager()->debugError(msg);
+      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, fpath, line-1);      
       break;
 
     case E_WARNING:
@@ -327,6 +355,11 @@ void DebuggerGB::debugLog(int type, const QString& msg, const QString& filePath,
       manager()->debugMessage(DebuggerManager::InfoMsg, msg, fpath, line);
       break;
   }
+}
+
+void DebuggerGB::updateError(const QString& filePath)
+{
+  manager()->debugMessage(DebuggerManager::ErrorMsg, "Fatal error", filePath, 0);  
 }
 
 #include "debuggergb.moc"
