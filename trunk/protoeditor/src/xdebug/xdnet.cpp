@@ -249,8 +249,6 @@ void XDNet::slotIncomingConnection(QSocket* socket)
   emit sigXDStarted();
 }
 
-
-
 void XDNet::slotReadBuffer()
 {
   long xmlSize;
