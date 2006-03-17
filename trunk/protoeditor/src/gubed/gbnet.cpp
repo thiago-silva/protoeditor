@@ -71,7 +71,6 @@ void GBNet::stopListener()
 
 void GBNet::startDebugging(const QString& filePath, SiteSettings* site, bool local)
 {
-  m_site = site;
   if(local)
   {
     QString cmd = m_debugger->settings()->startSessionScript() 
@@ -82,7 +81,7 @@ void GBNet::startDebugging(const QString& filePath, SiteSettings* site, bool loc
   else
   {
     QString relative = filePath;
-    relative = relative.remove(0, m_site->localBaseDir().length());
+    relative = relative.remove(0, site->localBaseDir().length());
 
     KURL url = site->effectiveURL();
     url.setPath(m_debugger->settings()->startSessionScript());
@@ -293,7 +292,7 @@ void GBNet::processCommand(const QString& datas)
   {
     if(!m_continuing)
     {
-      sendCommand("sendbacktrace",0);      
+      sendCommand("sendbacktrace",0);
       emit sigStepDone();
     }
     else
@@ -316,6 +315,7 @@ void GBNet::processCommand(const QString& datas)
     }
     else
     {
+      sendCommand("sendbacktrace",0);
       requestContinue();
     }
   }
@@ -618,7 +618,7 @@ void GBNet::processBacktrace(const QString& bt)
     }
     else
     {
-      where = file + "::" + func + "()";
+      where = func + "()";
     }
     
     if(m_site)
