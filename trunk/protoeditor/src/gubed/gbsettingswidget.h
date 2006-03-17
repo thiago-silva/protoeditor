@@ -39,10 +39,12 @@ public:
   int  listenPort();
   bool enableJIT();
   QString startSessionScript();
-  
+  bool breakOnLoad();
+
   void populate();
 private:
   QSpinBox  *m_spListenPort;
+  QCheckBox* m_ckBreakOnLoad;
   QCheckBox *m_ckEnableJIT;
   KLineEdit* m_edStartSessionScript;
   GBSettings* m_settings;

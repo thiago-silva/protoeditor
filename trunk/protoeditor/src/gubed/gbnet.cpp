@@ -284,7 +284,7 @@ void GBNet::slotReadBuffer()
 // Process a gubed command
 void GBNet::processCommand(const QString& datas)
 {
-  kdDebug() << "gbd command " << m_command << "\n";//" with data: " << datas << endl;
+//   kdDebug() << "gbd command " << m_command << "\n";//" with data: " << datas << endl;
 
   StringMap args = parseArgs(datas);
 
@@ -310,7 +310,14 @@ void GBNet::processCommand(const QString& datas)
   {    
     sendCommand("havesource", 0);
     emit sigGBStarted();
-    requestStepInto();
+    if(m_debugger->settings()->breakOnLoad())
+    {
+      requestStepInto();
+    }
+    else
+    {
+      requestContinue();
+    }
   }
   else if(m_command == "backtrace")
   {

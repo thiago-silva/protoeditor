@@ -26,6 +26,7 @@
 #include <klineedit.h>
 
 #include <qlayout.h>
+#include <qgroupbox.h>
 
 #include "gbsettings.h"
 
@@ -33,32 +34,52 @@ GBSettingsWidget::GBSettingsWidget(GBSettings* settings, QWidget *parent, const 
   : DebuggerTab(parent, name), m_settings(settings)
 {
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
+  QVBoxLayout *mainLayout = new QVBoxLayout(this, 16, 5);
 
-  QGridLayout* grid = new QGridLayout(0, 3, 3, -1, 16);
-
-  QLabel* lblistenPort = new QLabel(this);
-  lblistenPort->setText("Listen on port:");
-  grid->addWidget(lblistenPort,0 ,0);
-
-  m_spListenPort = new QSpinBox(this);
-  m_spListenPort->setMaxValue(99999);
-  grid->addWidget(m_spListenPort, 0, 1);  
-
-  QLabel* lbScripts = new QLabel(this);
-  lbScripts->setText("StartSession.php path:");
-  
-  grid->addWidget(lbScripts, 1, 0);
-    
-  m_edStartSessionScript = new KLineEdit(this);
-  grid->addWidget(m_edStartSessionScript, 1, 1);
+  QHBoxLayout* jitbox = new QHBoxLayout(0, 1, 10);
 
   m_ckEnableJIT = new QCheckBox(this);
   m_ckEnableJIT->setText("Enable JIT");
-  grid->addWidget(m_ckEnableJIT, 2, 0);
+  jitbox->addWidget(m_ckEnableJIT);
 
-  mainLayout->addLayout(grid);
-        
+  mainLayout->addLayout(jitbox);
+  QHBoxLayout* portbox = new QHBoxLayout(0, 1, 10);
+
+  QLabel* lblistenPort = new QLabel(this);
+  lblistenPort->setText("Listen on port:");
+  portbox->addWidget(lblistenPort);
+
+  m_spListenPort = new QSpinBox(this);
+  m_spListenPort->setMaxValue(99999);
+  portbox->addWidget(m_spListenPort);
+  portbox->addItem(new QSpacerItem( 40, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ));
+
+  mainLayout->addLayout(portbox);
+
+
+  QGroupBox* groupbox = new QGroupBox(this);
+  groupbox->setTitle("Options");
+  groupbox->setColumnLayout(0, Qt::Vertical );
+  QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
+  groupboxLayout->setAlignment(Qt::AlignTop);
+
+  QVBoxLayout* vbox = new QVBoxLayout(0, 3, 16);
+  m_ckBreakOnLoad = new QCheckBox(groupbox);
+  m_ckBreakOnLoad->setText("Break on load");
+  vbox->addWidget(m_ckBreakOnLoad);
+  
+  
+  QLabel *lbStartSession = new QLabel(groupbox);
+  lbStartSession->setText("StartSession.php path:");
+  vbox->addWidget(lbStartSession);
+
+  m_edStartSessionScript = new KLineEdit(groupbox);
+  vbox->addWidget(m_edStartSessionScript);
+
+  groupboxLayout->addLayout(vbox);
+
+  mainLayout->addWidget(groupbox);
+
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
@@ -74,13 +95,13 @@ bool GBSettingsWidget::enableJIT()
   return m_ckEnableJIT->isChecked();
 }
 
+bool GBSettingsWidget::breakOnLoad() {
+  return m_ckBreakOnLoad->isChecked();
+}
+
 QString GBSettingsWidget::startSessionScript()
 {
   QString str = m_edStartSessionScript->text();
-//   if(str[str.length()-1] == '/')
-//   {
-//     str.remove(str.length()-1, 1);
-//   }
   return str;
 }
   
@@ -89,6 +110,7 @@ void GBSettingsWidget::populate()
   m_spListenPort->setValue(m_settings->listenPort());
   m_ckEnableJIT->setChecked(m_settings->enableJIT());
   m_edStartSessionScript->setText(m_settings->startSessionScript());
+  m_ckBreakOnLoad->setChecked(m_settings->breakOnLoad());
 }
 
 #include "gbsettingswidget.moc"
