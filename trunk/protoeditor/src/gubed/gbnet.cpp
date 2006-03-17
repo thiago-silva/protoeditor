@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by Thiago Silva                                    *
  *   thiago.silva@kdemail.net                                              *
+ *   Copied/Based on Linus McCabe work on Quanta                           * 
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,8 +19,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*  Much of this code is based on Linus McCabe's work on Quanta+ 
-*/
 
 #include "gbnet.h"
 #include "debuggergb.h"
@@ -362,7 +361,7 @@ void GBNet::processCommand(const QString& datas)
   // Just some status info, display on status line
   else if(m_command == "status")
   {
-    kdDebug() << "status: " << datas << endl;
+//     kdDebug() << "status: " << datas << endl;
 
     /*long argcnt = args["args"].toLong();
     QString msg = i18n(args["message"]);  // How will we get these messages throught to the translators?

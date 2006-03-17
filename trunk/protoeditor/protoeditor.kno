@@ -49,17 +49,11 @@
 \CurrentEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Gubed:</li>
-<ul type="disc"><li>Fix the stop/run again issue</li>
-<li>Breakpoints</li>
-<li>Messages</li>
-<li>Update settings:</li>
-<ul type="disc"><li>Send super globals [x]</li>
-<li>Break on load [x]<br /></li></ul></ul>
-<li>Xdebug:</li>
-<ul type="disc"><li>See if it send messages (errors/notices etc)<br /></li></ul>
-<li>Create tutorials stepbystep to install modules and run!</li>
+<ul type="disc"><li>Breakpoints</li>
+<ul type="disc"><li>change (can't figure condition so far)<br /><br /></li></ul></ul>
+<div>Create tutorials stepbystep to install modules and run!</div>
 <ul type="disc"><li>Create Help docbook</li>
-<li>strings i18n aware<br /></li></ul>
+<li>QStrings i18n aware<br /></li></ul>
 <li>&quot;File-&gt;new&quot; support</li>
 <ul type="disc"><li>Normalize use of KURL/QString filePath</li>
 <ul type="disc"><li>Start on Document class</li>
@@ -71,7 +65,7 @@
 <li>runtocursor</li>
 <li>Breakpoints: clear button</li>
 <li>Watches: clear button</li>
-<li>-bug: run, change the stack (so the green icon appears on text border), run another file (or JIT session). The icon remains<br /><br /></li>
+<li>-bug: run, change the stack (so the green arrow appears on text border), run another file (or JIT session). The icon remains<br /><br /></li>
 <li>ruby</li>
 <li>python</li>
 <li>perl<br /></li>
