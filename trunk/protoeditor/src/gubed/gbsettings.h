@@ -21,15 +21,20 @@ public:
     return mEnableJIT;
   }
 
-  virtual QString name()
-  {
-    return m_name;
+  bool breakOnLoad() const {
+    return mBreakOnLoad;
   }
 
   QString startSessionScript()
   {
     return mStartSessionScript;
   }
+
+  virtual QString name()
+  {
+    return m_name;
+  }
+
 
   virtual void loadValuesFromWidget();
   virtual DebuggerTab* widget();
@@ -38,6 +43,7 @@ protected:
   // Gubed
   int  mListenPort;
   bool mEnableJIT;
+  bool mBreakOnLoad;
   QString mStartSessionScript;
   
   QString m_name;  

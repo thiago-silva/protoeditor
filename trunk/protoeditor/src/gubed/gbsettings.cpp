@@ -42,6 +42,10 @@ GBSettings::GBSettings(const QString& name)
   itemStartSessionScript = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "StartSessionScript" ), mStartSessionScript, "/Gubed/ServerScripts/StartSession.php");
   addItem( itemStartSessionScript, QString::fromLatin1( "StartSessionScript" ) );
 
+  KConfigSkeleton::ItemBool  *itemBreakOnLoad;
+  itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, true);
+  addItem( itemBreakOnLoad, QString::fromLatin1( "BreakOnLoad" ) );
+
   readConfig();
 }
 
@@ -54,6 +58,7 @@ void GBSettings::loadValuesFromWidget()
   mEnableJIT   = m_widget->enableJIT();
   mListenPort  = m_widget->listenPort();
   mStartSessionScript = m_widget->startSessionScript();
+  mBreakOnLoad        = m_widget->breakOnLoad();
 }
 
 DebuggerTab* GBSettings::widget()
