@@ -171,9 +171,20 @@ void DebuggerGB::changeCurrentExecutionPoint(DebuggerExecutionPoint*)
   //
 }
 
-void DebuggerGB::modifyVariable(Variable*, DebuggerExecutionPoint*)
+void DebuggerGB::modifyVariable(Variable* var, DebuggerExecutionPoint*)
 {
+  if(isRunning())
+  {
+    QString name  =  "$" + var->compositeName();
+    QString value =  var->value()->toString();
 
+    if(value.isEmpty()) value = "null";
+
+    m_net->requestChangeVar(name, value);
+
+    //reload variables (global/local/watches) to get the new value.
+//     requestVars();
+  }
 }
 
 
@@ -279,8 +290,19 @@ void DebuggerGB::stopJIT()
 
 void DebuggerGB::slotStepDone()
 {
-  m_net->requestWatches(m_wathcesList);
+  requestVars();
+}
+
+void DebuggerGB::requestVars()
+{
+  //globals
+  m_net->requestGlobals();
+
+  //locals
   m_net->requestWatch("$GLOBALS");
+
+  //watches
+  m_net->requestWatches(m_wathcesList);  
 }
 
 void DebuggerGB::updateStack(DebuggerStack* stack)
@@ -310,6 +332,18 @@ void DebuggerGB::updateLocalVariables(const QString& scope, const QString& vars)
 
 void DebuggerGB::updateWatch(const QString& name, const QString& value)
 {
+  if(m_wathcesList.find(name) == m_wathcesList.end())
+  {
+    //This watch is not on our list.
+    //It might happen whe the user modifies the value of a variable (ie. "$var=123")
+    //through the VariablesListView or through evaluation of code.
+    //Since, for evaluation and change of variable value,
+    //we request a watch expression "$var=123", we receive "$var=123" as the name
+    //of the variable and we don't want to add something like that to the watchlist
+    //everytime the user modifies a variable, right? :)
+    return;
+  }
+
   PHPVariable* var;
   if(value == "-") 
   {

@@ -82,8 +82,8 @@ private:
   bool startJIT();
   void stopJIT();
 
-  void requestWatches();
-  
+  void requestVars();
+
   QString m_name;
   bool m_isRunning;
   bool m_isJITActive;
