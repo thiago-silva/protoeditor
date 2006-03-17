@@ -46,9 +46,7 @@ QString DBGFileInfo::toRemoteFilePath(const QString& localFilePath)
   if(!m_site) return localFilePath;
 
   QString localFile  = localFilePath;
-  QString serverPath = m_site->remoteBaseDir();
-  QString localPath  = m_site->localBaseDir();
-  return serverPath + localFile.remove(0, localPath.length());
+  return m_site->remoteBaseDir() + localFile.remove(0, m_site->localBaseDir().length());
 }
 
 QString DBGFileInfo::toLocalFilePath(const QString& remoteFilePath)
@@ -56,9 +54,7 @@ QString DBGFileInfo::toLocalFilePath(const QString& remoteFilePath)
   if(!m_site) return remoteFilePath;
 
   QString remoteFile  = remoteFilePath;
-  QString serverPath  = m_site->remoteBaseDir();
-  QString localPath   = m_site->localBaseDir();
-  return localPath + remoteFile.remove(0, serverPath.length());
+  return m_site->localBaseDir() + remoteFile.remove(0, m_site->remoteBaseDir().length());
 }
 
 const QString& DBGFileInfo::moduleName(int modno)
