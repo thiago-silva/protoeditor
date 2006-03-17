@@ -42,10 +42,13 @@ class XDNet : public QObject
 public:
   //transaction id's
   enum {
-    GeneralId,
-    LocalScopeId,
-    GlobalScopeId,
-    SuperGlobalId    
+    GeneralId, //ID used for requesting common data
+
+    LocalScopeId, //ID for requesting local variables
+    GlobalScopeId, //ID for requesting global variables
+    SuperGlobalId, //ID for requesting super globals
+
+    ErrorStackId //ID for requesting Stack to build error data, only
   };
 
   XDNet(DebuggerXD* debugger, QObject *parent = 0, const char *name = 0);
@@ -97,7 +100,7 @@ private slots:
 private:
   void requestProperty(const QString& expression, int ctx_id, int id);
 
-  void requestStack();
+  void requestStack(int id);
   void requestBreakpointList();
 
   void processOutput(QDomElement&);
@@ -108,22 +111,24 @@ private:
   void processInit(QDomElement& root);
   void processResponse(QDomElement& root);
 
-  void processPendingData();
+  void dispatchErrorData();
   
   void error(const QString&);
 
+  SiteSettings     *m_site;
   DebuggerXD       *m_debugger;
   Connection       *m_con;
 
-  QSocket* m_socket;
+  QSocket          *m_socket;
 
   VariablesList_t* m_globalVars;
   int m_superglobalsCount;
   
   class Error {
     public:
-      bool exists;
       QString code;
+      QString filePath;
+      int line;
       QString data;
       QString exception;
   };
