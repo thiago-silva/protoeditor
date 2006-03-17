@@ -57,7 +57,6 @@ public:
   void updateWatch(Variable*);
   void updateBreakpoint(DebuggerBreakpoint* bp);
   void debugMessage(int, const QString&, const QString&, int);
-  void debugError(const QString&);
 //   void updateOutput(const QString&);
   void addOutput(const QString&);
 

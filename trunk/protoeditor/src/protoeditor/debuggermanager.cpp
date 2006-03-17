@@ -222,7 +222,7 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
   //5: debugger->start(siteSettings, filePath);
   
 
-  if(m_activeDebugger)
+  if(m_activeDebugger && m_activeDebugger->isRunning())
   {
     if(isProfiling)
     {
@@ -575,19 +575,10 @@ void DebuggerManager::debugMessage(int type, const QString& msg, const QString& 
   if(type == DebuggerManager::ErrorMsg) 
   {
     m_window->tabEditor()->gotoLineAtFile(filePath, line);
+    m_window->showError(msg);
   }
   m_window->messageListView()->add(type, msg, line, filePath);
 }
-
-void DebuggerManager::debugError(const QString& msg)
-{
-  m_window->showError(msg);  
-}
-
-// void DebuggerManager::updateOutput(const QString& output)
-// {
-//   m_window->edOutput()->setText(output);
-// }
 
 void DebuggerManager::addOutput(const QString& output)
 {
