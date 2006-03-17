@@ -74,7 +74,7 @@ public:
                         const QString& condition);
 
   void addOutput(const QString&);
-  void debugError(const QString& code, const QString& exception, const QString& data);
+  void debugError(int, const QString&, int, const QString&);
   
   XDSettings* settings();
 public slots:

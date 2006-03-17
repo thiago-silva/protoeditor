@@ -31,7 +31,6 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <qregexp.h>
 #include "phpdefs.h"
 
 DebuggerXD::DebuggerXD(DebuggerManager* manager)
@@ -387,17 +386,12 @@ void DebuggerXD::addOutput(const QString& msg)
   manager()->addOutput(msg);
 }
 
-void DebuggerXD::debugError(const QString& code, const QString& /*exception*/, const QString& data)
+void DebuggerXD::debugError(int code, const QString& filePath, int line, const QString& message)
 {
-  QString message = data;
-  QRegExp rx;
+//   int line = m_currentExecutionPoint->line();
+//   QString filePath = m_currentExecutionPoint->filePath();
 
-  rx.setPattern("\\[[^\\]]*\\]");
-  message.remove(rx);
-
-  int line = m_currentExecutionPoint->line();
-  QString filePath = m_currentExecutionPoint->filePath();
-  switch(code.toInt())
+  switch(code)
   {
     case E_ERROR:
     case E_CORE_ERROR:
