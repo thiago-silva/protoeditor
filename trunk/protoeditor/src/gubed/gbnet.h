@@ -28,6 +28,7 @@ class DebuggerGB;
 class SiteSettings;
 class Connection;
 class QSocket;
+class DebuggerBreakpoint;
 
 typedef QMap<QString,QString> StringMap;
 
@@ -52,11 +53,10 @@ public:
 
   void requestWatches(const QStringList&);
   void requestWatch(const QString& expression);
-  //   void requestVariables(int scope, int id);
-  //
-  //   void requestBreakpoint(DebuggerBreakpoint* bp);
-  //   void requestBreakpointUpdate(DebuggerBreakpoint* bp);
-  //   void requestBreakpointRemoval(int bpid);
+
+  void requestBreakpoint(DebuggerBreakpoint* bp);
+  void requestBreakpointUpdate(DebuggerBreakpoint* bp);
+  void requestBreakpointRemoval(DebuggerBreakpoint* bp);
 
 signals:
   void sigError(const QString&);
@@ -87,11 +87,14 @@ private:
   void processVariables(const QString& vars);  
 
   void processLog(const QString& log);
+  void processFatalError(const QString&);
 
   DebuggerGB       *m_debugger;
   Connection       *m_con;  
   QSocket          *m_socket;
+  SiteSettings     *m_site;
   bool             m_watchingGlobal;
+  bool             m_continuing;
   QString m_command;
 };
 
