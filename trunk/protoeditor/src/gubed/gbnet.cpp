@@ -24,6 +24,7 @@
 #include "gbnet.h"
 #include "debuggergb.h"
 
+#include "phpdefs.h"
 #include "connection.h"
 #include "sitesettings.h"
 #include "gbsettings.h"
@@ -120,6 +121,11 @@ void GBNet::requestStepOut()
   sendCommand("stepout", 0);
 }
 
+void GBNet::requestGlobals()
+{
+  sendCommand("sendallvariables",0);
+}
+
 void GBNet::requestWatches(const QStringList& list)
 {
   m_watchingGlobal = false;
@@ -140,11 +146,17 @@ void GBNet::requestWatch(const QString& expression)
   sendCommand("getwatch", "variable", expression.ascii(), 0);
 }
 
+void GBNet::requestChangeVar(const QString& name, const QString& value)
+{
+  sendCommand("setvariable", "variable", name.ascii(), "value", value.ascii(), 0);
+}
+
 void GBNet::slotIncomingConnection(QSocket* socket)
 {
   connect(socket, SIGNAL(readyRead()), this, SLOT(slotReadBuffer()));
   m_socket = socket;
 
+  m_site = ProtoeditorSettings::self()->currentSiteSettings();
   sendCommand("wait", 0);
 }
 
@@ -281,8 +293,7 @@ void GBNet::processCommand(const QString& datas)
   {
     if(!m_continuing)
     {
-      sendCommand("sendbacktrace",0);
-      sendCommand("sendallvariables",0);
+      sendCommand("sendbacktrace",0);      
       emit sigStepDone();
     }
     else
@@ -311,7 +322,7 @@ void GBNet::processCommand(const QString& datas)
 //     sendCommand("pause", 0);
     //sendCommand("run", 0);
 
-    //sendCommand("seterrormask", "errormask", QString::number(m_errormask).ascii(), 0);
+    sendCommand("seterrormask", "errormask", QString::number(E_ALL).ascii(), 0);
   }
   else if(m_command == "variable")
   {
@@ -333,6 +344,12 @@ void GBNet::processCommand(const QString& datas)
     if(m_continuing) 
     {
       requestContinue();
+    }
+    else
+    {
+      sendCommand("pause",0);
+      requestStepInto();
+      emit sigStepDone();
     }
   }
   // Just some status info, display on status line
@@ -566,7 +583,6 @@ void GBNet::processBacktrace(const QString& bt)
 
   QString where;
   QString localFile;
-  SiteSettings* site = ProtoeditorSettings::self()->currentSiteSettings();
 
   while(1) 
   {
@@ -576,7 +592,6 @@ void GBNet::processBacktrace(const QString& bt)
     idx += rx.matchedLength();
   
     levels = rx.cap(1).toInt();
-
 
     rx.setPattern("a:4:\\{s:\\d*:\"file\";s:\\d*:\"([^\"]*)\";s:\\d*:\"class\";s:\\d*:\"[^\"]*\";s:\\d*:\"function\";s:\\d*:\"([^\"]*)\";s:\\d*:\"line\";i:(\\d*);\\}");
     if(rx.search(bt, idx) == -1) {
@@ -599,10 +614,10 @@ void GBNet::processBacktrace(const QString& bt)
       where = file + "::" + func + "()";
     }
     
-    if(site) 
+    if(m_site)
     {
-      localFile = site->localBaseDir()
-                          + file.remove(0, site->remoteBaseDir().length());
+      localFile = m_site->localBaseDir()
+                          + file.remove(0, m_site->remoteBaseDir().length());
     }
     else
     {
@@ -659,13 +674,16 @@ void GBNet::processVariables(const QString& vars)
 void GBNet::processLog(const QString& log)
 {
   QRegExp rx;
-  rx.setPattern("a:4:\\{s:\\d*:\"filename\";([^;]*);s:\\d*:\"line\";i:(\\d*);s:\\d*:\"errnum\";i:(\\d*);s:\\d*:\"errmsg\";s:\\d*:\"([^;]*)\";");
+  rx.setPattern("a:4:\\{s:\\d*:\"filename\";s:\\d*:\"([^;]*)\";s:\\d*:\"line\";i:(\\d*);s:\\d*:\"errnum\";i:(\\d*);s:\\d*:\"errmsg\";s:\\d*:\"([^;]*)\";");
   if(rx.search(log, 0) == -1) {
     error("Error receiving network data.");
     return;
   }
 
-  m_debugger->updateMessage(rx.cap(3).toInt(), rx.cap(4), rx.cap(1), rx.cap(2).toInt());
+  QString filePath = rx.cap(1);
+  filePath = m_site->localBaseDir() + filePath.remove(0, m_site->remoteBaseDir().length());
+
+  m_debugger->updateMessage(rx.cap(3).toInt(), rx.cap(4), filePath, rx.cap(2).toInt());
 }
 
 
@@ -681,9 +699,9 @@ void GBNet::processFatalError(const QString& err)
     return;
   }
 
-  QString pp = rx.cap(1);
-  m_debugger->updateError(pp);
-  m_con->closeClient();
+  QString filePath = m_site->localBaseDir() + rx.cap(1).remove(0, m_site->remoteBaseDir().length());
+
+  m_debugger->updateError(filePath);  
 }
 
 #include "gbnet.moc"

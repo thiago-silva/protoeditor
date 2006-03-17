@@ -50,9 +50,11 @@ public:
   void requestStepInto();
   void requestStepOver();
   void requestStepOut();
-
+  
+  void requestGlobals();  
   void requestWatches(const QStringList&);
   void requestWatch(const QString& expression);
+  void requestChangeVar(const QString& name, const QString& value);
 
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointUpdate(DebuggerBreakpoint* bp);
