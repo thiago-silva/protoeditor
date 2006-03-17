@@ -30,7 +30,27 @@
 DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, const char *name)
     : DebuggerTab(parent, name), m_settings(settings) {
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
+  QVBoxLayout *mainLayout = new QVBoxLayout(this, 16, 5);
+
+  QHBoxLayout* jitbox = new QHBoxLayout(0, 1, 10);
+
+  m_ckEnableJIT = new QCheckBox(this);
+  m_ckEnableJIT->setText("Enable JIT");
+  jitbox->addWidget(m_ckEnableJIT);
+
+  mainLayout->addLayout(jitbox);
+  QHBoxLayout* portbox = new QHBoxLayout(0, 1, 10);
+
+  QLabel* lblistenPort = new QLabel(this);
+  lblistenPort->setText("Listen on port:");
+  portbox->addWidget(lblistenPort);
+
+  m_spListenPort = new QSpinBox(this);
+  m_spListenPort->setMaxValue(99999);
+  portbox->addWidget(m_spListenPort);
+  portbox->addItem(new QSpacerItem( 40, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ));
+
+  mainLayout->addLayout(portbox);
 
   QGroupBox* groupbox = new QGroupBox(this);
   groupbox->setTitle("Options");
@@ -65,28 +85,6 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   groupboxLayout->addLayout(grid);
 
   mainLayout->addWidget(groupbox);
-
-  QHBoxLayout* portbox = new QHBoxLayout(0, -1, 16);
-
-  QLabel* lblistenPort = new QLabel(this);
-  lblistenPort->setText("Listen on port:");
-  portbox->addWidget(lblistenPort);
-
-  m_spListenPort = new QSpinBox(this);
-  m_spListenPort->setMaxValue(99999);
-  portbox->addWidget(m_spListenPort);
-  portbox->addItem(new QSpacerItem( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
-
-  mainLayout->addLayout(portbox);
-
-  QHBoxLayout* jitbox = new QHBoxLayout(0, -1, 16);
-
-  m_ckEnableJIT = new QCheckBox(this);
-  m_ckEnableJIT->setText("Enable JIT");
-  jitbox->addWidget(m_ckEnableJIT);
-  jitbox->addItem(new QSpacerItem( 324, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
-
-  mainLayout->addLayout(jitbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }

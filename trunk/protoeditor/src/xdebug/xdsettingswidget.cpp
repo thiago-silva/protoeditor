@@ -32,30 +32,16 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
     : DebuggerTab(parent, name), m_settings(settings)
 {
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this, 10, 16);
+  QVBoxLayout *mainLayout = new QVBoxLayout(this, 16, 5);
 
-  QGroupBox* groupbox = new QGroupBox(this);
-  groupbox->setTitle("Options");
-  groupbox->setColumnLayout(0, Qt::Vertical );
-  QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
-  groupboxLayout->setAlignment(Qt::AlignTop);
+  QHBoxLayout* jitbox = new QHBoxLayout(0, 1, 10);
 
-  QVBoxLayout* hbox = new QVBoxLayout(0, 3, 6);
-  m_ckBreakOnLoad = new QCheckBox(groupbox);
-  m_ckBreakOnLoad->setText("Break on load");
-  hbox->addWidget(m_ckBreakOnLoad);
-  
-    
-  m_ckSendSuperGlobals = new QCheckBox(groupbox);
-  m_ckSendSuperGlobals->setText("Send super global variables");
-  hbox->addWidget(m_ckSendSuperGlobals);
+  m_ckEnableJIT = new QCheckBox(this);
+  m_ckEnableJIT->setText("Enable JIT");
+  jitbox->addWidget(m_ckEnableJIT);
 
-  groupboxLayout->addLayout(hbox);
-
-  mainLayout->addWidget(groupbox);
-
-  
-  QHBoxLayout* portbox = new QHBoxLayout(0, -1, 16);
+  mainLayout->addLayout(jitbox);
+  QHBoxLayout* portbox = new QHBoxLayout(0, 1, 10);
 
   QLabel* lblistenPort = new QLabel(this);
   lblistenPort->setText("Listen on port:");
@@ -64,19 +50,29 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
   m_spListenPort = new QSpinBox(this);
   m_spListenPort->setMaxValue(99999);
   portbox->addWidget(m_spListenPort);
-  portbox->addItem(new QSpacerItem( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
+  portbox->addItem(new QSpacerItem( 40, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ));
 
   mainLayout->addLayout(portbox);
 
-  QHBoxLayout* jitbox = new QHBoxLayout(0, -1, 16);
+  QGroupBox* groupbox = new QGroupBox(this);
+  groupbox->setTitle("Options");
+  groupbox->setColumnLayout(0, Qt::Vertical );
+  QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
+  groupboxLayout->setAlignment(Qt::AlignTop);
 
-  m_ckEnableJIT = new QCheckBox(this);
-  m_ckEnableJIT->setText("Enable JIT");
-  jitbox->addWidget(m_ckEnableJIT);
-  jitbox->addItem(new QSpacerItem( 324, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ));
+  QVBoxLayout* vbox = new QVBoxLayout(0, 3, 6);
+  m_ckBreakOnLoad = new QCheckBox(groupbox);
+  m_ckBreakOnLoad->setText("Break on load");
+  vbox->addWidget(m_ckBreakOnLoad);
+  
+    
+  m_ckSendSuperGlobals = new QCheckBox(groupbox);
+  m_ckSendSuperGlobals->setText("Send super global variables");
+  vbox->addWidget(m_ckSendSuperGlobals);
 
-  mainLayout->addLayout(jitbox);
+  groupboxLayout->addLayout(vbox);
 
+  mainLayout->addWidget(groupbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
