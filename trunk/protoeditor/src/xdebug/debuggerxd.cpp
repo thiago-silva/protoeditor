@@ -405,7 +405,6 @@ void DebuggerXD::debugError(const QString& code, const QString& /*exception*/, c
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
       manager()->debugMessage(DebuggerManager::ErrorMsg, message, filePath, line);
-      manager()->debugError(message);
       break;
 
     case E_WARNING:
