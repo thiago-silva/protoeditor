@@ -599,8 +599,6 @@ void DBGNet::slotIncomingConnection(QSocket* sock)
 
 void DBGNet::slotDBGClosed()
 {
-  //stoping the debugger (not the session!!)
-
   emit sigDBGClosed();
 
   m_receiver->clear();
