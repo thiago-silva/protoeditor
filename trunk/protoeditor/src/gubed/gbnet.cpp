@@ -307,16 +307,7 @@ void GBNet::processCommand(const QString& datas)
   else if(m_command == "initialize")
   {    
     sendCommand("havesource", 0);
-    emit sigGBStarted();
-    if(m_debugger->settings()->breakOnLoad())
-    {
-      requestStepInto();
-    }
-    else
-    {
-      sendCommand("sendbacktrace",0);
-      requestContinue();
-    }
+    requestStepInto();
   }
   else if(m_command == "backtrace")
   {
@@ -325,10 +316,14 @@ void GBNet::processCommand(const QString& datas)
   // Send run mode to script
   else if(m_command == "getrunmode")
   {
-//     sendCommand("pause", 0);
-    //sendCommand("run", 0);
+    sendCommand("seterrormask", "errormask", QString::number(0).ascii(), 0);
 
-    sendCommand("seterrormask", "errormask", QString::number(E_ALL).ascii(), 0);
+    emit sigGBStarted();
+    if(!m_debugger->settings()->breakOnLoad())
+    {
+      sendCommand("sendbacktrace",0);
+      requestContinue();
+    }    
   }
   else if(m_command == "variable")
   {
@@ -341,13 +336,14 @@ void GBNet::processCommand(const QString& datas)
   }
   else if(m_command == "error")
   {
-    QString msg = args["errmsg"];
+    //---only used when error mask has a value
+/*    QString msg = args["errmsg"];
     QString filename = args["filename"];
     QString line = args["line"];
 
     processLog(datas);
 
-    if(m_continuing) 
+    if(m_continuing)
     {
       requestContinue();
     }
@@ -356,7 +352,7 @@ void GBNet::processCommand(const QString& datas)
       sendCommand("pause",0);
       requestStepInto();
       emit sigStepDone();
-    }
+    }*/
   }
   // Just some status info, display on status line
   else if(m_command == "status")
