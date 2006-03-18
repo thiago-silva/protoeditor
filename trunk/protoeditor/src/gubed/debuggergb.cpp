@@ -374,7 +374,7 @@ void DebuggerGB::updateMessage(int type, const QString& msg, const QString& file
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, fpath, line-1);      
+      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, fpath, line);      
       break;
 
     case E_WARNING:
