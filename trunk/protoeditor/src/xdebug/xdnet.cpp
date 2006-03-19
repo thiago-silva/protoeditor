@@ -273,10 +273,9 @@ void XDNet::slotReadBuffer()
     char data[xmlSize+1];
 
     totalread = 0;
-    int aa;
+    int aa = 99;
     while(totalread != xmlSize)
-    {
-      aa = m_socket->bytesAvailable();
+    { 
       read = m_socket->readBlock(&data[totalread], xmlSize-totalread);
 
       if(read == -1)
@@ -287,7 +286,7 @@ void XDNet::slotReadBuffer()
       //       if(read == 0) break;
       if(read == 0)
       {
-        m_socket->waitForMore (-1, 0L);
+        aa = m_socket->waitForMore (-1, 0L);
       }
 
       totalread += read;
@@ -296,14 +295,15 @@ void XDNet::slotReadBuffer()
 
     data[xmlSize] = 0;
     //     if(m_superglobalsCount == 9) {
-    //       std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+//           std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
     //     }
 
     str.setAscii(data,xmlSize);
+
     processXML(str);
 
   }
-  while(m_socket->bytesAvailable());
+  while(m_socket && m_socket->bytesAvailable());
 }
 
 void XDNet::processXML(const QString& xml)
@@ -401,8 +401,7 @@ void XDNet::processResponse(QDomElement& root)
       (cmd == "run"))
   {
     if((root.attribute("status") == "break"))
-    {
-//       kdDebug() << "break for reason: " << root.attribute("reason") << endl;
+    {      
       if(root.attribute("reason") == "error")
       {        
         processError(root.firstChild().toElement());
@@ -418,6 +417,15 @@ void XDNet::processResponse(QDomElement& root)
     else if(root.attribute("status") == "stopped")
     {
       //nothing...
+    }
+    else if(root.attribute("status") == "stopping")
+    {
+      if(root.attribute("reason") == "aborted") 
+      {
+        processError(root.firstChild().toElement());
+        requestStack(ErrorStackId); //see processErrorData() for why this is here
+        requestContinue();
+      }
     }
     else
     {
@@ -558,7 +566,10 @@ void XDNet::processResponse(QDomElement& root)
       int id = e.attributeNode("id").value().toInt();
       QString filePath = KURL::fromPathOrURL(e.attributeNode("filename").value()).path();
 
-      filePath = m_site->localBaseDir() + filePath.remove(0, m_site->remoteBaseDir().length());
+      if(m_site)
+      {
+        filePath = m_site->localBaseDir() + filePath.remove(0, m_site->remoteBaseDir().length());
+      }
 
       int line = e.attributeNode("lineno").value().toInt();
       QString state = e.attributeNode("state").value();
