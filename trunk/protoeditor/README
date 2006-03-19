@@ -1,6 +1,7 @@
-                            Protoeditor
+Protoeditor
+-----------
 
-Project site: http://protoeditor.sourceforge.net/
+Project site: http://protoeditor.sourceforge.net
 
 1.0 About:
 
@@ -11,42 +12,39 @@ Project site: http://protoeditor.sourceforge.net/
 
    - DBG debugger (free version 2.11) at http://dd.cron.ru/dbg/
    - Xdebug (tested with CVS version 2.0.0beta3-dev).
+   - Gubed 0.2.2
 
   Protoeditor uses katepart as the text editor, so all the functionalities of
-  a _good_ editor are present (highlights, folding marks, etc, etc, etc).
-  This makes the debug experience more pratical.
+  a _good_ editor are present (highlights, folding marks, etc, etc, etc) wich 
+  makes the debug experience more pratical.
 
   Besides the editor, it supports common debugger features like:
-  steps, watches, stack/backtrace, breakpoints, conditional breakpoints...
+  steps, watches, backtrace, breakpoints, etc. Other features depend on what 
+  the debuggers supports.
 
-1.0 Requirements:
+
+1.1 Requirements:
 
   * KDE 3.2 + should be fine (if not, let me know :)
 
+
 1.2 Upgrades:
 
-  I suggest being carefull when upgrading Protoeditor beta versions. Since it
-  still has many things that changes over the releases, the settings (default
-  on ~/.kde/share/config/protoeditorrc) might not be valid for a newer
-  version . So, is likely that you will need to delete this file after an
-  upgrade.
+  Since Protoeditor has many things that changes over the releases, the 
+  file settings (default on ~/.kde/share/config/protoeditorrc) might not be 
+  valid for a newer version. So, if something is odd with configurations, 
+  try deleting this file  and run Protoeditor right after.
 
-2.0 Notes
 
-  2.1 Kate
+2.0 Configuration
 
-  The first time you execute Protoeditor, its configuration won't exist so, kate
-  will load the default settings for the editor, wich might not include
-  Icon Border (where breakpoints and execution arrows appears). Just open a file
-  (so the menu for the editor appears), goto "Editor" -> "Configure" and,
-  on "View defaults" and mark "Show Icon Border".
+  For a walk through on installing and configuring the debuggers and Protoeditor,
+  see the "Tutorial" section on Protoeditor's homepage.
 
-  2.2 Debugger Configuration
 
-  2.2.1 DBG and Xdebug
+2.1 Debugger Configuration
 
-  First, configure your debugger. For DBG and Xdebug, make sure it is active
-  with phpinfo(). 
+  For Xdebug and DBG, check you phpinfo() if they were successfuly installed.
 
   For details about DBG installation, check the DBG site: 
     http://dd.cron.ru
@@ -54,39 +52,46 @@ Project site: http://protoeditor.sourceforge.net/
   For details about Xdebug installation, check the Xdebug site:
     http://www.xdebug.org
 
-  2.2.2 Protoeditor configuration
+  For details about Gubed installation, check the Gubed site:
+    http://gubed.sourceforge.net
+
+  
+2.1.1 Protoeditor configuration
 
   Check your debugger options on Protoeditor settings. Most of them are self
   explanatory, but I'll give some hints ;)
 
-  The "PHP Binary path" is used to execute/debug scripts locally, and the
-  "Default debugger" chosen is the one to be used on local debugging sessions.
+  The "PHP Binary path" specifies the path for the PHP binary. Togueter with 
+  the "External console" settings in "External Application", it is used to 
+  execute/debug scripts locally using a console application, if desired.
 
-  JIT note: if enabled, Protoeditor will listen on the given port while the
-  application is running. Otherwise, it will only listen to the port when a
-  debug session is active.
+  The "Default debugger" chosen is the one to be used on local debugging 
+  sessions.
+
+  Every debugger has a JIT option. If enabled, Protoeditor will listen on the 
+  given port while the application is running. Otherwise, it will only listen 
+  to the port when a debug session is active.
 
   In "External Applications" you can select a browser to use while debugging
-  remote scripts and a console to execute/debug the scripts locally (ie.
-  using the php binary).
+  remote scripts and a console to execute/debug the scripts locally, using
+  the PHP binary.
 
-  2.2.3 Sites
+2.1.2 Sites
 
     From version 0.6, Protoeditor supports different settings for remote/local  
     directory mapping. On other IDE's this is simply the configuration for
     a given project. Since Protoeditor is not project centric, it uses "Site"
-    configuration. Each site has the following entries:
+    configuration to figure how to access the HTTP server, how to map
+    the paths of the scripts and which debugger it used. 
+    Each site has the following entries:
 
-      -Site name        : a simple name to identify this site
-      -URL              : the URL of the http server
-      -Remote base dir  : the remote directory of the site (eg.
-                          /var/www/htdocs/mysite)
-      -Local base dir   : the local directory of the site (eg. /home/me/mysite)
+      -Site name        : a simple name to identify this site.
+      -URL              : the URL of the http server.
+      -Remote base dir  : the remote directory of the site.
+      -Local base dir   : the local directory of the site.
       -Default file     : the default script to be debuged when this site is
                           selected.
-      -Debugger         : the debugger you are using to debug this site.
-
-      (other entries might appear in future versions)
+      -Debugger         : the debugger for this site.
 
     Many Sites can be registered and they are selected through the combo box on
     the main window toolbar or in the main menu. Also there is a default 
@@ -104,30 +109,31 @@ Project site: http://protoeditor.sourceforge.net/
     Example of a local Site:
 
     Site name       : home
-    URL             : http://localhost:8080
-    Remote base dir : /home/me/phpsite
+    URL             : http://192.168.0.1:8080
+    Remote base dir : /var/www/htdocs
     Local base dir  : /usr/apache/htdocs/phpsite
     Default file    : /usr/apache/htdocs/phpsite/index.php
     Debugger        : DBG
 
-  2.3 Main window
 
-    Now, some tricks, notes and not-so-obvious-features:
+3.0 Main window
+
+    Now, some tricks, notes and features:
 
       Variales list:
 
         -Expanded array/object childs remains expanded through
-         step-in/step-out/break,
+         step-in/step-out/break.
 
         -To modify a variable value on the fly, simply double click on it's
-         value and edit it.
+         value and edit it (as long as the debugger used supports it).
 
         -Right button on a variable popup a menu to copy the variable to the
          clipboard.
 
       Breakpoints:
 
-        -Multiple breakpoints on the same file/line is not supported.
+        -Multiple breakpoints on the same file/line is _not_ supported.
 
       Site script:
         
@@ -137,18 +143,11 @@ Project site: http://protoeditor.sourceforge.net/
         the option "Use Current Script" in the menu/toolbar so the active
         script in the editor is used.
 
-  2.4 Profiler
+
+4.0 Profiler
 
     Currently, DBG Profiler is supported. Be sure to have it enabled on php.ini
-    settings. It still very basic, but matches the main features of other IDE's
-    that uses DBG profiler.
-
-3.0 Future plans
-
-  - Improve profiling.
-  - Support Gubed debugger (http://gubed.sourceforge.net)
-  - Support other languages such as Ruby, Python, Perl and so on.
-  - Hope I live for that ;)
+    settings. 
 
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>

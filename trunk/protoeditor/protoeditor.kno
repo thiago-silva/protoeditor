@@ -48,12 +48,13 @@
 
 \CurrentEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Gubed:</li>
-<ul type="disc"><li>Breakpoints</li>
-<ul type="disc"><li>change (can't figure condition so far)<br /><br /></li></ul></ul>
-<div>Create tutorials stepbystep to install modules and run!</div>
+<ul type="disc"><li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)</li>
+<li>Use &quot;icon border&quot; and &quot;line number&quot; in the first run (mandatory!!! for the next version)<br /><br /></li>
+<li>Finish tutorial</li>
+<li>Release it!<br /></li>
 <ul type="disc"><li>Create Help docbook</li>
 <li>QStrings i18n aware<br /></li></ul>
+<li>Add an lineedit (like browsers) between editor and toolbar for arguments!</li>
 <li>&quot;File-&gt;new&quot; support</li>
 <ul type="disc"><li>Normalize use of KURL/QString filePath</li>
 <ul type="disc"><li>Start on Document class</li>
@@ -64,8 +65,22 @@
 <li>etc<br /><br /></li></ul></ul>
 <li>runtocursor</li>
 <li>Breakpoints: clear button</li>
-<li>Watches: clear button</li>
-<li>-bug: run, change the stack (so the green arrow appears on text border), run another file (or JIT session). The icon remains<br /><br /></li>
+<li>Watches: clear button<br /><br /></li>
+<li>Issues:</li>
+<ul type="disc"><li>Gubed:</li>
+<ul type="disc"><li>Breakpoints</li>
+<ul type="disc"><li>change (can't figure condition so far)</li></ul>
+<li>Halt on error stuff (is halting, different from the other debuggers)</li>
+<ul type="disc"><li>add settings for this (halt on [x]error [x]warning [x]notice)<br /></li></ul></ul></ul>
+<li>bug: </li>
+<ul type="disc"><li>run, change the stack (so the green arrow appears on text border), run another file (or JIT session). The icon remains<br /></li></ul>
+<li>bug (gubed)</li>
+<ul type="disc"><li>run script that includes another</li>
+<li>set breakpoint in the main script</li>
+<li>set breakpoint in the included script</li>
+<li>run and see the breaks.</li>
+<ul type="disc"><li>in the main script, the break ocurs right in the breakpoint</li>
+<li>in the included script, the break occurs in the line after<br /></li></ul></ul>
 <li>ruby</li>
 <li>python</li>
 <li>perl<br /></li>
