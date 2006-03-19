@@ -33,9 +33,9 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
 
   addColumn(tr2i18n(""));
   addColumn(tr2i18n("Status"));
-  addColumn(tr2i18n("File name"));
-  addColumn(tr2i18n("File path"));  
   addColumn(tr2i18n("Line"));
+  addColumn(tr2i18n("File name"));
+  addColumn(tr2i18n("File path"));    
   addColumn(tr2i18n("Condition"));
   addColumn(tr2i18n("Skip hits"));
   addColumn(tr2i18n("Hit count"));

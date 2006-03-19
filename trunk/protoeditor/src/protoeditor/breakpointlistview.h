@@ -32,8 +32,8 @@ class BreakpointListView : public KListView
 {
 Q_OBJECT
 public:
-  enum { StatusIconCol = 0, StatusTextCol, FileNameCol, FilePathCol
-       , LineCol, ConditionCol, SkipHitsCol, HitCountCol, };
+  enum { StatusIconCol = 0, StatusTextCol, LineCol, FileNameCol, FilePathCol
+       , ConditionCol, SkipHitsCol, HitCountCol, };
 
   BreakpointListView(QWidget *parent = 0, const char *name = 0);
   ~BreakpointListView();
