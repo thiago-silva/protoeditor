@@ -487,22 +487,31 @@ void ConsoleRequestor::doRequest(const KURL& url)
   {
     //use external console
 
-    kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "
+    kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "              
               << m_env.join(" ") << " " 
-              << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read" << endl;
+              << QString("cd ") <<  url.directory() << ";"
+              << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read"
+              << endl;
   
     //KProcess::quote(filePath)
     *m_process << QStringList::split(' ',consoleApp.arg("/bin/sh")) << "-c"
-      <<  (cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read");
+      << (
+          QString("cd ") +  url.directory() + ";"
+          + cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read"
+         );
   }
   else
   {
     //use current terminal
 
-    kdDebug() << "executing : " << "/bin/sh" << " -c " << cmd.arg(url.path()) << endl;
+    kdDebug() << "executing : " << "/bin/sh" << " -c "
+              << QString("cd ") <<  url.directory() << ";"
+              << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read"
+              << endl;
   
     //KProcess::quote(filePath)
-    *m_process << "/bin/sh" << "-c" << cmd.arg(url.path());
+    *m_process << "/bin/sh" << "-c" << 
+      (QString("cd ") +  url.directory() + ";" + cmd.arg(url.path()));
   }
 
   if(!m_process->start())
