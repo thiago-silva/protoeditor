@@ -46,6 +46,14 @@ EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char
   //   setTabReorderingEnabled(true);
   setHoverCloseButton (true);
   setHoverCloseButtonDelayed (true);
+
+  KConfig* config = KGlobal::config();
+  
+  if(!config->hasGroup(QString("Kate View Defaults"))) {
+    config->setGroup("Kate View Defaults");
+    config->writeEntry("Icon Bar","true", true);
+    config->writeEntry("Line Numbers","true",true);
+  }
 }
 
 EditorTabWidget::~EditorTabWidget()
