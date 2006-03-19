@@ -51,7 +51,8 @@
 <ul type="disc"><li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)</li>
 <li>Use &quot;icon border&quot; and &quot;line number&quot; in the first run (mandatory!!! for the next version)<br /><br /></li>
 <li>Finish tutorial</li>
-<li>Release it!<br /></li>
+<li>Create scripts to build news/ChangeLog and commit in the source tree</li>
+<li>release it!!<br /></li>
 <ul type="disc"><li>Create Help docbook</li>
 <li>QStrings i18n aware<br /></li></ul>
 <li>Add an lineedit (like browsers) between editor and toolbar for arguments!</li>
@@ -79,7 +80,7 @@
 <li>set breakpoint in the main script</li>
 <li>set breakpoint in the included script</li>
 <li>run and see the breaks.</li>
-<ul type="disc"><li>in the main script, the break ocurs right in the breakpoint</li>
+<ul type="disc"><li>in the main script, the break occurs right in the breakpoint</li>
 <li>in the included script, the break occurs in the line after<br /></li></ul></ul>
 <li>ruby</li>
 <li>python</li>
