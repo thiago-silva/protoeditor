@@ -7,7 +7,7 @@ Project site: http://protoeditor.sourceforge.net
 
   Protoeditor is a small KDE text editor developed for debugging
   scripts interactively. The goal is to provide a simple editor supporting a
-  variety of debuggers for different languages. Currently (beta 0.7), it
+  variety of debuggers for different languages. Currently (beta 0.8), it
   only supports PHP and the following debuggers:
 
    - DBG debugger (free version 2.11) at http://dd.cron.ru/dbg/
