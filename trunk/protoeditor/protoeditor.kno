@@ -48,11 +48,7 @@
 
 \CurrentEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)</li>
-<li>Use &quot;icon border&quot; and &quot;line number&quot; in the first run (mandatory!!! for the next version)<br /><br /></li>
-<li>Finish tutorial</li>
-<li>Create scripts to build news/ChangeLog and commit in the source tree</li>
-<li>release it!!<br /></li>
+<ul type="disc"><li>release it!!<br /></li>
 <ul type="disc"><li>Create Help docbook</li>
 <li>QStrings i18n aware<br /></li></ul>
 <li>Add an lineedit (like browsers) between editor and toolbar for arguments!</li>
@@ -64,6 +60,7 @@
 <li>DebuggerManager</li>
 <li>Breakpoint/BreakpointListView</li>
 <li>etc<br /><br /></li></ul></ul>
+<li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)</li>
 <li>runtocursor</li>
 <li>Breakpoints: clear button</li>
 <li>Watches: clear button<br /><br /></li>
