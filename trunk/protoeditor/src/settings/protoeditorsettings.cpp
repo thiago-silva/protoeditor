@@ -88,6 +88,11 @@ QString ProtoeditorSettings::currentSiteName() {
 
 void ProtoeditorSettings::registerDebuggerSettings(DebuggerSettingsInterface* dsettings, const QString& name)
 {
+  if(phpSettings()->defaultDebugger().isEmpty()) 
+  {
+    phpSettings()->setDefaultDebugger(name);
+  }
+
   m_debuggerSettingsMap[name] = dsettings;
 }
 
