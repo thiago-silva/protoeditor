@@ -180,7 +180,7 @@ void VariablesListView::populateChildren(VariablesListViewItem* item)
     so it can support recursive references easily
   */
 
-  if(item->childCount() > 0)
+  if((item->childCount() > 0) || (item->variable()->value()->isScalar()))
   {
     return;
   }
@@ -246,7 +246,12 @@ void VariablesListView::reexpandItems()
   for(it = paths.begin(); it != paths.end(); it++)
   {
     item = getItemFromPath(*it);
-    if(item) item->setOpen(true);
+
+    //variable might have changed from list to scalar
+    if(item && !item->variable()->value()->isScalar())
+    {
+      item->setOpen(true);
+    }
   }
 }
 
