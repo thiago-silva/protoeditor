@@ -503,7 +503,7 @@ void XDNet::processResponse(QDomElement& root)
     } 
     else 
     {
-      error("XDebug client: Internal error");
+      error("Xdebug client: Internal error");
     }
   }
   else if(cmd == "property_get")
