@@ -20,6 +20,11 @@
 
 #include "watchlistview.h"
 #include "variableslistviewitem.h"
+#include <kpopupmenu.h>
+
+#include <kapplication.h>
+#include <qclipboard.h>
+
 
 WatchListView::WatchListView(QWidget *parent, const char *name)
  : VariablesListView(parent, name)
@@ -30,6 +35,58 @@ WatchListView::WatchListView(QWidget *parent, const char *name)
 
 WatchListView::~WatchListView()
 {
+}
+
+void WatchListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int)
+{
+  enum { CopyVarItem, CopyValueItem, DeleteWatch, DeleteAllWatches };
+  
+  KPopupMenu* menu = new KPopupMenu(this);
+  menu->insertItem("Copy variable", CopyVarItem);
+  menu->insertItem("Copy value", CopyValueItem);
+  menu->insertItem("Delete", DeleteWatch);
+  menu->insertItem("Delete all", DeleteAllWatches);
+ 
+  if(!item)
+  {
+    menu->setItemEnabled(CopyVarItem, false);
+    menu->setItemEnabled(CopyValueItem, false);
+    menu->setItemEnabled(DeleteWatch, false);
+  }
+
+  if(childCount() == 0) 
+  {
+    menu->setItemEnabled(DeleteAllWatches, false);
+  }
+
+  int selection = menu->exec(p);
+  if(selection == -1)
+  {
+    delete menu;
+    return;
+  }
+  
+  QClipboard* clip = kapp->clipboard();
+
+  VariablesListViewItem* vitem =
+      dynamic_cast<VariablesListViewItem*>(item);
+  
+  switch(selection)
+  {
+    case CopyVarItem:
+      clip->setText(vitem->variable()->toString(), QClipboard::Clipboard);
+      break;
+    case CopyValueItem:
+      clip->setText(vitem->variable()->value()->toString(), QClipboard::Clipboard);
+      break;
+    case DeleteWatch:
+      removeWatch(vitem);
+      break;
+    case DeleteAllWatches:
+      removeAllWatches();
+  }
+
+  delete menu;   
 }
 
 void WatchListView::addWatch(Variable* var) {
@@ -90,15 +147,33 @@ void WatchListView::keyPressEvent(QKeyEvent* e) {
     VariablesListViewItem* item =
       dynamic_cast<VariablesListViewItem*>(currentItem());
 
-      if(item) {
-//         takeItem(item);
-        emit sigWatchRemoved(item->variable());
-        delete item;
-      }
-  } else {
+    removeWatch(item);
+  } 
+  else 
+  {
     VariablesListView::keyPressEvent(e);
   }
 }
 
+void WatchListView::removeWatch(VariablesListViewItem* item)
+{
+  if(item) {
+    emit sigWatchRemoved(item->variable());
+    delete item;
+  }
+}
+
+void WatchListView::removeAllWatches()
+{
+
+  VariablesListViewItem* item = dynamic_cast<VariablesListViewItem*>(firstChild());
+  VariablesListViewItem* other;
+  while(item)
+  {
+    other = item;
+    item = dynamic_cast<VariablesListViewItem*>(item->nextSibling());
+    removeWatch(other);
+  } 
+}
 
 #include "watchlistview.moc"

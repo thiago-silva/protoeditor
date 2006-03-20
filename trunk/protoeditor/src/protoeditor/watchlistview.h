@@ -42,7 +42,12 @@ public:
 signals:
   void sigWatchRemoved(Variable*);
 
+protected slots:
+  void slotContextMenuRequested(QListViewItem* item, const QPoint& p, int);
+
 protected:
+  void removeWatch(VariablesListViewItem*);
+  void removeAllWatches();
   virtual void keyPressEvent(QKeyEvent* e);
 
 };
