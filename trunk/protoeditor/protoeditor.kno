@@ -25,12 +25,16 @@
 
 \NewEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>1: Test current CVS version on other distro/KDE versions</li>
+<ul type="disc"><li>1: Test current SVN version on other distro/KDE versions</li>
 <li>2: Change version on kdevelop file, configure.in/configure.in.in</li>
 <li>3: Create NEWS file</li>
 <li>4: Create ChangeLog file</li>
 <li>5: Update README version</li>
 <li>6: TAG current CVS version</li>
+<li>7: create package</li>
+<ul type="disc"><li>remove unescessary data on workspace (Makefile.am dist-hook add everything when &quot;make dist&quot;)</li>
+<li>make dist, and check</li>
+<li>publish</li></ul>
 <li>7: Update site</li></ul>
 <p></p>
 <p></p>
@@ -48,22 +52,20 @@
 
 \CurrentEntry 1 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>release it!!<br /></li>
-<ul type="disc"><li>Create Help docbook</li>
-<li>QStrings i18n aware<br /></li></ul>
-<li>Add an lineedit (like browsers) between editor and toolbar for arguments!</li>
-<li>&quot;File-&gt;new&quot; support</li>
+<ul type="disc"><li>&quot;File-&gt;new&quot; support</li>
 <ul type="disc"><li>Normalize use of KURL/QString filePath</li>
 <ul type="disc"><li>Start on Document class</li>
 <li>EditorTabWidget</li>
 <li>MainWindow</li>
 <li>DebuggerManager</li>
 <li>Breakpoint/BreakpointListView</li>
-<li>etc<br /><br /></li></ul></ul>
-<li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)</li>
+<li>etc</li></ul></ul>
+<li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)<br /></li>
 <li>runtocursor</li>
 <li>Breakpoints: clear button</li>
 <li>Watches: clear button<br /><br /></li>
+<li>Create Help docbook</li>
+<li>QStrings i18n aware<br /></li>
 <li>Issues:</li>
 <ul type="disc"><li>Gubed:</li>
 <ul type="disc"><li>Breakpoints</li>
