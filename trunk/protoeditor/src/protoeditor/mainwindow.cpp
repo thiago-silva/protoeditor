@@ -45,6 +45,7 @@
 #include <ktexteditor/view.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
+#include <kcombobox.h>
 #include <qvaluelist.h>
 
 #include <kdialogbase.h>
@@ -92,6 +93,9 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
   loadSites();
 
   stateChanged("init");
+
+  m_cbArguments->insertStringList(ProtoeditorSettings::self()->argumentsHistory());
+  m_cbArguments->clearEdit();
 }
 
 void MainWindow::loadSites()
@@ -180,19 +184,11 @@ void MainWindow::setupActions()
   
 
   m_activeScriptAction = new KToggleAction("Use Current Script", "attach", 0, actionCollection(), "use_current_script");
-//   QStringList l;
-//   l << "Site Script" << "Active Script";
-//   m_defaultScriptAction->setItems(l);
-//   m_defaultScriptAction->setCurrentItem(0);
 
-
-  //   (void)new KAction(i18n("&Run"), "gear", "F9", m_debugger_manager,
-  //                     SLOT(slotDebugStart()), actionCollection(), "script_run_current_script");
-
-  (void)new KAction(i18n("Run in Console"), "gear", "F9", m_debugger_manager,
+  (void)new KAction(i18n("Run in Console"), "gear", "F9", this,
                     SLOT(slotScriptRun()), actionCollection(), "script_run");
 
-  (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", m_debugger_manager,
+  (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", this,
                     SLOT(slotDebugStart()), actionCollection(), "debug_start");
 
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
@@ -217,6 +213,20 @@ void MainWindow::setupActions()
                     SLOT(slotAddWatch()), actionCollection(), "editor_add_watch");
 
 
+  //arguments tool bar
+  m_cbArguments = new KHistoryCombo(true, this);
+  KWidgetAction* comboAction = new KWidgetAction( m_cbArguments, i18n( "Argument Bar" ), 0,
+                  0, 0, actionCollection(), "argument_combobox" );
+  comboAction->setShortcutConfigurable(false);
+  comboAction->setAutoSized(true);
+
+  (void)new KAction("Clear arguments", "clear_left", 0, m_cbArguments,
+                    SLOT(clearEdit()), actionCollection(), "argument_clear");
+
+  (void)new KWidgetAction(new QLabel("Arguments: ", this), "", "", 0, 0, actionCollection(), "argument_label");
+  
+
+  //finish!
   setStandardToolBarMenuEnabled(true);
 }
 
@@ -324,6 +334,11 @@ void MainWindow::createWidgets()
 
 MainWindow::~MainWindow()
 {
+  //removes the current text (wich might not have been used in debug/execution)
+  m_cbArguments->clearEdit();
+
+  ProtoeditorSettings::self()->setArgumentsHistory(m_cbArguments->historyItems());
+
   ProtoeditorSettings::self()->writeConfig(true);
 
   delete m_debugger_manager;
@@ -543,6 +558,27 @@ void MainWindow::slotShowSettings()
   ConfigDlg::showDialog();
 }
 
+void MainWindow::slotScriptRun()
+{
+  QString arg = m_cbArguments->currentText();
+  if(!arg.isEmpty()) 
+  {
+    m_cbArguments->addToHistory(arg);    
+  }  
+
+  m_debugger_manager->slotScriptRun();
+}
+
+void MainWindow::slotDebugStart()
+{
+  QString arg = m_cbArguments->currentText();
+  if(!arg.isEmpty()) 
+  {
+    m_cbArguments->addToHistory(arg);    
+  }
+  m_debugger_manager->slotDebugStart();
+}
+
 void MainWindow::showSorry(const QString& msg) const
 {
   KMessageBox::sorry(0, msg);
@@ -596,6 +632,11 @@ MessageListView* MainWindow::messageListView()
 KTextEdit* MainWindow::edOutput()
 {
   return m_edOutput;
+}
+
+KHistoryCombo* MainWindow::cbArguments()
+{
+  return m_cbArguments;
 }
 
 #include "mainwindow.moc"

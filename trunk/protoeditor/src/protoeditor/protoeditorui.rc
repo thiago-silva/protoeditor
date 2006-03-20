@@ -80,6 +80,13 @@
     <Action name="debug_step_out"/>
   </ToolBar>
 
+  <ToolBar name="argument_toolbar" noMerge="1" newline="true" fullWidth="true">
+    <text>Argument Toolbar</text>
+    <Action name="argument_clear"/>
+    <Action name="argument_label"/>
+    <Action name="argument_combobox"/>
+  </ToolBar>
+  
   <!--         States        -->
 
   <State name="init">

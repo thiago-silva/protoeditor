@@ -45,6 +45,7 @@ class KSelectAction;
 class KToggleAction;
 class KDialogBase;
 class QLabel;
+class KHistoryCombo;
 
 /*
  
@@ -68,11 +69,12 @@ public:
   VariablesListView*  globalVarList();
   VariablesListView*  localVarList();
 
+  KHistoryCombo*      cbArguments();
   KLineEdit*          edAddWatch();
   KPushButton*        btAddWatch();
   WatchListView*      watchList();
   BreakpointListView* breakpointListView();
-  MessageListView*        messageListView();
+  MessageListView*    messageListView();
   KTextEdit*          edOutput();
   //KTextEditor::EditInterface*  edOutput();
 
@@ -118,6 +120,9 @@ private slots:
 
   void slotSettingsChanged();
 
+  void slotScriptRun();
+  void slotDebugStart();
+  
 protected:
   virtual void closeEvent(QCloseEvent * e);
 private:
@@ -130,6 +135,7 @@ private:
   QLabel *m_lbDebugMsg;
   QLabel *m_lbDebugName;
   QLabel *m_lbEditorMsg;
+  KHistoryCombo* m_cbArguments;
   EditorTabWidget* m_tabEditor;
   DebuggerComboStack* m_stackCombo;
   VariablesListView* m_globaVarList;
