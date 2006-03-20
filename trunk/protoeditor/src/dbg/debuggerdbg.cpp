@@ -309,7 +309,10 @@ void DebuggerDBG::addWatches(const QStringList& list)
 
 void DebuggerDBG::addWatch(const QString& expression)
 {
-  m_wathcesList.append(expression);
+  if(m_wathcesList.find(expression) == m_wathcesList.end())
+  {
+    m_wathcesList.append(expression);
+  }
 
   if(isRunning())
   {
