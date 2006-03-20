@@ -75,14 +75,30 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
 BreakpointListView::~BreakpointListView()
 {}
 
+#include <kdebug.h>
+
 void BreakpointListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int)
 {
-  enum { ToggleBP, DeleteBP };  
+
+  enum { ToggleBP, DeleteBP, DeleteAllBPs };  
   
   KPopupMenu* menu = new KPopupMenu(this);
   menu->insertItem("Toggle State", ToggleBP);
   menu->insertItem("Delete", DeleteBP);
+  menu->insertItem("Delete All", DeleteAllBPs);
+
+  if(!item)
+  {
+    menu->setItemEnabled(ToggleBP, false);
+    menu->setItemEnabled(DeleteBP, false);
+  }
  
+  
+  if(childCount() == 0) 
+  {
+    menu->setItemEnabled(DeleteAllBPs, false);
+  }
+
   int selection = menu->exec(p);
   if(selection == -1)
   {
@@ -90,25 +106,45 @@ void BreakpointListView::slotContextMenuRequested(QListViewItem* item, const QPo
     return;
   }
   
-  BreakpointListViewItem* converted =
+  BreakpointListViewItem* bpitem =
       dynamic_cast<BreakpointListViewItem*>(item);
   
   switch(selection)
   {
     case ToggleBP:
-      if(converted->breakpoint()->status() == DebuggerBreakpoint::DISABLED) {
-        converted->breakpoint()->setStatus(DebuggerBreakpoint::ENABLED);
+      if(bpitem->breakpoint()->status() == DebuggerBreakpoint::DISABLED) {
+        bpitem->breakpoint()->setStatus(DebuggerBreakpoint::ENABLED);
       } else {
-        converted->breakpoint()->setStatus(DebuggerBreakpoint::DISABLED);
+        bpitem->breakpoint()->setStatus(DebuggerBreakpoint::DISABLED);
       }
-      converted->showBreakpoint();
+      bpitem->showBreakpoint();
       break;
     case DeleteBP:
-      removeBreakpoint(converted->breakpoint());
+      removeBreakpoint(bpitem->breakpoint());
       break;
+    case DeleteAllBPs:
+      removeAllBreakpoints();
   }
 
   delete menu;      
+}
+
+void BreakpointListView::removeAllBreakpoints()
+{
+  BreakpointListViewItem* item =
+    dynamic_cast<BreakpointListViewItem*>(firstChild());
+
+  DebuggerBreakpoint* bp;
+  while(item)
+  {
+    bp = item->breakpoint();
+    item =
+      dynamic_cast<BreakpointListViewItem*>(item-> nextSibling());
+
+    removeBreakpoint(bp);
+  }
+
+  
 }
 
 void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col)

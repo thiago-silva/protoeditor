@@ -73,6 +73,7 @@ protected:
   virtual void keyPressEvent(QKeyEvent* e);
 
 private:
+  void removeAllBreakpoints();
   void addBreakpoint(const QString&, int, bool);
   void removeBreakpoint(DebuggerBreakpoint*);
 
