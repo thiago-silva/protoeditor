@@ -30,7 +30,7 @@ PHPSettings::PHPSettings(  )
   addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
 
   KConfigSkeleton::ItemString  *itemPHPCommand;
-  itemPHPCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PHPCommand" ), mPHPCommand, "php %1");
+  itemPHPCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PHPCommand" ), mPHPCommand, "php");
   addItem( itemPHPCommand, QString::fromLatin1( "PHPCommand" ) );
 
   readConfig();
