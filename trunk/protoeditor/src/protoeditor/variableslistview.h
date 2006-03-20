@@ -51,7 +51,7 @@ protected slots:
 
   void slotDoubleClick(QListViewItem *, const QPoint &, int );
 
-  void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
+  virtual void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
 
 protected:
   VariablesListViewItem* lastRootItem();
