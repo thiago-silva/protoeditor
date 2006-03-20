@@ -39,7 +39,7 @@ public:
   virtual bool isRunning() const;
   virtual void init();
 
-  virtual void start(const QString&, bool local);
+  virtual void start(const QString&, const QString&, bool local);
   virtual void continueExecution();
   virtual void stop();
   virtual void stepInto();
@@ -58,7 +58,7 @@ public:
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
 
-  virtual void profile(const QString&, bool local);
+  virtual void profile(const QString&, const QString&, bool local);
 
 
   GBSettings* settings();

@@ -33,9 +33,15 @@ ProtoeditorSettings* ProtoeditorSettings::m_self = 0;
 ProtoeditorSettings::ProtoeditorSettings()
   :  QObject(), KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
 {
+  setCurrentGroup(QString::fromLatin1( "Protoeditor" ));
+
   KConfigSkeleton::ItemString  *itemCurrentSite;
-  itemCurrentSite = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "CurrentSite" ), m_currentSiteName);
+  itemCurrentSite = new KConfigSkeleton::ItemString(currentGroup(), QString::fromLatin1( "CurrentSite" ), m_currentSiteName);
   addItem( itemCurrentSite, QString::fromLatin1( "CurrentSite" ) );
+
+  KConfigSkeleton::ItemStringList *itemArgHistory;
+  itemArgHistory = new ItemStringList(currentGroup(), QString::fromLatin1("ArgumentHistory"), m_argumentsHistory);
+  addItem( itemArgHistory, QString::fromLatin1( "ArgumentHistory" ) );
 
   readConfig();
   //--
@@ -80,6 +86,24 @@ ProtoeditorSettings* ProtoeditorSettings::self()
   }
 
   return m_self;
+}
+
+void ProtoeditorSettings::setArgumentsHistory(const QStringList& args)
+{
+  m_argumentsHistory.clear();
+
+  //get only the first 20 strings  
+  int c = 0;
+  for(QStringList::const_iterator it = args.begin(); it != args.end(); it++, c++) 
+  {
+    if(c >= 20) break;
+    m_argumentsHistory << (*it);
+  }
+}
+
+QStringList ProtoeditorSettings::argumentsHistory()
+{
+  return m_argumentsHistory;
 }
 
 QString ProtoeditorSettings::currentSiteName() {

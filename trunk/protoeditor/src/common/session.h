@@ -44,9 +44,10 @@ class Session : public QObject
     static void dispose();
     static Session* self();
     
-    void start(const KURL& url, bool local = false);
-    void start(const KURL& url, const QStringList& env, bool local = false);
+    void start(const KURL& url);
+    void start(const KURL& url, const QString& args, const QStringList& env = QStringList());
 
+    const QString&     arguments();
     const QStringList& environment();
   signals:
     void sigError(const QString& error);
@@ -63,6 +64,8 @@ class Session : public QObject
 
     QHttp                *m_http;
     ExternalAppRequestor *m_extAppRequestor;
+
+    QString     m_args;
     QStringList m_env;
 };
 
@@ -147,6 +150,7 @@ class ConsoleRequestor : public ExternalAppRequestor
     virtual int  id();
 
   private:
+    QString     m_args;
     QStringList m_env;
 };
 

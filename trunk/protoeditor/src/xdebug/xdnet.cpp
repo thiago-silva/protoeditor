@@ -70,7 +70,8 @@ void XDNet::stopListener()
   m_con->close();
 }
 
-void XDNet::startDebugging(const QString& filePath, SiteSettings* site, bool local)
+void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
+    SiteSettings* site, bool local)
 {
   int id = kapp->random();
   if(local) 
@@ -84,7 +85,7 @@ void XDNet::startDebugging(const QString& filePath, SiteSettings* site, bool loc
         << "XDEBUG_SESSION_START"
         << QString::number(id);
 
-    Session::self()->start(filePath, env, true);
+    Session::self()->start(KURL::fromPathOrURL(filePath),uiargs, env);
   } 
   else
   {
@@ -93,9 +94,16 @@ void XDNet::startDebugging(const QString& filePath, SiteSettings* site, bool loc
 
     KURL url = site->effectiveURL();
     url.setPath(url.path() + uri);
-    url.setQuery(QString("XDEBUG_SESSION_START=")+QString::number(id));
-  
-    Session::self()->start(url);    
+
+    QString query = QString("XDEBUG_SESSION_START=")+QString::number(id);
+    
+    if(!uiargs.isEmpty())
+    {
+      query += "&" + uiargs;
+    }
+
+    url.setQuery(query);
+    Session::self()->start(url);
   }
 }
 

@@ -58,14 +58,9 @@ Session* Session::self()
   return m_self;
 }
 
-void Session::start(const KURL& url, bool local)
+void Session::start(const KURL& url)
 {
-  if(local)
-  {
-    m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(ExtAppSettings::EnumExtApp::Console, this);
-    m_extAppRequestor->doRequest(url);
-  }
-  else if(ProtoeditorSettings::self()->extAppSettings()->useExternalApp())
+  if(ProtoeditorSettings::self()->extAppSettings()->useExternalApp())
   {
     doExternalRequest(url);
   }
@@ -76,10 +71,13 @@ void Session::start(const KURL& url, bool local)
   m_env.clear();
 }
 
-void Session::start(const KURL& url, const QStringList& env, bool local)
+void Session::start(const KURL& url, const QString& args, const QStringList& env)
 {
-  m_env = env;
-  start(url, local);
+  m_args = args;
+  m_env  = env;
+
+  m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(ExtAppSettings::EnumExtApp::Console, this);
+  m_extAppRequestor->doRequest(url);  
 }
 
 void Session::initHTTPCommunication()
@@ -125,6 +123,11 @@ void Session::doExternalRequest(const KURL& url)
                         ProtoeditorSettings::self()->extAppSettings()->externalApp(), this);
 
   m_extAppRequestor->doRequest(url);
+}
+
+const QString& Session::arguments()
+{
+  return m_args;
 }
 
 const QStringList& Session::environment()
@@ -451,8 +454,10 @@ int OperaRequestor::id()
 ConsoleRequestor::ConsoleRequestor(Session* session)
     : ExternalAppRequestor()
 {
+  m_args = session->arguments();
   m_env = session->environment();
 }
+
 ConsoleRequestor::~ConsoleRequestor()
 {}
 
@@ -490,15 +495,14 @@ void ConsoleRequestor::doRequest(const KURL& url)
     kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "              
               << m_env.join(" ") << " " 
               << QString("cd ") <<  url.directory() << ";"
-              << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read"
+              << (cmd + " " + url.path() + " " + m_args) + ";echo \"Press Enter to continue...\";read"
               << endl;
   
     //KProcess::quote(filePath)
     *m_process << QStringList::split(' ',consoleApp.arg("/bin/sh")) << "-c"
       << (
           QString("cd ") +  url.directory() + ";"
-          + cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read"
-         );
+          + (cmd + " " + url.path() + " " + m_args) + ";echo \"Press Enter to continue...\";read");
   }
   else
   {
@@ -506,12 +510,12 @@ void ConsoleRequestor::doRequest(const KURL& url)
 
     kdDebug() << "executing : " << "/bin/sh" << " -c "
               << QString("cd ") <<  url.directory() << ";"
-              << cmd.arg(url.path()) + ";echo \"Press Enter to continue...\";read"
+              << (cmd + " " + url.path() + " " + m_args + ";echo \"Press Enter to continue...\";read")
               << endl;
   
     //KProcess::quote(filePath)
     *m_process << "/bin/sh" << "-c" << 
-      (QString("cd ") +  url.directory() + ";" + cmd.arg(url.path()));
+      (QString("cd ") +  url.directory() + ";" + cmd + " " + url.path() + " " + m_args);
   }
 
   if(!m_process->start())

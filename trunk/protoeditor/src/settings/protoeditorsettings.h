@@ -27,6 +27,7 @@
 
 #include <qmap.h>
 #include <qvaluelist.h>
+#include <qstringlist.h>
 
 class DebuggerSettingsInterface;
 class DebuggerSettings;
@@ -47,6 +48,9 @@ public:
 
   void registerDebuggerSettings(DebuggerSettingsInterface*, const QString& name);
 
+  void setArgumentsHistory(const QStringList&);
+  QStringList argumentsHistory();
+
   DebuggerSettingsInterface*             debuggerSettings(const QString& name);
   QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
   QString                                currentSiteName();
@@ -54,7 +58,7 @@ public:
   SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
   PHPSettings*                           phpSettings();
-  ExtAppSettings*                        extAppSettings();
+  ExtAppSettings*                        extAppSettings();  
 
   void clearSites();
   void addSite(int number, const QString& name, const QString& url,
@@ -83,8 +87,10 @@ private:
 
   QString                   m_currentSiteName;
 
+  QStringList               m_argumentsHistory;
+
   QMap<QString, DebuggerSettingsInterface*>  m_debuggerSettingsMap;
-  QMap<QString, SiteSettings*>               m_siteSettingsMap;
+  QMap<QString, SiteSettings*>               m_siteSettingsMap;  
 };
 
 #endif

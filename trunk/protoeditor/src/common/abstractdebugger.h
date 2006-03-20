@@ -54,7 +54,7 @@ public:
   virtual void init() = 0;
 
   /* commands commonly supported by a debugger. */
-  virtual void start(const QString&, bool local)  = 0;
+  virtual void start(const QString&, const QString& args, bool local)  = 0;
   virtual void continueExecution()                = 0;
   virtual void stop()                             = 0;
   virtual void stepInto()                         = 0;
@@ -85,7 +85,7 @@ public:
   virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
 
-  virtual void profile(const QString&, bool local) = 0;
+  virtual void profile(const QString&, const QString& args, bool local) = 0;
 
 protected:
   virtual DebuggerManager* manager();

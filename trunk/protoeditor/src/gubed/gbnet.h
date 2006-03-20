@@ -43,7 +43,8 @@ public:
   bool startListener(int port);
   void stopListener();
 
-  void startDebugging(const QString& filePath, SiteSettings* site, bool local);
+  void startDebugging(const QString& filePath, const QString& uiargs, 
+    SiteSettings* site, bool local);
 
   void requestContinue();
   void requestStop();

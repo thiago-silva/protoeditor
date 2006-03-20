@@ -205,7 +205,7 @@ void DebuggerManager::slotScriptRun()
   QString filePath = m_window->tabEditor()->currentDocumentPath();
 
   //Session::self()->start(ProtoeditorSettings::self()->phpSettings()->PHPCommand(), filePath);
-  Session::self()->start(filePath, true);
+  Session::self()->start(filePath, m_window->cbArguments()->currentText());
 }
 
 QString DebuggerManager::sessionPrologue(bool isProfiling) 
@@ -279,11 +279,11 @@ void DebuggerManager::processSession(const QString& filePath, bool local, bool i
 {
   if(isProfiling)
   {
-    m_activeDebugger->profile(filePath, local);
+    m_activeDebugger->profile(filePath, m_window->cbArguments()->currentText(), local);
   }
   else
   {
-    m_activeDebugger->start(filePath, local);
+    m_activeDebugger->start(filePath, m_window->cbArguments()->currentText(), local);
   }
 }
 

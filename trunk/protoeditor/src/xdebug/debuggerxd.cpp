@@ -82,7 +82,7 @@ void DebuggerXD::init()
   slotSettingsChanged();
 }
 
-void DebuggerXD::start(const QString& filepath, bool local)
+void DebuggerXD::start(const QString& filepath, const QString& args, bool local)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -94,7 +94,7 @@ void DebuggerXD::start(const QString& filepath, bool local)
 
   emit sigDebugStarting();
 
-  m_net->startDebugging(filepath, site, local);
+  m_net->startDebugging(filepath, args, site, local);
 }
 
 void DebuggerXD::continueExecution()
@@ -222,7 +222,7 @@ void DebuggerXD::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerXD::profile(const QString&, bool)
+void DebuggerXD::profile(const QString&, const QString&, bool)
 {
   /**/
 }

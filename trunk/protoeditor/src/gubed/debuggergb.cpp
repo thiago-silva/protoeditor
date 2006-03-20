@@ -80,7 +80,7 @@ void DebuggerGB::init()
 }
 
 
-void DebuggerGB::start(const QString& filePath, bool local)
+void DebuggerGB::start(const QString& filePath, const QString& args, bool local)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -92,7 +92,7 @@ void DebuggerGB::start(const QString& filePath, bool local)
 
   emit sigDebugStarting();
 
-  m_net->startDebugging(filePath, site, local);
+  m_net->startDebugging(filePath, args, site, local);
 }
 
 GBSettings* DebuggerGB::settings()
@@ -218,7 +218,7 @@ void DebuggerGB::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerGB::profile(const QString&, bool)
+void DebuggerGB::profile(const QString&, const QString&, bool)
 {}
 
 

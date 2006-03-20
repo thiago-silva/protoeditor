@@ -68,15 +68,18 @@ void GBNet::stopListener()
 }
 
 
-void GBNet::startDebugging(const QString& filePath, SiteSettings* site, bool local)
+void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
+  SiteSettings* site, bool local)
 {
   if(local)
   {
-    QString cmd = m_debugger->settings()->startSessionScript() 
-                + " " + filePath;
-    
-    Session::self()->start(cmd, true);
-  } 
+    QString args = filePath;
+    if(!uiargs.isEmpty())
+    {
+      args += " " + uiargs;
+    }
+    Session::self()->start(m_debugger->settings()->startSessionScript(), args);
+  }
   else
   {
     QString relative = filePath;
@@ -84,7 +87,15 @@ void GBNet::startDebugging(const QString& filePath, SiteSettings* site, bool loc
 
     KURL url = site->effectiveURL();
     url.setPath(m_debugger->settings()->startSessionScript());
-    url.setQuery(QString("gbdScript=")+relative);
+
+    QString query = "gbdScript=";
+    query += relative;
+
+    if(!uiargs.isEmpty())
+    {
+      query += "&" + uiargs;
+    }
+    url.setQuery(query); 
   
     Session::self()->start(url);
   }

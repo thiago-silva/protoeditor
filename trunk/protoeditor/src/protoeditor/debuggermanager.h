@@ -63,6 +63,9 @@ public:
 public slots:
   void slotConfigurationChanged();
   void slotGotoLineAtFile(const QString&, int);
+
+  void slotScriptRun();
+  void slotDebugStart();
   
 private slots:
   
@@ -70,9 +73,6 @@ private slots:
      Those are called when the user manipulates the UI.
   */
 
-  void slotScriptRun();
-
-  void slotDebugStart();
   void slotProfile();
 
   void slotDebugStop();

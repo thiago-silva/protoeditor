@@ -83,18 +83,21 @@ void DBGNet::stopListener()
   m_con->close();
 }
 
-void DBGNet::startDebugging(const QString& filePath, SiteSettings* site, bool local, int listenPort, dbgint sessid)
+void DBGNet::startDebugging(const QString& filePath, const QString& uiargs,
+    SiteSettings* site, bool local, int listenPort, dbgint sessid)
 {
-  requestPage(filePath, site, local, listenPort, sessid);
+  requestScript(filePath, uiargs, site, local, listenPort, sessid);
 }
   
-void DBGNet::startProfiling(const QString& filePath, SiteSettings* site, bool local, int listenPort, dbgint sessid)
+void DBGNet::startProfiling(const QString& filePath, const QString& uiargs,
+  SiteSettings* site, bool local, int listenPort, dbgint sessid)
 {
   m_isProfiling = true;
-  requestPage(filePath, site, local, listenPort, sessid);
+  requestScript(filePath, uiargs, site, local, listenPort, sessid);
 }
 
-void DBGNet::requestPage(const QString& filePath, SiteSettings* site, bool local, int listenPort, dbgint sessid)
+void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
+  SiteSettings* site, bool local, int listenPort, dbgint sessid)
 {
   m_dbgFileInfo->setSite(site);
 
@@ -102,11 +105,12 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, bool local
 
   if(local)
   {
-    QString cmd =  filePath + " DBGSESSID="
-                + QString::number(m_sessionId)
-                + "@clienthost:"
-                + QString::number(listenPort);
-    Session::self()->start(cmd , true);
+    QString args = uiargs + " " + " DBGSESSID="
+                 + QString::number(m_sessionId)
+                 + "@clienthost:"
+                 + QString::number(listenPort);
+
+    Session::self()->start(KURL::fromPathOrURL(filePath), args);
   }
   else
   {
@@ -117,10 +121,17 @@ void DBGNet::requestPage(const QString& filePath, SiteSettings* site, bool local
     KURL url = site->effectiveURL();
     url.setPath(url.path() + uri);
 
-    url.setQuery(QString("DBGSESSID=")
+    QString query = QString("DBGSESSID=")
                 + QString::number(m_sessionId)
                 + "@clienthost:"
-                + QString::number(listenPort));
+                + QString::number(listenPort);
+
+    if(!uiargs.isEmpty())
+    {
+      query += "&" + uiargs;
+    }
+
+    url.setQuery(query);
     Session::self()->start(url);
   }  
 }

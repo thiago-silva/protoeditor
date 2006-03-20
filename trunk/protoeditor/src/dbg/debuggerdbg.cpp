@@ -137,7 +137,7 @@ void DebuggerDBG::stopJIT()
   m_isJITActive = false;
 }
 
-void DebuggerDBG::start(const QString& filePath, bool local)
+void DebuggerDBG::start(const QString& filePath, const QString& args, bool local)
 {
   SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
 
@@ -150,7 +150,7 @@ void DebuggerDBG::start(const QString& filePath, bool local)
 
   emit sigDebugStarting();
   
-  m_net->startDebugging(filePath, site, local, m_dbgSettings->listenPort(), sessionid);
+  m_net->startDebugging(filePath, args, site, local, m_dbgSettings->listenPort(), sessionid);
 }
 
 void DebuggerDBG::continueExecution()
@@ -327,7 +327,7 @@ void DebuggerDBG::removeWatch(const QString& expression)
   }
 }
 
-void DebuggerDBG::profile(const QString& filePath, bool local)
+void DebuggerDBG::profile(const QString& filePath, const QString& args, bool local)
 {
   profileDialog()->clear();
 
@@ -342,7 +342,7 @@ void DebuggerDBG::profile(const QString& filePath, bool local)
 
   emit sigDebugStarting();
   
-  m_net->startProfiling(filePath, site, local, m_dbgSettings->listenPort(), sessionid);
+  m_net->startProfiling(filePath, args, site, local, m_dbgSettings->listenPort(), sessionid);
 }
 
 DBGProfileDialog* DebuggerDBG::profileDialog()
