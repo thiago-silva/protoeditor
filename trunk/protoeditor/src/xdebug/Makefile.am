@@ -4,7 +4,7 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
 METASOURCES = AUTO
 libxdebug_la_LDFLAGS = $(all_libraries)
 noinst_LTLIBRARIES = libxdebug.la
-noinst_HEADERS = xdsettings.h xd_defs.h xdsettingswidget.h debuggerxd.h xdnet.h \
+noinst_HEADERS = xdsettings.h xdsettingswidget.h debuggerxd.h xdnet.h \
 	xdvariableparser.h
 libxdebug_la_SOURCES = xdsettings.cpp xdsettingswidget.cpp debuggerxd.cpp \
 		xdnet.cpp xdvariableparser.cpp

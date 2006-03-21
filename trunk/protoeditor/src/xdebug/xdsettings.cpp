@@ -20,7 +20,6 @@
 
 #include "xdsettings.h"
 #include "xdsettingswidget.h"
-#include "xd_defs.h"
 
 #include <qwidget.h>
 
@@ -32,7 +31,7 @@ XDSettings::XDSettings(const QString& name)
   setCurrentGroup( QString::fromLatin1( m_name ) );
 
   KConfigSkeleton::ItemInt  *itemListenPort;
-  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, XD_DEFAULT_PORT );
+  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, 9000 );
   addItem( itemListenPort, QString::fromLatin1( "ListenPort" ) );
 
   KConfigSkeleton::ItemBool  *itemEnableJIT;
