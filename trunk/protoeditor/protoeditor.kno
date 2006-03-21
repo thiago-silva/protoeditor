@@ -1,36 +1,13 @@
-\NewEntry 0 Mental Notes / Random ideas
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Valgrind command:<br />valgrind --log-file=val --tool=addrcheck --num-callers=10 --leak-check=yes ./protoeditor<br /></li>
-<li>Take a look at http://www.enginsite.com/php-editor.htm<br /></li>
-<li>Change the colums of breakpoint and message listviews.</li>
-<ul type="disc"><li>Create a column for the filename only</li>
-<li>Create a column for the path of the file<br /></li></ul>
-<li>Change QSocket to KSocket (or similar)?<br /></li>
-<li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
-<li>Try to get default kate settings from the user's katerc</li>
-<ul type="disc"><li>See the possibility to setup katepart to show line number / icon margin on the first run of protoeditor (no protoeditorrc yet).<br /></li></ul>
-<li>Implement &quot;Run to the cursor&quot;, &quot;run with args (get/post)&quot;</li>
-<ul type="disc"><li>for &quot;run with args&quot;, add a lineedit to the mainwindow instead of showing an annoying dialog (hate those...)</li>
-<li>Args: Maybe a new entry on the site settings?<br /></li></ul>
-<li>Add a tab on the site settings for more than one directory mapping (requested feature)<br /></li>
-<li></li>
-<ul type="disc"><li>rename: variableparser to phpvariableparser </li>
-<li>long/int mix variables are kindda messy. check it.<br /></li></ul>
-<li>Create a menu &quot;window&quot; with a list of opened files.<br /></li>
-<li>Test with a Win32 http server! (Check path stuff)</li></ul>
-<p></p>
-</body></html>
-
 \NewEntry 0 Site and non-implementation notes
 
 \NewEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>1: Test current SVN version on other distro/KDE versions</li>
 <li>2: Change version on kdevelop file, configure.in/configure.in.in</li>
-<li>3: Create NEWS file</li>
-<li>4: Create ChangeLog file</li>
-<li>5: Update README version</li>
-<li>6: TAG current CVS version</li>
+<li>3: Create NEWS</li>
+<li>4: Create ChangeLog</li>
+<li>5: Update README/FAQ</li>
+<li>6: TAG current SVN version</li>
 <li>7: create package</li>
 <ul type="disc"><li>remove unescessary data on workspace (Makefile.am dist-hook add everything when &quot;make dist&quot;)</li>
 <li>make dist, and check</li>
@@ -40,17 +17,12 @@
 <p></p>
 </body></html>
 
-\NewEntry 1 TODO
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Produce NEWS file from ChangeLog.</li>
-<li>Add to menu: &quot;Bugs&quot;, &quot;Forum&quot;, &quot;CVSWeb&quot;....</li>
-<li>Create user documentation</li>
-<li>Expose ChangeLog on the site (see if this can be updated trough CVS)</li></ul>
-</body></html>
 
 \NewEntry 0 Implementation
 
-\CurrentEntry 1 TODO
+\CurrentEntry 1 v1.0
+
+\NewEntry 2 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>&quot;File-&gt;new&quot; support</li>
 <ul type="disc"><li>Normalize use of KURL/QString filePath</li>
@@ -61,17 +33,19 @@
 <li>Breakpoint/BreakpointListView</li>
 <li>etc</li></ul></ul>
 <li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)<br /></li>
-<li>runtocursor</li>
-<li>Breakpoints: clear button</li>
-<li>Watches: clear button<br /><br /></li>
+<li>runtocursor<br /></li>
+<li>Implement directory mapping (for default include paths, etc) by Site</li>
+<li>add settings for halt (halt on [x]error [x]warning [x]notice)</li>
+<ul type="disc"><li>check if all php debuggers support this<br /></li></ul>
+<li>See KPDF for the toolbar button &quot;open / openrecent&quot;<br /></li>
 <li>Create Help docbook</li>
 <li>QStrings i18n aware<br /></li>
-<li>Issues:</li>
-<ul type="disc"><li>Gubed:</li>
+<li>Test with a Win32 http server! (Check path stuff)<br /></li>
+<li>----------issues --------------------<br /><br /></li>
+<li>Gubed:</li>
 <ul type="disc"><li>Breakpoints</li>
 <ul type="disc"><li>change (can't figure condition so far)</li></ul>
-<li>Halt on error stuff (is halting, different from the other debuggers)</li>
-<ul type="disc"><li>add settings for this (halt on [x]error [x]warning [x]notice)<br /></li></ul></ul></ul>
+<li>Halt on error stuff (is halting, different from the other debuggers)<br /></li></ul>
 <li>bug: </li>
 <ul type="disc"><li>run, change the stack (so the green arrow appears on text border), run another file (or JIT session). The icon remains<br /></li></ul>
 <li>bug (gubed)</li>
@@ -80,97 +54,29 @@
 <li>set breakpoint in the included script</li>
 <li>run and see the breaks.</li>
 <ul type="disc"><li>in the main script, the break occurs right in the breakpoint</li>
-<li>in the included script, the break occurs in the line after<br /></li></ul></ul>
-<li>ruby</li>
-<li>python</li>
-<li>perl<br /></li>
-<li>Doc:</li>
-<ul type="disc"><li>Add note about console debuging (only cgi SAPI supported by DBG)<br /></li></ul>
-<li>latter:</li>
-<ul type="disc"><li>Implement directory mapping (for default include paths, etc) by Site</li>
-<li>ExternalApps by Site (maybe)</li></ul></ul>
-</body></html>
-
-
-\NewEntry 1 DBG and infra
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Cleanup wishes from the forum and bugs.</li>
-<li>Better handling of Site settings (see problem posted on forum)</li>
-<div></div>
-<li>Features / Usability:</li>
-<ul type="disc"><li>Add &quot;Halt on &lt;error&gt; &lt;notice&gt; &lt;warning&gt;&quot; on DBG Settings<br /></li></ul>
-<li>-------------------------------------------------------------------</li></ul>
-</body></html>
-
-\NewEntry 1 Bug reminder
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>DBG: Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /><br /></li>
+<li>in the included script, the break occurs in the line after<br /><br /></li></ul></ul>
+<li>DBG: </li>
+<ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /></li></ul>
 <li>Crash:</li>
-<ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash</li>
-<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes</li></ul></ul>
+<ul type="disc"><li>Sometimes executing &quot;Protoeditor settings&quot;, it crash<br /></li></ul>
+<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
 </body></html>
 
-\NewEntry 0 Quanta
 
-\NewEntry 1 quanta HACKING
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Bitstream Vera Sans">
-<p> Quanta's coding style is a real mess as it was written by many persons, and</p>
-<p>some had changed their style on-the-fly. ;-) From now on, if you add new code</p>
-<p>to Quanta please follow the below rules:</p>
-<p></p>
-<p>1. Use spaces instead of tabs.</p>
-<p>2. Indent with 2 spaces.</p>
-<p>3. Do not put spaces around parentheses, except in one case (grouping multiple</p>
-<p>   expressions): if ( (A || B) &amp;&amp; (C || D) )</p>
-<p>4. Do not put spaces around &quot;-&gt;&quot;, use: object-&gt;methodname().</p>
-<p>5. No extra spaces between parameters/arguments, just after commas: method(arg1, arg2, ...)</p>
-<p>6. Put spaces around =, &gt;, &lt;, !=, +, -, /, *: a = b * c / d</p>
-<p>7. Name the member variables as m_variablename if they are not public. See #8.</p>
-<p>8. Try to avoid public member variables. Write instead set/get methods. See #9.</p>
-<p>9. Don't put the &quot;get&quot; prefix ahead of the get method. Example:</p>
-<p>   Variable: m_foo</p>
-<p>   Get method: foo()</p>
-<p>   Set method: setFoo()</p>
-<p>10. Mention the argument names also in header files. Signals may be an exception.</p>
-<p>11. Use 0L when setting a pointer to NULL.</p>
-<p>12. I prefer to put the opening { in a new line, but I'm not strongly against putting</p>
-<p>    it in the same line as the expression, like: if (a) {</p>
-<p>13. Avoid inclusions in header files. Use forward declarations instead, like:</p>
-<p>   Header file:</p>
-<p>     class Foo;</p>
-<p>     class Foo2{</p>
-<p>       Foo* m_foo;</p>
-<p>     }</p>
-<p>   Implementation file:</p>
-<p>     #include &quot;foo.h&quot;</p>
-<p>14. Use .h and .cpp for file extension.</p>
-<p>15. Use layouts when creating UI files, otherwise the UI components are not resized when you</p>
-<p>      resize the main widget, translated interfaces or when you use another widget style the</p>
-<p>      dialog might look bad. The simple way to do this is in Qt Designer: click on an empty space</p>
-<p>      and Ctrl-G. Do it first for every container style widget (boxes, frames, tabwidget tabs, etc.)</p>
-<p>      Try to resize the dialog after you preview it.</p>
-<p>16. Make the tab order in widgets logical. Preview it and press tabs to see in which order are the</p>
-<p>      components focused.</p>
-<p>17. 15 and 16 is valid for Kommander scripts as well.</p>
-<p>18. Include the moc files in the .cpp files: use</p>
-<p>        #include &quot;qobject_derivated_class_file.moc&quot;</p>
-<p>      at the end of the cpp files.</p>
-<p>19. Avoid the usage of .ui.h files (implementing the slots in Designer). The reasons behind this rule</p>
-<p>    are:</p>
-<p>	- the automake/autoconf framework won't detect if you make a change in the .ui.h file and the</p>
-<p>	  file won't be recompiled if you modify it. Aside of being annoying can lead to unexpected</p>
-<p>	  runtime and linking errors.</p>
-<p>	- it's nicer to edit the sources in KDevelop. ;-)</p>
-<p>    So instead of using .ui.h, create a derived class, and implement the slots/methods there. You can</p>
-<p>    still create and connect slots in Designer.</p>
-<p>20. Create a new file for each (non-trivial) class.</p>
-<p>21. Use forward declarations.</p>
-<p>22. Put the inclusion for the class's header file as the first inclusion in the implemenetation file.</p>
-<p></p>
-<p></p>
-<p>Last, but not least read the howto's and faq's on http://developer.kde.org</p>
-<p></p>
+\NewEntry 1 v2.0
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Support for 1+ of the following languages:</li>
+<ul type="disc"><li>Ruby</li>
+<li>python</li>
+<li>perl</li>
+<li>Java</li>
+<li>Lua?<br /><br /></li></ul>
+<li>Add tab: &quot;Console&quot; for language debuggers that use it</li>
+<ul type="disc"><li>Create a KMDI, so its easy to hide/show the (numerous) tabs</li>
+<li>Debuggers might need to inform its capabilities to configure the UI accordingly.<br /></li></ul>
+<li>Branch it, so v1.0 continue its own development.</li></ul>
 </body></html>
+
 
 \NewEntry 0 KDE faqs, howtos, standards
 
