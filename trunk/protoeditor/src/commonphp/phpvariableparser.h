@@ -31,10 +31,10 @@
   Used to parse PHP serialized text into a list of Variables 
 */
 
-class VariableParser{
+class PHPVariableParser{
 public:
-  VariableParser(const QString& raw);
-  ~VariableParser();
+  PHPVariableParser(const QString& raw);
+  ~PHPVariableParser();
 
   PHPVariable* parseVariable();
   VariablesList_t* parseAnonymousArray();

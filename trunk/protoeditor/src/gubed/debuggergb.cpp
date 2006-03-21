@@ -32,7 +32,7 @@
 #include <klocale.h>
 
 #include "phpvariable.h"
-#include "variableparser.h"
+#include "phpvariableparser.h"
 
 
 DebuggerGB::DebuggerGB(DebuggerManager* manager)
@@ -319,7 +319,7 @@ void DebuggerGB::updateStack(DebuggerStack* stack)
 
 void DebuggerGB::updateGlobalVariables(const QString& vars)
 {
-  VariableParser p(vars);
+  PHPVariableParser p(vars);
   VariablesList_t* array = p.parseAnonymousArray();    
   manager()->updateGlobalVars(array);
 }
@@ -327,7 +327,7 @@ void DebuggerGB::updateGlobalVariables(const QString& vars)
 void DebuggerGB::updateLocalVariables(const QString& scope, const QString& vars)
 {
   if(scope == "Current Scope") {
-    VariableParser p(vars);
+    PHPVariableParser p(vars);
     VariablesList_t* array = p.parseAnonymousArray();    
     manager()->updateLocalVars(array);
   }
@@ -356,7 +356,7 @@ void DebuggerGB::updateWatch(const QString& name, const QString& value)
   }
   else
   {
-    VariableParser p(value);
+    PHPVariableParser p(value);
     var = p.parseVariable();
     var->setName(name);
   }

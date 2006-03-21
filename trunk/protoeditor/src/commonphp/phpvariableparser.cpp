@@ -19,29 +19,29 @@
  ***************************************************************************/
 
 
-#include "variableparser.h"
+#include "phpvariableparser.h"
 
 #include <qregexp.h>
 #include <kdebug.h>
 #include "phpvariable.h"
 
-VariableParser::VariableParser(const QString& raw)
+PHPVariableParser::PHPVariableParser(const QString& raw)
   : m_raw(raw), m_index(0)
 {
 }
 
-VariableParser::~VariableParser()
+PHPVariableParser::~PHPVariableParser()
 {
 }
 
-PHPVariable* VariableParser::parseVariable() {
+PHPVariable* PHPVariableParser::parseVariable() {
   PHPVariable* var = new PHPVariable(NULL);
   VariableValue* value = parseValue(var);
   var->setValue(value);
   return var;
 }
 
-VariablesList_t* VariableParser::parseAnonymousArray() {
+VariablesList_t* PHPVariableParser::parseAnonymousArray() {
   //pretend that there is the first variable so the references
   //are set correctly
   m_indexedVarList.append(NULL);
@@ -49,7 +49,7 @@ VariablesList_t* VariableParser::parseAnonymousArray() {
 }
 
 
-VariablesList_t* VariableParser::parseArray(PHPVariable* var)
+VariablesList_t* PHPVariableParser::parseArray(PHPVariable* var)
 {
   int size;
   VariablesList_t* list = new VariablesList_t;
@@ -69,7 +69,7 @@ VariablesList_t* VariableParser::parseArray(PHPVariable* var)
   return list;
 }
 
-PHPVariable* VariableParser::parseVarName(PHPVariable* parent)
+PHPVariable* PHPVariableParser::parseVarName(PHPVariable* parent)
 {
   QString name;
   switch(m_raw.at(m_index).latin1())
@@ -81,7 +81,7 @@ PHPVariable* VariableParser::parseVarName(PHPVariable* parent)
       name = parseString();
       break;
     default:
-      kdDebug() << "+++++ Bug on PHPVariableParser!" << endl;
+      kdDebug() << "+++++ Bug on PHPPHPVariableParser!" << endl;
   }
 
   PHPVariable* var = new PHPVariable(parent);
@@ -92,7 +92,7 @@ PHPVariable* VariableParser::parseVarName(PHPVariable* parent)
   return var;
 }
 
-QString VariableParser::parseString()
+QString PHPVariableParser::parseString()
 {
   QRegExp rx;
   rx.setPattern("s:(\\d*):");
@@ -118,7 +118,7 @@ QString VariableParser::parseString()
   */
 }
 
-QString VariableParser::parseInt()
+QString PHPVariableParser::parseInt()
 {
   QRegExp rx;
   //rx.setPattern("i:(\\d*);"); //crash if the number is negative, ie. "i:-1". \\d doesn't reconize negatives
@@ -130,7 +130,7 @@ QString VariableParser::parseInt()
   return rx.cap(1);
 }
 
-QString VariableParser::parseDouble()
+QString PHPVariableParser::parseDouble()
 {
   QRegExp rx;
   rx.setPattern("d:([^;]*);"); //ie. d:1.11111111111E+18;
@@ -141,7 +141,7 @@ QString VariableParser::parseDouble()
   return rx.cap(1);
 }
 
-QString VariableParser::parseBool()
+QString PHPVariableParser::parseBool()
 {
   QRegExp rx;
   rx.setPattern("b:(\\d*);");
@@ -155,7 +155,7 @@ QString VariableParser::parseBool()
   }
 }
 
-QString VariableParser::parseResource()
+QString PHPVariableParser::parseResource()
 {
   //z:6:\"stream\":3;
   QRegExp rx;
@@ -167,7 +167,7 @@ QString VariableParser::parseResource()
   return rx.cap(1);
 }
 
-QString VariableParser::parseClassType()
+QString PHPVariableParser::parseClassType()
 {
   //O:6:"Classe":3:{s:6:...
   QRegExp rx;
@@ -179,7 +179,7 @@ QString VariableParser::parseClassType()
   return rx.cap(1);
 }
 
-VariablesList_t* VariableParser::parseObjectMembers(PHPVariable* parent)
+VariablesList_t* PHPVariableParser::parseObjectMembers(PHPVariable* parent)
 {
   //O:6:"Classe":3:{s:6:"membro";N;s:4:"mem2";N;s:4:"priv";N;}
   int size;
@@ -200,7 +200,7 @@ VariablesList_t* VariableParser::parseObjectMembers(PHPVariable* parent)
   return list;
 }
 
-VariableValue* VariableParser::parseValue(PHPVariable* var)
+VariableValue* PHPVariableParser::parseValue(PHPVariable* var)
 {
   PHPArrayValue* arrayValue;
   PHPObjectValue* objectValue;
@@ -290,12 +290,12 @@ VariableValue* VariableParser::parseValue(PHPVariable* var)
       scalarValue->set(parseResource());
       return scalarValue;
     default:
-      kdDebug() << "+++++ Bug on PHPVariableParser!" << endl;
+      kdDebug() << "+++++ Bug on PHPPHPVariableParser!" << endl;
       return 0;
   }
 }
 
-int VariableParser::parseReference() {
+int PHPVariableParser::parseReference() {
   QRegExp rx;
   rx.setPattern("R:(\\d*);");
   if(rx.search(m_raw, m_index) == -1) return 0;
@@ -305,7 +305,7 @@ int VariableParser::parseReference() {
   return rx.cap(1).toInt();
 }
 
-int VariableParser::parseSoftReference()
+int PHPVariableParser::parseSoftReference()
 {
   QRegExp rx;
   rx.setPattern("r:(\\d*);");
@@ -317,11 +317,11 @@ int VariableParser::parseSoftReference()
 }
 
 /*
-QPtrList<VariableValue> VariableParser::indexedVarList() {
+QPtrList<VariableValue> PHPVariableParser::indexedVarList() {
   return m_indexedVarList;
 }
 
-void VariableParser::setIndexedVarList(QPtrList<VariableValue> indexedVarList) {
+void PHPVariableParser::setIndexedVarList(QPtrList<VariableValue> indexedVarList) {
   m_indexedVarList = indexedVarList;
 }
 */

@@ -22,7 +22,7 @@
 #include "debuggermanager.h"
 #include "dbgnet.h"
 #include "dbg_defs.h"
-#include "variableparser.h"
+#include "phpvariableparser.h"
 #include "phpvariable.h"
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
@@ -387,7 +387,7 @@ void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGl
   if(str.isEmpty())
   {
     //global vars
-    VariableParser p(result);
+    PHPVariableParser p(result);
 
     VariablesList_t* array = p.parseAnonymousArray();
 
@@ -417,7 +417,7 @@ void DebuggerDBG::updateWatch(const QString& result, const QString& str)
   PHPVariable* var;
   if(!result.isEmpty())
   {
-    VariableParser p(result);
+    PHPVariableParser p(result);
 
     var = p.parseVariable();
     var->setName(str);
