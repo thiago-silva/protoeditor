@@ -1,3 +1,5 @@
+SUBDIRS = php
+
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings $(all_includes)
 METASOURCES = AUTO

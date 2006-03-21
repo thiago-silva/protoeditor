@@ -35,9 +35,8 @@ protoeditor_SOURCES = editortabwidget.cpp debuggerfactory.cpp \
 	messagelistview.cpp watchlistview.cpp breakpointlistview.cpp breakpointlistviewitem.cpp \
 	mainwindow.cpp protoeditor.cpp document.cpp
 
-#SUBDIRS = commonphp common dbg protoeditor
 protoeditor_LDADD = $(top_builddir)/src/gubed/libgubed.la \
 	$(top_builddir)/src/xdebug/libxdebug.la $(top_builddir)/src/settings/widgets/libsettingswidget.la \
 	$(top_builddir)/src/settings/libsettings.la $(top_builddir)/src/dbg/profiler/libdbgprofiler.la \
-	$(top_builddir)/src/commonphp/libcommonphp.la $(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/common/php/libcommonphp.la $(top_builddir)/src/common/libcommon.la \
 	$(top_builddir)/src/dbg/libdbg.la -lkatepartinterfaces $(LIB_KDEUI)

@@ -1,5 +1,4 @@
-INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/commonphp $(all_includes)
+INCLUDES = -I$(top_srcdir)/src/common $(all_includes)
 
 METASOURCES = AUTO
 

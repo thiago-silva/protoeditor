@@ -1,5 +1,5 @@
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/commonphp -I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings \
+	-I$(top_srcdir)/src/common/php -I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings \
 	-I$(top_srcdir)/src/xdebug $(all_includes) -I../settings
 METASOURCES = AUTO
 libxdebug_la_LDFLAGS = $(all_libraries)
