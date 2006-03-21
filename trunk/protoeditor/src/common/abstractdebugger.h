@@ -93,7 +93,7 @@ protected:
 signals:
   /*
     emitted right before starting the session. Normally, it should be emited
-    before requesting a connection with the debugger itself, so DebuggerManager can show a yello led on the MainWindow
+    before requesting a connection with the debugger itself
   */
   void sigDebugStarting();
 
@@ -103,7 +103,7 @@ signals:
   void sigDebugEnded();
 
   /* When a step(in/over/out) is done, or a breakpoint is reached, and so on */
-  void sigDebugBreak();
+  void sigDebugPaused();
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);

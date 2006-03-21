@@ -314,7 +314,7 @@ void DebuggerGB::updateStack(DebuggerStack* stack)
 //   m_globalExecutionPoint  = stack->bottomExecutionPoint();
   manager()->updateStack(stack);
 
-  emit sigDebugBreak(); 
+  emit sigDebugPaused(); 
 }
 
 void DebuggerGB::updateGlobalVariables(const QString& vars)

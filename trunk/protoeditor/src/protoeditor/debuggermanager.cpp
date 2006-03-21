@@ -176,7 +176,7 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
           this, SLOT(slotError(const QString&)));
 
   connect(debugger, SIGNAL(sigDebugBreak()),
-          this, SLOT(slotDebugBreak()));
+          this, SLOT(sigDebugPaused()));
 
   connect(debugger, SIGNAL(sigDebugStarting()),
           this, SLOT(slotDebugStarting()));

@@ -580,7 +580,7 @@ void DebuggerDBG::processStepData()
 void DebuggerDBG::slotBreakpoint()
 {
   processStepData();
-  emit sigDebugBreak();
+  emit sigDebugPaused();
 }
 
 void DebuggerDBG::slotStepDone()
@@ -590,7 +590,7 @@ void DebuggerDBG::slotStepDone()
   //hide the first step. Its done automatically on DBGNet::processHeader() - DBGC_STARTUP.
   if(!m_firstStep)
   {
-    emit sigDebugBreak();
+    emit sigDebugPaused();
   }
   else
   {

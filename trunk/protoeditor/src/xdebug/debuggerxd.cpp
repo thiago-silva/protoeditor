@@ -311,7 +311,7 @@ void DebuggerXD::requestVars()
 void DebuggerXD::slotStepDone()
 {
   requestVars();
-  emit sigDebugBreak();
+  emit sigDebugPaused();
 }
 
 void DebuggerXD::requestWatches(int ctx_id)
