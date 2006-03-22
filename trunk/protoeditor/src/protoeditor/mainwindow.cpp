@@ -161,7 +161,12 @@ void MainWindow::setupStatusBar()
 void MainWindow::setupActions()
 {
   //file menu
+  KStdAction::openNew(this, SLOT(slotNewFile()), actionCollection());
+
   KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
+
+  KStdAction::save(this, SLOT(slotSaveCurrentFile()), actionCollection());
+  KStdAction::saveAs(this, SLOT(slotSaveCurrentFileAs()), actionCollection());
 
   m_actionRecent = KStdAction::openRecent(this, SLOT(slotFileRecent(const KURL&)), actionCollection());
   m_actionRecent->loadEntries(kapp->config());//,"Recent Files");
@@ -359,6 +364,11 @@ void MainWindow::openFile()
   slotOpenFile();
 }
 
+void MainWindow::slotNewFile()
+{
+  m_tabEditor->createNew();
+}
+
 void MainWindow::slotOpenFile()
 {
   //Show KFileDialog on the current Site's "local base dir" or
@@ -416,45 +426,85 @@ void MainWindow::slotCloseFile()
   m_tabEditor->closeCurrentDocument();
 }
 
+void MainWindow::slotSaveCurrentFile() 
+{
+  saveCurrentFile();
+}
+
+void MainWindow::slotSaveCurrentFileAs()
+{
+  saveCurrentFileAs();
+}
+
+bool MainWindow::saveCurrentFile()
+{
+  if(!m_tabEditor->currentDocumentExistsOnDisk())
+  {
+    saveCurrentFileAs();
+  }
+  else if(!m_tabEditor->saveCurrentFile())
+  {
+    //katepart already show an error message
+    //showSorry("Unable to save file");
+    return false;
+  }
+  return true;
+}
+
+bool MainWindow::saveCurrentFileAs()
+{
+  QString location = ":protoeditor";
+  KURL url = KFileDialog::getSaveURL(location, QString::null, this);
+
+  if(!url.isEmpty())
+  {
+    if(m_tabEditor->saveCurrentFileAs(url))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 void MainWindow::slotCloseAllFiles()
 {
   m_tabEditor->closeAllDocuments();
 }
 
-void MainWindow::slotSaveFile()
-{
-  if(!m_tabEditor->saveCurrentFile())
-  {
-    showSorry("Unable to save file");
-  }
-}
+// void MainWindow::slotSaveFile()
+// {
+//   if(!m_tabEditor->saveCurrentFile())
+//   {
+//     showSorry("Unable to save file");
+//   }
+// }
 
-void MainWindow::slotSaveFileAs()
-{
-  //Show KFileDialog on the current Site's "local base dir" or
-  //use ::protoeditor to retrieve the last folder used
-
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  QString location;
-  if(currentSite)
-  {
-    location = currentSite->localBaseDir();
-  }
-  else
-  {
-    location = ":protoeditor";
-  }
-
-  KURL url = KFileDialog::getSaveURL(location, QString::null, this);
-
-  if(!url.isEmpty())
-  {
-    if(!m_tabEditor->saveCurrentFileAs(url))
-    {
-      showSorry("Unable to save file");
-    }
-  }
-}
+// void MainWindow::slotSaveFileAs()
+// {
+//   //Show KFileDialog on the current Site's "local base dir" or
+//   //use ::protoeditor to retrieve the last folder used
+// 
+//   SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+//   QString location;
+//   if(currentSite)
+//   {
+//     location = currentSite->localBaseDir();
+//   }
+//   else
+//   {
+//     location = ":protoeditor";
+//   }
+// 
+//   KURL url = KFileDialog::getSaveURL(location, QString::null, this);
+// 
+//   if(!url.isEmpty())
+//   {
+//     if(!m_tabEditor->saveCurrentFileAs(url))
+//     {
+//       showSorry("Unable to save file");
+//     }
+//   }
+// }
 
 // bool MainWindow::close()
 // {

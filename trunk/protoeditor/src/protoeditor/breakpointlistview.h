@@ -24,7 +24,7 @@
 #include <klistview.h>
 #include <qvaluelist.h>
 
-
+class KURL;
 class DebuggerBreakpoint;
 class BreakpointListViewItem;
 
@@ -40,12 +40,12 @@ public:
 
   void updateBreakpoint(DebuggerBreakpoint*);
 
-  void toggleBreakpoint(const QString&, int, bool enabled = true);
+  void toggleBreakpoint(const KURL&, int, bool enabled = true);
 
   void resetBreakpointItems();
 
   QValueList<DebuggerBreakpoint*> breakpoints();
-  QValueList<DebuggerBreakpoint*> breakpointsFrom(const QString&);
+  QValueList<DebuggerBreakpoint*> breakpointsFrom(const KURL&);
 
 signals:
   //this signals are sent after TextEditor processed the Marks
@@ -53,15 +53,15 @@ signals:
   void sigBreakpointChanged(DebuggerBreakpoint*);
   void sigBreakpointRemoved(DebuggerBreakpoint*);
 
-  void sigDoubleClick(const QString&, int);
+  void sigDoubleClick(const KURL&, int);
 
   //Breakpoint was deleted here, not from TextEditor Mark
   //void sigBreakpointDeleted(DebuggerBreakpoint*);
 
 public slots:
   //connection with KTextEditor
-  void slotBreakpointMarked(const QString&, int, bool);
-  void slotBreakpointUnmarked(const QString&, int);
+  void slotBreakpointMarked(const KURL&, int, bool);
+  void slotBreakpointUnmarked(const KURL&, int);
 
 private slots:
   void slotCicked(QListViewItem*, const QPoint&, int);
@@ -74,11 +74,11 @@ protected:
 
 private:
   void removeAllBreakpoints();
-  void addBreakpoint(const QString&, int, bool);
+  void addBreakpoint(const KURL&, int, bool);
   void removeBreakpoint(DebuggerBreakpoint*);
 
   BreakpointListViewItem*  findBreakpoint(DebuggerBreakpoint*);
-  BreakpointListViewItem*  findBreakpoint(QString, int);
+  BreakpointListViewItem*  findBreakpoint(const KURL&, int);
 };
 
 #endif

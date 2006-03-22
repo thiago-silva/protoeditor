@@ -19,9 +19,13 @@
  ***************************************************************************/
 
 #include "messagelistview.h"
+
+#include "debuggermanager.h"
+
 #include <klocale.h>
 #include <kiconloader.h>
-#include "debuggermanager.h"
+#include <kurl.h>
+
 
 MessageListView::MessageListView(QWidget *parent, const char *name)
  : KListView(parent, name)
@@ -77,7 +81,7 @@ void MessageListView::add(int type, QString message, int line, QString file) {
 
 void MessageListView::slotDoubleClick(QListViewItem * item, const QPoint &, int)
 {
-  emit sigDoubleClick(item->text(MessageListView::FileCol)
+  emit sigDoubleClick(KURL::fromPathOrURL(item->text(MessageListView::FileCol))
                     , item->text(MessageListView::LineCol).toLong());
 }
 

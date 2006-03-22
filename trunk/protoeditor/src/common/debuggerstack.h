@@ -24,6 +24,8 @@
 #include <qptrlist.h>
 #include <qstring.h>
 
+#include <kurl.h>
+
 /* represents a point of execution (file/line) with extra data such as functionName...
    Should be expanded in the future
 */
@@ -31,14 +33,14 @@
 class DebuggerExecutionPoint {
 public:
   DebuggerExecutionPoint();
-  DebuggerExecutionPoint(int id, const QString& filePath, int line, const QString& function);
+  DebuggerExecutionPoint(int id, const KURL& url, int line, const QString& function);
   ~DebuggerExecutionPoint();
 
   void setId(int);
   int  id() const;
 
-  void setFilePath(const QString&);
-  QString filePath() const;
+  void setURL(const KURL&);
+  KURL url() const;
 
   void setLine(int);
   int line() const;
@@ -47,7 +49,7 @@ public:
   QString function() const;
 private:
   int m_id;
-  QString m_filePath;
+  KURL m_url;
   int m_line;
   QString m_function;
 };
@@ -64,10 +66,10 @@ public:
   DebuggerStack();
   ~DebuggerStack();
 
-  void push(int id, const QString& filePath, int line, const QString& function);
+  void push(int id, const KURL& url, int line, const QString& function);
   void push(DebuggerExecutionPoint*);
 
-  void insert(int id, const QString& filePath, int line, const QString& function);
+  void insert(int id, const KURL& url, int line, const QString& function);
   void insert(DebuggerExecutionPoint*);
   
   DebuggerExecutionPoint*     bottomExecutionPoint();

@@ -90,14 +90,14 @@ void DebuggerManager::init()
 
   //connects the editor with the BREAKPOINT UI
   connect(m_window->tabEditor(),
-          SIGNAL(sigBreakpointMarked(const QString&, int, bool)),
+          SIGNAL(sigBreakpointMarked(const KURL&, int, bool)),
           m_window->breakpointListView(),
-          SLOT(slotBreakpointMarked(const QString&, int, bool)));
+          SLOT(slotBreakpointMarked(const KURL&, int, bool)));
 
   connect(m_window->tabEditor(),
-          SIGNAL(sigBreakpointUnmarked(const QString&, int )),
+          SIGNAL(sigBreakpointUnmarked(const KURL&, int )),
           m_window->breakpointListView(),
-          SLOT(slotBreakpointUnmarked(const QString&, int)));
+          SLOT(slotBreakpointUnmarked(const KURL&, int)));
 
   //connects the editor to us
   connect(m_window->tabEditor(), SIGNAL(sigNewDocument()),
@@ -117,12 +117,12 @@ void DebuggerManager::init()
   connect(m_window->breakpointListView(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
           this, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
 
-  connect(m_window->breakpointListView(), SIGNAL(sigDoubleClick(const QString&, int)),
-          this, SLOT(slotGotoLineAtFile(const QString&, int)));
+  connect(m_window->breakpointListView(), SIGNAL(sigDoubleClick(const KURL&, int)),
+          this, SLOT(slotGotoLineAtFile(const KURL&, int)));
 
   //connects the LOG UI to us
-  connect(m_window->messageListView(), SIGNAL(sigDoubleClick(const QString&, int)),
-          this, SLOT(slotGotoLineAtFile(const QString&, int)));
+  connect(m_window->messageListView(), SIGNAL(sigDoubleClick(const KURL&, int)),
+          this, SLOT(slotGotoLineAtFile(const KURL&, int)));
 
   loadDebuggers();
 }
@@ -175,8 +175,8 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
   connect(debugger, SIGNAL(sigInternalError(const QString&)),
           this, SLOT(slotError(const QString&)));
 
-  connect(debugger, SIGNAL(sigDebugBreak()),
-          this, SLOT(sigDebugPaused()));
+  connect(debugger, SIGNAL(sigDebugPaused()),
+          this, SLOT(slotDebugPaused()));
 
   connect(debugger, SIGNAL(sigDebugStarting()),
           this, SLOT(slotDebugStarting()));
@@ -202,13 +202,19 @@ void DebuggerManager::slotScriptRun()
     }
   }
 
-  QString filePath = m_window->tabEditor()->currentDocumentPath();
+  KURL url = m_window->tabEditor()->currentDocumentURL();
 
-  //Session::self()->start(ProtoeditorSettings::self()->phpSettings()->PHPCommand(), filePath);
-  Session::self()->start(filePath, m_window->cbArguments()->currentText());
+  if(!url.isLocalFile())
+  {
+    m_window->showSorry("Unable to run non-local file");    
+  }
+  else
+  {
+    Session::self()->start(url.path(), m_window->cbArguments()->currentText());
+  }
 }
 
-QString DebuggerManager::sessionPrologue(bool isProfiling) 
+KURL DebuggerManager::sessionPrologue(bool isProfiling) 
 {
   //1: check if there is a debug session running
   //  -if yes, send a continueExecution()
@@ -236,7 +242,7 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
     }
   }
   
-  QString filePath;
+  KURL url;
   SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
   if(currentSite)
   {
@@ -244,7 +250,7 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
  
     if(!m_window->useCurrentScript())
     {
-      filePath = currentSite->defaultFile();
+      url = currentSite->defaultFile();
     }
   }
   else
@@ -256,10 +262,10 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
   if(!m_activeDebugger)
   {
     m_window->showSorry("Error loading debugger.");
-    return QString::null;
+    return KURL();
   }
 
-  if(filePath.isEmpty())
+  if(url.isEmpty())
   {
     if(m_window->tabEditor()->count() == 0)
     {
@@ -267,39 +273,46 @@ QString DebuggerManager::sessionPrologue(bool isProfiling)
       if(m_window->tabEditor()->count() == 0)
       {
         //couldn't open the file for some reason
-        return QString::null;
+        return KURL();
       }
     }
-    filePath = m_window->tabEditor()->currentDocumentPath();
+    url = m_window->tabEditor()->currentDocumentURL();
   }
-  return filePath;
+
+  if(!url.isLocalFile())
+  {
+    m_window->showSorry("Unable to debug non-local file");
+    return KURL();
+  }
+
+  return url;
 }
 
-void DebuggerManager::processSession(const QString& filePath, bool local, bool isProfiling)
+void DebuggerManager::processSession(const KURL& url, bool local, bool isProfiling)
 {
   if(isProfiling)
   {
-    m_activeDebugger->profile(filePath, m_window->cbArguments()->currentText(), local);
+    m_activeDebugger->profile(url.path(), m_window->cbArguments()->currentText(), local);
   }
   else
   {
-    m_activeDebugger->start(filePath, m_window->cbArguments()->currentText(), local);
+    m_activeDebugger->start(url.path(), m_window->cbArguments()->currentText(), local);
   }
 }
 
 void DebuggerManager::slotDebugStart()
 {
-  QString filePath = sessionPrologue(false);
-  if(!filePath.isEmpty()) {
-    processSession(filePath, ProtoeditorSettings::self()->currentSiteSettings()?false:true, false);
+  KURL url = sessionPrologue(false);
+  if(!url.isEmpty()) {
+    processSession(url, ProtoeditorSettings::self()->currentSiteSettings()?false:true, false);
   }
 }
 
 void DebuggerManager::slotProfile()
 {
-  QString filePath = sessionPrologue(true);
-  if(!filePath.isEmpty()) {
-    processSession(filePath, ProtoeditorSettings::self()->currentSiteSettings()?false:true, true);
+  KURL url = sessionPrologue(true);
+  if(!url.isEmpty()) {
+    processSession(url, ProtoeditorSettings::self()->currentSiteSettings()?false:true, true);
   }
 }
 
@@ -338,19 +351,19 @@ void DebuggerManager::slotDebugStepOut()
 //from the menu action
 void DebuggerManager::slotDebugToggleBp()
 {
-  QString filePath = m_window->tabEditor()->currentDocumentPath();
+  KURL url = m_window->tabEditor()->currentDocumentURL();
   int line = m_window->tabEditor()->currentDocumentLine();
 
-  if(!m_window->tabEditor()->hasBreakpointAt(filePath, line))
+  if(!m_window->tabEditor()->hasBreakpointAt(url, line))
   {
-    m_window->tabEditor()->markActiveBreakpoint(filePath, line);
+    m_window->tabEditor()->markActiveBreakpoint(url, line);
   }
   else
   {
-    m_window->tabEditor()->unmarkActiveBreakpoint(filePath, line);
+    m_window->tabEditor()->unmarkActiveBreakpoint(url, line);
   }
 
-  m_window->breakpointListView()->toggleBreakpoint(filePath, line);
+  m_window->breakpointListView()->toggleBreakpoint(url, line);
 }
 
 void DebuggerManager::slotAddWatch()
@@ -393,13 +406,13 @@ void DebuggerManager::slotComboStackChanged(DebuggerExecutionPoint* old, Debugge
 
   EditorTabWidget* ed = m_window->tabEditor();
 
-  ed->gotoLineAtFile(nw->filePath(), nw->line()-1);
+  ed->gotoLineAtFile(nw->url(), nw->line()-1);
 
-  ed->unmarkPreExecutionPoint(old->filePath()/*, old->line()*/);
+  ed->unmarkPreExecutionPoint(old->url()/*, old->line()*/);
 
   if(nw != m_window->stackCombo()->stack()->topExecutionPoint())
   {
-    ed->markPreExecutionPoint(nw->filePath(), nw->line());
+    ed->markPreExecutionPoint(nw->url(), nw->line());
   }
 
   if(m_activeDebugger)
@@ -439,12 +452,12 @@ void DebuggerManager::slotBreakpointChanged(DebuggerBreakpoint* bp)
   switch(bp->status())
   {
     case DebuggerBreakpoint::ENABLED:
-      m_window->tabEditor()->unmarkDisabledBreakpoint(bp->filePath(), bp->line());
-      m_window->tabEditor()->markActiveBreakpoint(bp->filePath(), bp->line());
+      m_window->tabEditor()->unmarkDisabledBreakpoint(bp->url(), bp->line());
+      m_window->tabEditor()->markActiveBreakpoint(bp->url(), bp->line());
       break;
     case DebuggerBreakpoint::DISABLED:
-      m_window->tabEditor()->unmarkActiveBreakpoint(bp->filePath(), bp->line());
-      m_window->tabEditor()->markDisabledBreakpoint(bp->filePath(), bp->line());
+      m_window->tabEditor()->unmarkActiveBreakpoint(bp->url(), bp->line());
+      m_window->tabEditor()->markDisabledBreakpoint(bp->url(), bp->line());
     case DebuggerBreakpoint::UNRESOLVED:
       break;
   }
@@ -454,10 +467,10 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
 {
   if(bp->status() == DebuggerBreakpoint::ENABLED) {
     m_window->tabEditor()->unmarkActiveBreakpoint(
-      bp->filePath(), bp->line());
+      bp->url(), bp->line());
   } else {
     m_window->tabEditor()->unmarkDisabledBreakpoint(
-      bp->filePath(), bp->line());
+      bp->url(), bp->line());
   }
 
   if(m_activeDebugger)
@@ -466,9 +479,9 @@ void DebuggerManager::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   }
 }
 
-void DebuggerManager::slotGotoLineAtFile(const QString& filePath, int line)
+void DebuggerManager::slotGotoLineAtFile(const KURL& url, int line)
 {
-  m_window->tabEditor()->gotoLineAtFile(filePath, line-1);
+  m_window->tabEditor()->gotoLineAtFile(url, line-1);
 }
 
 void DebuggerManager::slotWatchRemoved(Variable* var)
@@ -495,12 +508,12 @@ void DebuggerManager::slotNewDocument()
 
   QValueList<DebuggerBreakpoint*> bplist =
     m_window->breakpointListView()->breakpointsFrom(
-      m_window->tabEditor()->currentDocumentPath());
+      m_window->tabEditor()->currentDocumentURL());
 
   QValueList<DebuggerBreakpoint*>::iterator it;
   for(it = bplist.begin(); it != bplist.end(); ++it)
   {
-    m_window->tabEditor()->markActiveBreakpoint((*it)->filePath(), (*it)->line());
+    m_window->tabEditor()->markActiveBreakpoint((*it)->url(), (*it)->line());
   }
 }
 
@@ -524,7 +537,7 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
     execPoint =
       m_window->stackCombo()->stack()->topExecutionPoint();
 
-    ed->unmarkExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
+    ed->unmarkExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
 
   if(m_window->stackCombo()->currentItem() != 0)
@@ -532,7 +545,7 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
     execPoint =
       m_window->stackCombo()->selectedDebuggerExecutionPoint();
 
-    ed->unmarkPreExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
+    ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
 
   //**** dealing with the new Stack (the argument)
@@ -544,10 +557,10 @@ void DebuggerManager::updateStack(DebuggerStack* stack)
   m_window->stackCombo()->setStack(stack);
 
   execPoint = stack->topExecutionPoint();
-  ed->setCurrentDocumentTab(execPoint->filePath(), true);
-  ed->gotoLineAtFile(execPoint->filePath(), execPoint->line()-1);
+  ed->setCurrentDocumentTab(execPoint->url(), true);
+  ed->gotoLineAtFile(execPoint->url(), execPoint->line()-1);
 
-  ed->markExecutionPoint(execPoint->filePath(), execPoint->line());
+  ed->markExecutionPoint(execPoint->url(), execPoint->line());
 }
 
 void DebuggerManager::updateGlobalVars(VariablesList_t* vars)
@@ -658,13 +671,13 @@ void DebuggerManager::slotDebugEnded()
     DebuggerExecutionPoint* execPoint;
     execPoint = stack->topExecutionPoint();
 
-    ed->unmarkExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
+    ed->unmarkExecutionPoint(execPoint->url()/*, execPoint->line()*/);
 
     //remove the pre execution line mark if any
     execPoint =
       m_window->stackCombo()->selectedDebuggerExecutionPoint();
 
-    ed->unmarkPreExecutionPoint(execPoint->filePath()/*, execPoint->line()*/);
+    ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
   
   /*
@@ -678,7 +691,7 @@ void DebuggerManager::slotDebugEnded()
   m_window->setDebugStatusName("");
 }
 
-void DebuggerManager::slotDebugBreak()
+void DebuggerManager::slotDebugPaused()
 {
   //step(into/over/out) or a breakpoint or something like happened. We don't care too mutch about it :)
   m_window->setDebugStatusMsg("Done");

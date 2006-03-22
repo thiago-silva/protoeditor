@@ -31,6 +31,7 @@ class DebuggerBreakpoint;
 class MainWindow;
 class DebuggerExecutionPoint;
 class SiteSettings;
+class KURL;
 
 /*
  The core of the application.
@@ -62,7 +63,7 @@ public:
 
 public slots:
   void slotConfigurationChanged();
-  void slotGotoLineAtFile(const QString&, int);
+  void slotGotoLineAtFile(const KURL&, int);
 
   void slotScriptRun();
   void slotDebugStart();
@@ -99,14 +100,14 @@ private slots:
   void slotDebugStarting();
   void slotDebugStarted(AbstractDebugger*);
   void slotDebugEnded();
-  void slotDebugBreak();
+  void slotDebugPaused();
   
   //Debugger internal error (conection, listen port, etc)
   void slotError(const QString&);
 
 private:
-  QString sessionPrologue(bool isProfiling);
-  void processSession(const QString& filePath, bool local, bool isProfiling);
+  KURL sessionPrologue(bool isProfiling);
+  void processSession(const KURL& url, bool local, bool isProfiling);
     
   void connectDebugger(AbstractDebugger*);
 

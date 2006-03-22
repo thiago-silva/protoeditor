@@ -80,8 +80,8 @@ void BreakpointListViewItem::showBreakpoint() {
       break;
   }
 
-  setText(BreakpointListView::FileNameCol,  m_breakpoint->filePath().section( '/', -1 ));
-  setText(BreakpointListView::FilePathCol,  m_breakpoint->filePath());
+  setText(BreakpointListView::FileNameCol,  m_breakpoint->url().fileName());
+  setText(BreakpointListView::FilePathCol,  m_breakpoint->url().prettyURL());
   setText(BreakpointListView::LineCol,      QString::number(m_breakpoint->line()));
   setText(BreakpointListView::ConditionCol, m_breakpoint->condition());
   setText(BreakpointListView::SkipHitsCol,  QString::number(m_breakpoint->skipHits()));

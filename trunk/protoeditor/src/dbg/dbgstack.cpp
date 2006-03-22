@@ -68,7 +68,8 @@ DebuggerStack* DBGStack::debuggerStack(DBGFileInfo* dbgFileInfo)
       function = dbgFileInfo->moduleName((*it).modNo) + "::main()";
       //function = "main()";
     }
-    stack->push((*it).scopeId, dbgFileInfo->moduleName((*it).modNo), (*it).line, function);
+    stack->push((*it).scopeId, KURL::fromPathOrURL(dbgFileInfo->moduleName((*it).modNo)),
+       (*it).line, function);
   }
 
   return stack;

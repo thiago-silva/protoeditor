@@ -450,7 +450,9 @@ void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, in
       status = DebuggerBreakpoint::UNRESOLVED;
       break;
   }
-  DebuggerBreakpoint* bp = new DebuggerBreakpoint(id, filePath, line, status, condition, hitcount, skiphits);
+  DebuggerBreakpoint* bp = new DebuggerBreakpoint(id, KURL::fromPathOrURL(filePath), 
+      line, status, condition, hitcount, skiphits);
+
   manager()->updateBreakpoint(bp);
 }
 

@@ -7,40 +7,44 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
+ *   This program is distributed in the hope that it will be useful,      *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
+ *   Free Software Foundation, Inc.,                                      *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
 #include "document.h"
 
-#include <kurl.h>
 #include <ktexteditor/document.h>
 #include <ktexteditor/editorchooser.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/markinterfaceextension.h>
 #include <ktexteditor/viewcursorinterface.h>
-// #include <ktexteditor/texthintinterface.h>
 
 #include <kiconloader.h>
 #include <kdeversion.h>
+#include <kactioncollection.h>
 
-//Tied to Kate
+//Tied to Kate :|
 #include <kate/document.h>
 #include <kate/view.h>
+
+#include <klocale.h>
 
 #include <qwidget.h>
 #include <qlayout.h>
 
-Document::Document(QWidget *parent, const char *name)
-  : QObject(parent, name), m_terminating(false), m_userMarkedGuard(false), m_tab(0), m_view(0), m_execLine(0), m_preExecLine(0)
-{}
+Document::Document(QWidget *parent, const KURL& url, const char *name)
+  : QObject(parent, name), m_terminating(false), m_userMarkedGuard(false), 
+    m_tab(0), m_view(0), m_execLine(0), m_preExecLine(0), m_url(url)
+{ 
+  init();
+}
 
 
 Document::~Document()
@@ -54,17 +58,53 @@ Document::~Document()
     //     delete m_view; //KWrite only deletes the doc
     delete doc;
   }
-
   delete m_tab;
+}
+
+void Document::init() {  
+
+  m_tab = new QWidget(dynamic_cast<QWidget*>(parent()));
+
+  KTextEditor::Document *doc =
+  KTextEditor::EditorChooser::createDocument(
+    m_tab, "KTextEditor::Document");
+
+  if(!doc) {
+    //error!
+    return;
+  }
+  
+  QVBoxLayout *lay = new QVBoxLayout(m_tab, 1, 1);
+
+  KTextEditor::View * view = doc->createView(m_tab);
+  
+  lay->addWidget(view);
+
+  m_view = view;
+
+  setupMarks();
+
+  connect(m_view, SIGNAL(newStatus()), this, SIGNAL(sigTextChanged()));
+  connect(m_view, SIGNAL(viewStatusMsg(const QString&)), this, SIGNAL(sigStatusMsg(const QString&)));
+
+  //remove file_save* actons. Default goes directly to katepart
+  //wich doesn't use our directory location, but the 
+  //application binary directory as default to KFileDialog.
+  //Those should be configured by the MainWindow now.
+  KAction* ac = m_view->actionCollection()->action("file_save_as");
+  if(ac) m_view->actionCollection()->take(ac);
+  
+  ac = m_view->actionCollection()->action("file_save");
+  if(ac) m_view->actionCollection()->take(ac);
 }
 
 KTextEditor::View* Document::view()
 {
   return m_view;
 }
-const QString& Document::path()
-{
-  return m_path;
+
+const KURL& Document::url() {
+  return m_url;
 }
 
 QWidget* Document::tab()
@@ -96,58 +136,27 @@ bool Document::saveAs(const KURL& url)
   }
 }
 
+
 bool Document::open(const KURL& url)
 {
-  KTextEditor::Document *doc =
-    KTextEditor::EditorChooser::createDocument(
-      0L, "KTextEditor::Document");
-
-  if(!doc)
+  if(!m_view)
   {
     return false;
   }
-  else if(!doc->openURL(url))
+  else if(!m_view->document()->openURL(url))
   {
-    delete doc;
     return false;
   }
 
   //activate the reload dialog when external changes happen to the text
-  Kate::Document* kdoc = dynamic_cast<Kate::Document*>(doc);
+  Kate::Document* kdoc = dynamic_cast<Kate::Document*>(m_view->document());
   if(kdoc)
     kdoc->setFileChangedDialogsActivated(true);
 
-  m_tab = new QWidget(dynamic_cast<QWidget*>(parent()));
-  
-  QVBoxLayout *lay = new QVBoxLayout(m_tab, 1, 1);
+  m_url = url;
 
-  KTextEditor::View * view = doc->createView(m_tab);
-  
-  lay->addWidget(view);
-
-  m_path = url.path();
-  m_view = view;
-
-  setupMarks();
-
-//   connect(m_view->document(), SIGNAL(textChanged()), this, SLOT(slotTextChanged()));
-  connect(m_view, SIGNAL(newStatus()), this, SIGNAL(sigTextChanged()));
-  connect(m_view, SIGNAL(viewStatusMsg(const QString&)), this, SIGNAL(sigStatusMsg(const QString&)));
-
-  //enable hints (kate didn't implemented this properly yet)
-/*  KTextEditor::TextHintInterface *hint = textHintInterface(m_view);
-  hint->enableTextHints(1000);
-
-  connect(m_view, SIGNAL(needTextHint(int, int, QString&)), this, SLOT(slotNeedTextHint(int, int, QString&)));*/
-  
   return true;
 }
-/*
-void Document::slotNeedTextHint(int line, int col, QString&)
-{
-  int a;
-  a = 2;
-}*/
 
 bool Document::close()
 {
@@ -159,6 +168,11 @@ bool Document::close()
   m_terminating = false;
   
   return ret;
+}
+
+bool Document::existsOnDisk()
+{
+  return m_view->document()->url().isValid();
 }
 
 bool Document::isModified()
@@ -206,10 +220,11 @@ void Document::setupMarks()
 #endif
 
 #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
-  imarkex->setDescription(KTextEditor::MarkInterface::BreakpointActive, "Breakpoint");
+  imarkex->setDescription(KTextEditor::MarkInterface::BreakpointActive, i18n("Breakpoint"));
 #else
-  imarkex->setDescription(KTextEditor::MarkInterface::markType02, "Breakpoint");
+  imarkex->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
 #endif
+
 
 #if (KDE_VERSION_MAJOR >= 3) &&  (KDE_VERSION_MINOR >= 3)
   imarkex->setMarksUserChangable(KTextEditor::MarkInterface::Bookmark + KTextEditor::MarkInterface::BreakpointActive);
@@ -219,6 +234,8 @@ void Document::setupMarks()
 
   connect(m_view->document(), SIGNAL(marksChanged()), this, SLOT(slotMarkChanged()));
 }
+
+
 
 void Document::gotoLine(int line)
 {
@@ -234,7 +251,7 @@ int Document::currentLine()
 {
   if(!m_view) return 0;
 
-  uint line, col;
+  unsigned int line, col;
   KTextEditor::ViewCursorInterface *vci;
 
   vci = dynamic_cast<KTextEditor::ViewCursorInterface*>(m_view);
@@ -244,7 +261,7 @@ int Document::currentLine()
   return line+1;
 }
 
-void Document::addMark(int line, /*KTextEditor::MarkInterface::MarkTypes type*/ uint type)
+void Document::addMark(int line, unsigned int type)
 {
   KTextEditor::MarkInterface* imark =
     dynamic_cast<KTextEditor::MarkInterface*>(m_view->document());
@@ -256,7 +273,7 @@ void Document::addMark(int line, /*KTextEditor::MarkInterface::MarkTypes type*/ 
   m_userMarkedGuard = false;
 }
 
-void Document::removeMark(int line, /*KTextEditor::MarkInterface::MarkTypes type*/ uint type)
+void Document::removeMark(int line, unsigned int type)
 {
   KTextEditor::MarkInterface* imark =
     dynamic_cast<KTextEditor::MarkInterface*>(m_view->document());
@@ -373,17 +390,6 @@ bool Document::hasBreakpointAt(int line)
 QString Document::wordUnderCursor()
 {
 
-/*  KTextEditor::SelectionInterface* selif =
-      dynamic_cast<KTextEditor::SelectionInterface*>(m_view->document());
-
-  if(selif)
-  {
-    if(!selif->selection().isEmpty())
-    {
-      return selif->selection();
-    }
-  }
-  */
   Kate::View* v = dynamic_cast<Kate::View*>(m_view);
   if(v)
   {

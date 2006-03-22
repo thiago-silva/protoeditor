@@ -172,7 +172,7 @@ void GBNet::slotIncomingConnection(QSocket* socket)
 
 void GBNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
-  QString filePath = bp->filePath();
+  QString filePath = bp->url().path();
   if(m_site) 
   {    
     filePath = m_site->remoteBaseDir() + filePath.remove(0, m_site->localBaseDir().length());
@@ -188,7 +188,7 @@ void GBNet::requestBreakpoint(DebuggerBreakpoint* bp)
 
 void GBNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
 {
-  QString filePath = bp->filePath();
+  QString filePath = bp->url().path();
   if(m_site) 
   {    
     filePath = m_site->remoteBaseDir() + filePath.remove(0, m_site->localBaseDir().length());
@@ -204,7 +204,7 @@ void GBNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
 
 void GBNet::requestBreakpointRemoval(DebuggerBreakpoint* bp)
 {
-  QString filePath = bp->filePath();
+  QString filePath = bp->url().path();
   if(m_site) 
   {    
     filePath = m_site->remoteBaseDir() + filePath.remove(0, m_site->localBaseDir().length());
@@ -637,7 +637,7 @@ void GBNet::processBacktrace(const QString& bt)
       localFile = file;
     }
 
-    stack->insert(levels, localFile, line, where);
+    stack->insert(levels, KURL::fromPathOrURL(localFile), line, where);
   }
 
   m_debugger->updateStack(stack);

@@ -92,12 +92,18 @@ public:
   void setDebugStatusName(const QString&);
   void setLedState(int);
 
+  bool saveCurrentFileAs();
+  bool saveCurrentFile();
+  
 private slots:
+  void slotSaveCurrentFile();
+  void slotSaveCurrentFileAs();
+  void slotNewFile();
   void slotOpenFile();
   void slotCloseFile();
   void slotCloseAllFiles();
-  void slotSaveFile();
-  void slotSaveFileAs();
+//   void slotSaveFile();
+//   void slotSaveFileAs();
   void slotQuit();
   //void slotShowSettings();
   void slotEditKeys();

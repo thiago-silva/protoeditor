@@ -27,6 +27,8 @@
 
 #include <ktexteditor/markinterface.h>
 
+#include <kurl.h>
+
 class QWidget;
 
 namespace KTextEditor
@@ -34,24 +36,24 @@ namespace KTextEditor
   class View;
 }
 
-class KURL;
-
 class Document : public QObject
 {
   Q_OBJECT
 public:
-  Document(QWidget *parent, const char *name = 0);
+  Document(QWidget *parent, const KURL& = KURL(), const char *name = 0);
 
   ~Document();
 
   KTextEditor::View* view();
-  const QString& path();
-  QWidget* tab();
+  const KURL&        url();
+  QWidget*           tab();
   
   bool save();
   bool saveAs(const KURL&);
   bool open(const KURL& url);
   bool close();
+
+  bool existsOnDisk();
 
   bool isModified();
   
@@ -76,12 +78,13 @@ signals:
   
 private slots:
   void slotMarkChanged();
-//   void slotNeedTextHint(int, int, QString&);
+
 private:
- 
+  void init();
+
   void setupMarks();
-  void addMark(int line, /*KTextEditor::MarkInterface::MarkTypes type*/ uint type);
-  void removeMark(int line, /*KTextEditor::MarkInterface::MarkTypes type*/ uint type);
+  void addMark(int line, unsigned int type);
+  void removeMark(int line, unsigned int type);
 
   bool m_terminating;
   
@@ -100,7 +103,7 @@ private:
   int m_execLine;
   int m_preExecLine;
 
-  QString m_path;
+  KURL m_url;
   QValueList<KTextEditor::Mark> m_breakpointMarks;
 };
 

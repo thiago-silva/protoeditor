@@ -22,6 +22,7 @@
 #define MESSAGELISTVIEW_H
 
 #include <klistview.h>
+class KURL;
 
 class MessageListView : public KListView
 {
@@ -33,7 +34,7 @@ public:
   void add(int type, QString message, int line, QString file);
 
 signals:
-  void sigDoubleClick(const QString&, int);
+  void sigDoubleClick(const KURL&, int);
 
 private slots:
   void slotDoubleClick(QListViewItem *, const QPoint &, int);

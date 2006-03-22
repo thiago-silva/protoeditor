@@ -22,6 +22,7 @@
 #ifndef DEBUGGERBREAKPOINT_H
 #define DEBUGGERBREAKPOINT_H
 #include <qstring.h>
+#include <kurl.h>
 
 class DebuggerBreakpoint{
 public:
@@ -30,7 +31,7 @@ public:
   DebuggerBreakpoint();
   DebuggerBreakpoint(const DebuggerBreakpoint&);
 
-  DebuggerBreakpoint(int id, const QString& filePath
+  DebuggerBreakpoint(int id, const KURL& url
                      , int line
                      , int status = ENABLED
                      , const QString& conditionExpr = ""
@@ -40,7 +41,7 @@ public:
   virtual ~DebuggerBreakpoint();
 
   virtual void setId(int);
-  virtual void setFilePath(const QString& filePath);
+  virtual void setURL(const KURL& url);
   virtual void setLine(int line);
   virtual void setCondition(const QString& expression);
   virtual void setStatus(int status);
@@ -48,7 +49,7 @@ public:
   virtual void setSkipHits(int skipHits);
 
   virtual int id();
-  virtual const QString& filePath();
+  virtual const KURL& url();
   virtual int line();
   virtual const QString& condition();
   virtual int status();
@@ -57,14 +58,14 @@ public:
 
   //compare only relevant members: line/file
   virtual bool compare(DebuggerBreakpoint*);
-  virtual bool compare(QString, int);
+  virtual bool compare(const KURL&, int);
 
 protected:
   
   //ID is not currently used (only internaly by the debugger clients that needs it)
   
   int     m_id; 
-  QString m_filePath;
+  KURL    m_url;
   int     m_line;
   int     m_status;
   QString m_conditionExpr;

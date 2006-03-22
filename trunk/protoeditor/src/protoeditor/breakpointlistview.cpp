@@ -23,6 +23,7 @@
 #include "debuggerbreakpoint.h"
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kurl.h>
 
 BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
     : KListView(parent, name)
@@ -74,8 +75,6 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
 
 BreakpointListView::~BreakpointListView()
 {}
-
-#include <kdebug.h>
 
 void BreakpointListView::slotContextMenuRequested(QListViewItem* item, const QPoint& p, int)
 {
@@ -186,7 +185,7 @@ void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, i
     case FilePathCol:
     case LineCol:
     case HitCountCol:
-      emit sigDoubleClick(item->breakpoint()->filePath(), item->breakpoint()->line());
+      emit sigDoubleClick(item->breakpoint()->url(), item->breakpoint()->line());
       break;
   }
 }
@@ -237,23 +236,23 @@ void BreakpointListView::updateBreakpoint(DebuggerBreakpoint* bp)
   }
 }
 
-void BreakpointListView::toggleBreakpoint(const QString& filePath, int line, bool enabled)
+void BreakpointListView::toggleBreakpoint(const KURL& url, int line, bool enabled)
 {
-  BreakpointListViewItem*  item = findBreakpoint(filePath, line);
+  BreakpointListViewItem*  item = findBreakpoint(url, line);
   if(item)
   {
     removeBreakpoint(item->breakpoint());
   }
   else
   {
-    addBreakpoint(filePath, line, enabled);
+    addBreakpoint(url, line, enabled);
   }
 }
 
-void BreakpointListView::addBreakpoint(const QString& filePath, int line, bool enabled)
+void BreakpointListView::addBreakpoint(const KURL& url, int line, bool enabled)
 {
   //note: TextEditor lines are 0 based
-  DebuggerBreakpoint* bp = new DebuggerBreakpoint(0, filePath, line);
+  DebuggerBreakpoint* bp = new DebuggerBreakpoint(0, url, line);
   //addBreakpoint(bp);
   if(!enabled) {
     bp->setStatus(DebuggerBreakpoint::DISABLED);
@@ -296,7 +295,7 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpoints()
   return list;
 }
 
-QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QString& filePath)
+QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const KURL& url)
 {
   QValueList<DebuggerBreakpoint*> list;
 
@@ -305,7 +304,7 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QStrin
 
   while(item)
   {
-    if(item->breakpoint()->filePath() == filePath)
+    if(item->breakpoint()->url() == url)
     {
       list.append(item->breakpoint());
     }
@@ -316,14 +315,14 @@ QValueList<DebuggerBreakpoint*> BreakpointListView::breakpointsFrom(const QStrin
   return list;
 }
 
-void BreakpointListView::slotBreakpointMarked(const QString& filePath, int line, bool enabled)
+void BreakpointListView::slotBreakpointMarked(const KURL& url, int line, bool enabled)
 {
-  toggleBreakpoint(filePath, line, enabled);
+  toggleBreakpoint(url, line, enabled);
 }
 
-void BreakpointListView::slotBreakpointUnmarked(const QString& filePath, int line)
+void BreakpointListView::slotBreakpointUnmarked(const KURL& url, int line)
 {
-  toggleBreakpoint(filePath, line);
+  toggleBreakpoint(url, line);
 }
 
 /*
@@ -372,7 +371,7 @@ BreakpointListViewItem*  BreakpointListView::findBreakpoint(DebuggerBreakpoint* 
   return NULL;
 }
 
-BreakpointListViewItem*  BreakpointListView::findBreakpoint(QString filePath, int line)
+BreakpointListViewItem*  BreakpointListView::findBreakpoint(const KURL& url, int line)
 {
   //Note: we don't use the DebuggerBreakpoint::id() to verify equality!
 
@@ -381,7 +380,7 @@ BreakpointListViewItem*  BreakpointListView::findBreakpoint(QString filePath, in
 
   while(item)
   {
-    if(item->breakpoint()->compare(filePath, line))
+    if(item->breakpoint()->compare(url, line))
     {
       return item;
     }

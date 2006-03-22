@@ -22,12 +22,12 @@
 
 
 DebuggerExecutionPoint::DebuggerExecutionPoint()
-  : m_id(0), m_filePath(), m_line(0), m_function(0)
+  : m_id(0), m_url(), m_line(0), m_function(0)
 {
 }
 
-DebuggerExecutionPoint::DebuggerExecutionPoint(int id, const QString& filePath, int line, const QString& function)
-  : m_id(id), m_filePath(filePath), m_line(line), m_function(function)
+DebuggerExecutionPoint::DebuggerExecutionPoint(int id, const KURL& url, int line, const QString& function)
+  : m_id(id), m_url(url), m_line(line), m_function(function)
 {
 }
 
@@ -45,14 +45,14 @@ int DebuggerExecutionPoint::id() const
   return m_id;
 }
 
-void DebuggerExecutionPoint::setFilePath(const QString& filePath)
+void DebuggerExecutionPoint::setURL(const KURL& url)
 {
-  m_filePath = filePath;
+  m_url = url;
 }
 
-QString DebuggerExecutionPoint::filePath() const
+KURL DebuggerExecutionPoint::url() const
 {
-  return m_filePath;
+  return m_url;
 }
 
 void DebuggerExecutionPoint::setLine(int line)
@@ -89,10 +89,10 @@ DebuggerStack::~DebuggerStack()
   }
 }
 
-void DebuggerStack::push(int id, const QString& filePath, int line, const QString& function)
+void DebuggerStack::push(int id, const KURL& url, int line, const QString& function)
 {
   DebuggerExecutionPoint *execPoint =
-    new DebuggerExecutionPoint(id, filePath, line, function);
+    new DebuggerExecutionPoint(id, url, line, function);
   m_execPointList.prepend(execPoint);
 }
 
@@ -101,10 +101,10 @@ void DebuggerStack::push(DebuggerExecutionPoint* execPoint)
   m_execPointList.prepend(execPoint);
 }
 
-void DebuggerStack::insert(int id, const QString& filePath, int line, const QString& function)
+void DebuggerStack::insert(int id, const KURL& url, int line, const QString& function)
 {
   DebuggerExecutionPoint *execPoint =
-      new DebuggerExecutionPoint(id, filePath, line, function);
+      new DebuggerExecutionPoint(id, url, line, function);
   m_execPointList.append(execPoint);
 }
 

@@ -32,6 +32,8 @@
 #include <kfileitem.h>
 #include <kurldrag.h>
 #include <qdragobject.h> 
+#include <qdir.h>
+#include <klocale.h>
 
 EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char *name)
     : KTabWidget(parent, name), m_terminating(false),
@@ -67,6 +69,9 @@ void EditorTabWidget::terminate()
   closeAllDocuments();
 }
 
+void EditorTabWidget::createNew() {
+  createDocument();
+}
 
 bool EditorTabWidget::openDocument(const KURL& url)
 {
@@ -143,16 +148,26 @@ bool EditorTabWidget::closeAllDocuments()
   return true;
 }
 
-void EditorTabWidget::setCurrentDocumentTab(const QString& filePath, bool forceOpen)
+void EditorTabWidget::setCurrentDocumentTab(const KURL& url, bool forceOpen)
 {
-  int index = documentIndex(filePath);
-  if(index != -1)
+  int index = documentIndex(url);
+
+  /* currentPageIndex() == index:
+      setCurrentDocumentTab() is activated  when debug starts.
+      setCurrentPage() emits currentChanged() -> slotCurrentChanged().
+      In slotCurrentChanged(), action state changes to has_fileopen
+      and this ativate buttons like "debug" and "run".
+      For any effects, this avoids, at least, set the currentPage twice
+  */
+  if(currentPageIndex() == index) return;
+
+  if(index != -1 ) 
   {
     setCurrentPage(index);
   }
   else if(forceOpen)
   {
-    createDocument(KURL::fromPathOrURL(filePath));
+    createDocument(url);
   }
 }
 
@@ -163,16 +178,21 @@ bool EditorTabWidget::saveCurrentFile()
   return currentDocument()->save();
 }
 
-bool EditorTabWidget::saveCurrentFileAs(const KURL & url)
+bool EditorTabWidget::saveCurrentFileAs(const KURL& url)
 {
   if(count() == 0) return false;
 
-  return currentDocument()->saveAs(url);
+  bool ret = currentDocument()->saveAs(url);
+  if(ret) {
+    slotDocumentSaved();
+  }
+
+  return ret;
 }
 
-void EditorTabWidget::gotoLineAtFile(const QString& filePath, int line)
+void EditorTabWidget::gotoLineAtFile(const KURL& url, int line)
 {
-  setCurrentDocumentTab(filePath, true);
+  setCurrentDocumentTab(url, true);
 
   if(currentPageIndex() == -1) return;
 
@@ -180,22 +200,22 @@ void EditorTabWidget::gotoLineAtFile(const QString& filePath, int line)
 }
 
 
-const QString& EditorTabWidget::documentPath(int index)
+KURL EditorTabWidget::documentURL(int index)
 {
   int size = m_docList.count();
   if((index >= 0) && (index < size))
   {
-    return document(index)->path();
+    return document(index)->url();
   }
   else
   {
-    return QString::null;
+    return KURL();
   }
 }
 
-const QString& EditorTabWidget::currentDocumentPath()
+KURL EditorTabWidget::currentDocumentURL()
 {
-  return documentPath(currentPageIndex());
+  return documentURL(currentPageIndex());
 }
 
 int EditorTabWidget::currentDocumentLine()
@@ -205,84 +225,90 @@ int EditorTabWidget::currentDocumentLine()
   return currentDocument()->currentLine();
 }
 
-void EditorTabWidget::markActiveBreakpoint(const QString& filePath, int line)
+bool EditorTabWidget::currentDocumentExistsOnDisk()
 {
-  Document* doc = document(filePath);
+  return currentDocument()->existsOnDisk();
+}
+
+void EditorTabWidget::markActiveBreakpoint(const KURL& url, int line)
+{
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->markActiveBreakpoint(line);
+    document(url)->markActiveBreakpoint(line);
   }
 }
 
-void EditorTabWidget::unmarkActiveBreakpoint(const QString& filePath, int line)
+void EditorTabWidget::unmarkActiveBreakpoint(const KURL& url, int line)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->unmarkActiveBreakpoint(line);
+    document(url)->unmarkActiveBreakpoint(line);
   }
 }
 
-void EditorTabWidget::markDisabledBreakpoint(const QString& filePath, int line)
+void EditorTabWidget::markDisabledBreakpoint(const KURL& url, int line)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->markDisabledBreakpoint(line);
+    document(url)->markDisabledBreakpoint(line);
   }
 }
 
-void EditorTabWidget::unmarkDisabledBreakpoint(const QString& filePath, int line)
+void EditorTabWidget::unmarkDisabledBreakpoint(const KURL& url, int line)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->unmarkDisabledBreakpoint(line);
+    document(url)->unmarkDisabledBreakpoint(line);
   }
 }
 
-void EditorTabWidget::markExecutionPoint(const QString& filePath, int line)
+void EditorTabWidget::markExecutionPoint(const KURL& url, int line)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->markExecutionPoint(line);
+    document(url)->markExecutionPoint(line);
   }
 }
 
-void EditorTabWidget::unmarkExecutionPoint(const QString& filePath)
+void EditorTabWidget::unmarkExecutionPoint(const KURL& url)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->unmarkExecutionPoint();
+    document(url)->unmarkExecutionPoint();
   }
 }
 
-void EditorTabWidget::markPreExecutionPoint(const QString& filePath, int line)
+void EditorTabWidget::markPreExecutionPoint(const KURL& url, int line)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->markPreExecutionPoint(line);
+    document(url)->markPreExecutionPoint(line);
   }
 }
 
-void EditorTabWidget::unmarkPreExecutionPoint(const QString& filePath)
+void EditorTabWidget::unmarkPreExecutionPoint(const KURL& url)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    document(filePath)->unmarkPreExecutionPoint();
+    document(url)->unmarkPreExecutionPoint();
   }
 }
 
-bool EditorTabWidget::hasBreakpointAt(const QString& filePath, int line)
+
+bool EditorTabWidget::hasBreakpointAt(const KURL& url, int line)
 {
-  Document* doc = document(filePath);
+  Document* doc = document(url);
   if(doc)
   {
-    return document(filePath)->hasBreakpointAt(line);
+    return document(url)->hasBreakpointAt(line);
   }
   else
   {
@@ -290,8 +316,17 @@ bool EditorTabWidget::hasBreakpointAt(const QString& filePath, int line)
   }
 }
 
-bool EditorTabWidget::createDocument(const KURL& url)
-{
+void EditorTabWidget::createDocument() {
+  QString home = QDir::homeDirPath();
+  KURL url(i18n("%1/untitled_%2.gpt").arg(home, QString::number(count()+1)));
+  Document* doc = new Document(this, url);
+
+  initDoc(doc);
+
+  doc->view()->setFocus();
+}
+
+bool EditorTabWidget::createDocument(const KURL& url) {
   Document* doc = new Document(this);
 
   if(!doc->open(url))
@@ -299,7 +334,12 @@ bool EditorTabWidget::createDocument(const KURL& url)
     delete doc;
     return false;
   }
+  initDoc(doc);
+  return true;
+}
 
+void EditorTabWidget::initDoc(Document* doc)
+{
   connect(doc, SIGNAL(sigBreakpointMarked(Document*, int, bool )), this,
           SLOT(slotBreakpointMarked(Document*, int, bool)));
 
@@ -312,17 +352,20 @@ bool EditorTabWidget::createDocument(const KURL& url)
   connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
           SLOT(slotStatusMsg(const QString&)));
 
+  connect(doc, SIGNAL(sigDocumentSaved()), this, 
+          SLOT(slotDocumentSaved()));  
+
   connect(doc->view(), SIGNAL(dropEventPass(QDropEvent*)),
     this, SLOT(slotDropEvent(QDropEvent*)));
-    
-  QIconSet mimeIcon (KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
+
+  QIconSet mimeIcon(KMimeType::pixmapForURL(doc->url(), 0, KIcon::Small));
   if (mimeIcon.isNull())
   {
     mimeIcon = QIconSet(SmallIcon("document"));
   }
 
-  addTab(doc->tab(), mimeIcon, url.fileName());
-  setTabToolTip(doc->tab(), doc->path());
+  addTab(doc->tab(), mimeIcon, doc->url().fileName());
+  setTabToolTip(doc->tab(), doc->url().prettyURL());
 
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(doc->view());
   if (popupIf)
@@ -332,21 +375,20 @@ bool EditorTabWidget::createDocument(const KURL& url)
     connect(popup, SIGNAL(aboutToShow()), this, SLOT(slotMenuAboutToShow()));
   }
 
-  m_docList.append(doc);
+  m_docList.append(doc); 
 
   setCurrentPage(count()-1);
   emit sigNewDocument();
-  return true;
 }
 
-int EditorTabWidget::documentIndex(const QString& filePath)
+int EditorTabWidget::documentIndex(const KURL& url)
 {
   int i = 0;
 
   QValueList<Document*>::iterator it;
   for (it = m_docList.begin(); it != m_docList.end(); ++it, i++ )
   {
-    if((*it)->path() == filePath)
+    if((*it)->url() == url)
     {
       return i;
     }
@@ -363,7 +405,7 @@ void EditorTabWidget::slotCurrentChanged(QWidget*)
 {
   if(m_terminating) return;
 
-  m_window->setCaption(currentDocumentPath());
+  m_window->setCaption(currentDocumentURL().prettyURL());
 
   if(m_currentView)
   {
@@ -381,12 +423,12 @@ void EditorTabWidget::slotCurrentChanged(QWidget*)
 
 void EditorTabWidget::slotBreakpointMarked(Document* doc, int line, bool enabled)
 {
-  emit sigBreakpointMarked(doc->path(), line, enabled);
+  emit sigBreakpointMarked(doc->url(), line, enabled);
 }
 
 void EditorTabWidget::slotBreakpointUnmarked(Document* doc, int line)
 {
-  emit sigBreakpointUnmarked(doc->path(), line);
+  emit sigBreakpointUnmarked(doc->url(), line);
 }
 
 void EditorTabWidget::slotTextChanged()
@@ -402,7 +444,7 @@ void EditorTabWidget::slotTextChanged()
   }
   else
   {
-    QIconSet mimeIcon(KMimeType::pixmapForURL(doc->path(), 0, KIcon::Small));
+    QIconSet mimeIcon(KMimeType::pixmapForURL(doc->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
     {
       mimeIcon = QIconSet(SmallIcon("document"));
@@ -414,6 +456,21 @@ void EditorTabWidget::slotTextChanged()
 void EditorTabWidget::slotStatusMsg(const QString& msg)
 {
   m_window->setEditorStatusMsg(msg);
+}
+
+void EditorTabWidget::slotDocumentSaved()
+{
+  if(!currentDocument()->isModified())
+  {
+    QIconSet mimeIcon(KMimeType::pixmapForURL(currentDocumentURL(), 0, KIcon::Small));
+    if (mimeIcon.isNull())
+    {
+      mimeIcon = QIconSet(SmallIcon("document"));
+    }
+    setTabLabel(currentDocument()->tab(), currentDocumentURL().fileName());
+    setTabIconSet(currentDocument()->tab(), mimeIcon);
+    setTabToolTip(currentDocument()->tab(), currentDocumentURL().prettyURL());  
+  }
 }
 
 void EditorTabWidget::contextMenu(int index, const QPoint & p)
@@ -460,7 +517,7 @@ KTextEditor::View* EditorTabWidget::currentView()
   return m_currentView;
 }
 
-Document* EditorTabWidget::document(uint index)
+Document* EditorTabWidget::document(unsigned int index)
 {
   if(index > (m_docList.count()-1))
   {
@@ -472,13 +529,13 @@ Document* EditorTabWidget::document(uint index)
   }
 }
 
-Document* EditorTabWidget::document(const QString& filePath)
+Document* EditorTabWidget::document(const KURL& url)
 {
   QValueList<Document*>::iterator it;
   for(it = m_docList.begin(); it != m_docList.end(); ++it)
   {
 
-    if((*it)->path() == filePath)
+    if((*it)->url() == url)
     {
       return (*it);
     }

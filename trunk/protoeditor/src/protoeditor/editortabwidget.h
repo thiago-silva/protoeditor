@@ -48,39 +48,41 @@ public:
 
   //void setMainWindow(MainWindow*);
 
+  void createNew();
   bool openDocument(const KURL& url);
   bool closeCurrentDocument();
   bool closeAllDocuments();
-  void setCurrentDocumentTab(const QString&, bool forceOpen = false);
+  void setCurrentDocumentTab(const KURL&, bool forceOpen = false);
 
   bool saveCurrentFile();
   bool saveCurrentFileAs(const KURL & url);
 
-  void gotoLineAtFile(const QString& file, int line);
+  void gotoLineAtFile(const KURL&, int);
 
-  const QString& documentPath(int index);
+  KURL documentURL(int index);
 
-  const QString& currentDocumentPath();
-  int            currentDocumentLine();
+  KURL currentDocumentURL();
+  int  currentDocumentLine();
+  bool currentDocumentExistsOnDisk();
 
-  void markActiveBreakpoint(const QString&, int);
-  void unmarkActiveBreakpoint(const QString&, int);
-  void markDisabledBreakpoint(const QString&, int);
-  void unmarkDisabledBreakpoint(const QString&, int);
-  void markExecutionPoint(const QString&, int);
-  void unmarkExecutionPoint(const QString&);
-  void markPreExecutionPoint(const QString&, int);
-  void unmarkPreExecutionPoint(const QString&);
+  void markActiveBreakpoint(const KURL&, int);
+  void unmarkActiveBreakpoint(const KURL&, int);
+  void markDisabledBreakpoint(const KURL&, int);
+  void unmarkDisabledBreakpoint(const KURL&, int);
+  void markExecutionPoint(const KURL&, int);
+  void unmarkExecutionPoint(const KURL&);
+  void markPreExecutionPoint(const KURL&, int);
+  void unmarkPreExecutionPoint(const KURL&);
 
-  bool hasBreakpointAt(const QString& , int);
+  bool hasBreakpointAt(const KURL& , int);
 
   KTextEditor::View* currentView();
 
   void terminate();
 
 signals:
-  void sigBreakpointMarked(const QString&, int, bool);
-  void sigBreakpointUnmarked(const QString&, int);
+  void sigBreakpointMarked(const KURL&, int, bool);
+  void sigBreakpointUnmarked(const KURL&, int);
   void sigNewDocument();
   void sigNoDocument();
   void sigAddWatch(const QString&);
@@ -104,21 +106,24 @@ private slots:
   
   void slotDropEvent(QDropEvent*);
 
+  void slotDocumentSaved();
+
 protected:
   void dragEnterEvent(QDragEnterEvent*);
   void dragMoveEvent( QDragMoveEvent *);
   void dropEvent(QDropEvent*);
 
 private:
+  void                        initDoc(Document*);
   bool                        closeDocument(int);
-  Document*                   document(uint);
-  Document*                   document(const QString&);
+  Document*                   document(unsigned int );
+  Document*                   document(const KURL&);
   Document*                   currentDocument();
-
+  void                        createDocument();
   bool                        createDocument(const KURL& url);
   void                        setupMarks(KTextEditor::View* view);
 
-  int                         documentIndex(const QString& filepath);
+  int                         documentIndex(const KURL&);
   //   void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
   //   void                        loadMarks(Document_t&, KTextEditor::Document*);
 

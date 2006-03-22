@@ -200,7 +200,7 @@ void XDNet::requestProperty(const QString& expression, int ctx_id, int id)
 void XDNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
   QString breakpoint_set = "breakpoint_set -t line -f ";
-  breakpoint_set += bp->filePath().section('/', -1);
+  breakpoint_set += bp->url().path().section('/', -1);
   breakpoint_set += " -i ";
   breakpoint_set += QString::number(GeneralId);
   breakpoint_set += " -n ";
@@ -473,7 +473,7 @@ void XDNet::processResponse(QDomElement& root)
       {
         localFile = file.path();
       }
-      stack->insert(level, localFile, line, where);
+      stack->insert(level, KURL::fromPathOrURL(localFile), line, where);
     }
 
     //request global/local vars
@@ -484,7 +484,7 @@ void XDNet::processResponse(QDomElement& root)
     //update stack
     if(root.attributeNode("transaction_id").value().toInt() == ErrorStackId)
     {
-      m_error.filePath = stack->topExecutionPoint()->filePath();
+      m_error.filePath = stack->topExecutionPoint()->url().path();
       m_error.line     = stack->topExecutionPoint()->line();
       dispatchErrorData();
     }

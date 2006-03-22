@@ -27,21 +27,21 @@ DebuggerBreakpoint::DebuggerBreakpoint()
 {
 }
 
-DebuggerBreakpoint::DebuggerBreakpoint(int id, const QString& filePath
+DebuggerBreakpoint::DebuggerBreakpoint(int id, const KURL& url
                      , int line
                      , int status
                      , const QString& conditionExpr
                      , int hitCount
                      , int skipHits)
 
-  : m_id(id), m_filePath(filePath), m_line(line),
+  : m_id(id), m_url(url), m_line(line),
     m_status(status), m_conditionExpr(conditionExpr),
     m_hitCount(hitCount), m_skipHits(skipHits)
 {
 }
 
 DebuggerBreakpoint::DebuggerBreakpoint(const DebuggerBreakpoint& bp)
- : m_id(bp.m_id), m_filePath(bp.m_filePath), m_line(bp.m_line),
+ : m_id(bp.m_id), m_url(bp.m_url), m_line(bp.m_line),
    m_status(bp.m_status), m_conditionExpr(bp.m_conditionExpr),
    m_hitCount(bp.m_hitCount), m_skipHits(bp.m_skipHits)
 {
@@ -55,9 +55,9 @@ void DebuggerBreakpoint::setId(int id) {
   m_id = id;
 }
 
-void DebuggerBreakpoint::setFilePath(const QString& filePath)
+void DebuggerBreakpoint::setURL(const KURL& url)
 {
-  m_filePath = filePath;
+  m_url = url;
 }
 
 void DebuggerBreakpoint::setLine(int line)
@@ -89,9 +89,9 @@ int DebuggerBreakpoint::id() {
   return m_id;
 }
 
-const QString& DebuggerBreakpoint::filePath()
+const KURL& DebuggerBreakpoint::url()
 {
-  return m_filePath;
+  return m_url;
 }
 
 int DebuggerBreakpoint::line()
@@ -120,11 +120,11 @@ int DebuggerBreakpoint::skipHits()
 }
 
 bool DebuggerBreakpoint::compare(DebuggerBreakpoint* bp) {
-  return (m_filePath == bp->m_filePath) &&
+  return (m_url      == bp->m_url) &&
          (m_line     == bp->m_line);
 }
 
-bool DebuggerBreakpoint::compare(QString filePath, int line) {
-  return (m_filePath == filePath) &&
+bool DebuggerBreakpoint::compare(const KURL& url, int line) {
+  return (m_url      == url) &&
          (m_line     == line);
 }
