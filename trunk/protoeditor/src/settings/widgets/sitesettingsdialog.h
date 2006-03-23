@@ -21,6 +21,7 @@
 #define SITESETTINGSDIALOG_H
 
 #include <kdialogbase.h>
+#include <kurl.h>
 
 class KLineEdit;
 class QSpinBox;
@@ -35,20 +36,20 @@ public:
   ~SiteSettingsDialog();
 
   QString name();
-  QString url();
-  QString remoteBaseDir();
-  QString localBaseDir();
-  QString defaultFile();
+  KURL    url();
+  KURL    remoteBaseDir();
+  KURL    localBaseDir();
+  KURL    defaultFile();
   QString debuggerClient();
   
-  void populate(const QString& name, const QString& url,
-                const QString& remoteBaseDir, const QString& localBaseDir,
-                const QString& defaultFile, const QString& debuggerClient);
+  void populate(const QString& name, const KURL& url,
+                const KURL& remoteBaseDir, const KURL& localBaseDir,
+                const KURL& defaultFile, const QString& debuggerClient);
 
   void setUpdate();
 protected slots:
   void slotOk();
-
+  void slotOpenFileDialog(KURLRequester*);
 private:
   KLineEdit     *m_edName;
   KLineEdit     *m_edUrl;

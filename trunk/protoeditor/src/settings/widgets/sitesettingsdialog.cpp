@@ -24,6 +24,7 @@
 #include <klineedit.h>
 #include <qlayout.h>
 #include <qframe.h>
+#include <kfiledialog.h>
 
 #include <kmessagebox.h>
 #include <kurlrequester.h>
@@ -56,15 +57,6 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   m_edUrl->setText("http://");
   grid->addWidget(m_edUrl, 1, 1);
 
-//   label = new QLabel(frame);
-//   label->setText("Port:");
-//   grid->addWidget(label, 2, 0);
-// 
-//   m_spPort = new QSpinBox(frame);
-//   m_spPort->setMaxValue(999999);
-//   m_spPort->setValue(80);
-//   grid->addWidget(m_spPort, 2, 1);
-
   label = new QLabel(frame);
   label->setText("Remote base dir:");
   grid->addWidget(label, 2, 0);
@@ -86,8 +78,6 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   grid->addWidget(label, 4, 0);
 
   m_edDefaultFile = new KURLRequester(frame);
-  //note: this filter must be the same as in void MainWindow::slotOpenFile()
-  m_edDefaultFile->setFilter("*.php| PHP Scripts\n*|All Files");
   grid->addWidget(m_edDefaultFile, 4, 1);
 
   label = new QLabel(frame);
@@ -110,6 +100,9 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   enableButtonSeparator(true);
 
   resize(600, 250);  
+
+  connect(m_edDefaultFile, SIGNAL(openFileDialog(KURLRequester*)),
+    this, SLOT(slotOpenFileDialog(KURLRequester*)));
 }
 
 
@@ -123,30 +116,48 @@ void SiteSettingsDialog::setUpdate()
 
 void SiteSettingsDialog::slotOk()
 {
-  if(m_edName->text().isEmpty())
+  if(name().isEmpty())
   {
     KMessageBox::sorry(this, "\"Name\" is required.");
     return;
   }
 
-  if(!KURL(m_edUrl->text()).isValid())
+  if(url().isEmpty() || !url().isValid())
   {
     KMessageBox::sorry(this, "\"URL\" is not valid.");
+    return;
+  }
+
+  if(remoteBaseDir().isEmpty() || !remoteBaseDir().isValid())
+  {
+    KMessageBox::sorry(this, "\"Remote base dir\" is not valid.");
+    return;
+  }
+
+  if(localBaseDir().isEmpty() || !localBaseDir().isValid())
+  {
+    KMessageBox::sorry(this, "\"Local base dir\" is not valid.");
+    return;
+  }
+
+  if(!defaultFile().isEmpty() && !defaultFile().isValid())
+  {
+    KMessageBox::sorry(this, "\"Default file\" is not valid.");
     return;
   }
 
   KDialogBase::slotOk();
 }
 
-void SiteSettingsDialog::populate(const QString& name, const QString& url,/* int port,*/
-                                  const QString& remoteBaseDir, const QString& localBaseDir,
-                                  const QString& defaultFile, const QString& debuggerClient)
+void SiteSettingsDialog::populate(const QString& name, const KURL& url,
+                                  const KURL& remoteBaseDir, const KURL& localBaseDir,
+                                  const KURL& defaultFile, const QString& debuggerClient)
 {
   m_edName->setText(name);
-  m_edUrl->setText(url);
-  m_edRemoteBaseDir->setText(remoteBaseDir);
-  m_edLocalBaseDir->setURL(localBaseDir);
-  m_edDefaultFile->setURL(defaultFile);
+  m_edUrl->setText(url.url());
+  m_edRemoteBaseDir->setText(remoteBaseDir.pathOrURL());
+  m_edLocalBaseDir->setURL(localBaseDir.pathOrURL());
+  m_edDefaultFile->setURL(defaultFile.pathOrURL());
   m_cbDebuggerClient->setCurrentText(debuggerClient);
 }
 
@@ -156,50 +167,43 @@ QString SiteSettingsDialog::name()
   return m_edName->text();
 }
 
-QString SiteSettingsDialog::url()
+KURL SiteSettingsDialog::url()
 {
-  QString str = m_edUrl->text();
-  if(str.at(str.length()-1) == '/')
-  {
-    str = str.left(str.length()-1);
-  }
-  return str;
+  return KURL::fromPathOrURL(m_edUrl->text());
 }
 
-// int SiteSettingsDialog::port()
-// {
-//   return m_spPort->value();
-// }
-
-QString SiteSettingsDialog::remoteBaseDir()
+KURL SiteSettingsDialog::remoteBaseDir()
 {
-  QString str = m_edRemoteBaseDir->text();
-  if(str.at(str.length()-1) == '/')
-  {
-    str = str.left(str.length()-1);
-  }
-  
-  return str;
+  KURL url;
+  url.setDirectory(m_edRemoteBaseDir->text()); 
+  return url;
 }
 
-QString SiteSettingsDialog::localBaseDir()
+KURL SiteSettingsDialog::localBaseDir()
 {
-  QString str = m_edLocalBaseDir->url();
-  if(str.at(str.length()-1) == '/')
-  {
-    str = str.left(str.length()-1);
-  }
-  return str;
+  KURL url;
+  url.setDirectory(m_edLocalBaseDir->url()); 
+  return url;
 }
 
-QString SiteSettingsDialog::defaultFile()
+KURL SiteSettingsDialog::defaultFile()
 {
-  return m_edDefaultFile->url();
+  return KURL::fromPathOrURL(m_edDefaultFile->url());
 }
 
 QString SiteSettingsDialog::debuggerClient()
 {
   return m_cbDebuggerClient->currentText();
+}
+
+void SiteSettingsDialog::slotOpenFileDialog(KURLRequester* /*default file*/)
+{
+  //note: this filter must be the same as in void MainWindow::slotOpenFile()
+  m_edDefaultFile->setFilter("*.php| PHP Scripts\n*|All Files");
+  if(!m_edLocalBaseDir->url().isEmpty())
+  {
+    m_edDefaultFile->fileDialog()->setURL(m_edLocalBaseDir->url());
+  }
 }
 
 #include "sitesettingsdialog.moc"
