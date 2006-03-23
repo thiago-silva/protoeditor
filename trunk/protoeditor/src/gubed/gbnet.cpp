@@ -78,12 +78,12 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
     {
       args += " " + uiargs;
     }
-    Session::self()->start(m_debugger->settings()->startSessionScript(), args);
+    Session::self()->start(KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
   }
   else
   {
     QString relative = filePath;
-    relative = relative.remove(0, site->localBaseDir().length());
+    relative = relative.remove(0, site->localBaseDir().directory().length());
 
     KURL url = site->effectiveURL();
     url.setPath(m_debugger->settings()->startSessionScript());
@@ -175,7 +175,7 @@ void GBNet::requestBreakpoint(DebuggerBreakpoint* bp)
   QString filePath = bp->url().path();
   if(m_site) 
   {    
-    filePath = m_site->remoteBaseDir() + filePath.remove(0, m_site->localBaseDir().length());
+    filePath = m_site->mapLocalToRemote(filePath);
   }
 
   sendCommand("breakpoint", 
@@ -191,7 +191,7 @@ void GBNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
   QString filePath = bp->url().path();
   if(m_site) 
   {    
-    filePath = m_site->remoteBaseDir() + filePath.remove(0, m_site->localBaseDir().length());
+    filePath = m_site->mapLocalToRemote(filePath);
   }
 
 //   sendCommand("breakpoint", 
@@ -207,7 +207,7 @@ void GBNet::requestBreakpointRemoval(DebuggerBreakpoint* bp)
   QString filePath = bp->url().path();
   if(m_site) 
   {    
-    filePath = m_site->remoteBaseDir() + filePath.remove(0, m_site->localBaseDir().length());
+    filePath = m_site->mapLocalToRemote(filePath);
   }
 
   sendCommand("removebreakpoint",
@@ -629,8 +629,7 @@ void GBNet::processBacktrace(const QString& bt)
     
     if(m_site)
     {
-      localFile = m_site->localBaseDir()
-                          + file.remove(0, m_site->remoteBaseDir().length());
+      localFile = m_site->mapRemoteToLocal(file);
     }
     else
     {
@@ -694,7 +693,11 @@ void GBNet::processLog(const QString& log)
   }
 
   QString filePath = rx.cap(1);
-  filePath = m_site->localBaseDir() + filePath.remove(0, m_site->remoteBaseDir().length());
+  
+  if(m_site)
+  {
+    filePath = m_site->mapRemoteToLocal(filePath);
+  }
 
   m_debugger->updateMessage(rx.cap(3).toInt(), rx.cap(4), filePath, rx.cap(2).toInt());
 }
@@ -712,7 +715,11 @@ void GBNet::processFatalError(const QString& err)
     return;
   }
 
-  QString filePath = m_site->localBaseDir() + rx.cap(1).remove(0, m_site->remoteBaseDir().length());
+  QString filePath = rx.cap(1);
+  if(m_site)
+  {
+    filePath = m_site->mapRemoteToLocal(filePath);
+  }
 
   m_debugger->updateError(filePath);  
 }
