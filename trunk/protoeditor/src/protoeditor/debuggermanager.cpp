@@ -210,7 +210,7 @@ void DebuggerManager::slotScriptRun()
   }
   else
   {
-    Session::self()->start(url.path(), m_window->cbArguments()->currentText());
+    Session::self()->start(url, m_window->cbArguments()->currentText());
   }
 }
 
@@ -238,7 +238,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
     {
       m_activeDebugger->continueExecution();
       m_window->setDebugStatusMsg("Continuing...");
-      return QString::null;
+      return KURL();
     }
   }
   
@@ -581,16 +581,29 @@ void DebuggerManager::updateWatch(Variable* var)
 void DebuggerManager::updateBreakpoint(DebuggerBreakpoint* bp)
 {
   m_window->breakpointListView()->updateBreakpoint(bp);
+
+  switch(bp->status())
+  {
+    case DebuggerBreakpoint::ENABLED:
+      m_window->tabEditor()->unmarkDisabledBreakpoint(bp->url(), bp->line());
+      m_window->tabEditor()->markActiveBreakpoint(bp->url(), bp->line());
+      break;
+    case DebuggerBreakpoint::DISABLED:
+      m_window->tabEditor()->unmarkActiveBreakpoint(bp->url(), bp->line());
+      m_window->tabEditor()->markDisabledBreakpoint(bp->url(), bp->line());
+    case DebuggerBreakpoint::UNRESOLVED:
+      break;
+  }
 }
 
-void DebuggerManager::debugMessage(int type, const QString& msg, const QString& filePath, int line)
+void DebuggerManager::debugMessage(int type, const QString& msg, const KURL& url, int line)
 {
   if(type == DebuggerManager::ErrorMsg) 
   {
-    m_window->tabEditor()->gotoLineAtFile(filePath, line);
+    m_window->tabEditor()->gotoLineAtFile(url, line);
     m_window->showError(msg);
   }
-  m_window->messageListView()->add(type, msg, line, filePath);
+  m_window->messageListView()->add(type, msg, line, url);
 }
 
 void DebuggerManager::addOutput(const QString& output)
