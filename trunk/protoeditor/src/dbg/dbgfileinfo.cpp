@@ -33,28 +33,18 @@ void DBGFileInfo::setSite(SiteSettings* site)
   m_site = site;
 }
 
-QString DBGFileInfo::toURI(const QString& filePath)
+QString DBGFileInfo::mapLocalToRemote(const QString& filePath)
 {
   if(!m_site) return filePath;
 
-  QString uri = filePath;
-  return uri.remove(0, m_site->localBaseDir().length());
+  return m_site->mapLocalToRemote(filePath);
 }
 
-QString DBGFileInfo::toRemoteFilePath(const QString& localFilePath)
+QString DBGFileInfo::mapRemoteToLocal(const QString& filePath)
 {
-  if(!m_site) return localFilePath;
+  if(!m_site) return filePath;
 
-  QString localFile  = localFilePath;
-  return m_site->remoteBaseDir() + localFile.remove(0, m_site->localBaseDir().length());
-}
-
-QString DBGFileInfo::toLocalFilePath(const QString& remoteFilePath)
-{
-  if(!m_site) return remoteFilePath;
-
-  QString remoteFile  = remoteFilePath;
-  return m_site->localBaseDir() + remoteFile.remove(0, m_site->remoteBaseDir().length());
+  return m_site->mapRemoteToLocal(filePath);
 }
 
 const QString& DBGFileInfo::moduleName(int modno)
@@ -78,7 +68,7 @@ int DBGFileInfo::moduleNumber(const QString& localFilePath)
 
 void DBGFileInfo::addModuleInfo(int modno, const QString& remotefilePath)
 {
-  m_fileMap[modno] = toLocalFilePath(remotefilePath);
+  m_fileMap[modno] = mapRemoteToLocal(remotefilePath);
 
   m_moduleUpdated = true;
 }

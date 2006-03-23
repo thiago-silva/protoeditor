@@ -30,10 +30,8 @@ public:
 
   void setSite(SiteSettings*);
 
-  QString toURI(const QString&);
-
-  QString toRemoteFilePath(const QString&);
-  QString toLocalFilePath(const QString&);
+  QString mapLocalToRemote(const QString&);
+  QString mapRemoteToLocal(const QString&);
 
   const QString& moduleName(int modno);
   int moduleNumber(const QString&);
