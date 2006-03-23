@@ -31,9 +31,9 @@ public:
   SiteSettings( const QString &number );
   ~SiteSettings();
 
-  void load(const QString& name, const QString& url,
-            const QString& remoteBaseDir, const QString& localBaseDir,
-            const QString& defaultFile, bool matchFileInLowerCase,
+  void load(const QString& name, const KURL& url,
+            const KURL& remoteBaseDir, const KURL& localBaseDir,
+            const KURL& defaultFile, bool matchFileInLowerCase,
             const QString& debuggerClient);
 
   void setName(const QString& name)
@@ -47,52 +47,52 @@ public:
   }
 
 
-  void setUrl(const QString& url)
+  void setUrl(const KURL& url)
   {
-    mUrl = url;
+    mUrl = url.pathOrURL();
   }
 
-  QString url() {
-    return mUrl;
+  KURL url() {
+    return KURL::fromPathOrURL(mUrl);
   }
 
   KURL effectiveURL() const
   {
-    KURL url(mUrl);
+    KURL url = KURL::fromPathOrURL(mUrl);
     if(url.port() == 0) {
       url.setPort(80);
     }
     return url;
   }
 
-  void setLocalBaseDir(const QString& localBaseDir)
+  void setLocalBaseDir(const KURL& localBaseDir)
   {
-    mLocalBaseDir = localBaseDir;
+    mLocalBaseDir = localBaseDir.pathOrURL();
   }
 
-  QString localBaseDir() const
+  KURL localBaseDir() const
   {
-    return mLocalBaseDir;
+    return KURL::fromPathOrURL(mLocalBaseDir);
   }
 
-  void setRemoteBaseDir(const QString& remoteBaseDir)
+  void setRemoteBaseDir(const KURL& remoteBaseDir)
   {
-    mRemoteBaseDir = remoteBaseDir;
+    mRemoteBaseDir = remoteBaseDir.pathOrURL();
   }
 
-  QString remoteBaseDir() const
+  KURL remoteBaseDir() const
   {
-    return mRemoteBaseDir;
+    return KURL::fromPathOrURL(mRemoteBaseDir);
   }
 
-  void setDefaultFile(const QString& defaultFile)
+  void setDefaultFile(const KURL& defaultFile)
   {
-    mDefaultFile = defaultFile;
+    mDefaultFile = defaultFile.pathOrURL();
   }
 
-  QString defaultFile() const
+  KURL defaultFile() const
   {
-    return mDefaultFile;
+    return KURL::fromPathOrURL(mDefaultFile);
   }
 
   void setMatchFileInLowerCase(bool value)
@@ -113,6 +113,37 @@ public:
   QString debuggerClient() const
   {
     return mDebuggerClient;
+  }
+ 
+ 
+  KURL mapRequestURLFor(const QString& filePath)
+  {    
+    QString urlPath = filePath;
+    urlPath = urlPath.remove(0, mLocalBaseDir.length());
+
+    KURL url = effectiveURL();
+    if(!urlPath.startsWith("/"))
+    {
+      urlPath.prepend('/');
+    }
+    url.setPath(urlPath);
+    return url;
+  }
+
+  QString mapRemoteToLocal(const QString& filePath) 
+  {
+    QString intersection = KURL::fromPathOrURL(filePath).path();
+    intersection = KURL::fromPathOrURL(mLocalBaseDir).path() + intersection.remove(0, mRemoteBaseDir.length());
+
+    return intersection;// + filePath.section('/', -1);
+  }
+
+  QString mapLocalToRemote(const QString& filePath)
+  {
+    QString intersection = KURL::fromPathOrURL(filePath).path();
+    intersection = KURL::fromPathOrURL(mRemoteBaseDir).path() + intersection.remove(0, mLocalBaseDir.length()) ;
+
+    return intersection;// + filePath.section('/', -1);
   }
 
 protected:

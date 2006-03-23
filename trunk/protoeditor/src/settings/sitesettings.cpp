@@ -24,6 +24,7 @@ SiteSettings::SiteSettings(const QString &number)
   : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
   , mParamnumber(number)
 {
+
   setCurrentGroup( QString::fromLatin1( "Site_%1" ).arg( mParamnumber ) );
 
   KConfigSkeleton::ItemString  *itemName;
@@ -57,18 +58,18 @@ SiteSettings::SiteSettings(const QString &number)
 }
 
 
-void SiteSettings::load(const QString& name, const QString& url,/* int port,*/
-     const QString& remoteBaseDir, const QString& localBaseDir,
-     const QString& defaultFile, bool matchFileInLowerCase,
+void SiteSettings::load(const QString& name, const KURL& url,
+     const KURL& remoteBaseDir, const KURL& localBaseDir,
+     const KURL& defaultFile, bool matchFileInLowerCase,
      const QString& debuggerClient)
 {
   mName = name;
-  mUrl = url;
-  mRemoteBaseDir = remoteBaseDir;
-  mLocalBaseDir = localBaseDir;
+  mUrl = url.url();
+  mRemoteBaseDir = remoteBaseDir.pathOrURL();
+  mLocalBaseDir = localBaseDir.pathOrURL();
   mMatchFileInLowerCase = matchFileInLowerCase;
   mDebuggerClient = debuggerClient;
-  mDefaultFile = defaultFile;
+  mDefaultFile = defaultFile.pathOrURL();
 }
 
 SiteSettings::~SiteSettings()
