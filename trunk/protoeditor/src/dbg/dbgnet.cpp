@@ -54,9 +54,6 @@ DBGNet::DBGNet(DebuggerDBG* debugger, QObject *parent, const char *name)
   connect(m_requestor, SIGNAL(sigError(const QString&)),
           this, SLOT(slotError(const QString&)));
 
-  connect(Session::self(), SIGNAL(sigError(const QString&)),
-      this, SLOT(slotError(const QString&)));
-
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
   connect(m_con, SIGNAL(sigClientClosed()), this, SLOT(slotDBGClosed()));
@@ -114,12 +111,7 @@ void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
   }
   else
   {
-
-    QString uri = filePath;
-    uri = uri.remove(0, site->localBaseDir().length());
-
-    KURL url = site->effectiveURL();
-    url.setPath(url.path() + uri);
+    KURL url = site->mapRequestURLFor(filePath);
 
     QString query = QString("DBGSESSID=")
                 + QString::number(m_sessionId)
@@ -193,7 +185,7 @@ void DBGNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
   m_requestor->requestBreakpoint( bp->id()
                                   , m_dbgFileInfo->moduleNumber(bp->url().path())
-                                  , m_dbgFileInfo->toRemoteFilePath(bp->url().path())
+                                  , m_dbgFileInfo->mapLocalToRemote(bp->url().path())
                                   , bp->line()
                                   , bp->condition()
                                   , bp->status()
@@ -515,7 +507,7 @@ void DBGNet::processLog(const DBGResponseTagLog* log, DBGResponsePack* pack)
   m_debugger->debugLog(log->type()
                        , logmsg
                        , log->lineNo()
-                       , m_dbgFileInfo->toLocalFilePath(module)
+                       , m_dbgFileInfo->mapRemoteToLocal(module)
                        , log->extInfo());
 }
 
@@ -541,7 +533,7 @@ void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack
   }
 
   m_debugger->updateBreakpoint(bp->bpNo()
-                               , m_dbgFileInfo->toLocalFilePath(modname)
+                               , m_dbgFileInfo->mapRemoteToLocal(modname)
                                , bp->lineNo()
                                , bp->state()
                                //, bp->isTemp()
