@@ -45,7 +45,7 @@ public:
   ~Document();
 
   KTextEditor::View* view();
-  const KURL&        url();
+  KURL               url();
   QWidget*           tab();
   
   bool save();
@@ -75,7 +75,7 @@ signals:
   void sigBreakpointMarked(Document*, int, bool enabled);
   void sigStatusMsg(const QString&);
   void sigTextChanged();
-  
+  void sigDocumentSaved();
 private slots:
   void slotMarkChanged();
 

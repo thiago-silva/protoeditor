@@ -103,8 +103,15 @@ KTextEditor::View* Document::view()
   return m_view;
 }
 
-const KURL& Document::url() {
-  return m_url;
+KURL Document::url() {
+  if(m_view->document()->url().isEmpty())
+  {
+    return m_url;
+  }
+  else
+  {
+    return m_view->document()->url();
+  }
 }
 
 QWidget* Document::tab()
@@ -114,26 +121,42 @@ QWidget* Document::tab()
 
 bool Document::save()
 {
+  bool ret;
   if(m_view)
   {
-    return m_view->document()->save();
+    ret = m_view->document()->save();
   }
   else
   {
-    return false;
+    ret = false;
   }
+
+  if(ret)
+  {
+    emit sigDocumentSaved();
+  }
+
+  return ret;
 }
 
 bool Document::saveAs(const KURL& url)
 {
+  bool ret;
   if(m_view)
   {
-    return m_view->document()->saveAs(url);
+    ret = m_view->document()->saveAs(url);
   }
   else
   {
-    return false;
+    ret = false;
   }
+
+  if(ret)
+  {
+    emit sigDocumentSaved();
+  }
+
+  return ret;
 }
 
 
