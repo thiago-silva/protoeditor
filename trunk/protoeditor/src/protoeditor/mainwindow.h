@@ -128,6 +128,8 @@ private slots:
 
   void slotScriptRun();
   void slotDebugStart();
+
+//   void slotCurrentSiteChanged(const QString&);
   
 protected:
   virtual void closeEvent(QCloseEvent * e);

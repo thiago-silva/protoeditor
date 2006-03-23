@@ -29,7 +29,7 @@
 #include "debuggermanager.h"
 #include "configdlg.h"
 #include "protoeditorsettings.h"
-
+#include "phpsettings.h"
 
 #include <kapplication.h>
 #include <kstatusbar.h>
@@ -58,7 +58,6 @@
 #include <ktexteditor/view.h>
 #include <ktexteditor/editinterface.h>
 */
-
 
 #include <qlayout.h>
 #include <qsplitter.h>
@@ -122,8 +121,9 @@ void MainWindow::loadSites()
     
   m_siteAction->setItems(strsites);
   m_siteAction->setCurrentItem(curr);
-  
-  ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());
+    
+  ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());  
+//   slotCurrentSiteChanged(m_siteAction->currentText());
 }
 
 void MainWindow::setupStatusBar()
@@ -186,6 +186,9 @@ void MainWindow::setupActions()
 
   connect(m_siteAction, SIGNAL(activated(const QString&)),
       ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+
+//   connect(m_siteAction, SIGNAL(activated(const QString&)),
+//       this, SLOT(slotCurrentSiteChanged(const QString&)));
   
 
   m_activeScriptAction = new KToggleAction("Use Current Script", "attach", 0, actionCollection(), "use_current_script");
@@ -208,8 +211,9 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-  (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", m_debugger_manager,
-                    SLOT(slotProfile()), actionCollection(), "script_profile");
+/*  (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
+      m_debugger_manager, SLOT(slotProfile()), actionCollection(), "script_profile");*/
+  
 
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
@@ -378,7 +382,7 @@ void MainWindow::slotOpenFile()
   QString location;
   if(currentSite)
   {
-    location = currentSite->localBaseDir();
+    location = currentSite->localBaseDir().path();
   }
   else
   {
@@ -628,6 +632,37 @@ void MainWindow::slotDebugStart()
   }
   m_debugger_manager->slotDebugStart();
 }
+
+// void MainWindow::slotCurrentSiteChanged(const QString&)
+// {
+//   //this slot has to be connected after the settings connection
+//   //so the settings has the current site
+//   //disable Profile if not DBG
+// 
+//   SiteSettings* site = ProtoeditorSettings::self()->currentSiteSettings();
+//   if(site)
+//   {
+//     if(site->debuggerClient() == "DBG")
+//     {
+//       actionCollection()->action("script_profile")->setEnabled(true);
+//     }
+//     else
+//     {
+//       actionCollection()->action("script_profile")->setEnabled(false);
+//     }
+//   }
+//   else
+//   {
+//     if(ProtoeditorSettings::self()->phpSettings()->defaultDebugger() == "DBG")
+//     {
+//       actionCollection()->action("script_profile")->setEnabled(true);
+//     }
+//     else
+//     {
+//       actionCollection()->action("script_profile")->setEnabled(false);
+//     }
+//   }
+// }
 
 void MainWindow::showSorry(const QString& msg) const
 {
