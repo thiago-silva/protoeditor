@@ -46,9 +46,6 @@
 XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
     : QObject(parent, name), m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
 {
-  connect(Session::self(), SIGNAL(sigError(const QString&)),
-      this, SLOT(slotError(const QString&)));
-
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
   connect(m_con, SIGNAL(sigClientClosed()), this, SLOT(slotXDClosed()));
@@ -89,11 +86,7 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
   } 
   else
   {
-    QString uri = filePath;
-    uri = uri.remove(0, site->localBaseDir().length());
-
-    KURL url = site->effectiveURL();
-    url.setPath(url.path() + uri);
+    KURL url = site->mapRequestURLFor(filePath);
 
     QString query = QString("XDEBUG_SESSION_START=")+QString::number(id);
     
@@ -199,34 +192,45 @@ void XDNet::requestProperty(const QString& expression, int ctx_id, int id)
 
 void XDNet::requestBreakpoint(DebuggerBreakpoint* bp)
 {
+  //NOTE: xdebug2.0beta doesn't support conditional
   QString breakpoint_set = "breakpoint_set -t line -f ";
-  breakpoint_set += bp->url().path().section('/', -1);
+
+  if(m_site)
+  {
+    breakpoint_set += m_site->mapLocalToRemote(bp->url().path());
+  }
+  else
+  {
+    breakpoint_set += bp->url().path();
+  }
+
   breakpoint_set += " -i ";
   breakpoint_set += QString::number(GeneralId);
   breakpoint_set += " -n ";
   breakpoint_set += QString::number(bp->line());
-  breakpoint_set += " -h ";
-  breakpoint_set += QString::number(bp->skipHits());
   breakpoint_set += " -s ";
   breakpoint_set += bp->status()==DebuggerBreakpoint::ENABLED?"enabled":"disabled";
-  breakpoint_set += " -- ";
-  breakpoint_set += KCodecs::base64Encode(bp->condition().utf8());;
+
+//   breakpoint_set += " -h ";
+//   breakpoint_set += QString::number(3);
+//   breakpoint_set += " -- ";
+//   breakpoint_set += KCodecs::base64Encode(QString(">=").utf8());
 
   m_socket->writeBlock(breakpoint_set, breakpoint_set.length()+1);
 }
 
 void XDNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
 {
-  QString breakpoint_update = "breakpoint_update -i 1 -d ";
-  breakpoint_update += QString::number(bp->id());
-  breakpoint_update += " -i ";
+  QString breakpoint_update = "breakpoint_update -i ";
   breakpoint_update += QString::number(GeneralId);
-  breakpoint_update += " -h ";
-  breakpoint_update += QString::number(bp->skipHits());
+  breakpoint_update += " -d ";
+  breakpoint_update += QString::number(bp->id());
   breakpoint_update += " -s ";
   breakpoint_update += bp->status()==DebuggerBreakpoint::ENABLED?"enabled":"disabled";
-  breakpoint_update += " -- ";
-  breakpoint_update += KCodecs::base64Encode(bp->condition().utf8());;
+//   breakpoint_update += " -h ";
+//   breakpoint_update += QString::number(bp->condition().isEmpty()?0:1);
+//   breakpoint_update += " -- ";
+//   breakpoint_update += KCodecs::base64Encode(bp->condition().utf8());
 
   m_socket->writeBlock(breakpoint_update, breakpoint_update.length()+1);
 }
@@ -453,27 +457,27 @@ void XDNet::processResponse(QDomElement& root)
       int level = st.attributeNode("level").value().toInt();
       int line = st.attributeNode("lineno").value().toInt();
 
-      KURL file = KURL::fromPathOrURL(st.attributeNode("filename").value());
+      QString file = st.attributeNode("filename").value();
       QString where = st.attributeNode("where").value();
 
       if((where == "{main}") || (where == "include"))
       {
-        where = file.path() + "::main()";
+        where = file + "::main()";
       }
 
       //to local filepath
-      QString localFile;
+      KURL localFile;
+//       QString localFile;
 
-      if(m_site) 
+      if(m_site)
       {
-        localFile = m_site->localBaseDir()
-                  + file.path().remove(0, m_site->remoteBaseDir().length());
+        localFile = m_site->mapRemoteToLocal(file);
       }
       else
       {
-        localFile = file.path();
+        localFile = KURL::fromPathOrURL(file);
       }
-      stack->insert(level, KURL::fromPathOrURL(localFile), line, where);
+      stack->insert(level, localFile, line, where);
     }
 
     //request global/local vars
@@ -576,7 +580,7 @@ void XDNet::processResponse(QDomElement& root)
 
       if(m_site)
       {
-        filePath = m_site->localBaseDir() + filePath.remove(0, m_site->remoteBaseDir().length());
+        filePath = m_site->mapRemoteToLocal(filePath);
       }
 
       int line = e.attributeNode("lineno").value().toInt();
