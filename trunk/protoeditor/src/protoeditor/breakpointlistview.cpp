@@ -154,18 +154,21 @@ void BreakpointListView::slotCicked(QListViewItem* qitem, const QPoint&, int col
   {
     if(item->breakpoint()->status() == DebuggerBreakpoint::DISABLED)
     {
-      item->setUserBpStatus(DebuggerBreakpoint::ENABLED);
-      item->showBreakpoint();
+      item->setUserBpStatus(DebuggerBreakpoint::ENABLED);      
       emit sigBreakpointChanged(item->breakpoint());
     }
     else if(item->breakpoint()->status() == DebuggerBreakpoint::ENABLED)
     {
       item->setUserBpStatus(DebuggerBreakpoint::DISABLED);
-      item->showBreakpoint();
       emit sigBreakpointChanged(item->breakpoint());
     }
+    else 
+    {
+      //TODO!
+      //error!!
+    }
+    item->showBreakpoint();
   }
-
 }
 
 void BreakpointListView::slotDoubleClick(QListViewItem* qitem, const QPoint &, int col)
