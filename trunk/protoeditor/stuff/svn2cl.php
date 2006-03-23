@@ -178,73 +178,11 @@ class ChangeLog {
     }
   }
 
-  function dumpNewsLog() {
-    $printedMsgs = array();
-
-    foreach($this->entries as $date => $logs) {
-
-      if(!$this->hasNewsMessages($logs)) {
-        //don't print this day
-        continue;
-      }
-
-      echo "$date";
-      
-      foreach($logs as $log) {
-        if(!$log->msgs) {
-          continue;
-        }
-
-        if(!count($log->files)) {
-          continue;
-        }
-
-        
-        if((count($log->msgs['NEW']) == 0) &&
-           (count($log->msgs['BUGFIX']) == 0) ) {
-          continue;
-        }
-
-        echo "\n\n";
-        foreach($log->files as $file) {
-          echo "\t* $file:\n";
-        }
-
-        if(count($log->msgs['NEW'])) {          
-          foreach($log->msgs['NEW'] as $new) {
-            $this->printMsg($new, "\n\t-");
-          }
-        }
-
-        if(count($log->msgs['BUGFIX'])) {
-          echo "\n\tBug fixes:";
-          foreach($log->msgs['BUGFIX'] as $new) {            
-            $this->printMsg($new, "\n\t-");
-          }
-        }
-      }
-      echo "\n\n";      
-    }
-  }
-
   function hasClMessages($logs) {
     //check if has any kind of message
     foreach($logs as $log) {
       if($log->msgs != null) {
         return true;  
-      }
-    }
-    return false;
-  }
-
-  function hasNewsMessages($logs) {
-    //check only for news and bugfixes
-    foreach($logs as $log) {
-      if(count($log->msgs)==0) continue;
-
-      if((count($log->msgs['NEW']) > 0) ||
-         (count($log->msgs['BUGFIX']) > 0)) {
-        return true;
       }
     }
     return false;
