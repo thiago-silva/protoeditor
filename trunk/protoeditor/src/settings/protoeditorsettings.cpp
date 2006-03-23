@@ -26,6 +26,7 @@
 
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kurl.h>
 
 QString ProtoeditorSettings::LocalSiteName = "-- Local --";
 ProtoeditorSettings* ProtoeditorSettings::m_self = 0;
@@ -180,15 +181,14 @@ void ProtoeditorSettings::clearSites()
   m_siteSettingsMap.clear();
 }
 
-void ProtoeditorSettings::addSite(int number, const QString& name, const QString& url,
-               const QString& remoteBaseDir, const QString& localBaseDir, const QString& defaultFile,
+void ProtoeditorSettings::addSite(int number, const QString& name, const KURL& url,
+               const KURL& remoteBaseDir, const KURL& localBaseDir, const KURL& defaultFile,
                const QString& debuggerClient)
 
 {
   SiteSettings* s = new SiteSettings(QString::number(number));
-  s->load(name, url,/* port, */remoteBaseDir, localBaseDir, defaultFile,
-    /* TODO: */
-          false, debuggerClient);
+  s->load(name, url, remoteBaseDir, localBaseDir, defaultFile,
+    /* TODO: */  false, debuggerClient);
 
   m_siteSettingsMap[s->name()] = s;
 }

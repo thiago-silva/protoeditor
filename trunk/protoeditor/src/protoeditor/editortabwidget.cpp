@@ -76,7 +76,7 @@ void EditorTabWidget::createNew() {
 bool EditorTabWidget::openDocument(const KURL& url)
 {
   int index;
-  if((index = documentIndex(url.path())) != -1)
+  if((index = documentIndex(url)) != -1)
   {
     //file already opened, show it
     this->setCurrentPage(index);
@@ -183,10 +183,6 @@ bool EditorTabWidget::saveCurrentFileAs(const KURL& url)
   if(count() == 0) return false;
 
   bool ret = currentDocument()->saveAs(url);
-  if(ret) {
-    slotDocumentSaved();
-  }
-
   return ret;
 }
 
@@ -318,7 +314,7 @@ bool EditorTabWidget::hasBreakpointAt(const KURL& url, int line)
 
 void EditorTabWidget::createDocument() {
   QString home = QDir::homeDirPath();
-  KURL url(i18n("%1/untitled_%2.gpt").arg(home, QString::number(count()+1)));
+  KURL url = KURL::fromPathOrURL(i18n("%1/untitled_%2").arg(home, QString::number(count()+1)));
   Document* doc = new Document(this, url);
 
   initDoc(doc);

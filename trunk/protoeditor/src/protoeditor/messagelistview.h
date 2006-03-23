@@ -31,7 +31,7 @@ public:
   MessageListView(QWidget *parent = 0, const char *name = 0);
   ~MessageListView();
 
-  void add(int type, QString message, int line, QString file);
+  void add(int type, QString message, int line, const KURL& url);
 
 signals:
   void sigDoubleClick(const KURL&, int);

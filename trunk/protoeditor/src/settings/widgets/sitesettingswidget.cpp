@@ -156,20 +156,20 @@ void SiteSettingsWidget::slotListDoubleClicked(QListBoxItem*)
   slotModify();
 }
 
-void SiteSettingsWidget::modifySite(const QString& name, const QString& url,
-                                 const QString& remoteBaseDir, const QString& localBaseDir,
-                                  const QString& defaultFile, const QString& debuggerClient)
+void SiteSettingsWidget::modifySite(const QString& name, const KURL& url,
+                                 const KURL& remoteBaseDir, const KURL& localBaseDir,
+                                  const KURL& defaultFile, const QString& debuggerClient)
 {
-  Site s(name, url, /*port, */remoteBaseDir, localBaseDir, defaultFile, debuggerClient);
+  Site s(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerClient);
   
   m_siteMap[name] = s;
   //s->setMatchCase
   //s->setDebuggger
 }
 
-void SiteSettingsWidget::addSite(const QString& name, const QString& url, /*int port,*/
-                                 const QString& remoteBaseDir, const QString& localBaseDir,
-                                 const QString& defaultFile, const QString& debuggerClient )
+void SiteSettingsWidget::addSite(const QString& name, const KURL& url,
+                                 const KURL& remoteBaseDir, const KURL& localBaseDir,
+                                 const KURL& defaultFile, const QString& debuggerClient )
 {
   Site s(name, url,/* port,*/ remoteBaseDir, localBaseDir, defaultFile, debuggerClient);
 

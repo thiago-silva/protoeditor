@@ -34,6 +34,7 @@ class DebuggerSettings;
 class SiteSettings;
 class PHPSettings;
 class ExtAppSettings;
+class KURL;
 
 class ProtoeditorSettings  : public QObject, KConfigSkeleton  {
   Q_OBJECT
@@ -61,9 +62,9 @@ public:
   ExtAppSettings*                        extAppSettings();  
 
   void clearSites();
-  void addSite(int number, const QString& name, const QString& url,
-               const QString& remoteBaseDir, const QString& localBaseDir,
-              const QString& defaultFile, const QString& debuggerClient);
+  void addSite(int number, const QString& name, const KURL& url,
+               const KURL& remoteBaseDir, const KURL& localBaseDir,
+              const KURL& defaultFile, const QString& debuggerClient);
 
   void writeConfig(bool silent = false);
 

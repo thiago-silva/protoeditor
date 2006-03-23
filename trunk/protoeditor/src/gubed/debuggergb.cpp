@@ -377,26 +377,26 @@ void DebuggerGB::updateMessage(int type, const QString& msg, const QString& file
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, fpath, line);      
+      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, KURL::fromPathOrURL(fpath), line);      
       break;
 
     case E_WARNING:
     case E_CORE_WARNING:
     case E_COMPILE_WARNING:
     case E_USER_WARNING:
-      manager()->debugMessage(DebuggerManager::WarningMsg, msg, fpath, line);
+      manager()->debugMessage(DebuggerManager::WarningMsg, msg, KURL::fromPathOrURL(fpath), line);
       break;
     case E_NOTICE:
     case E_USER_NOTICE:
     case E_STRICT:
-      manager()->debugMessage(DebuggerManager::InfoMsg, msg, fpath, line);
+      manager()->debugMessage(DebuggerManager::InfoMsg, msg, KURL::fromPathOrURL(fpath), line);
       break;
   }
 }
 
 void DebuggerGB::updateError(const QString& filePath)
 {
-  manager()->debugMessage(DebuggerManager::ErrorMsg, "Fatal error", filePath, 0);  
+  manager()->debugMessage(DebuggerManager::ErrorMsg, "Fatal error", KURL::fromPathOrURL(filePath), 0);  
 }
 
 #include "debuggergb.moc"

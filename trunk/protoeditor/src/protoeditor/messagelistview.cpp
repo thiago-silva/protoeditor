@@ -55,7 +55,7 @@ MessageListView::~MessageListView()
 {
 }
 
-void MessageListView::add(int type, QString message, int line, QString file) {
+void MessageListView::add(int type, QString message, int line, const KURL& url) {
   QListViewItem* item = new QListViewItem(this);
   item->setSelectable(true);
 
@@ -73,7 +73,7 @@ void MessageListView::add(int type, QString message, int line, QString file) {
 
   item->setText(MessageListView::MessageCol, message);
   item->setText(MessageListView::LineCol, QString::number(line));
-  item->setText(MessageListView::FileCol, file);
+  item->setText(MessageListView::FileCol, url.prettyURL());
 
   //add new item to the bottom of the list
   item->moveItem(lastItem());

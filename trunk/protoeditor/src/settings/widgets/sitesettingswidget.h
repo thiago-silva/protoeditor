@@ -21,6 +21,7 @@
 #define SITESETTINGSWIDGET_H
 
 #include <qwidget.h>
+#include <kurl.h>
 
 class KPushButton;
 class QListBox;
@@ -50,29 +51,29 @@ private slots:
   void slotListDoubleClicked(QListBoxItem*);
 
 private:
-  void addSite(const QString& name, const QString& url,
-               const QString& remoteBaseDir, const QString& localBaseDir,
-               const QString& defaultFile, const QString& debuggerClinet);
+  void addSite(const QString& name, const KURL& url,
+               const KURL& remoteBaseDir, const KURL& localBaseDir,
+               const KURL& defaultFile, const QString& debuggerClinet);
 
-  void modifySite(const QString& name, const QString& url,
-                  const QString& remoteBaseDir, const QString& localBaseDir,
-                  const QString& defaultFile, const QString& debuggerClinet);
+  void modifySite(const QString& name, const KURL& url,
+                  const KURL& remoteBaseDir, const KURL& localBaseDir,
+                  const KURL& defaultFile, const QString& debuggerClinet);
 
   class Site
   {
   public:
     Site() {};
-    Site(const QString& n, const QString& h,
-         const QString& r, const QString& l, const QString& d, const QString& c)
-        : name(n), url(h), remoteBaseDir(r), localBaseDir(l), defaultFile(d),
+    Site(const QString& n, const KURL& u,
+         const KURL& r, const KURL& l, const KURL& d, const QString& c)
+        : name(n), url(u), remoteBaseDir(r), localBaseDir(l), defaultFile(d),
           debuggerClient(c){}
     ~Site() {}
 
     QString name;
-    QString url;
-    QString remoteBaseDir;
-    QString localBaseDir;
-    QString defaultFile;
+    KURL    url;
+    KURL    remoteBaseDir;
+    KURL    localBaseDir;
+    KURL    defaultFile;
     QString debuggerClient;
   };
 

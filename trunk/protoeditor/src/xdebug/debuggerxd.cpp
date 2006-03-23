@@ -403,19 +403,19 @@ void DebuggerXD::debugError(int code, const QString& filePath, int line, const Q
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, message, filePath, line);
+      manager()->debugMessage(DebuggerManager::ErrorMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
 
     case E_WARNING:
     case E_CORE_WARNING:
     case E_COMPILE_WARNING:
     case E_USER_WARNING:
-      manager()->debugMessage(DebuggerManager::WarningMsg, message, filePath, line);
+      manager()->debugMessage(DebuggerManager::WarningMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
     case E_NOTICE:
     case E_USER_NOTICE:
     case E_STRICT:
-      manager()->debugMessage(DebuggerManager::InfoMsg, message, filePath, line);
+      manager()->debugMessage(DebuggerManager::InfoMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
   }
 }
