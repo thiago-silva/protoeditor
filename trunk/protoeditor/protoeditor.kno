@@ -23,14 +23,12 @@
 
 \CurrentEntry 2 TODO (0.9)
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Shortcut for &quot;Focus editor&quot; (like kdevelop)</li>
-<li>set &quot;Configure editor&quot; disabled when no file is opened (just as KDevelop)<br /></li>
-<li>Implement directory mapping (for default include paths, etc) by Site</li>
+<ul type="disc"><li>Implement directory mapping (for default include paths, etc) by Site</li>
 <li>add settings for halt (halt on [x]error [x]warning [x]notice)</li>
 <ul type="disc"><li>check if all php debuggers support this<br /></li></ul>
 <li>See KPDF for the toolbar button &quot;open / openrecent&quot;</li>
 <ul type="disc"><li>see if it works with old versions  of kde<br /></li></ul>
-<li>DOc note:</li>
+<li>DOC note:</li>
 <ul type="disc"><li>XDebug2.0beta5 doesn't support conditional breakpoint (see xdebug sourcecode)<br /></li></ul>
 <li>Create Help docbook</li>
 <li>QStrings i18n aware<br /></li>
@@ -67,6 +65,12 @@
 <li>Add tab: &quot;Console&quot; for language debuggers that use it</li>
 <ul type="disc"><li>Create a KMDI, so its easy to hide/show the (numerous) tabs</li>
 <li>Debuggers might need to inform its capabilities to configure the UI accordingly.<br /></li></ul>
+<li>UI objects must be very configurable</li>
+<ul type="disc"><li>Debuggers that doesn't support Breakpoint's condition, should inform the UI about this.</li>
+<li>And so on... (profile, change var value, bp hitcount/skiphits, messages/log, output)<br /></li></ul>
+<li>Starting a session should have timeout (in case the server doesn't respond)</li>
+<ul type="disc"><li>Like PHPEdit</li>
+<li>Ressurrection of LedWait<br /></li></ul>
 <li>Branch it, so v1.0 continue its own development.</li></ul>
 </body></html>
 
