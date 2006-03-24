@@ -100,10 +100,10 @@ void DebuggerManager::init()
           SLOT(slotBreakpointUnmarked(const KURL&, int)));
 
   //connects the editor to us
-  connect(m_window->tabEditor(), SIGNAL(sigNewDocument()),
+  connect(m_window->tabEditor(), SIGNAL(sigNewPage()),
           this, SLOT(slotNewDocument()));
 
-  connect(m_window->tabEditor(), SIGNAL(sigNoDocument()),
+  connect(m_window->tabEditor(), SIGNAL(sigEmpty()),
           this, SLOT(slotNoDocument()));
 
 
