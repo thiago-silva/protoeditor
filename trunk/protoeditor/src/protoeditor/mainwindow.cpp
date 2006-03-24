@@ -179,6 +179,7 @@ void MainWindow::setupActions()
 
   KStdAction::keyBindings(this, SLOT(slotEditKeys()), actionCollection());
   KStdAction::configureToolbars(this, SLOT(slotEditToolbars()), actionCollection());
+
   KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
   m_siteAction     = new KSelectAction("Site", 0, actionCollection(), "site_selection");
@@ -211,28 +212,30 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-/*  (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
+/* (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
       m_debugger_manager, SLOT(slotProfile()), actionCollection(), "script_profile");*/
   
-
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
 
-  (void)new KAction("", "math_brace", 0, m_tabEditor,
+  (void)new KAction(i18n("Add Watch"), "math_brace", 0, m_tabEditor,
                     SLOT(slotAddWatch()), actionCollection(), "editor_add_watch");
 
 
   //arguments tool bar
   m_cbArguments = new KHistoryCombo(true, this);
-  KWidgetAction* comboAction = new KWidgetAction( m_cbArguments, i18n( "Argument Bar" ), 0,
+
+  KWidgetAction* comboAction = new KWidgetAction( m_cbArguments, "Argument Bar ", 0,
                   0, 0, actionCollection(), "argument_combobox" );
   comboAction->setShortcutConfigurable(false);
   comboAction->setAutoSized(true);
 
-  (void)new KAction("Clear arguments", "clear_left", 0, m_cbArguments,
+
+  (void)new KAction("Clear Arguments", "clear_left", 0, m_cbArguments,
                     SLOT(clearEdit()), actionCollection(), "argument_clear");
 
-  (void)new KWidgetAction(new QLabel("Arguments: ", this), "", "", 0, 0, actionCollection(), "argument_label");
+  (void)new KWidgetAction(new QLabel("Arguments: ", this), "Arguments ", "Alt+a", 
+      this, SLOT(slotFocusArgumentBar()), actionCollection(), "argument_label" );
   
 
   //finish!
@@ -631,6 +634,12 @@ void MainWindow::slotDebugStart()
     m_cbArguments->addToHistory(arg);    
   }
   m_debugger_manager->slotDebugStart();
+}
+
+void MainWindow::slotFocusArgumentBar()
+{
+  m_cbArguments->setFocus();
+  m_cbArguments->lineEdit()->selectAll();
 }
 
 // void MainWindow::slotCurrentSiteChanged(const QString&)

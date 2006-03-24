@@ -110,9 +110,6 @@ private slots:
   void slotEditToolbars();
 
   /*
-  void slotHasNoFiles();
-  void slotHasFiles();
-
   void slotHasNoUndo();
   void slotHasUndo();
   void slotHasNoRedo();
@@ -130,7 +127,9 @@ private slots:
   void slotDebugStart();
 
 //   void slotCurrentSiteChanged(const QString&);
-  
+
+  void slotFocusArgumentBar();  
+
 protected:
   virtual void closeEvent(QCloseEvent * e);
 private:
@@ -164,7 +163,7 @@ private:
   DebuggerSettingsWidget *m_debuggerSettings;
   BrowserSettingsWidget  *m_browserSettings;
 
-  DebuggerManager* m_debugger_manager;
+  DebuggerManager* m_debugger_manager;  
 };
 
 #endif
