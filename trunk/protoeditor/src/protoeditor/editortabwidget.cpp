@@ -39,6 +39,21 @@ EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char
     : KTabWidget(parent, name), m_terminating(false),
     m_window(window), m_currentView(0)
 {
+
+  //Tabs control
+  (void)new KAction("Activate Next Tab", "tab_next", 
+    "Alt+Right", this, SLOT(slotActivateNextTab()), m_window->actionCollection(), "activatenexttab" );
+
+  (void)new KAction("Activate Previous Tab", "tab_previous", 
+    "Alt+Left", this, SLOT(slotActivatePrevTab()), m_window->actionCollection(), "activateprevtab" );
+
+  (void)new KAction("Raise Editor", "tab_next", 
+    "Alt+C", this, SLOT(slotFocusCurrentDocument()), m_window->actionCollection(), "focuscurrentdocument" );
+
+
+  (void)new KAction("Configure &Editor...", 0, 0, 
+    this, SLOT(slotConfigureEditor()), m_window->actionCollection(), "settings_editor");
+
   setAcceptDrops(TRUE);
   
   connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotCurrentChanged(QWidget*)));
@@ -123,7 +138,7 @@ bool EditorTabWidget::closeDocument(int index)
 
   if((count() == 0) && !m_terminating)
   {
-    emit sigNoDocument();
+    emit sigEmpty();
     m_window->actionStateChanged("has_nofileopened");
     m_window->setCaption(QString::null);
     m_window->setEditorStatusMsg(QString::null);
@@ -374,7 +389,7 @@ void EditorTabWidget::initDoc(Document* doc)
   m_docList.append(doc); 
 
   setCurrentPage(count()-1);
-  emit sigNewDocument();
+  emit sigNewPage();
 }
 
 int EditorTabWidget::documentIndex(const KURL& url)
@@ -595,6 +610,38 @@ void EditorTabWidget::slotDropEvent(QDropEvent* e) {
       m_window->openFile(list[i]);
     }
   }  
+}
+
+void EditorTabWidget::slotActivateNextTab()
+{
+  if(m_docList.count() == 0) return;
+
+  unsigned int index = currentPageIndex() + 1;
+  if(index < m_docList.count())
+  {
+    setCurrentPage(index);
+  }  
+}
+
+void EditorTabWidget::slotActivatePrevTab()
+{
+  if(m_docList.count() == 0) return;
+
+  unsigned int index = currentPageIndex() - 1;
+  if(index < m_docList.count())
+  {
+    setCurrentPage(index);
+  }  
+}
+
+void EditorTabWidget::slotFocusCurrentDocument()
+{
+  if(m_currentView) m_currentView->setFocus();
+}
+
+void EditorTabWidget::slotConfigureEditor()
+{
+  Document::configureEditor(currentView());
 }
 
 #include "editortabwidget.moc"

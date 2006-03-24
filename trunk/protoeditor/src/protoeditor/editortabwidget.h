@@ -28,6 +28,7 @@
 class MainWindow;
 class KURL;
 class Document;
+class KAction;
 
 namespace KTextEditor
 {
@@ -83,8 +84,8 @@ public:
 signals:
   void sigBreakpointMarked(const KURL&, int, bool);
   void sigBreakpointUnmarked(const KURL&, int);
-  void sigNewDocument();
-  void sigNoDocument();
+  void sigNewPage();
+  void sigEmpty();
   void sigAddWatch(const QString&);
 
 public slots:
@@ -108,6 +109,11 @@ private slots:
 
   void slotDocumentSaved();
 
+  void slotActivateNextTab();
+  void slotActivatePrevTab();
+  void slotFocusCurrentDocument();
+
+  void slotConfigureEditor();
 protected:
   void dragEnterEvent(QDragEnterEvent*);
   void dragMoveEvent( QDragMoveEvent *);
@@ -124,22 +130,14 @@ private:
   void                        setupMarks(KTextEditor::View* view);
 
   int                         documentIndex(const KURL&);
-  //   void                        dispatchMark(KTextEditor::Mark& mark, bool adding);
-  //   void                        loadMarks(Document_t&, KTextEditor::Document*);
-
 
   bool m_terminating;
   QValueList<Document*> m_docList;
 
 
-  //bool m_markGuard;
-  //we don't want sigBreakpointUnmarked() to be emited when the document close.
-  //bool m_closeGuard;
-
   MainWindow* m_window;
 
   KTextEditor::View* m_currentView;
-  //   KParts::PartManager* m_partManager;
 };
 
 #endif
