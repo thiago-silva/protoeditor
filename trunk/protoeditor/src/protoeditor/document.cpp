@@ -96,6 +96,11 @@ void Document::init() {
   
   ac = m_view->actionCollection()->action("file_save");
   if(ac) m_view->actionCollection()->take(ac);
+
+  //TabEditor process the settings.
+  ac = m_view->actionCollection()->action("set_confdlg");
+  if(ac) m_view->actionCollection()->take(ac);
+
 }
 
 KTextEditor::View* Document::view()
@@ -534,6 +539,19 @@ void Document::slotMarkChanged()
       m_preExecLine = mark->line+1;
     }
   }
+}
+
+
+void Document::configureEditor(KTextEditor::View* view)
+{
+  KTextEditor::ConfigInterface * conf = configInterface (view->document());
+  if (!conf)
+  {
+    return;
+  }
+
+  conf->configDialog();
+  conf->writeConfig();
 }
 
 #include "document.moc"

@@ -10,7 +10,6 @@
       <Action name="file_open"/>      
       <Action name="file_open_recent"/>
       <Separator/>      
-      <!--       <DefineGroup name="save_merge"/> -->
       <Action name="file_save"/>
       <Action name="file_save_as"/>
       <Separator/>
@@ -25,7 +24,7 @@
     </Menu>
 
     <Menu name="menu_script" noMerge="1">
-      <text>S&amp;cript</text>
+      <text>S&amp;cript</text>      
       <Action name="site_selection"/>
       <Action name="use_current_script"/>
       <Separator />      
@@ -39,18 +38,19 @@
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
-      <Separator />
-<!--       <Action name="script_profile"/> -->
+<!--      <Separator />
+      <Action name="script_profile"/>-->
       <Separator />
       <Action name="debug_toggle_bp"/>
     </Menu>
 
-    <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
+    <Menu name="settings" noMerge="1">
+      <text>&amp;Settings</text>
       <Merge name="StandardToolBarMenuHandler" />
       <Action name="options_configure_keybinding" />
       <Action name="options_configure_toolbars" />
       <Separator/>
-      <Merge/>
+      <Action name="settings_editor" />
       <Action name="settings_protoeditor" />
    </Menu>
    
@@ -84,6 +84,7 @@
     <Action name="debug_step_over"/>
     <Action name="debug_step_into"/>
     <Action name="debug_step_out"/>
+    <Separator />    
   </ToolBar>
 
   <ToolBar name="argument_toolbar" noMerge="1" newline="true" fullWidth="true">
@@ -111,6 +112,7 @@
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
       <Action name="debug_toggle_bp"/>
+      <Action name="settings_editor" />      
     </disable>
   </State>
   
@@ -148,6 +150,7 @@
       <Action name="file_close"/>
       <Action name="file_close_all"/>
       <Action name="debug_toggle_bp"/>
+      <Action name="settings_editor" />
     </disable>
   </State>
 
@@ -158,6 +161,7 @@
       <Action name="file_close"/>
       <Action name="file_close_all"/>
       <Action name="debug_toggle_bp"/>
+      <Action name="settings_editor" />
     </enable>
   </State>
   

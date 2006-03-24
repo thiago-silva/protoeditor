@@ -70,6 +70,8 @@ public:
   bool hasBreakpointAt(int line);
 
   QString wordUnderCursor();
+
+  static void configureEditor(KTextEditor::View*);
 signals:
   void sigBreakpointUnmarked(Document*, int);
   void sigBreakpointMarked(Document*, int, bool enabled);
