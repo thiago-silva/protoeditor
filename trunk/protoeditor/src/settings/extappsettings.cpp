@@ -63,7 +63,7 @@ ExtAppSettings::ExtAppSettings(  )
   addItem( itemUseConsole, QString::fromLatin1( "UseConsole" ) );
 
   KConfigSkeleton::ItemString  *itemConsole;
-  itemConsole = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "Console" ), mConsole, "konsole -e %1");
+  itemConsole = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "Console" ), mConsole, "konsole -e");
   addItem( itemConsole, QString::fromLatin1( "Console" ) );
 /*
   KConfigSkeleton::ItemString  *itemShellExec;

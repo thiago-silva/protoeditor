@@ -492,14 +492,14 @@ void ConsoleRequestor::doRequest(const KURL& url)
   {
     //use external console
 
-    kdDebug() << "executing console: " << consoleApp.arg("/bin/sh") << " -c "              
+    kdDebug() << "executing console: " << (consoleApp + " /bin/sh") << " -c "              
               << m_env.join(" ") << " " 
               << QString("cd ") <<  url.directory() << ";"
               << (cmd + " " + url.path() + " " + m_args) + ";echo \"Press Enter to continue...\";read"
               << endl;
   
     //KProcess::quote(filePath)
-    *m_process << QStringList::split(' ',consoleApp.arg("/bin/sh")) << "-c"
+    *m_process << QStringList::split(' ',consoleApp + " /bin/sh") << "-c"
       << (
           QString("cd ") +  url.directory() + ";"
           + (cmd + " " + url.path() + " " + m_args) + ";echo \"Press Enter to continue...\";read");
