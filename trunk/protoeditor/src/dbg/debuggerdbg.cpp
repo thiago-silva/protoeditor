@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2005 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -62,6 +62,7 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
+  connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
 }
 
 DebuggerDBG::~DebuggerDBG()
@@ -598,6 +599,16 @@ void DebuggerDBG::slotStepDone()
   {
     m_firstStep = false;
   }
+}
+
+void DebuggerDBG::slotNewConnection()
+{
+  //we don't know if it is requested session or JIT, so we have
+  //to update the m_net site
+  m_net->setSite(ProtoeditorSettings::self()->currentSiteSettings());
+
+  //tell debuggermanager to cleanup any pending session
+  emit sigJITStarted(this);
 }
 
 #include "debuggerdbg.moc"

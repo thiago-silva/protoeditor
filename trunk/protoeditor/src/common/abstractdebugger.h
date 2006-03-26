@@ -97,6 +97,14 @@ signals:
   */
   void sigDebugStarting();
 
+  /*
+    emitted when someone tries to connect to the debugger.
+    This is used to cleanup and stop any debug session active
+    before starting the JIT session.
+  */
+
+  void sigJITStarted(AbstractDebugger*);
+
   /* Tells the DebuggerManager that we are active on a session. */
   void sigDebugStarted(AbstractDebugger*);
 

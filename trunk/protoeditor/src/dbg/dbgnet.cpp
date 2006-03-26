@@ -70,6 +70,11 @@ DBGNet::~DBGNet()
   delete m_dbgFileInfo;
 }
 
+void DBGNet::setSite(SiteSettings* site)
+{
+  m_dbgFileInfo->setSite(site);
+}
+
 bool DBGNet::startListener(int port)
 {
   return m_con->listenOn(port);
@@ -598,6 +603,7 @@ void DBGNet::slotIncomingConnection(QSocket* sock)
 {
   m_receiver->setSocket(sock);
   m_requestor->setSocket(sock);
+  emit sigNewConnection();
 }
 
 void DBGNet::slotDBGClosed()

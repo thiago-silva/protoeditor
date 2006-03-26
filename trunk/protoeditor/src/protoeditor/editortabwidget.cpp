@@ -174,7 +174,7 @@ void EditorTabWidget::setCurrentDocumentTab(const KURL& url, bool forceOpen)
       and this ativate buttons like "debug" and "run".
       For any effects, this avoids, at least, set the currentPage twice
   */
-  if(currentPageIndex() == index) return;
+  if((m_docList.count() > 0) && (currentPageIndex() == index)) return;
 
   if(index != -1 ) 
   {

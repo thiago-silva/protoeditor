@@ -102,6 +102,8 @@ private slots:
   void slotDebugEnded();
   void slotDebugPaused();
   
+  void slotJITStarted(AbstractDebugger*);
+
   //Debugger internal error (conection, listen port, etc)
   void slotError(const QString&);
 

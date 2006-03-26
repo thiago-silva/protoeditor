@@ -84,7 +84,7 @@ private slots:
   void slotXDStarted();
   void slotXDStopped(); //end of debug
   void slotStepDone();
- 
+  void slotNewConnection();
 private:
   void requestVars();
   void requestWatches(int ctx_id);

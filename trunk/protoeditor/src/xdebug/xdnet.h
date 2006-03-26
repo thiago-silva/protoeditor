@@ -54,6 +54,8 @@ public:
   XDNet(DebuggerXD* debugger, QObject *parent = 0, const char *name = 0);
   ~XDNet();
 
+  void setSite(SiteSettings* site);
+
   //DebuggerXD communicates trough the following:
   bool startListener(int port);
   void stopListener();
@@ -82,6 +84,7 @@ signals:
   void sigXDStarted();
   void sigXDClosed();
   void sigStepDone();
+  void sigNewConnection();
 //   void sigBreakpoint();
 
   /*

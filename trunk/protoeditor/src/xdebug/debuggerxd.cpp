@@ -53,6 +53,7 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
   connect(m_net, SIGNAL(sigXDClosed()), this, SLOT(slotXDStopped()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
+  connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
   //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
 }
 
@@ -418,6 +419,16 @@ void DebuggerXD::debugError(int code, const QString& filePath, int line, const Q
       manager()->debugMessage(DebuggerManager::InfoMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
   }
+}
+
+void DebuggerXD::slotNewConnection()
+{
+  //we don't know if it is requested session or JIT, so we have
+  //to update the m_net site
+  m_net->setSite(ProtoeditorSettings::self()->currentSiteSettings());
+
+  //tell debuggermanager to cleanup any pending session
+  emit sigJITStarted(this);
 }
 
 #include "debuggerxd.moc"

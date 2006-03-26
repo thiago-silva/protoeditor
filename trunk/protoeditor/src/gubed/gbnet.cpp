@@ -57,6 +57,11 @@ GBNet::~GBNet()
   delete m_con;
 }
 
+void GBNet::setSite(SiteSettings* site)
+{
+  m_site = site;
+}
+
 bool GBNet::startListener(int port)
 {
   return m_con->listenOn(port);
@@ -165,8 +170,9 @@ void GBNet::slotIncomingConnection(QSocket* socket)
   connect(socket, SIGNAL(readyRead()), this, SLOT(slotReadBuffer()));
   m_socket = socket;
 
-  m_site = ProtoeditorSettings::self()->currentSiteSettings();
   sendCommand("wait", 0);
+
+  emit sigNewConnection();
 }
 
 

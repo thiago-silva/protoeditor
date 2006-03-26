@@ -57,6 +57,11 @@ XDNet::~XDNet()
   delete m_con;
 }
 
+void XDNet::setSite(SiteSettings* site)
+{
+  m_site = site;
+}
+
 bool XDNet::startListener(int port)
 {
   return m_con->listenOn(port);
@@ -256,11 +261,9 @@ void XDNet::slotIncomingConnection(QSocket* socket)
 {
   connect(socket, SIGNAL(readyRead()), this, SLOT(slotReadBuffer()));
 
-  m_socket = socket;
+  m_socket = socket;  
   
-  m_site = ProtoeditorSettings::self()->currentSiteSettings();
-
-  emit sigXDStarted();
+  emit sigNewConnection();
 }
 
 void XDNet::slotReadBuffer()
@@ -382,6 +385,7 @@ void XDNet::processInit(QDomElement& init)
   << copyright.text()
   << endl;
 
+  emit sigXDStarted();
 
   //setup stdout/sterr:
 
@@ -389,7 +393,7 @@ void XDNet::processInit(QDomElement& init)
   m_socket->writeBlock(stdout, stdout.length()+1);
 
   QString stderr = "stderr -i 1 -c 1";//copy stderr to IDE
-  m_socket->writeBlock(stderr, stderr.length()+1);
+  m_socket->writeBlock(stderr, stderr.length()+1);  
 
   if(m_debugger->settings()->breakOnLoad())
   {

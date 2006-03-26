@@ -39,6 +39,8 @@ public:
   GBNet(DebuggerGB* debugger, QObject *parent = 0, const char *name = 0);
   ~GBNet();
 
+  void setSite(SiteSettings* site);
+
   //DebuggerGB communicates trough the following:
   bool startListener(int port);
   void stopListener();
@@ -66,7 +68,7 @@ signals:
   void sigGBStarted();
   void sigGBClosed();
   void sigStepDone();
-
+  void sigNewConnection();
 private slots:
   void slotIncomingConnection(QSocket*);
   void slotGBClosed();

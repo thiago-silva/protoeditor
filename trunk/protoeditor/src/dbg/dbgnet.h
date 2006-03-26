@@ -62,6 +62,7 @@ public:
   bool startListener(int port);
   void stopListener();
 
+  void setSite(SiteSettings* site);
   void startDebugging(const QString&, const QString& uiargs,
       SiteSettings* site, bool local, int listenPort, dbgint sessid);
 
@@ -110,7 +111,7 @@ signals:
   void sigDBGClosed();
   void sigStepDone();
   void sigBreakpoint();
-  
+  void sigNewConnection();
 private slots:
   void slotIncomingConnection(QSocket*);
   void slotDBGClosed();
@@ -133,7 +134,7 @@ private:
   dbgint             m_headerFlags;
   dbgint             m_profFreq;
   DebuggerDBG       *m_debugger;
-  Connection     *m_con;
+  Connection        *m_con;
   DBGReceiver       *m_receiver;
   DBGRequestor      *m_requestor;
 

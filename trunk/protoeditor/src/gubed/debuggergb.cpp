@@ -55,6 +55,7 @@ DebuggerGB::DebuggerGB(DebuggerManager* manager)
   connect(m_net, SIGNAL(sigGBClosed()), this, SLOT(slotGBClosed()));
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
+  connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
 }
 
 
@@ -397,6 +398,16 @@ void DebuggerGB::updateMessage(int type, const QString& msg, const QString& file
 void DebuggerGB::updateError(const QString& filePath)
 {
   manager()->debugMessage(DebuggerManager::ErrorMsg, "Fatal error", KURL::fromPathOrURL(filePath), 0);  
+}
+
+void DebuggerGB::slotNewConnection()
+{
+  //we don't know if it is requested session or JIT, so we have
+  //to update the m_net site
+  m_net->setSite(ProtoeditorSettings::self()->currentSiteSettings());
+
+  //tell debuggermanager to cleanup any pending session
+  emit sigJITStarted(this);
 }
 
 #include "debuggergb.moc"

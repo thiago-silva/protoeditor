@@ -92,6 +92,7 @@ public slots:
 private slots:
   void slotStepDone();
   void slotBreakpoint();
+  void slotNewConnection();
 private:
   DBGProfileDialog* profileDialog();
     

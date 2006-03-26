@@ -180,6 +180,9 @@ void DebuggerManager::connectDebugger(AbstractDebugger* debugger)
 
   connect(debugger, SIGNAL(sigDebugStarting()),
           this, SLOT(slotDebugStarting()));
+
+  connect(debugger, SIGNAL(sigJITStarted(AbstractDebugger*)),
+          this, SLOT(slotJITStarted(AbstractDebugger*)));
 }
 
 
@@ -200,6 +203,11 @@ void DebuggerManager::slotScriptRun()
       //couldn't open the file for some reason
       return;
     }
+  }
+
+  if(m_activeDebugger && m_activeDebugger->isRunning()) 
+  {
+    m_activeDebugger->stop();
   }
 
   KURL url = m_window->tabEditor()->currentDocumentURL();
@@ -692,13 +700,6 @@ void DebuggerManager::slotDebugEnded()
 
     ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
-  
-  /*
-  m_window->actionCollection()->action("debug_stop")->setEnabled(false);
-  m_window->actionCollection()->action("debug_step_into")->setEnabled(false);
-  m_window->actionCollection()->action("debug_step_over")->setEnabled(false);
-  m_window->actionCollection()->action("debug_step_out")->setEnabled(false);
-  */
 
   m_activeDebugger = 0;
   m_window->setDebugStatusName("");
@@ -708,6 +709,14 @@ void DebuggerManager::slotDebugPaused()
 {
   //step(into/over/out) or a breakpoint or something like happened. We don't care too mutch about it :)
   m_window->setDebugStatusMsg("Done");
+}
+
+void DebuggerManager::slotJITStarted(AbstractDebugger* debugger)
+{
+  if(m_activeDebugger && (debugger != m_activeDebugger) && m_activeDebugger->isRunning())
+  {
+    m_activeDebugger->stop();
+  }
 }
 
 void DebuggerManager::slotError(const QString& message)

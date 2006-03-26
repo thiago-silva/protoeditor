@@ -55,7 +55,7 @@ Document::~Document()
   {
     KTextEditor::Document* doc = m_view->document();
     doc->closeURL();
-    //     delete m_view; //KWrite only deletes the doc
+    //delete m_view; //KWrite only deletes the doc
     delete doc;
   }
   delete m_tab;
@@ -100,7 +100,6 @@ void Document::init() {
   //TabEditor process the settings.
   ac = m_view->actionCollection()->action("set_confdlg");
   if(ac) m_view->actionCollection()->take(ac);
-
 }
 
 KTextEditor::View* Document::view()

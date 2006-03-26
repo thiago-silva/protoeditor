@@ -77,7 +77,7 @@ private slots:
   void slotGBStarted();
   void slotGBClosed();
   void slotStepDone();
-
+  void slotNewConnection();
 private:
   bool startJIT();
   void stopJIT();
