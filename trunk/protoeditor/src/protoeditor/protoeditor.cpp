@@ -46,11 +46,10 @@ static KCmdLineOptions options[] =
 int main(int argc, char **argv)
 {
   KAboutData about("protoeditor", I18N_NOOP("Protoeditor"), version, description,
-                   KAboutData::License_GPL, "(C) 2005-2006 Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
+                   KAboutData::License_GPL, "(C) 2005-2006 Thiago Silva", 0, "http://protoeditor.sourceforge.net", "thiago.silva@kdemail.com");
   about.addAuthor( "Thiago Silva", 0, "thiago.silva@kdemail.com" );
   KCmdLineArgs::init(argc, argv, &about);
   KCmdLineArgs::addCmdLineOptions( options );
-
 
   KApplication app;
   //ProtoEditor *protoeditor = 0;
