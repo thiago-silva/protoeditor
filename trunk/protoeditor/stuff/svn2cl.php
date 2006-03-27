@@ -81,6 +81,7 @@ class ChangeLog {
     $msgs["REGULAR"] = array();
     $msgs["NEW"] = array();
     $msgs["BUGFIX"] = array();
+    $msgs["DEVNULL"] = array();
 
     $flag = "REGULAR";
     foreach($lines as $line) {
@@ -97,7 +98,10 @@ class ChangeLog {
       } else if(strpos($line, "FIX")!==FALSE) {
         $flag = "BUGFIX";
         continue;
-      } 
+      } else if(strpos($line, "SILENT") !== FALSE) {
+        $flag = "DEVNULL";
+        continue;
+      }
 
       if(substr($line, 0, 1) == '-') {
         $line = substr($line, 1);
@@ -106,8 +110,8 @@ class ChangeLog {
     }
 
     if((count($msgs["REGULAR"]) == 0) &&
-       (count($msgs["REGULAR"]) == 0) &&
-       (count($msgs["REGULAR"]) == 0) ) {
+       (count($msgs["NEW"]) == 0) &&
+       (count($msgs["BUGFIX"]) == 0) ) {
       return null;
     } else {
       return $msgs;

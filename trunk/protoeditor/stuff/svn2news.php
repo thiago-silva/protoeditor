@@ -107,13 +107,13 @@ class NewsLog {
       array_push($lines, trim($l));
     }
 
-    $msgs["REGULAR"] = array();
     $msgs["NEW"] = array();
     $msgs["BUGFIX"] = array();
+    $msgs["DEVNULL"] = array();
 
-    $flag = "REGULAR";
+    $flag = "DEVNULL";
     foreach($lines as $line) {
-
+      
       if(!$line) continue;
 
       if((strpos($line, "nomsg")!==FALSE) || (strpos($line, "*** empty log message ***")!==FALSE)) {
@@ -126,7 +126,7 @@ class NewsLog {
       } else if(strpos($line, "FIX")!==FALSE) {
         $flag = "BUGFIX";
         continue;
-      } 
+      }   
 
       if(substr($line, 0, 1) == '-') {
         $line = substr($line, 1);
@@ -134,9 +134,8 @@ class NewsLog {
       array_push($msgs[$flag], $line);
     }
 
-    if((count($msgs["REGULAR"]) == 0) &&
-       (count($msgs["REGULAR"]) == 0) &&
-       (count($msgs["REGULAR"]) == 0) ) {
+    if((count($msgs["NEW"]) == 0) &&
+       (count($msgs["BUGFIX"]) == 0) ) {
       return null;
     } else {
       return $msgs;
