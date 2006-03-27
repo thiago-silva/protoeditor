@@ -38,7 +38,7 @@
       <Action name="debug_step_over"/>
       <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
-<!--      <Separator />
+<!--  <Separator />
       <Action name="script_profile"/>-->
       <Separator />
       <Action name="debug_toggle_bp"/>
@@ -53,7 +53,6 @@
       <Action name="settings_editor" />
       <Action name="settings_protoeditor" />
    </Menu>
-   
   </MenuBar>
 
   <Menu name="ktexteditor_popup" noMerge="1">
