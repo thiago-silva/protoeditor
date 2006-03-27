@@ -41,6 +41,12 @@
      - If local debugging, you can look in the messages Protoeditor prints in 
        the terminal for the command line it's using to execute the script.
 
+  Q: DBG doesn't work when debugging locally using the console. What is wrong?
+
+  A: Using DBG with the PHP binary is only supported if your binary is 
+     PHP (CGI), instead of the default PHP (CLI), due to a lack of support on 
+     the current free version of DBG (wich might be fixed in the next version).
+
   Q: I'm having lots of problems to make this work. What should I do?
   
   A: Go to the forum (http://sourceforge.net/forum/forum.php?forum_id=439825) 

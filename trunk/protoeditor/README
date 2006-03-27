@@ -7,7 +7,7 @@ Project site: http://protoeditor.sourceforge.net
 
   Protoeditor is a small KDE text editor developed for debugging
   scripts interactively. The goal is to provide a simple editor supporting a
-  variety of debuggers for different languages. Currently (beta 0.8), it
+  variety of debuggers for different languages. Currently (beta 0.9), it
   only supports PHP and the following debuggers:
 
    - DBG debugger (free version 2.11) at http://dd.cron.ru/dbg/
@@ -61,7 +61,7 @@ Project site: http://protoeditor.sourceforge.net
   Check your debugger options on Protoeditor settings. Most of them are self
   explanatory, but I'll give some hints ;)
 
-  The "PHP Binary path" specifies the path for the PHP binary. Togueter with 
+  The "PHP command" specifies the path for the PHP binary. Togueter with 
   the "External console" settings in "External Application", it is used to 
   execute/debug scripts locally using a console application, if desired.
 
@@ -143,11 +143,17 @@ Project site: http://protoeditor.sourceforge.net
         the option "Use Current Script" in the menu/toolbar so the active
         script in the editor is used.
 
+      Site mappings:
+        
+        -When using scripts located in directories other than the base dirs (local/remote),
+         it's possible to add more directory mappings. This is usefull if you set
+         "include_path" on php.ini for other directories. Protoeditor mappings alow you
+         to map those extra paths.
 
 4.0 Profiler
 
-    Currently, DBG Profiler is supported. Be sure to have it enabled on php.ini
-    settings. 
+    The DBG Profiler, supported until Protoeditor 0.8, is not functional in this version (0.9).
+    It might be active again in version 1.0.
 
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>
