@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *   Copied/Based on Linus McCabe work on Quanta                           * 
  *                                                                         *

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -33,17 +33,18 @@ public:
   ExtAppSettingsWidget(QWidget *parent = 0, const char *name = 0);
   ~ExtAppSettingsWidget();
 
-  QCheckBox *m_ckUseExternalApp;
-  QComboBox *m_cbExtApp;
-
-  QCheckBox *m_ckUseConsole;
-  KLineEdit* m_edConsole;
-
   void populate();
   void updateSettings();
 private slots:
   void slotUseExtApp(int);
   void slotUseConsole(int);
+
+private:
+  QCheckBox *m_ckUseExternalApp;
+  QComboBox *m_cbExtApp;
+
+  QCheckBox *m_ckUseConsole;
+  KLineEdit* m_edConsole;
 };
 
 #endif

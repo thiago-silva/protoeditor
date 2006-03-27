@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -46,7 +46,7 @@ static KCmdLineOptions options[] =
 int main(int argc, char **argv)
 {
   KAboutData about("protoeditor", I18N_NOOP("Protoeditor"), version, description,
-                   KAboutData::License_GPL, "(C) 2005 Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
+                   KAboutData::License_GPL, "(C) 2005-2006 Thiago Silva", 0, 0, "thiago.silva@kdemail.com");
   about.addAuthor( "Thiago Silva", 0, "thiago.silva@kdemail.com" );
   KCmdLineArgs::init(argc, argv, &about);
   KCmdLineArgs::addCmdLineOptions( options );
