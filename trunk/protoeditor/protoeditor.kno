@@ -21,7 +21,7 @@
 
 \NewEntry 1 v1.0
 
-\CurrentEntry 2 TODO (0.9)
+\NewEntry 2 TODO (0.9)
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Test again (implemented sigNewConnection() in all debuggers, but didn't tested yet):</li>
 <ul type="disc"><li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
@@ -49,6 +49,12 @@
 <li>in the included script, the break occurs in the line after<br /><br /></li></ul></ul>
 <li>DBG:  </li>
 <ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /></li></ul></ul>
+</body></html>
+
+
+\CurrentEntry 2 1.0
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>JIT defaults to disabled on all debuggers</li></ul>
 </body></html>
 
 
