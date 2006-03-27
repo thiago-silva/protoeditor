@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -35,12 +35,6 @@ public:
   SiteSettingsWidget(QWidget *parent = 0, const char *name = 0);
   ~SiteSettingsWidget();
 
-  KPushButton   *m_btAdd;
-  KPushButton   *m_btModify;
-  KPushButton   *m_btRemove;
-
-  QListBox      *m_sitesListBox;
-
   void populate();
   void updateSettings();
 private slots:
@@ -53,20 +47,22 @@ private slots:
 private:
   void addSite(const QString& name, const KURL& url,
                const KURL& remoteBaseDir, const KURL& localBaseDir,
-               const KURL& defaultFile, const QString& debuggerClinet);
+               const KURL& defaultFile, const QString& debuggerClinet,
+               const QMap<QString,QString>&);
 
   void modifySite(const QString& name, const KURL& url,
                   const KURL& remoteBaseDir, const KURL& localBaseDir,
-                  const KURL& defaultFile, const QString& debuggerClinet);
+                  const KURL& defaultFile, const QString& debuggerClinet,
+                  const QMap<QString,QString>&);
 
   class Site
   {
   public:
     Site() {};
     Site(const QString& n, const KURL& u,
-         const KURL& r, const KURL& l, const KURL& d, const QString& c)
+         const KURL& r, const KURL& l, const KURL& d, const QString& c, const QMap<QString,QString>& m)
         : name(n), url(u), remoteBaseDir(r), localBaseDir(l), defaultFile(d),
-          debuggerClient(c){}
+          debuggerClient(c), mappings(m) {}
     ~Site() {}
 
     QString name;
@@ -75,7 +71,14 @@ private:
     KURL    localBaseDir;
     KURL    defaultFile;
     QString debuggerClient;
+    QMap<QString,QString> mappings;
   };
+
+  KPushButton   *m_btAdd;
+  KPushButton   *m_btModify;
+  KPushButton   *m_btRemove;
+
+  QListBox      *m_sitesListBox;
 
   QMap<QString, Site> m_siteMap;
 };

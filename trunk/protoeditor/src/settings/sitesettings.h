@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -33,121 +33,42 @@ public:
 
   void load(const QString& name, const KURL& url,
             const KURL& remoteBaseDir, const KURL& localBaseDir,
-            const KURL& defaultFile, bool matchFileInLowerCase,
-            const QString& debuggerClient);
+            const KURL& defaultFile, /*bool matchFileInLowerCase,*/
+            const QString& debuggerClient, const QMap<QString,QString>&);
 
-  void setName(const QString& name)
-  {
-    mName = name;
-  }
+  void setName(const QString& name);
+  QString name() const;
+  void setUrl(const KURL& url);
+  KURL url();
 
-  QString name() const
-  {
-    return mName;
-  }
+  KURL effectiveURL() const;
+  void setLocalBaseDir(const KURL& localBaseDir);
+  KURL localBaseDir() const;
+  void setRemoteBaseDir(const KURL& remoteBaseDir);
+  KURL remoteBaseDir() const;
+  void setDefaultFile(const KURL& defaultFile);
+  KURL defaultFile() const;
+//   void setMatchFileInLowerCase(bool value);
+//   bool matchFileInLowerCase() const;
+  void setDebuggerClient(const QString& name);
+  QString debuggerClient() const;
+
+  void setMappings(const QMap<QString,QString>&);
+  QMap<QString,QString> mappings();
 
 
-  void setUrl(const KURL& url)
-  {
-    mUrl = url.pathOrURL();
-  }
+  KURL mapRequestURLFor(const QString& filePath);
+  QString mapRemoteToLocal(const QString& filePath);
+  QString mapLocalToRemote(const QString& filePath);
 
-  KURL url() {
-    return KURL::fromPathOrURL(mUrl);
-  }
 
-  KURL effectiveURL() const
-  {
-    KURL url = KURL::fromPathOrURL(mUrl);
-    if(url.port() == 0) {
-      url.setPort(80);
-    }
-    return url;
-  }
+  void remove();
 
-  void setLocalBaseDir(const KURL& localBaseDir)
-  {
-    mLocalBaseDir = localBaseDir.pathOrURL();
-  }
-
-  KURL localBaseDir() const
-  {
-    return KURL::fromPathOrURL(mLocalBaseDir);
-  }
-
-  void setRemoteBaseDir(const KURL& remoteBaseDir)
-  {
-    mRemoteBaseDir = remoteBaseDir.pathOrURL();
-  }
-
-  KURL remoteBaseDir() const
-  {
-    return KURL::fromPathOrURL(mRemoteBaseDir);
-  }
-
-  void setDefaultFile(const KURL& defaultFile)
-  {
-    mDefaultFile = defaultFile.pathOrURL();
-  }
-
-  KURL defaultFile() const
-  {
-    return KURL::fromPathOrURL(mDefaultFile);
-  }
-
-  void setMatchFileInLowerCase(bool value)
-  {
-    mMatchFileInLowerCase = value;
-  }
-
-  bool matchFileInLowerCase() const
-  {
-    return mMatchFileInLowerCase;
-  }
-
-  void setDebuggerClient(const QString& name)
-  {
-    mDebuggerClient = name;
-  }
-
-  QString debuggerClient() const
-  {
-    return mDebuggerClient;
-  }
- 
- 
-  KURL mapRequestURLFor(const QString& filePath)
-  {    
-    QString urlPath = filePath;
-    urlPath = urlPath.remove(0, mLocalBaseDir.length());
-
-    KURL url = effectiveURL();
-    if(!urlPath.startsWith("/"))
-    {
-      urlPath.prepend('/');
-    }
-    url.setPath(urlPath);
-    return url;
-  }
-
-  QString mapRemoteToLocal(const QString& filePath) 
-  {
-    QString intersection = KURL::fromPathOrURL(filePath).path();
-    intersection = KURL::fromPathOrURL(mLocalBaseDir).path() + intersection.remove(0, mRemoteBaseDir.length());
-
-    return intersection;// + filePath.section('/', -1);
-  }
-
-  QString mapLocalToRemote(const QString& filePath)
-  {
-    QString intersection = KURL::fromPathOrURL(filePath).path();
-    intersection = KURL::fromPathOrURL(mRemoteBaseDir).path() + intersection.remove(0, mLocalBaseDir.length()) ;
-
-    return intersection;// + filePath.section('/', -1);
-  }
-
-protected:
   
+protected:
+  virtual void usrWriteConfig();
+  virtual void usrReadConfig();
+
   QString mParamnumber;
 
   // Site_$(number)
@@ -156,9 +77,9 @@ protected:
   QString mRemoteBaseDir;
   QString mLocalBaseDir;
   QString mDefaultFile;
-  bool mMatchFileInLowerCase;
+//   bool mMatchFileInLowerCase;
   QString mDebuggerClient;
-
+  QMap<QString,QString> mMappings;
 private:
 };
 

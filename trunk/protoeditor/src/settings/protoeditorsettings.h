@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -64,7 +64,8 @@ public:
   void clearSites();
   void addSite(int number, const QString& name, const KURL& url,
                const KURL& remoteBaseDir, const KURL& localBaseDir,
-              const KURL& defaultFile, const QString& debuggerClient);
+               const KURL& defaultFile, const QString& debuggerClient, 
+               const QMap<QString,QString>&);
 
   void writeConfig(bool silent = false);
 

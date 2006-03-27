@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -175,7 +175,7 @@ void ProtoeditorSettings::clearSites()
   SiteSettings* s;
   for(sit = m_siteSettingsMap.begin(); sit != m_siteSettingsMap.end(); ++sit) {
      s = sit.data();
-     s->config()->deleteGroup(s->currentGroup());
+     s->remove();     
      delete s;
   }
   m_siteSettingsMap.clear();
@@ -183,12 +183,11 @@ void ProtoeditorSettings::clearSites()
 
 void ProtoeditorSettings::addSite(int number, const QString& name, const KURL& url,
                const KURL& remoteBaseDir, const KURL& localBaseDir, const KURL& defaultFile,
-               const QString& debuggerClient)
+               const QString& debuggerClient, const QMap<QString,QString>& mappings)
 
 {
   SiteSettings* s = new SiteSettings(QString::number(number));
-  s->load(name, url, remoteBaseDir, localBaseDir, defaultFile,
-    /* TODO: */  false, debuggerClient);
+  s->load(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerClient, mappings);
 
   m_siteSettingsMap[s->name()] = s;
 }

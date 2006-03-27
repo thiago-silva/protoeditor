@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -90,7 +90,9 @@ void SiteSettingsWidget::populate()
   QValueList<SiteSettings*>::iterator it;
   for(it = list.begin(); it != list.end(); ++it) {
     addSite((*it)->name(), (*it)->url(),
-              (*it)->remoteBaseDir(), (*it)->localBaseDir(), (*it)->defaultFile(), (*it)->debuggerClient());
+              (*it)->remoteBaseDir(), (*it)->localBaseDir(),  
+              (*it)->defaultFile(), (*it)->debuggerClient(),
+              (*it)->mappings());
   }
 }
 
@@ -106,7 +108,9 @@ void SiteSettingsWidget::slotAdd()
 
     } else {
       addSite(dialog->name(), dialog->url(),
-              dialog->remoteBaseDir(), dialog->localBaseDir(), dialog->defaultFile(),dialog->debuggerClient());
+              dialog->remoteBaseDir(), dialog->localBaseDir(), 
+              dialog->defaultFile(),dialog->debuggerClient(),
+              dialog->mappings());
       break;
     }
   }
@@ -122,11 +126,15 @@ void SiteSettingsWidget::slotModify()
 
   Site s = m_siteMap[m_sitesListBox->text(m_sitesListBox->currentItem())];
 
-  dialog->populate(s.name, s.url, s.remoteBaseDir, s.localBaseDir, s.defaultFile, s.debuggerClient);
+  dialog->populate(s.name, s.url, s.remoteBaseDir, s.localBaseDir, 
+                   s.defaultFile, s.debuggerClient, s.mappings);
+
   dialog->setUpdate();
   if(dialog->exec() == QDialog::Accepted) {
-    modifySite(dialog->name(), dialog->url(),/* dialog->port(),*/
-               dialog->remoteBaseDir(), dialog->localBaseDir(), dialog->defaultFile(), dialog->debuggerClient());
+    modifySite(dialog->name(), dialog->url(),
+               dialog->remoteBaseDir(), dialog->localBaseDir(), 
+               dialog->defaultFile(), dialog->debuggerClient(),
+               dialog->mappings());
   }
   delete dialog;
 }
@@ -157,25 +165,21 @@ void SiteSettingsWidget::slotListDoubleClicked(QListBoxItem*)
 }
 
 void SiteSettingsWidget::modifySite(const QString& name, const KURL& url,
-                                 const KURL& remoteBaseDir, const KURL& localBaseDir,
-                                  const KURL& defaultFile, const QString& debuggerClient)
+                                    const KURL& remoteBaseDir, const KURL& localBaseDir,
+                                    const KURL& defaultFile, const QString& debuggerClient,
+                                    const QMap<QString,QString>& mappings)
 {
-  Site s(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerClient);
+  Site s(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerClient, mappings);
   
   m_siteMap[name] = s;
-  //s->setMatchCase
-  //s->setDebuggger
 }
 
 void SiteSettingsWidget::addSite(const QString& name, const KURL& url,
                                  const KURL& remoteBaseDir, const KURL& localBaseDir,
-                                 const KURL& defaultFile, const QString& debuggerClient )
+                                 const KURL& defaultFile, const QString& debuggerClient,
+                                 const QMap<QString,QString>& mappings)
 {
-  Site s(name, url,/* port,*/ remoteBaseDir, localBaseDir, defaultFile, debuggerClient);
-
-//s->load(name, host, port, remoteBaseDir, localBaseDir,
-//     /* TODO: */
-//     false, "DBG");
+  Site s(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerClient, mappings);
 
   m_siteMap[name] = s;
   m_sitesListBox->insertItem(name);
@@ -191,7 +195,7 @@ void SiteSettingsWidget::updateSettings()
     Site s = it.data();
     ProtoeditorSettings::self()->addSite(count,
       it.data().name, it.data().url, it.data().remoteBaseDir,
-      it.data().localBaseDir, it.data().defaultFile, it.data().debuggerClient);
+      it.data().localBaseDir, it.data().defaultFile, it.data().debuggerClient, it.data().mappings);
   }
 }
 

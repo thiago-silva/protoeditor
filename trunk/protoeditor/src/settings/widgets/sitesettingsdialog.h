@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Thiago Silva                                    *
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -28,6 +28,40 @@ class QSpinBox;
 class KURLRequester;
 class QComboBox;
 
+
+class DirMappingWidget : public QWidget {
+  Q_OBJECT
+public:
+  enum { LocalColumn, RemoteColumn };
+
+  DirMappingWidget(QWidget* parent, const char* name = 0);
+  ~DirMappingWidget();
+
+  void setMappings(const QMap<QString,QString>&);
+  QMap<QString,QString> mappings();
+
+private slots:
+  void slotAdd();
+  void slotUpdate();
+  void slotRemove();
+
+  void slotSelectionChanged();
+private:
+  
+  void initListView();
+
+  void addMapping(const QString& local, const QString& remote);
+
+  bool itemExists(const QString&);  
+
+  QPushButton   *m_btAdd;
+  QPushButton   *m_btUpdate;
+  QPushButton   *m_btRemove;
+  KURLRequester* m_edLocalDir;
+  KLineEdit*     m_edRemoteDir;
+  KListView*     m_listView;
+};
+
 class SiteSettingsDialog : public KDialogBase
 {
   Q_OBJECT
@@ -42,21 +76,25 @@ public:
   KURL    defaultFile();
   QString debuggerClient();
   
+  QMap<QString,QString> mappings();
+
   void populate(const QString& name, const KURL& url,
                 const KURL& remoteBaseDir, const KURL& localBaseDir,
-                const KURL& defaultFile, const QString& debuggerClient);
+                const KURL& defaultFile, const QString& debuggerClient,
+                QMap<QString,QString>&);
 
   void setUpdate();
 protected slots:
   void slotOk();
   void slotOpenFileDialog(KURLRequester*);
 private:
-  KLineEdit     *m_edName;
-  KLineEdit     *m_edUrl;
-  KLineEdit     *m_edRemoteBaseDir;
-  KURLRequester *m_edLocalBaseDir;
-  KURLRequester *m_edDefaultFile;
-  QComboBox     *m_cbDebuggerClient;
+  DirMappingWidget *m_mappingWidget;
+  KLineEdit        *m_edName;
+  KLineEdit        *m_edUrl;
+  KLineEdit        *m_edRemoteBaseDir;
+  KURLRequester    *m_edLocalBaseDir;
+  KURLRequester    *m_edDefaultFile;
+  QComboBox        *m_cbDebuggerClient;
 };
 
 #endif
