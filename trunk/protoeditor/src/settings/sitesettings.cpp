@@ -207,10 +207,36 @@ QString SiteSettings::mapRemoteToLocal(const QString& filePath)
 
 QString SiteSettings::mapLocalToRemote(const QString& filePath)
 {
-  //aways use mRemoteBaseDir (ie. don't using mappings)
   QString intersection = KURL::fromPathOrURL(filePath).path();
-  intersection = KURL::fromPathOrURL(mRemoteBaseDir).path() + intersection.remove(0, mLocalBaseDir.length()) ;
+  QString localDir;
+  QString remoteDir;
 
+  bool usingMappings = false;
+
+  if(filePath.find(mLocalBaseDir) == -1)
+  {
+    //try mappings
+    QMap<QString, QString>::iterator it;
+    for(it = mMappings.begin(); it != mMappings.end(); ++it) 
+    {
+      if(filePath.find(it.key()) != -1)
+      {
+        localDir = it.key();
+        remoteDir = it.data();
+        usingMappings = true;
+        break;
+      }
+    }    
+  }
+
+  //using base dirs
+  if(!usingMappings)
+  {
+    localDir = mLocalBaseDir;
+    remoteDir = mRemoteBaseDir;
+  }
+
+  intersection = KURL::fromPathOrURL(remoteDir).path() + intersection.remove(0, localDir.length());
   return intersection;
 }
 
