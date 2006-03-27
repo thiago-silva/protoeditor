@@ -38,8 +38,8 @@ Project site: http://protoeditor.sourceforge.net
 
 2.0 Configuration
 
-  For a walk through on installing and configuring the debuggers and Protoeditor,
-  see the "Tutorial" section on Protoeditor's homepage.
+  For a walk through on installing and configuring the debuggers and 
+  Protoeditor, see the "Tutorial" section on Protoeditor's homepage.
 
 
 2.1 Debugger Configuration
@@ -145,15 +145,16 @@ Project site: http://protoeditor.sourceforge.net
 
       Site mappings:
         
-        -When using scripts located in directories other than the base dirs (local/remote),
-         it's possible to add more directory mappings. This is usefull if you set
-         "include_path" on php.ini for other directories. Protoeditor mappings alow you
-         to map those extra paths.
+        -When using scripts located in directories other than the base dirs 
+         (local/remote), it's possible to add more directory mappings. This is 
+         usefull, for example, if you add directories to "include_path" on 
+         php.ini and you want Protoeditor to be aware of scripts on these
+         directories.
 
 4.0 Profiler
 
-    The DBG Profiler, supported until Protoeditor 0.8, is not functional in this version (0.9).
-    It might be active again in version 1.0.
+    The DBG Profiler, supported until Protoeditor 0.8, is not functional in 
+    this version (0.9). It might be active again in version 1.0.
 
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>
