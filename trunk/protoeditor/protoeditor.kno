@@ -23,11 +23,10 @@
 
 \CurrentEntry 2 TODO (0.9)
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Implement directory mapping (for default include paths, etc) by Site</li>
+<ul type="disc"><li>Test again (implemented sigNewConnection() in all debuggers, but didn't tested yet):</li>
+<ul type="disc"><li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
 <li>add settings for halt (halt on [x]error [x]warning [x]notice)</li>
 <ul type="disc"><li>check if all php debuggers support this<br /></li></ul>
-<li>See KPDF for the toolbar button &quot;open / openrecent&quot;</li>
-<ul type="disc"><li>see if it works with old versions  of kde<br /></li></ul>
 <li>DOC note:</li>
 <ul type="disc"><li>XDebug2.0beta5 doesn't support conditional breakpoint (see xdebug sourcecode)<br /></li></ul>
 <li>Create Help docbook</li>
@@ -48,9 +47,8 @@
 <li>run and see the breaks.</li>
 <ul type="disc"><li>in the main script, the break occurs right in the breakpoint</li>
 <li>in the included script, the break occurs in the line after<br /><br /></li></ul></ul>
-<li>DBG: </li>
-<ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /></li></ul>
-<li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
+<li>DBG:  </li>
+<ul type="disc"><li>Run debugger with a script that uses function debubreak(). Run and continue. The execPoint is not transfered to the debugBreak() line.<br /></li></ul></ul>
 </body></html>
 
 
