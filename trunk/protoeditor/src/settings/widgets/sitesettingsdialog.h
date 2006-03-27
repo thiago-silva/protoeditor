@@ -50,7 +50,7 @@ private:
   
   void initListView();
 
-  void addMapping(const QString& local, const QString& remote);
+  void addMapping(QString local, QString remote);
 
   bool itemExists(const QString&);  
 

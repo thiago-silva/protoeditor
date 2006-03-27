@@ -150,7 +150,13 @@ void DirMappingWidget::slotAdd()
     return;
   }
 
-  if(itemExists(m_edLocalDir->url()))
+  QString l = m_edLocalDir->url();
+  if(!l.endsWith("/"))
+  {
+    l += "/";
+  }
+
+  if(itemExists(l))
   {
     KMessageBox::sorry(this, "\"Local dir\" already exists.");
     return;
@@ -164,7 +170,7 @@ void DirMappingWidget::slotAdd()
   m_edRemoteDir->clear();
 }
 
-void DirMappingWidget::addMapping(const QString& local, const QString& remote)
+void DirMappingWidget::addMapping(QString local, QString remote)
 {
   QListViewItem* item = new QListViewItem(m_listView);
 
@@ -175,9 +181,21 @@ void DirMappingWidget::addMapping(const QString& local, const QString& remote)
 void DirMappingWidget::slotUpdate()
 {
   QListViewItem* item = m_listView->selectedItem();
+
+  QString local = m_edLocalDir->url();
+  QString remote = m_edRemoteDir->text();
+  if(!local.endsWith("/"))
+  {
+    local += "/";     
+  }
+
+  if(!remote.endsWith("/"))
+  {
+    remote += "/";
+  }
   
-  item->setText(LocalColumn, m_edLocalDir->url());
-  item->setText(RemoteColumn, m_edRemoteDir->text());
+  item->setText(LocalColumn, local);
+  item->setText(RemoteColumn, remote);
 
   m_listView->clearSelection();
 
