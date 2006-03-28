@@ -460,7 +460,17 @@ bool MainWindow::saveCurrentFile()
 
 bool MainWindow::saveCurrentFileAs()
 {
-  QString location = ":protoeditor";
+  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  QString location;
+  if(currentSite)
+  {
+    location = currentSite->localBaseDir().path();
+  }
+  else
+  {
+    location = ":protoeditor";
+  }
+
   KURL url = KFileDialog::getSaveURL(location, QString::null, this);
 
   if(!url.isEmpty())
