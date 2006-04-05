@@ -51,7 +51,7 @@
 #include <kdialogbase.h>
 #include <kiconloader.h>
 #include <ktextedit.h>
-
+#include <kencodingfiledialog.h>
 /*
 #include <ktexteditor/document.h>
 #include <ktexteditor/editorchooser.h>
@@ -203,11 +203,11 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
-  (void)new KAction(i18n("Step Over"), "dbgnext", "F6", m_debugger_manager,
-                    SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
-
-  (void)new KAction(i18n("Step Into"), "dbgstep", "F7", m_debugger_manager,
+  (void)new KAction(i18n("Step Into"), "dbgstep", "F6", m_debugger_manager,
                     SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
+
+  (void)new KAction(i18n("Step Over"), "dbgnext", "F7", m_debugger_manager,
+                    SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
 
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
@@ -471,16 +471,39 @@ bool MainWindow::saveCurrentFileAs()
     location = ":protoeditor";
   }
 
-  KURL url = KFileDialog::getSaveURL(location, QString::null, this);
+    KEncodingFileDialog::Result res=KEncodingFileDialog::getSaveURLAndEncoding(
+      QString(),location,QString::null,this,i18n("Save File"));
 
-  if(!url.isEmpty())
+
+
+  //KURL url = KFileDialog::getSaveURL(location, QString::null, this);
+  if(!res.URLs.isEmpty() && checkOverwrite( res.URLs.first() ) )
+//  if(!url.isEmpty() && checkOverwrite(url))
   {
-    if(m_tabEditor->saveCurrentFileAs(url))
+    if(m_tabEditor->saveCurrentFileAs(res.URLs.first(), res.encoding))
     {
       return true;
     }
   }
   return false;
+}
+
+bool MainWindow::checkOverwrite(KURL u)
+{
+  if(!u.isLocalFile())
+    return true;
+
+  QFileInfo info( u.path() );
+  if( !info.exists() )
+    return true;
+
+  return KMessageBox::Continue
+         == KMessageBox::warningContinueCancel
+              ( this,
+                i18n( "A file named \"%1\" already exists. Are you sure you want to overwrite it?" ).arg( info.fileName() ),
+                i18n( "Overwrite File?" ),
+                KGuiItem( i18n( "&Overwrite" ), "filesave", i18n( "Overwrite the file" ) )
+              );
 }
 
 void MainWindow::slotCloseAllFiles()

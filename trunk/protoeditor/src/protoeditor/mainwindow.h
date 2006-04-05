@@ -138,6 +138,8 @@ private:
   void createWidgets();
   void loadSites();
 
+  bool checkOverwrite(KURL u);
+
   QLabel *m_lbLed;
   QLabel *m_lbDebugMsg;
   QLabel *m_lbDebugName;
