@@ -56,7 +56,7 @@ public:
   void setCurrentDocumentTab(const KURL&, bool forceOpen = false);
 
   bool saveCurrentFile();
-  bool saveCurrentFileAs(const KURL & url);
+  bool saveCurrentFileAs(const KURL & url, const QString& encoding = QString::null);
 
   void gotoLineAtFile(const KURL&, int);
 

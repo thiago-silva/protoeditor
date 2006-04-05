@@ -53,6 +53,8 @@ public:
   bool open(const KURL& url);
   bool close();
 
+  void setEncoding(const QString&);
+
   bool existsOnDisk();
 
   bool isModified();
@@ -69,7 +71,7 @@ public:
   void unmarkPreExecutionPoint();
   bool hasBreakpointAt(int line);
 
-  QString wordUnderCursor();
+  QString wordUnderCursor();  
 
   static void configureEditor(KTextEditor::View*);
 signals:

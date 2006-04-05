@@ -197,6 +197,12 @@ bool Document::close()
   return ret;
 }
 
+void Document::setEncoding(const QString& enc)
+{
+  Kate::Document* kdoc = dynamic_cast<Kate::Document*>(m_view->document());
+  kdoc->setEncoding(enc);
+}
+
 bool Document::existsOnDisk()
 {
   return m_view->document()->url().isValid();

@@ -193,8 +193,12 @@ bool EditorTabWidget::saveCurrentFile()
   return currentDocument()->save();
 }
 
-bool EditorTabWidget::saveCurrentFileAs(const KURL& url)
+bool EditorTabWidget::saveCurrentFileAs(const KURL& url, const QString& encoding)
 {
+  if(!encoding.isEmpty()) {
+    currentDocument()->setEncoding(encoding);
+  }
+
   if(count() == 0) return false;
 
   bool ret = currentDocument()->saveAs(url);
