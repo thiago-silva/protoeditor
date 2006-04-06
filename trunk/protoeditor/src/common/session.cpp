@@ -495,14 +495,14 @@ void ConsoleRequestor::doRequest(const KURL& url)
     kdDebug() << "executing console: " << (consoleApp + " /bin/sh") << " -c "              
               << m_env.join(" ") << " " 
               << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + m_args) + ";echo \"Press Enter to continue...\";read"
+              << (cmd + " " + url.path() + " " + m_args) + ";echo \"Press any key to continue...\";read"
               << endl;
   
     //KProcess::quote(filePath)
     *m_process << QStringList::split(' ',consoleApp + " /bin/sh") << "-c"
       << (
           QString("cd ") +  url.directory() + ";"
-          + (cmd + " " + url.path() + " " + m_args) + ";echo \"Press Enter to continue...\";read");
+          + (cmd + " " + url.path() + " " + m_args) + ";echo \"Press any key to continue...\";read");
   }
   else
   {
@@ -510,7 +510,7 @@ void ConsoleRequestor::doRequest(const KURL& url)
 
     kdDebug() << "executing : " << "/bin/sh" << " -c "
               << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + m_args + ";echo \"Press Enter to continue...\";read")
+              << (cmd + " " + url.path() + " " + m_args + ";echo \"Press any key to continue...\";read")
               << endl;
   
     //KProcess::quote(filePath)
