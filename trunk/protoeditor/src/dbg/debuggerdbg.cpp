@@ -529,8 +529,8 @@ void DebuggerDBG::checkDBGVersion(int major, int minor, const QString& desc)
       (minor != DBG_API_MINOR_VESION))
   {
 
-    emit sigInternalError(QString("Incompatible DBG version. Expecting %1.%2.").arg(
-                            QString::number(DBG_API_MAJOR_VESION), QString::number(DBG_API_MINOR_VESION)));
+/*    emit sigInternalError(QString("Incompatible DBG version. Expecting %1.%2.").arg(
+                            QString::number(DBG_API_MAJOR_VESION), QString::number(DBG_API_MINOR_VESION)));*/
   }
 }
 
