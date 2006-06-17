@@ -22,6 +22,8 @@
 #include "dbgnetdata.h"
 #include "dbgfileinfo.h"
 
+#include <klocale.h>
+
 DBGStack::DBGStack()
     : /*m_stack(NULL), */ m_frozen(false)
 {}
@@ -65,7 +67,7 @@ DebuggerStack* DBGStack::debuggerStack(DBGFileInfo* dbgFileInfo)
     if(((*it).function).find("::") == -1) {
       function = (*it).function;
     } else {
-      function = dbgFileInfo->moduleName((*it).modNo) + "::main()";
+      function = dbgFileInfo->moduleName((*it).modNo) + i18n("::main()");
       //function = "main()";
     }
     stack->push((*it).scopeId, KURL::fromPathOrURL(dbgFileInfo->moduleName((*it).modNo)),

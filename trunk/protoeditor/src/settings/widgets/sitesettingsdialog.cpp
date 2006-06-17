@@ -30,6 +30,7 @@
 #include <kurlrequester.h>
 #include <qtabwidget.h>
 #include <klistview.h>
+#include <klocale.h>
 
 #include "debuggersettingsinterface.h"
 #include "sitesettings.h"
@@ -47,7 +48,7 @@ DirMappingWidget::DirMappingWidget(QWidget* parent, const char* name)
   QGridLayout* grid = new QGridLayout(0, 2, 2, 3, 5);
 
   QLabel* label = new QLabel(this);
-  label->setText("Local dir:");
+  label->setText(i18n("Local dir:"));
   grid->addWidget(label, 0, 0);
 
   m_edLocalDir = new KURLRequester(this);
@@ -55,7 +56,7 @@ DirMappingWidget::DirMappingWidget(QWidget* parent, const char* name)
   grid->addWidget(m_edLocalDir, 0, 1);
 
   label = new QLabel(this);
-  label->setText("Remote dir:");
+  label->setText(i18n("Remote dir:"));
   grid->addWidget(label, 1, 0);
 
   m_edRemoteDir = new KLineEdit(this);
@@ -67,15 +68,15 @@ DirMappingWidget::DirMappingWidget(QWidget* parent, const char* name)
   QHBoxLayout* hbox = new QHBoxLayout(this, 0, 3);
 
   m_btAdd = new QPushButton(this);
-  m_btAdd->setText("Add");
+  m_btAdd->setText(i18n("Add"));
   hbox->addWidget(m_btAdd);
 
   m_btUpdate = new QPushButton(this);
-  m_btUpdate->setText("Update");
+  m_btUpdate->setText(i18n("Update"));
   hbox->addWidget(m_btUpdate);
 
   m_btRemove = new QPushButton(this);
-  m_btRemove->setText("Remove");
+  m_btRemove->setText(i18n("Remove"));
   hbox->addWidget(m_btRemove);
 
   mainLayout->addLayout(hbox);
@@ -102,8 +103,8 @@ void DirMappingWidget::initListView()
 //   m_listView->setSorting(-1);
   m_listView->setAllColumnsShowFocus(true);
 
-  m_listView->addColumn("Local dir");  
-  m_listView->addColumn("Remote dir");
+  m_listView->addColumn(i18n("Local dir"));
+  m_listView->addColumn(i18n("Remote dir"));
 
   m_listView->setResizeMode(QListView::AllColumns);
 }
@@ -140,13 +141,13 @@ void DirMappingWidget::slotAdd()
 
   if(m_edLocalDir->url().isEmpty() || !local.isValid())
   {
-    KMessageBox::sorry(this, "\"Local dir\" is not valid.");
+    KMessageBox::sorry(this, i18n("\"Local dir\" is not valid."));
     return;
   }
 
   if(m_edRemoteDir->text().isEmpty() || !remote.isValid())
   {
-    KMessageBox::sorry(this, "\"Remote dir\" is not valid.");
+    KMessageBox::sorry(this, i18n("\"Remote dir\" is not valid."));
     return;
   }
 
@@ -158,7 +159,7 @@ void DirMappingWidget::slotAdd()
 
   if(itemExists(l))
   {
-    KMessageBox::sorry(this, "\"Local dir\" already exists.");
+    KMessageBox::sorry(this, i18n("\"Local dir\" already exists."));
     return;
   }
 
@@ -252,7 +253,7 @@ bool DirMappingWidget::itemExists(const QString& local)
 //-----------------------------------------------------------------
 
 SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
-    : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, "Site settings", KDialogBase::Ok|KDialogBase::Cancel)
+    : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, i18n("Site settings"), KDialogBase::Ok|KDialogBase::Cancel)
 {
   QFrame *frame = plainPage();
 
@@ -267,29 +268,29 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   QGridLayout* grid = new QGridLayout(0, 5, 2, 3, 5);
 
   QLabel* label = new QLabel(sitewidget);
-  label->setText("Site name:");
+  label->setText(i18n("Site name:"));
   grid->addWidget(label, 0, 0);
 
   m_edName = new KLineEdit(sitewidget);
   grid->addWidget(m_edName, 0, 1);
 
   label = new QLabel(sitewidget);
-  label->setText("URL:");
+  label->setText(i18n("URL:"));
   grid->addWidget(label, 1, 0);
 
   m_edUrl = new KLineEdit(sitewidget);
-  m_edUrl->setText("http://");
+  m_edUrl->setText(i18n("http://"));
   grid->addWidget(m_edUrl, 1, 1);
 
   label = new QLabel(sitewidget);
-  label->setText("Remote base dir:");
+  label->setText(i18n("Remote base dir:"));
   grid->addWidget(label, 2, 0);
 
   m_edRemoteBaseDir = new KLineEdit(sitewidget);
   grid->addWidget(m_edRemoteBaseDir, 2, 1);
 
   label = new QLabel(sitewidget);
-  label->setText("Local base dir:");
+  label->setText(i18n("Local base dir:"));
   grid->addWidget(label, 3, 0);
 
   m_edLocalBaseDir = new KURLRequester(sitewidget);
@@ -298,14 +299,14 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   
   //
   label = new QLabel(sitewidget);
-  label->setText("Default file:");
+  label->setText(i18n("Default file:"));
   grid->addWidget(label, 4, 0);
 
   m_edDefaultFile = new KURLRequester(sitewidget);
   grid->addWidget(m_edDefaultFile, 4, 1);
 
   label = new QLabel(sitewidget);
-  label->setText("Debugger:");
+  label->setText(i18n("Debugger:"));
   grid->addWidget(label, 5, 0);
 
   m_cbDebuggerClient = new QComboBox(sitewidget);
@@ -321,12 +322,12 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   siteLayout->addLayout(grid);
   siteLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-  tab->addTab(sitewidget, "Site");
+  tab->addTab(sitewidget, i18n("Site"));
 
 
 
   m_mappingWidget = new DirMappingWidget(tab);
-  tab->addTab(m_mappingWidget, "Mappings");
+  tab->addTab(m_mappingWidget, i18n("Mappings"));
 
   mainLayout->addWidget(tab);  
 
@@ -351,31 +352,31 @@ void SiteSettingsDialog::slotOk()
 {
   if(name().isEmpty())
   {
-    KMessageBox::sorry(this, "\"Name\" is required.");
+    KMessageBox::sorry(this, i18n("\"Name\" is required."));
     return;
   }
 
   if(url().isEmpty() || !url().isValid())
   {
-    KMessageBox::sorry(this, "\"URL\" is not valid.");
+    KMessageBox::sorry(this, i18n("\"URL\" is not valid."));
     return;
   }
 
   if(remoteBaseDir().isEmpty() || !remoteBaseDir().isValid())
   {
-    KMessageBox::sorry(this, "\"Remote base dir\" is not valid.");
+    KMessageBox::sorry(this, i18n("\"Remote base dir\" is not valid."));
     return;
   }
 
   if(localBaseDir().isEmpty() || !localBaseDir().isValid())
   {
-    KMessageBox::sorry(this, "\"Local base dir\" is not valid.");
+    KMessageBox::sorry(this, i18n("\"Local base dir\" is not valid."));
     return;
   }
 
   if(!defaultFile().isEmpty() && !defaultFile().isValid())
   {
-    KMessageBox::sorry(this, "\"Default file\" is not valid.");
+    KMessageBox::sorry(this, i18n("\"Default file\" is not valid."));
     return;
   }
 
@@ -467,7 +468,7 @@ QMap<QString,QString> SiteSettingsDialog::mappings()
 void SiteSettingsDialog::slotOpenFileDialog(KURLRequester* /*default file*/)
 {
   //note: this filter must be the same as in void MainWindow::slotOpenFile()
-  m_edDefaultFile->setFilter("*.php| PHP Scripts\n*|All Files");
+  m_edDefaultFile->setFilter(i18n("*.php| PHP Scripts\n*|All Files"));
   if(!m_edLocalBaseDir->url().isEmpty())
   {
     m_edDefaultFile->fileDialog()->setURL(m_edLocalBaseDir->url());

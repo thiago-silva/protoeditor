@@ -27,6 +27,7 @@
 
 #include <qlayout.h>
 #include <qgroupbox.h>
+#include <klocale.h>
 
 #include "gbsettings.h"
 
@@ -39,14 +40,14 @@ GBSettingsWidget::GBSettingsWidget(GBSettings* settings, QWidget *parent, const 
   QHBoxLayout* jitbox = new QHBoxLayout(0, 1, 10);
 
   m_ckEnableJIT = new QCheckBox(this);
-  m_ckEnableJIT->setText("Enable JIT");
+  m_ckEnableJIT->setText(i18n("Enable JIT"));
   jitbox->addWidget(m_ckEnableJIT);
 
   mainLayout->addLayout(jitbox);
   QHBoxLayout* portbox = new QHBoxLayout(0, 1, 10);
 
   QLabel* lblistenPort = new QLabel(this);
-  lblistenPort->setText("Listen on port:");
+  lblistenPort->setText(i18n("Listen on port:"));
   portbox->addWidget(lblistenPort);
 
   m_spListenPort = new QSpinBox(this);
@@ -58,19 +59,19 @@ GBSettingsWidget::GBSettingsWidget(GBSettings* settings, QWidget *parent, const 
 
 
   QGroupBox* groupbox = new QGroupBox(this);
-  groupbox->setTitle("Options");
+  groupbox->setTitle(i18n("Options"));
   groupbox->setColumnLayout(0, Qt::Vertical );
   QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
   groupboxLayout->setAlignment(Qt::AlignTop);
 
   QVBoxLayout* vbox = new QVBoxLayout(0, 3, 16);
   m_ckBreakOnLoad = new QCheckBox(groupbox);
-  m_ckBreakOnLoad->setText("Break on load");
+  m_ckBreakOnLoad->setText(i18n("Break on load"));
   vbox->addWidget(m_ckBreakOnLoad);
   
   
   QLabel *lbStartSession = new QLabel(groupbox);
-  lbStartSession->setText("StartSession.php path:");
+  lbStartSession->setText(i18n("StartSession.php path:"));
   vbox->addWidget(lbStartSession);
 
   m_edStartSessionScript = new KLineEdit(groupbox);

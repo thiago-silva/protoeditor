@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include "phpvariable.h"
-
+#include <klocale.h>
 
 PHPVariable::PHPVariable(Variable* parent)
   : Variable(parent)
@@ -76,15 +76,15 @@ QString PHPScalarValue::typeName()
 {
   switch(m_type) {
     case Integer:
-      return QString("Integer");
+      return i18n("Integer");
     case Double:
-      return QString("Double");
+      return i18n("Double");
     case Boolean:
-      return QString("Boolean");
+      return i18n("Boolean");
     case String:
-      return QString("String");
+      return i18n("String");
     case Resource:
-      return QString("Resource");
+      return i18n("Resource");
 
     /*case Reference:
       return QString("reference");*/
@@ -143,8 +143,9 @@ QString PHPArrayValue::toString(int indent)
 }
 
 QString PHPArrayValue::typeName()
-{
-  QString s = "Array[";
+{  
+  QString s = i18n("Array");
+  s += "[";
   if(m_list) {
     s += QString::number(m_list->count()) + "]";
   } else {

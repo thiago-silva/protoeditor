@@ -24,6 +24,7 @@
 
 #include <kapplication.h>
 #include <qclipboard.h>
+#include <klocale.h>
 
 
 WatchListView::WatchListView(QWidget *parent, const char *name)
@@ -42,10 +43,10 @@ void WatchListView::slotContextMenuRequested(QListViewItem* item, const QPoint& 
   enum { CopyVarItem, CopyValueItem, DeleteWatch, DeleteAllWatches };
   
   KPopupMenu* menu = new KPopupMenu(this);
-  menu->insertItem("Copy variable", CopyVarItem);
-  menu->insertItem("Copy value", CopyValueItem);
-  menu->insertItem("Delete", DeleteWatch);
-  menu->insertItem("Delete all", DeleteAllWatches);
+  menu->insertItem(i18n("Copy variable"), CopyVarItem);
+  menu->insertItem(i18n("Copy value"), CopyValueItem);
+  menu->insertItem(i18n("Delete"), DeleteWatch);
+  menu->insertItem(i18n("Delete all"), DeleteAllWatches);
  
   if(!item)
   {

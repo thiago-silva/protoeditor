@@ -51,7 +51,7 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
 
   path.clear();
   path << i18n("Debuggers") << i18n("PHP");
-  frame = addVBoxPage(path, i18n("PHP"), BarIcon("php", KIcon::SizeSmall));
+  frame = addVBoxPage(path, "PHP", BarIcon("php", KIcon::SizeSmall));
   frame->setSpacing(0);
   frame->setMargin(0);
   m_phpSettingsWidget = new PHPSettingsWidget(frame, "PHP");//->reparent(((QWidget*)frame), 0, QPoint());
@@ -68,7 +68,7 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
   frame = addVBoxPage(path, i18n("External Applications"), BarIcon("konqueror", KIcon::SizeSmall));
   frame->setSpacing(0);
   frame->setMargin(0);
-  m_extAppSettingsWidget = new ExtAppSettingsWidget(frame, "External Applications");//->reparent(((QWidget*)frame), 0, QPoint());
+  m_extAppSettingsWidget = new ExtAppSettingsWidget(frame, i18n("External Applications"));//->reparent(((QWidget*)frame), 0, QPoint());
 
   //(void)new DebuggerSettingsWidget(f, "Debugger");
   //(void) new BrowserSettingsWidget(f, "Browser");

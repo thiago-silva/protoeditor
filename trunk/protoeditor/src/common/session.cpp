@@ -251,7 +251,7 @@ void KonquerorRequestor::doRequest(const KURL& url)
         , "konqueror-mainwindow#1", "openURL(QString)"
         , data))
   {
-    emit sigError("Error opening browser");
+    emit sigError(i18n("Error opening browser"));
   }
 }
 
@@ -265,7 +265,7 @@ void KonquerorRequestor::openNewKonqueror(const KURL& url)
 
   if(!m_process->start())
   {
-    emit sigError("Error opening Konqueror.");
+    emit sigError(i18n("Error opening Konqueror."));
   }
   else
   {
@@ -289,7 +289,7 @@ void KonquerorRequestor::init()
 
     if(!m_dcopClient->attach())
     {
-      emit sigError("Could not init external application.");
+      emit sigError(i18n("Could not init external application."));
     }
   }
 }
@@ -323,7 +323,7 @@ void MozillaRequestor::doRequest(const KURL& url)
 
   if(!m_process->start(KProcess::Block))
   {
-    emit sigError("Error executing remote Mozilla.");
+    emit sigError(i18n("Error executing remote Mozilla."));
   }
   else
   {
@@ -335,7 +335,7 @@ void MozillaRequestor::doRequest(const KURL& url)
       *m_process  << url.prettyURL();
       if(!m_process->start())
       {
-        emit sigError("Error executing Mozilla.");
+        emit sigError(i18n("Error executing Mozilla."));
       }
       else
       {
@@ -379,7 +379,7 @@ void FirefoxRequestor::doRequest(const KURL& url)
 
   if(!m_process->start(KProcess::Block))
   {
-    emit sigError("Error executing Firefox.");
+    emit sigError(i18n("Error executing Firefox."));
   }
   else
   {
@@ -391,7 +391,7 @@ void FirefoxRequestor::doRequest(const KURL& url)
       *m_process  << url.prettyURL();
       if(!m_process->start())
       {
-        emit sigError("Error executing Firefox.");
+        emit sigError(i18n("Error executing Firefox."));
       }
       else
       {
@@ -436,7 +436,7 @@ void OperaRequestor::doRequest(const KURL& url)
 
   if(!m_process->start())
   {
-    emit sigError("Error executing Opera.");
+    emit sigError(i18n("Error executing Opera."));
   }
   else
   {
@@ -495,14 +495,16 @@ void ConsoleRequestor::doRequest(const KURL& url)
     kdDebug() << "executing console: " << (consoleApp + " /bin/sh") << " -c "              
               << m_env.join(" ") << " " 
               << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + m_args) + ";echo \"Press any key to continue...\";read"
+              << (cmd + " " + url.path() + " " + m_args) + (";echo " + 
+                  i18n("\"Press Enter to continue...\"") + ";read")
               << endl;
   
     //KProcess::quote(filePath)
     *m_process << QStringList::split(' ',consoleApp + " /bin/sh") << "-c"
       << (
           QString("cd ") +  url.directory() + ";"
-          + (cmd + " " + url.path() + " " + m_args) + ";echo \"Press any key to continue...\";read");
+          + (cmd + " " + url.path() + " " + m_args) + (";echo " + 
+            i18n("\"Press Enter to continue...\"") + ";read"));
   }
   else
   {
@@ -510,7 +512,8 @@ void ConsoleRequestor::doRequest(const KURL& url)
 
     kdDebug() << "executing : " << "/bin/sh" << " -c "
               << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + m_args + ";echo \"Press any key to continue...\";read")
+              << (cmd + " " + url.path() + " " + m_args + ";echo " +
+                 i18n("\"Press Enter to continue...\"") + ";read")
               << endl;
   
     //KProcess::quote(filePath)
@@ -520,7 +523,7 @@ void ConsoleRequestor::doRequest(const KURL& url)
 
   if(!m_process->start())
   {
-    emit sigError("Error executing console.");
+    emit sigError(i18n("Error executing console."));
   }
   else
   {

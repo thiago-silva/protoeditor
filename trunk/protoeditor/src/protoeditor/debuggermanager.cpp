@@ -35,6 +35,7 @@
 #include "sitesettings.h"
 #include "phpsettings.h"
 
+#include <klocale.h>
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kstatusbar.h>
@@ -214,7 +215,7 @@ void DebuggerManager::slotScriptRun()
 
   if(!url.isLocalFile())
   {
-    m_window->showSorry("Unable to run non-local file");    
+    m_window->showSorry(i18n("Unable to run non-local file"));
   }
   else
   {
@@ -245,7 +246,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
     else
     {
       m_activeDebugger->continueExecution();
-      m_window->setDebugStatusMsg("Continuing...");
+      m_window->setDebugStatusMsg(i18n("Continuing..."));
       return KURL();
     }
   }
@@ -269,7 +270,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
   
   if(!m_activeDebugger)
   {
-    m_window->showSorry("Error loading debugger.");
+    m_window->showSorry(i18n("Error loading debugger."));
     return KURL();
   }
 
@@ -289,7 +290,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
 
   if(!url.isLocalFile())
   {
-    m_window->showSorry("Unable to debug non-local file");
+    m_window->showSorry(i18n("Unable to debug non-local file"));
     return KURL();
   }
 
@@ -328,7 +329,7 @@ void DebuggerManager::slotDebugStop()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg("Stoping...");
+  m_window->setDebugStatusMsg(i18n("Stoping..."));
   m_activeDebugger->stop();
 }
 
@@ -336,7 +337,7 @@ void DebuggerManager::slotDebugStepInto()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg("Steping...");
+  m_window->setDebugStatusMsg(i18n("Steping..."));
   m_activeDebugger->stepInto();
 }
 
@@ -344,7 +345,7 @@ void DebuggerManager::slotDebugStepOver()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg("Steping...");
+  m_window->setDebugStatusMsg(i18n("Steping..."));
   m_activeDebugger->stepOver();
 }
 
@@ -352,7 +353,7 @@ void DebuggerManager::slotDebugStepOut()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg("Steping...");
+  m_window->setDebugStatusMsg(i18n("Steping..."));
   m_activeDebugger->stepOut();
 }
 
@@ -646,13 +647,13 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
   m_window->stackCombo()->clear();
   m_window->edOutput()->clear();
 
-  m_window->setDebugStatusMsg("Debug started");
+  m_window->setDebugStatusMsg(i18n("Debug started"));
   m_window->setDebugStatusName(m_activeDebugger->name()); //show the name of the debugger on the StatusBar
   m_window->setLedState(MainWindow::LedOn);               //green led
 
   //setup the actions stuff
   m_window->actionStateChanged("debug_started");
-  m_window->actionCollection()->action("debug_start")->setText("Continue");
+  m_window->actionCollection()->action("debug_start")->setText(i18n("Continue"));
 
   m_window->actionCollection()->action("site_selection")->setEnabled(false);
 
@@ -677,9 +678,9 @@ void DebuggerManager::slotDebugEnded()
   //setup the actions stuff
   m_window->actionCollection()->action("site_selection")->setEnabled(true);
   m_window->actionStateChanged("debug_stopped");
-  m_window->actionCollection()->action("debug_start")->setText("Start Debug");
+  m_window->actionCollection()->action("debug_start")->setText(i18n("Start Debug"));
   
-  m_window->setDebugStatusMsg("Stopped");
+  m_window->setDebugStatusMsg(i18n("Stopped"));
   m_window->setLedState(MainWindow::LedOff); //red led
 
   EditorTabWidget* ed = m_window->tabEditor();

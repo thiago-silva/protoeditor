@@ -91,13 +91,13 @@ void Connection::slotError(int error)
   switch(error)
   {
     case QSocket::ErrConnectionRefused:
-      emit sigError(QString("Connection refused"));
+      emit sigError(i18n("Connection refused"));
       break;
     case QSocket::ErrHostNotFound:
-      emit sigError(QString("Host not found"));
+      emit sigError(i18n("Host not found"));
       break;
     case QSocket::ErrSocketRead:
-      emit sigError(QString("Error reading network data"));
+      emit sigError(i18n("Error reading network data"));
       break;
   }
 }
@@ -132,7 +132,7 @@ bool Connection::listenOn(int port)
   {
     m_listening = true;
     m_notifier = new QSocketNotifier(m_device->socket(), QSocketNotifier::Read,
-                                     this, "accepting new connections" );
+                                     this, i18n("accepting new connections"));
 
     connect( m_notifier, SIGNAL(activated(int)),
              this, SLOT(slotIncomingConnection(int)) );

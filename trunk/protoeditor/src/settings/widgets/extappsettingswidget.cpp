@@ -27,7 +27,7 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <klineedit.h>
-
+#include <klocale.h>
 
 
 ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
@@ -37,13 +37,13 @@ ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
   QGridLayout* grid = new QGridLayout(this, 2, 2, 3, 10);
 
   m_ckUseExternalApp = new QCheckBox(this);
-  m_ckUseExternalApp->setText("Use external browser");
+  m_ckUseExternalApp->setText(i18n("Use external browser"));
 
   m_cbExtApp = new QComboBox(this);
-  m_cbExtApp->insertItem("Konqueror");
-  m_cbExtApp->insertItem("Mozilla");
-  m_cbExtApp->insertItem("Firefox");
-  m_cbExtApp->insertItem("Opera");
+  m_cbExtApp->insertItem(i18n("Konqueror"));
+  m_cbExtApp->insertItem(i18n("Mozilla"));
+  m_cbExtApp->insertItem(i18n("Firefox"));
+  m_cbExtApp->insertItem(i18n("Opera"));
   m_cbExtApp->setEnabled(false);
 
   grid->addWidget(m_ckUseExternalApp, 0, 0);
@@ -52,7 +52,7 @@ ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
   connect(m_ckUseExternalApp, SIGNAL(stateChanged(int)), this, SLOT(slotUseExtApp(int)));
 
   m_ckUseConsole = new QCheckBox(this);
-  m_ckUseConsole->setText("External console:");
+  m_ckUseConsole->setText(i18n("External console:"));
   grid->addWidget(m_ckUseConsole, 1, 0);
 
   connect(m_ckUseConsole, SIGNAL(stateChanged(int)), this, SLOT(slotUseConsole(int)));

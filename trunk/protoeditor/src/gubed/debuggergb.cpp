@@ -397,7 +397,7 @@ void DebuggerGB::updateMessage(int type, const QString& msg, const QString& file
 
 void DebuggerGB::updateError(const QString& filePath)
 {
-  manager()->debugMessage(DebuggerManager::ErrorMsg, "Fatal error", KURL::fromPathOrURL(filePath), 0);  
+  manager()->debugMessage(DebuggerManager::ErrorMsg, i18n("Fatal error"), KURL::fromPathOrURL(filePath), 0);  
 }
 
 void DebuggerGB::slotNewConnection()

@@ -31,6 +31,7 @@
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <klocale.h>
 
 SiteSettingsWidget::SiteSettingsWidget(QWidget *parent, const char *name)
     : QWidget(parent, name)
@@ -38,7 +39,7 @@ SiteSettingsWidget::SiteSettingsWidget(QWidget *parent, const char *name)
   QVBoxLayout* mainLayout = new QVBoxLayout(this, 10, 0);
 
   QLabel * lbSites = new QLabel(this);
-  lbSites->setText("Sites:");
+  lbSites->setText(i18n("Sites:"));
   mainLayout->addWidget(lbSites);
 
   QVBoxLayout* buttonLayout = new QVBoxLayout(this, 10, 10);
@@ -49,16 +50,16 @@ SiteSettingsWidget::SiteSettingsWidget(QWidget *parent, const char *name)
   hlayout->addWidget(m_sitesListBox);
 
   m_btAdd = new KPushButton(this);
-  m_btAdd->setText("Add...");
+  m_btAdd->setText(i18n("Add..."));
   buttonLayout->addWidget(m_btAdd);
 
   m_btModify = new KPushButton(this);
-  m_btModify->setText("Modify...");
+  m_btModify->setText(i18n("Modify..."));
   m_btModify->setEnabled(false);
   buttonLayout->addWidget(m_btModify);
 
   m_btRemove = new KPushButton(this);
-  m_btRemove->setText("Remove");
+  m_btRemove->setText(i18n("Remove"));
   m_btRemove->setEnabled(false);
   buttonLayout->addWidget(m_btRemove);
   buttonLayout->addItem(new QSpacerItem( 20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding ));
@@ -104,7 +105,7 @@ void SiteSettingsWidget::slotAdd()
 
     if((m_sitesListBox->findItem(dialog->name()) != 0) ||
        (dialog->name() == ProtoeditorSettings::LocalSiteName)) {
-      KMessageBox::sorry(this, QString("Site \"") + dialog->name() + "\" already exists.");
+      KMessageBox::sorry(this, i18n("Site \"") + dialog->name() + i18n("\" already exists."));
 
     } else {
       addSite(dialog->name(), dialog->url(),

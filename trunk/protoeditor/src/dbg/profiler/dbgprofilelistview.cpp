@@ -21,6 +21,7 @@
 #include "dbgprofilelistview.h"
 #include "dbgprofiledata.h"
 #include "dbgprofilelocation.h"
+#include <klocale.h>
 
 DBGProfileListViewItem::DBGProfileListViewItem(KListView* parent, DBGProfileData* data, int view)
     : KListViewItem(parent), m_data(data)
@@ -142,13 +143,13 @@ DBGProfileListView::DBGProfileListView(QWidget *parent, const char *name)
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
 
-  addColumn("Location");
-  addColumn("Line");
-  addColumn("Hits");
-  addColumn("Avarage time (ms)");
-  addColumn("Total time (ms)");
-  addColumn("Min time (ms)");
-  addColumn("Max time (ms)");
+  addColumn(i18n("Location"));
+  addColumn(i18n("Line"));
+  addColumn(i18n("Hits"));
+  addColumn(i18n("Avarage time (ms)"));
+  addColumn(i18n("Total time (ms)"));
+  addColumn(i18n("Min time (ms)"));
+  addColumn(i18n("Max time (ms)"));
   //   addColumn("Chart");
 
   setColumnAlignment(LineCol, Qt::AlignHCenter);

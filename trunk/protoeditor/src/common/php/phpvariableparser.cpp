@@ -23,6 +23,7 @@
 
 #include <qregexp.h>
 #include <kdebug.h>
+#include <klocale.h>
 #include "phpvariable.h"
 
 PHPVariableParser::PHPVariableParser(const QString& raw)
@@ -149,9 +150,9 @@ QString PHPVariableParser::parseBool()
   if(rx.search(m_raw, m_index) == -1) return "";
   m_index += rx.matchedLength();
   if(rx.cap(1) == "1") {
-    return QString("true");
+    return i18n("true");
   } else {
-    return QString("false");
+    return i18n("false");
   }
 }
 

@@ -49,7 +49,7 @@ DBGSettings::DBGSettings(const QString& name)
   addItem( itemListenPort, QString::fromLatin1( "ListenPort" ) );
 
   KConfigSkeleton::ItemBool  *itemEnableJIT;
-  itemEnableJIT = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "EnableJIT" ), mEnableJIT, true );
+  itemEnableJIT = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "EnableJIT" ), mEnableJIT, false );
   addItem( itemEnableJIT, QString::fromLatin1( "EnableJIT" ) );
 
   readConfig();

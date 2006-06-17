@@ -26,24 +26,25 @@
 #include <qtoolbutton.h>
 
 #include <kiconloader.h>
+#include <klocale.h>
 
 DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
   : KDialog(parent, name)
 {
-  setCaption("DBG Profiler");
+  setCaption(i18n("DBG Profiler"));
 
   QVBoxLayout* vlayout = new QVBoxLayout(this, 11, 6);
 
   QHBoxLayout* hbox = new QHBoxLayout(0, 0, 6);
 
   QLabel* lbView = new QLabel(this);
-  lbView->setText("View mode:");
+  lbView->setText(i18n("View mode:"));
   hbox->addWidget(lbView);
 
   KIconLoader *loader = KGlobal::iconLoader();
   
   m_btModule = new QToolButton(this);
-  m_btModule->setTextLabel("Module view");
+  m_btModule->setTextLabel(i18n("Module view"));
   m_btModule->setPixmap(loader->loadIcon("view_icon", KIcon::Small));
   m_btModule->setToggleButton(true);
   m_btModule->setOn(true);
@@ -51,14 +52,14 @@ DBGProfileDialog::DBGProfileDialog(QWidget* parent, const char* name)
   hbox->addWidget(m_btModule);
 
   m_btContext = new QToolButton(this);
-  m_btContext->setTextLabel("Context view");
+  m_btContext->setTextLabel(i18n("Context view"));
   m_btContext->setPixmap(loader->loadIcon("view_detailed", KIcon::Small));
   m_btContext->setToggleButton(true);
   m_btContext->setAutoRaise(true);
   hbox->addWidget(m_btContext);
 
   m_btDetail = new QToolButton(this);
-  m_btDetail->setTextLabel("Detailed view");
+  m_btDetail->setTextLabel(i18n("Detailed view"));
   m_btDetail->setPixmap(loader->loadIcon("view_text", KIcon::Small));
   m_btDetail->setToggleButton(true);
   m_btDetail->setAutoRaise(true);

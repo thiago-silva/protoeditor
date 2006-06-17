@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "variable.h"
+#include <klocale.h>
 
 Variable::Variable(Variable* parent)
     : m_parent(parent), m_name(""), m_value(NULL), m_isShared(false), m_isReference(false) {}
@@ -103,7 +104,7 @@ Variable* Variable::parent()
 
 //--------------------------------------------------------------
 
-QString VariableValue::UndefinedType = "Undefined";
+QString VariableValue::UndefinedType = i18n("Undefined");
 
 VariableValue::VariableValue(Variable* owner)
     : m_varOwner(owner), m_isScalar(true) {}

@@ -204,7 +204,7 @@ DBGResponseTag* DBGReceiver::buildTag(int frameName, char* buffer)
       tag = new DBGResponseTagSrcCtxInfo(buffer);
       break;
     default:
-      emit sigError("Error receiving network data.");
+      emit sigError(i18n("Error receiving network data."));
       break;
   }
   return tag;

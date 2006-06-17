@@ -35,6 +35,7 @@
 #include "sitesettings.h"
 #include "session.h"
 
+#include <klocale.h>
 #include <kdebug.h>
 #include <knotifyclient.h>
 
@@ -274,7 +275,7 @@ bool DBGNet::processHeader(DBGHeader* header)
 {
   if(header->sync() != DBGSYNC)
   {
-    error("Network sync error.");
+    error(i18n("Network sync error."));
     return false;
   }
 
@@ -291,7 +292,7 @@ bool DBGNet::processHeader(DBGHeader* header)
     case DBGC_ERROR:
       if(m_isProfiling)
       {
-        error("PHP could not execute the script. Check for errors before running the profiler.");
+        error(i18n("PHP could not execute the script. Check for errors before running the profiler."));
         return false;
       }
       break;
@@ -561,7 +562,7 @@ void DBGNet::processProf(const DBGResponseTagProf* proftag, DBGResponsePack*)
   QString contextName = m_dbgFileInfo->contextName(ctxid);
   if(contextName.isEmpty())
   {
-    contextName = moduleName.section('/', -1).append("::main");
+    contextName = moduleName.section('/', -1).append(i18n("::main()"));
   }
 
   contextName.append("()");

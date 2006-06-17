@@ -24,7 +24,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
-
+#include <klocale.h>
 #include "dbgsettings.h"
 
 DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, const char *name)
@@ -35,14 +35,14 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   QHBoxLayout* jitbox = new QHBoxLayout(0, 1, 10);
 
   m_ckEnableJIT = new QCheckBox(this);
-  m_ckEnableJIT->setText("Enable JIT");
+  m_ckEnableJIT->setText(i18n("Enable JIT"));
   jitbox->addWidget(m_ckEnableJIT);
 
   mainLayout->addLayout(jitbox);
   QHBoxLayout* portbox = new QHBoxLayout(0, 1, 10);
 
   QLabel* lblistenPort = new QLabel(this);
-  lblistenPort->setText("Listen on port:");
+  lblistenPort->setText(i18n("Listen on port:"));
   portbox->addWidget(lblistenPort);
 
   m_spListenPort = new QSpinBox(this);
@@ -53,7 +53,7 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   mainLayout->addLayout(portbox);
 
   QGroupBox* groupbox = new QGroupBox(this);
-  groupbox->setTitle("Options");
+  groupbox->setTitle(i18n("Options"));
   groupbox->setColumnLayout(0, Qt::Vertical );
   QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
   groupboxLayout->setAlignment(Qt::AlignTop);
@@ -61,25 +61,25 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   QGridLayout* grid = new QGridLayout(0, 3, 2, 3, 6);
 
   m_ckBreakOnLoad = new QCheckBox(groupbox);
-  m_ckBreakOnLoad->setText("Break on load");
+  m_ckBreakOnLoad->setText(i18n("Break on load"));
   grid->addWidget(m_ckBreakOnLoad, 0, 0);
 
   m_ckSendErrors = new QCheckBox(groupbox);
-  m_ckSendErrors->setText("Send erros");
+  m_ckSendErrors->setText(i18n("Send erros"));
   grid->addWidget(m_ckSendErrors, 1, 0);
 
 
   m_ckSendLogs = new QCheckBox(groupbox);
-  m_ckSendLogs->setText("Send logs");
+  m_ckSendLogs->setText(i18n("Send logs"));
   grid->addWidget(m_ckSendLogs, 2, 0);
 
 
   m_ckSendOutput = new QCheckBox(groupbox);
-  m_ckSendOutput->setText("Send output");
+  m_ckSendOutput->setText(i18n("Send output"));
   grid->addWidget(m_ckSendOutput, 0, 1);
 
   m_ckSendDetailedOutput = new QCheckBox(groupbox);
-  m_ckSendDetailedOutput->setText("Send detailed output");
+  m_ckSendDetailedOutput->setText(i18n("Send detailed output"));
   grid->addWidget(m_ckSendDetailedOutput, 1, 1);
 
   groupboxLayout->addLayout(grid);

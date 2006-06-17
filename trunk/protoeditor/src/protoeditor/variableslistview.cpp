@@ -37,9 +37,9 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   setRootIsDecorated(true);
   setSorting(-1);
 
-  addColumn(tr2i18n("Name"));
-  addColumn(tr2i18n("Value"));
-  addColumn(tr2i18n("Type"));
+  addColumn(i18n("Name"));
+  addColumn(i18n("Value"));
+  addColumn(i18n("Type"));
 
   setColumnWidthMode(VariablesListView::NameCol,  Manual);
   setColumnWidthMode(VariablesListView::ValueCol, Manual);
@@ -134,8 +134,8 @@ void VariablesListView::slotContextMenuRequested(QListViewItem* item, const QPoi
   enum { CopyVarItem, CopyValueItem };
   
   KPopupMenu* menu = new KPopupMenu(this);
-  menu->insertItem("Copy variable", CopyVarItem);
-  menu->insertItem("Copy value", CopyValueItem);
+  menu->insertItem(i18n("Copy variable"), CopyVarItem);
+  menu->insertItem(i18n("Copy value"), CopyValueItem);
  
   if(!item)
   {

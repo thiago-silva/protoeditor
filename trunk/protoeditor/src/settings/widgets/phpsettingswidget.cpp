@@ -29,6 +29,7 @@
 #include <qtabwidget.h>
 
 #include <klineedit.h>
+#include <klocale.h>
 
 
 PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
@@ -39,7 +40,7 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   QGridLayout* grid = new QGridLayout(0, 2,2, 3, 10);
 
   QLabel* lbPhp= new QLabel(this);
-  lbPhp->setText("PHP command:");
+  lbPhp->setText(i18n("PHP command:"));
   grid->addWidget(lbPhp, 0, 0);
 
 
@@ -47,7 +48,7 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   grid->addWidget(m_edPHPCommand, 0, 1);
   
   QLabel* lbDefaultDebugger = new QLabel(this);
-  lbDefaultDebugger->setText("Default debugger:");
+  lbDefaultDebugger->setText(i18n("Default debugger:"));
   grid->addWidget(lbDefaultDebugger, 1, 0);
 
   m_cbDefaultDebugger = new QComboBox(this);

@@ -182,7 +182,7 @@ void MainWindow::setupActions()
 
   KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
 
-  m_siteAction     = new KSelectAction("Site", 0, actionCollection(), "site_selection");
+  m_siteAction     = new KSelectAction(i18n("Site"), 0, actionCollection(), "site_selection");
   m_siteAction->setComboWidth(150);
 
   connect(m_siteAction, SIGNAL(activated(const QString&)),
@@ -192,7 +192,7 @@ void MainWindow::setupActions()
 //       this, SLOT(slotCurrentSiteChanged(const QString&)));
   
 
-  m_activeScriptAction = new KToggleAction("Use Current Script", "attach", 0, actionCollection(), "use_current_script");
+  m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
   (void)new KAction(i18n("Run in Console"), "gear", "F9", this,
                     SLOT(slotScriptRun()), actionCollection(), "script_run");
@@ -225,16 +225,16 @@ void MainWindow::setupActions()
   //arguments tool bar
   m_cbArguments = new KHistoryCombo(true, this);
 
-  KWidgetAction* comboAction = new KWidgetAction( m_cbArguments, "Argument Bar ", 0,
+  KWidgetAction* comboAction = new KWidgetAction( m_cbArguments, i18n("Argument Bar "), 0,
                   0, 0, actionCollection(), "argument_combobox" );
   comboAction->setShortcutConfigurable(false);
   comboAction->setAutoSized(true);
 
 
-  (void)new KAction("Clear Arguments", "clear_left", 0, m_cbArguments,
+  (void)new KAction(i18n("Clear Arguments"), "clear_left", 0, m_cbArguments,
                     SLOT(clearEdit()), actionCollection(), "argument_clear");
 
-  (void)new KWidgetAction(new QLabel("Arguments: ", this), "Arguments ", "Alt+a", 
+  (void)new KWidgetAction(new QLabel(i18n("Arguments: "), this), i18n("Arguments "), "Alt+a", 
       this, SLOT(slotFocusArgumentBar()), actionCollection(), "argument_label" );
   
 
@@ -264,14 +264,14 @@ void MainWindow::createWidgets()
 
   m_globaVarList = new VariablesListView(globalVarTab);
   globalVarTabLayout->addWidget(m_globaVarList);
-  tabDebug->insertTab(globalVarTab, QString("Global"));
+  tabDebug->insertTab(globalVarTab, i18n("Global"));
 
   QWidget* tabStack = new QWidget(tabDebug);
   QVBoxLayout* varTabLayout = new QVBoxLayout(tabStack, 1, 1);
   QHBoxLayout* stackComboLayout = new QHBoxLayout(0, 6, 6);
 
   QLabel* stackLabel = new QLabel(tabStack);
-  stackLabel->setText(("Stack:"));
+  stackLabel->setText(i18n("Stack:"));
   stackLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, stackLabel->sizePolicy().hasHeightForWidth()));
   stackComboLayout->addWidget(stackLabel);
 
@@ -281,7 +281,7 @@ void MainWindow::createWidgets()
 
   m_localVarList= new VariablesListView(tabStack);
   varTabLayout->addWidget(m_localVarList);
-  tabDebug->insertTab(tabStack, QString("Local"));
+  tabDebug->insertTab(tabStack, i18n("Local"));
 
   QWidget* tabWatch = new QWidget(tabDebug);
   QVBoxLayout* watchTabLayout = new QVBoxLayout(tabWatch, 1, 1);
@@ -289,7 +289,7 @@ void MainWindow::createWidgets()
   QHBoxLayout* addWatchLayout = new QHBoxLayout(0, 6, 6);
 
   QLabel* addLabel = new QLabel(tabWatch);
-  addLabel->setText(("Watch:"));
+  addLabel->setText(i18n("Watch:"));
   addWatchLayout->addWidget(addLabel);
 
   m_edAddWatch = new KLineEdit(tabWatch);
@@ -298,7 +298,7 @@ void MainWindow::createWidgets()
 
   m_btAddWatch = new KPushButton(tabWatch);
   m_btAddWatch->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, m_btAddWatch->sizePolicy().hasHeightForWidth()));
-  m_btAddWatch->setText(("Add"));
+  m_btAddWatch->setText(i18n("Add"));
   addWatchLayout->addWidget(m_btAddWatch);
 
   QSpacerItem* spacer = new QSpacerItem(430, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -307,21 +307,21 @@ void MainWindow::createWidgets()
 
   m_watchList = new WatchListView(tabWatch);
   watchTabLayout->addWidget(m_watchList);
-  tabDebug->insertTab(tabWatch, QString("Watch"));
+  tabDebug->insertTab(tabWatch, i18n("Watch"));
 
   QWidget* breakpointTab = new QWidget(tabDebug);
   QVBoxLayout* breakpointTabLayout = new QVBoxLayout(breakpointTab, 1, 1);
 
   m_breakpointList = new BreakpointListView(breakpointTab);
   breakpointTabLayout->addWidget(m_breakpointList);
-  tabDebug->insertTab(breakpointTab, QString("Breakpoints"));
+  tabDebug->insertTab(breakpointTab, i18n("Breakpoints"));
 
   QWidget* logTab = new QWidget(tabDebug);
   QVBoxLayout* logTabLayout = new QVBoxLayout(logTab, 1, 1);
 
   m_messageListView = new MessageListView(logTab);
   logTabLayout->addWidget(m_messageListView);
-  tabDebug->insertTab(logTab, QString("Messages"));
+  tabDebug->insertTab(logTab, i18n("Messages"));
 
   QWidget* outputTab = new QWidget(tabDebug);
   QVBoxLayout* outputTabLayout = new QVBoxLayout(outputTab, 1, 1);
@@ -341,7 +341,7 @@ void MainWindow::createWidgets()
   outputTabLayout->addWidget(doc->createView(outputTab));
   */
 
-  tabDebug->insertTab(outputTab, QString("Output"));
+  tabDebug->insertTab(outputTab, i18n("Output"));
 }
 
 MainWindow::~MainWindow()
@@ -395,7 +395,7 @@ void MainWindow::slotOpenFile()
   //note: the filter must be the same as SiteSettingsDialog::SiteSettingsDialog default file
   QStringList strList =
     KFileDialog::getOpenFileNames(
-      location, "*.php| PHP Scripts\n*|All Files", this);
+      location, i18n("*.php| PHP Scripts\n*|All Files"), this);
 
   if(strList.count())
   {
@@ -419,7 +419,7 @@ void MainWindow::openFile(const KURL& url)
   }
 
   m_actionRecent->removeURL(url);
-  showSorry(QString("\"") + url.prettyURL() + "\" is unreadable.");
+  showSorry(QString("\"") + url.prettyURL() + i18n("\" is unreadable."));
 }
 
 

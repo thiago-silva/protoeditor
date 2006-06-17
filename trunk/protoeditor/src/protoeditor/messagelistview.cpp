@@ -34,9 +34,9 @@ MessageListView::MessageListView(QWidget *parent, const char *name)
   setAllColumnsShowFocus(true);
 
   addColumn("*");
-  addColumn(tr2i18n("Message"));
-  addColumn(tr2i18n("Line"));
-  addColumn(tr2i18n("File"));
+  addColumn(i18n("Message"));
+  addColumn(i18n("Line"));
+  addColumn(i18n("File"));
 
   setColumnWidth(MessageListView::MessageCol, 350);
   setColumnWidth(MessageListView::FileCol, 200);

@@ -32,14 +32,14 @@ BreakpointListView::BreakpointListView(QWidget *parent, const char *name)
   setSorting(-1);
   setAllColumnsShowFocus(true);
 
-  addColumn(tr2i18n(""));
-  addColumn(tr2i18n("Status"));
-  addColumn(tr2i18n("Line"));
-  addColumn(tr2i18n("File name"));
-  addColumn(tr2i18n("File path"));    
-  addColumn(tr2i18n("Condition"));
-  addColumn(tr2i18n("Skip hits"));
-  addColumn(tr2i18n("Hit count"));
+  addColumn(i18n(""));
+  addColumn(i18n("Status"));
+  addColumn(i18n("Line"));
+  addColumn(i18n("File name"));
+  addColumn(i18n("File path"));    
+  addColumn(i18n("Condition"));
+  addColumn(i18n("Skip hits"));
+  addColumn(i18n("Hit count"));
 
   setColumnWidthMode(StatusIconCol, Manual);
   setColumnWidthMode(StatusTextCol, Manual);
@@ -82,9 +82,9 @@ void BreakpointListView::slotContextMenuRequested(QListViewItem* item, const QPo
   enum { ToggleBP, DeleteBP, DeleteAllBPs };  
   
   KPopupMenu* menu = new KPopupMenu(this);
-  menu->insertItem("Toggle State", ToggleBP);
-  menu->insertItem("Delete", DeleteBP);
-  menu->insertItem("Delete All", DeleteAllBPs);
+  menu->insertItem(i18n("Toggle State"), ToggleBP);
+  menu->insertItem(i18n("Delete"), DeleteBP);
+  menu->insertItem(i18n("Delete All"), DeleteAllBPs);
 
   if(!item)
   {

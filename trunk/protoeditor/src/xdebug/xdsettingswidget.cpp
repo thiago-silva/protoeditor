@@ -25,6 +25,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
+#include <klocale.h>
 
 #include "xdsettings.h"
 
@@ -37,14 +38,14 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
   QHBoxLayout* jitbox = new QHBoxLayout(0, 1, 10);
 
   m_ckEnableJIT = new QCheckBox(this);
-  m_ckEnableJIT->setText("Enable JIT");
+  m_ckEnableJIT->setText(i18n("Enable JIT"));
   jitbox->addWidget(m_ckEnableJIT);
 
   mainLayout->addLayout(jitbox);
   QHBoxLayout* portbox = new QHBoxLayout(0, 1, 10);
 
   QLabel* lblistenPort = new QLabel(this);
-  lblistenPort->setText("Listen on port:");
+  lblistenPort->setText(i18n("Listen on port:"));
   portbox->addWidget(lblistenPort);
 
   m_spListenPort = new QSpinBox(this);
@@ -55,19 +56,19 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
   mainLayout->addLayout(portbox);
 
   QGroupBox* groupbox = new QGroupBox(this);
-  groupbox->setTitle("Options");
+  groupbox->setTitle(i18n("Options"));
   groupbox->setColumnLayout(0, Qt::Vertical );
   QVBoxLayout* groupboxLayout = new QVBoxLayout(groupbox->layout());
   groupboxLayout->setAlignment(Qt::AlignTop);
 
   QVBoxLayout* vbox = new QVBoxLayout(0, 3, 6);
   m_ckBreakOnLoad = new QCheckBox(groupbox);
-  m_ckBreakOnLoad->setText("Break on load");
+  m_ckBreakOnLoad->setText(i18n("Break on load"));
   vbox->addWidget(m_ckBreakOnLoad);
   
     
   m_ckSendSuperGlobals = new QCheckBox(groupbox);
-  m_ckSendSuperGlobals->setText("Send super global variables");
+  m_ckSendSuperGlobals->setText(i18n("Send super global variables"));
   vbox->addWidget(m_ckSendSuperGlobals);
 
   groupboxLayout->addLayout(vbox);

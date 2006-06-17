@@ -41,17 +41,17 @@ EditorTabWidget::EditorTabWidget(QWidget* parent, MainWindow *window, const char
 {
 
   //Tabs control
-  (void)new KAction("Activate Next Tab", "tab_next", 
+  (void)new KAction(i18n("Activate Next Tab"), "tab_next", 
     "Alt+Right", this, SLOT(slotActivateNextTab()), m_window->actionCollection(), "activatenexttab" );
 
-  (void)new KAction("Activate Previous Tab", "tab_previous", 
+  (void)new KAction(i18n("Activate Previous Tab"), "tab_previous", 
     "Alt+Left", this, SLOT(slotActivatePrevTab()), m_window->actionCollection(), "activateprevtab" );
 
-  (void)new KAction("Raise Editor", "tab_next", 
+  (void)new KAction(i18n("Raise Editor"), "tab_next", 
     "Alt+C", this, SLOT(slotFocusCurrentDocument()), m_window->actionCollection(), "focuscurrentdocument" );
 
 
-  (void)new KAction("Configure &Editor...", 0, 0, 
+  (void)new KAction(i18n("Configure &Editor..."), 0, 0, 
     this, SLOT(slotConfigureEditor()), m_window->actionCollection(), "settings_editor");
 
   setAcceptDrops(TRUE);
@@ -493,9 +493,9 @@ void EditorTabWidget::contextMenu(int index, const QPoint & p)
   enum { Close, CloseOthers, CloseAll };
 
   KPopupMenu* menu = new KPopupMenu(this);
-  menu->insertItem(SmallIcon("fileclose"), "Close", Close);
-  menu->insertItem("Close Other Tabs", CloseOthers);
-  menu->insertItem("Close All", CloseAll);
+  menu->insertItem(SmallIcon("fileclose"), i18n("Close"), Close);
+  menu->insertItem(i18n("Close Other Tabs"), CloseOthers);
+  menu->insertItem(i18n("Close All"), CloseAll);
 
   Document* doc = document(index);
   int idx = 0;
@@ -572,13 +572,13 @@ void EditorTabWidget::slotMenuAboutToShow()
     QString watch = currentDocument()->wordUnderCursor();
     if(watch.isEmpty())
     {
-      ac->setText(QString("Add Watch"));
+      ac->setText(i18n("Add Watch"));
       ac->setEnabled(false);
     }
     else
     {
       ac->setEnabled(true);
-      ac->setText(QString("Add Watch: ") + watch);
+      ac->setText(i18n("Add Watch: ") + watch);
     }
   }
 }

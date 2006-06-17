@@ -22,6 +22,7 @@
 #include "breakpointlistview.h"
 #include "debuggerbreakpoint.h"
 #include <kiconloader.h>
+#include <klocale.h>
 
 BreakpointListViewItem::BreakpointListViewItem(KListView *parent)
     : KListViewItem(parent), m_breakpoint(0), m_offlineState(DebuggerBreakpoint::ENABLED)
@@ -64,18 +65,18 @@ void BreakpointListViewItem::setBreakpoint(DebuggerBreakpoint* bp)
 void BreakpointListViewItem::showBreakpoint() {
   switch(m_breakpoint->status()) {
       case DebuggerBreakpoint::ENABLED:
-      setText(BreakpointListView::StatusTextCol, "Enabled");
+      setText(BreakpointListView::StatusTextCol, i18n("Enabled"));
       setPixmap(BreakpointListView::StatusIconCol, m_enabled);
       break;
 
       case DebuggerBreakpoint::DISABLED:
-      setText(BreakpointListView::StatusTextCol, "Disabled");
+      setText(BreakpointListView::StatusTextCol, i18n("Disabled"));
       setPixmap(BreakpointListView::StatusIconCol, m_disabled);
       break;
 
       case DebuggerBreakpoint::UNRESOLVED:
       default:
-      setText(BreakpointListView::StatusTextCol, "Unresolved");
+      setText(BreakpointListView::StatusTextCol, i18n("Unresolved"));
       setPixmap(BreakpointListView::StatusIconCol, m_unresolved);
       break;
   }

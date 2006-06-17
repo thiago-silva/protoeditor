@@ -445,7 +445,7 @@ void XDNet::processResponse(QDomElement& root)
     }
     else
     {
-      error(QString("Unknown error\ncommand: ") + cmd +
+      error(i18n("Unknown error\ncommand: ") + cmd +
             "\nstatus: " + root.attribute("status") +
             "\nreason: " + root.attribute("reason"));
     }
@@ -466,7 +466,7 @@ void XDNet::processResponse(QDomElement& root)
 
       if((where == "{main}") || (where == "include"))
       {
-        where = file + "::main()";
+        where = file + i18n("::main()");
       }
 
       //to local filepath
@@ -527,7 +527,7 @@ void XDNet::processResponse(QDomElement& root)
     } 
     else 
     {
-      error("Xdebug client: Internal error");
+      error(i18n("Xdebug client: Internal error"));
     }
   }
   else if(cmd == "property_get")
@@ -598,7 +598,7 @@ void XDNet::processResponse(QDomElement& root)
   }
   else
   {
-    error(QString("Unknow network packet: ") + cmd);
+    error(i18n("Unknow network packet: ") + cmd);
   }
 }
 

@@ -34,6 +34,7 @@
 #include <kurl.h>
 #include <qregexp.h>
 #include <stdarg.h>
+#include <klocale.h>
 
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
@@ -614,7 +615,7 @@ void GBNet::processBacktrace(const QString& bt)
 
     rx.setPattern("a:4:\\{s:\\d*:\"file\";s:\\d*:\"([^\"]*)\";s:\\d*:\"class\";s:\\d*:\"[^\"]*\";s:\\d*:\"function\";s:\\d*:\"([^\"]*)\";s:\\d*:\"line\";i:(\\d*);\\}");
     if(rx.search(bt, idx) == -1) {
-      error("Error receiving network data.");
+      error(i18n("Error receiving network data."));
       return;
     }
   
@@ -654,7 +655,7 @@ void GBNet::processVariable(const QString& var)
   rx.setPattern("s:\\d*:\"([^;]*)\";(.*)");  
   if(rx.search(var, 0) == -1)
   {
-    error("Error receiving network data.");
+    error(i18n("Error receiving network data."));
     return;
   }
 
@@ -679,7 +680,7 @@ void GBNet::processVariables(const QString& vars)
   QRegExp rx;
   rx.setPattern("s:\\d*:\"([^;]*)\";");  
   if(rx.search(vars, 0) == -1) {
-    error("Error receiving network data.");
+    error(i18n("Error receiving network data."));
     return;
   }
 
@@ -694,7 +695,7 @@ void GBNet::processLog(const QString& log)
   QRegExp rx;
   rx.setPattern("a:4:\\{s:\\d*:\"filename\";s:\\d*:\"([^;]*)\";s:\\d*:\"line\";i:(\\d*);s:\\d*:\"errnum\";i:(\\d*);s:\\d*:\"errmsg\";s:\\d*:\"([^;]*)\";");
   if(rx.search(log, 0) == -1) {
-    error("Error receiving network data.");
+    error(i18n("Error receiving network data."));
     return;
   }
 
@@ -717,7 +718,7 @@ void GBNet::processFatalError(const QString& err)
 
   if(rx.search(err, 0) == -1) 
   {
-    error("Error receiving network data.");
+    error(i18n("Error receiving network data."));
     return;
   }
 
