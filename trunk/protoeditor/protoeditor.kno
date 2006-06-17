@@ -19,9 +19,17 @@
 
 \NewEntry 0 Implementation
 
+\CurrentEntry 1 TODO
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<ul type="disc"><li>Diff head to 0.9 tag</li>
+<ul type="disc"><li>commit differences to 0.9 and continue working for 1.0 there (complete 1.0 TODO list)</li>
+<li>start working on 2.0 concurrently<br /></li></ul></ul>
+</body></html>
+
+
 \NewEntry 1 v1.0
 
-\NewEntry 2 TODO (0.9)
+\NewEntry 2 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Test again (implemented sigNewConnection() in all debuggers, but didn't tested yet):</li>
 <ul type="disc"><li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
@@ -31,7 +39,8 @@
 <ul type="disc"><li>XDebug2.0beta5 doesn't support conditional breakpoint (see xdebug sourcecode)<br /></li></ul>
 <li>Create Help docbook</li>
 <li>QStrings i18n aware<br /></li>
-<li>Release 0.9<br /></li>
+<li>JIT defaults to disabled on all debuggers<br /></li>
+<li>Release 1.0<br /></li>
 <li>----------issues --------------------<br /><br /></li>
 <li>Gubed:</li>
 <ul type="disc"><li>Breakpoints</li>
@@ -52,30 +61,25 @@
 </body></html>
 
 
-\CurrentEntry 2 1.0
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>JIT defaults to disabled on all debuggers</li></ul>
-</body></html>
-
-
 \NewEntry 1 v2.0
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Support for 1+ of the following languages:</li>
-<ul type="disc"><li>Ruby</li>
+<ul type="disc"><li>perl</li>
+<li>Ruby</li>
 <li>python</li>
-<li>perl</li>
 <li>Java</li>
 <li>Lua?<br /><br /></li></ul>
 <li>Add tab: &quot;Console&quot; for language debuggers that use it</li>
-<ul type="disc"><li>Create a KMDI, so its easy to hide/show the (numerous) tabs</li>
-<li>Debuggers might need to inform its capabilities to configure the UI accordingly.<br /></li></ul>
+<ul type="disc"><li>Create a (KMDI|similar), so its easy to hide/show the (numerous) tabs?</li>
+<li>Debuggers might need to inform its capabilities to configure the UI accordingly.</li>
+<ul type="disc"><li>Xdebug for instance, doesn't support conditional bp's<br /></li></ul></ul>
 <li>UI objects must be very configurable</li>
 <ul type="disc"><li>Debuggers that doesn't support Breakpoint's condition, should inform the UI about this.</li>
-<li>And so on... (profile, change var value, bp hitcount/skiphits, messages/log, output)<br /></li></ul>
+<li>And so on... (profile, change var value, bp hitcount/skiphits, messages/log, output)</li>
+<li>Thread tab (ruby, python, perl and so on use it)<br /></li></ul>
 <li>Starting a session should have timeout (in case the server doesn't respond)</li>
 <ul type="disc"><li>Like PHPEdit</li>
-<li>Ressurrection of LedWait<br /></li></ul>
-<li>Branch it, so v1.0 continue its own development.</li></ul>
+<li>Ressurrection of LedWait?</li></ul></ul>
 </body></html>
 
 \NewEntry 0 KDE faqs, howtos, standards
