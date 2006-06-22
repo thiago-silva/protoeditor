@@ -79,7 +79,7 @@ signals:
   void sigBreakpointMarked(Document*, int, bool enabled);
   void sigStatusMsg(const QString&);
   void sigTextChanged();
-  void sigDocumentSaved();
+  void sigDocumentSaved(Document*);
 private slots:
   void slotMarkChanged();
 

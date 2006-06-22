@@ -81,6 +81,7 @@ public:
 
   void terminate();
 
+  void saveExistingFiles();
 signals:
   void sigBreakpointMarked(const KURL&, int, bool);
   void sigBreakpointUnmarked(const KURL&, int);
@@ -107,7 +108,7 @@ private slots:
   
   void slotDropEvent(QDropEvent*);
 
-  void slotDocumentSaved();
+  void slotDocumentSaved(Document*);
 
   void slotActivateNextTab();
   void slotActivatePrevTab();

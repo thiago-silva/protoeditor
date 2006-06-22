@@ -205,6 +205,18 @@ bool EditorTabWidget::saveCurrentFileAs(const KURL& url, const QString& encoding
   return ret;
 }
 
+void EditorTabWidget::saveExistingFiles()
+{
+  QValueList<Document*>::iterator it;
+  for(it = m_docList.begin(); it != m_docList.end(); ++it)
+  {
+    if((*it)->existsOnDisk())
+    {
+      (*it)->save();
+    }
+  }    
+}
+
 void EditorTabWidget::gotoLineAtFile(const KURL& url, int line)
 {
   setCurrentDocumentTab(url, true);
@@ -367,8 +379,8 @@ void EditorTabWidget::initDoc(Document* doc)
   connect(doc, SIGNAL(sigStatusMsg(const QString&)), this,
           SLOT(slotStatusMsg(const QString&)));
 
-  connect(doc, SIGNAL(sigDocumentSaved()), this, 
-          SLOT(slotDocumentSaved()));  
+  connect(doc, SIGNAL(sigDocumentSaved(Document*)), this, 
+          SLOT(slotDocumentSaved(Document*)));  
 
   connect(doc->view(), SIGNAL(dropEventPass(QDropEvent*)),
     this, SLOT(slotDropEvent(QDropEvent*)));
@@ -473,19 +485,16 @@ void EditorTabWidget::slotStatusMsg(const QString& msg)
   m_window->setEditorStatusMsg(msg);
 }
 
-void EditorTabWidget::slotDocumentSaved()
+void EditorTabWidget::slotDocumentSaved(Document* doc)
 {
-  if(!currentDocument()->isModified())
-  {
-    QIconSet mimeIcon(KMimeType::pixmapForURL(currentDocumentURL(), 0, KIcon::Small));
+    QIconSet mimeIcon(KMimeType::pixmapForURL(doc->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
     {
       mimeIcon = QIconSet(SmallIcon("document"));
     }
-    setTabLabel(currentDocument()->tab(), currentDocumentURL().fileName());
-    setTabIconSet(currentDocument()->tab(), mimeIcon);
-    setTabToolTip(currentDocument()->tab(), currentDocumentURL().prettyURL());  
-  }
+    setTabLabel(doc->tab(), doc->url().fileName());
+    setTabIconSet(doc->tab(), mimeIcon);
+    setTabToolTip(doc->tab(), doc->url().prettyURL());  
 }
 
 void EditorTabWidget::contextMenu(int index, const QPoint & p)

@@ -137,7 +137,7 @@ bool Document::save()
 
   if(ret)
   {
-    emit sigDocumentSaved();
+    emit sigDocumentSaved(this);
   }
 
   return ret;
@@ -157,7 +157,7 @@ bool Document::saveAs(const KURL& url)
 
   if(ret)
   {
-    emit sigDocumentSaved();
+    emit sigDocumentSaved(this);
   }
 
   return ret;
