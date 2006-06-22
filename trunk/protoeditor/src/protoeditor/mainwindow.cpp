@@ -212,8 +212,8 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
-/* (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
-      m_debugger_manager, SLOT(slotProfile()), actionCollection(), "script_profile");*/
+ (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
+      m_debugger_manager, SLOT(slotProfile()), actionCollection(), "script_profile");
   
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
                     SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
@@ -656,6 +656,7 @@ void MainWindow::slotScriptRun()
     m_cbArguments->addToHistory(arg);    
   }  
 
+  m_tabEditor->saveExistingFiles();
   m_debugger_manager->slotScriptRun();
 }
 
@@ -666,6 +667,9 @@ void MainWindow::slotDebugStart()
   {
     m_cbArguments->addToHistory(arg);    
   }
+
+  m_tabEditor->saveExistingFiles();
+
   m_debugger_manager->slotDebugStart();
 }
 
