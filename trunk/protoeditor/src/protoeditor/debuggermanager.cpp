@@ -337,7 +337,7 @@ void DebuggerManager::slotDebugStepInto()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg(i18n("Steping..."));
+  m_window->setDebugStatusMsg(i18n("Stepping..."));
   m_activeDebugger->stepInto();
 }
 
@@ -345,7 +345,7 @@ void DebuggerManager::slotDebugStepOver()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg(i18n("Steping..."));
+  m_window->setDebugStatusMsg(i18n("Stepping..."));
   m_activeDebugger->stepOver();
 }
 
@@ -353,7 +353,7 @@ void DebuggerManager::slotDebugStepOut()
 {
   if(!m_activeDebugger) return;
 
-  m_window->setDebugStatusMsg(i18n("Steping..."));
+  m_window->setDebugStatusMsg(i18n("Stepping..."));
   m_activeDebugger->stepOut();
 }
 
