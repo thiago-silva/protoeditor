@@ -1,57 +1,90 @@
-Version 0.9
+Version 1.0
 
 	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
-	* /trunk/protoeditor/src/xdebug/debuggerxd.cpp:
-	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
-
-	Bug fixes:
-	-Watches shouldn't be replicated in the list
-
-	* /trunk/protoeditor/src/protoeditor/breakpointlistview.cpp:
-	* /trunk/protoeditor/src/protoeditor/breakpointlistview.h:
-
-	Bug fixes:
-	-Deleting/toggling non existent breakpoint causes segfault
-
-	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
-	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
-
-	Bug fixes:
-	-Copying non existent variable causes segfault
-
-	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
-
-	Bug fixes:
-	-Multiple MessageBox showing the same error on http conection
-	failure.
-	-Breakpoint request sending incorrect/duplicated parameters
-
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
+	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.cpp:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/xdebug/debuggerxd.h:
+	* /trunk/protoeditor/src/dbg/dbgnet.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/xdebug/xdnet.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.h:
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
 
+	-Added command "Run to cursor"
+
+	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/gubed/gbnet.cpp:
+	* /trunk/protoeditor/src/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/gubed/gbnet.h:
+
 	Bug fixes:
-	-Breakpoint is not being updated in the editor margin.
+	-Starting debug session
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	Bug fixes:
+	-Katepart and debugger shortcut keys conflict
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	-Automatically saving script before run it
+	Bug fixes:
+	-Running script file that doesn't exists on disk
+	-Ghost execution point (backtrace) icon remaining through
+	debug sessions
+
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+
+	Bug fixes:
+	-show correct error line number
+
+	* /trunk/protoeditor/data/icons/hi48-app-protoeditor.png:
+	* /trunk/protoeditor/data/icons/hi22-app-protoeditor.png:
+	* /trunk/protoeditor/data/icons/hi32-app-protoeditor.png:
+
+	-Improved the icons a little bit
+
+	* /trunk/protoeditor/doc/en:
+	* /trunk/protoeditor/doc/en/index.docbook:
+	* /trunk/protoeditor/doc/Makefile.am:
+	* /trunk/protoeditor/doc/en/Makefile.am:
+	* /trunk/protoeditor/doc/en/ss1.png:
+
+	-Adding protoeditor's manual
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+
+	-Saving all opened+existing documents when running or
+	starting a debug session
 
 	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
 	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
 
-	-Removed DBG Profile (hidden)
-
-	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
-
-	-File->New, at least :)
-
-	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
-
 	Bug fixes:
-	-Multiple MessageBox showing the same error on http conection
-	failure.
+	-savedialog should ask before overwrite existing file
 
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+Version 0.9
 
-	-New shortcuts: "Activate Next Tab", "Activate Previous Tab"
-	and "Raise Editor"
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.h:
+	* /trunk/protoeditor/src/settings/sitesettings.cpp:
+	* /trunk/protoeditor/src/settings/sitesettings.h:
+
+	-Added extra directory mapping configuration for site
+	settings.
 
 	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
 	* /trunk/protoeditor/src/gubed/gbnet.cpp:
@@ -76,38 +109,60 @@ Version 0.9
 	stop/clean current session nor editor's execution point
 	icons
 
-	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
-	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
-	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp:
-	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
-	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h:
-	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.h:
-	* /trunk/protoeditor/src/settings/sitesettings.cpp:
-	* /trunk/protoeditor/src/settings/sitesettings.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
 
-	-Added extra directory mapping configuration for site
-	settings.
+	-New shortcuts: "Activate Next Tab", "Activate Previous Tab"
+	and "Raise Editor"
 
-Version 0.8
+	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
 
-	* /trunk/protoeditor/src/protoeditor/watchlistview.h:
-	* /trunk/protoeditor/src/protoeditor/watchlistview.cpp:
+	Bug fixes:
+	-Multiple MessageBox showing the same error on http conection
+	failure.
 
-	-expanded items remains trough debugging steps
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+
+	-File->New, at least :)
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-Removed DBG Profile (hidden)
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	Bug fixes:
+	-Breakpoint is not being updated in the editor margin.
 
 	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
 
 	Bug fixes:
-	-execution should not stop on log message (warning, notices,
-	etc)
-	-Using path mapping for the breakpoint file paths
+	-Multiple MessageBox showing the same error on http conection
+	failure.
+	-Breakpoint request sending incorrect/duplicated parameters
 
-	* /trunk/protoeditor/src/xdebug/xdnet.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
 
 	Bug fixes:
-	-execution should not stop on log message (warning, notices,
-	etc)
-	-Using path mapping for the breakpoint file paths
+	-Copying non existent variable causes segfault
+
+	* /trunk/protoeditor/src/protoeditor/breakpointlistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistview.h:
+
+	Bug fixes:
+	-Deleting/toggling non existent breakpoint causes segfault
+
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
+
+	Bug fixes:
+	-Watches shouldn't be replicated in the list
+
+Version 0.8
 
 	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
 
@@ -115,95 +170,26 @@ Version 0.8
 	-Breakpoint segfault.
 	-Parse error processing.
 
-Version 0.7
-
-	* /trunk/protoeditor/src/protoeditor/debuggerfactory.h:
-	* /trunk/protoeditor/src/gubed/Makefile.am:
-	* /trunk/protoeditor/src/gubed/gbsettings.cpp:
-	* /trunk/protoeditor/src/protoeditor/Makefile.am:
-	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
-	* /trunk/protoeditor/src/gubed/gbsettingswidget.cpp:
-	* /trunk/protoeditor/src/gubed/gb_defs.h:
-	* /trunk/protoeditor/src/gubed/gbsettings.h:
-	* /trunk/protoeditor/src/gubed:
-	* /trunk/protoeditor/src/gubed/gbnet.cpp:
-	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
-	* /trunk/protoeditor/src/gubed/debuggergb.h:
-	* /trunk/protoeditor/src/gubed/gbsettingswidget.h:
-	* /trunk/protoeditor/src/Makefile.am:
-	* /trunk/protoeditor/src/gubed/gbnet.h:
-
-	-Beginning support for Gubed (experimental)
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/document.cpp:
-
-	-Persistent breakpoints.
-
-	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
-	* /trunk/protoeditor/src/dbg/dbgrequestor.cpp:
-	* /trunk/protoeditor/src/dbg/dbgrequestor.h:
-
-	Bug fixes:
-	-generic fix for default port 80, so it affect all debuggers
-
-	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
-	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
-
-	Bug fixes:
-	-adding a watch when last visible item on list is a child,
-	causes the new watch to be a brother of this child (non-root
-	item)
-
-	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
 	* /trunk/protoeditor/src/xdebug/xdnet.h:
 
 	Bug fixes:
-	-generic fix for default port 80, so it affect all debuggers
-	-The GET variable that triggers xdebug changed
-	-receiving incomplete network data
+	-execution should not stop on log message (warning, notices,
+	etc)
+	-Using path mapping for the breakpoint file paths
 
-	* /trunk/protoeditor/src/settings/sitesettings.h:
-
-	Bug fixes:
-	-generic fix for default port 80, so it affect all debuggers
-
-	* /trunk/protoeditor/src/xdebug/debuggerxd.cpp:
-	* /trunk/protoeditor/src/xdebug/debuggerxd.h:
-
-	-support for local execution/debug
-
-	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
-	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
-
-	-support for local execution/debug
-	Bug fixes:
-	-checking for debugger/siteSettings existance without create
-	objects in the maps
-
-	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	-support for local execution/debug
-	Bug fixes:
-	-Opening Smary templates with special chars in the name
-	(QString to KURL)
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
 
 	Bug fixes:
-	-Opening Smary templates with special chars in the name
-	(QString to KURL)
+	-execution should not stop on log message (warning, notices,
+	etc)
+	-Using path mapping for the breakpoint file paths
 
-	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
-	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/protoeditor/watchlistview.h:
+	* /trunk/protoeditor/src/protoeditor/watchlistview.cpp:
 
-	-support for local execution/debug
+	-expanded items remains trough debugging steps
 
-	* /trunk/protoeditor/src/common/httpsession.cpp:
-	* /trunk/protoeditor/src/common/httpsession.h:
-
-	-support for local execution/debug
+Version 0.7
 
 	* /trunk/protoeditor/src/settings/widgets/extoutputsettingswidget.cpp:
 	* /trunk/protoeditor/src/settings/phpsettings.h:
@@ -229,6 +215,94 @@ Version 0.7
 
 	-support for local execution/debug
 
+	* /trunk/protoeditor/src/common/httpsession.cpp:
+	* /trunk/protoeditor/src/common/httpsession.h:
+
+	-support for local execution/debug
+
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
+
+	-support for local execution/debug
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+
+	Bug fixes:
+	-Opening Smary templates with special chars in the name
+	(QString to KURL)
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-support for local execution/debug
+	Bug fixes:
+	-Opening Smary templates with special chars in the name
+	(QString to KURL)
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+
+	-support for local execution/debug
+	Bug fixes:
+	-checking for debugger/siteSettings existance without create
+	objects in the maps
+
+	* /trunk/protoeditor/src/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/xdebug/debuggerxd.h:
+
+	-support for local execution/debug
+
+	* /trunk/protoeditor/src/settings/sitesettings.h:
+
+	Bug fixes:
+	-generic fix for default port 80, so it affect all debuggers
+
+	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/src/xdebug/xdnet.h:
+
+	Bug fixes:
+	-generic fix for default port 80, so it affect all debuggers
+	-The GET variable that triggers xdebug changed
+	-receiving incomplete network data
+
+	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
+
+	Bug fixes:
+	-adding a watch when last visible item on list is a child,
+	causes the new watch to be a brother of this child (non-root
+	item)
+
+	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.h:
+
+	Bug fixes:
+	-generic fix for default port 80, so it affect all debuggers
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+
+	-Persistent breakpoints.
+
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.h:
+	* /trunk/protoeditor/src/gubed/Makefile.am:
+	* /trunk/protoeditor/src/gubed/gbsettings.cpp:
+	* /trunk/protoeditor/src/protoeditor/Makefile.am:
+	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/gubed/gbsettingswidget.cpp:
+	* /trunk/protoeditor/src/gubed/gb_defs.h:
+	* /trunk/protoeditor/src/gubed/gbsettings.h:
+	* /trunk/protoeditor/src/gubed:
+	* /trunk/protoeditor/src/gubed/gbnet.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+	* /trunk/protoeditor/src/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/gubed/gbsettingswidget.h:
+	* /trunk/protoeditor/src/Makefile.am:
+	* /trunk/protoeditor/src/gubed/gbnet.h:
+
+	-Beginning support for Gubed (experimental)
+
 Version 0.6.4
 
 	* /trunk/protoeditor/src/protoeditor/Makefile.am:
@@ -237,31 +311,67 @@ Version 0.6.4
 
 Version 0.6.3
 
+	* /trunk/protoeditor/src/dbg/profiler/dbgprofilelistview.cpp:
+
+	Bug fixes:
+	-Deleting data already deleted
+
+	* /trunk/protoeditor/src/dbg/dbgconnection.cpp:
+
+	Bug fixes:
+	-emiting slotClosed twice
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
 
-	Bug fixes:
-	-JIT is not started when Protoeditor starts
-	-Toggle breakpoint through action wasn't adding bp properly.
+	-Added "toggle breakpoint" and "add watch" to the editor
+	context menu.
 
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+
+	-Added "toggle breakpoint" and "add watch" to the editor
+	context menu.
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
 	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
 
-	Bug fixes:
-	-Default shortcut for "Stop Debug"
+	-Improved status bar
 
-	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
-	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
-	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
 
-	Bug fixes:
-	-JIT is not started when Protoeditor starts
+	-Added mime icon to the tabs of the editor.
+	-Closing files through the tab icon.
 
 	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
 
 	Bug fixes:
-	-#1156552 (still broken)
+	-#1156552 (now its for real)
 
-	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
-	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+
+	-Added "default script" on Site settings.
+	-Users can select wheter to run the current site's script or
+	the active script on the editor.
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-Added "default script" on Site settings.
+	-Users can select wheter to run the current site's script or
+	the active script on the editor.
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/settings/sitesettings.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	* /trunk/protoeditor/src/settings/sitesettings.h:
 
 	-Added "default script" on Site settings.
 	-Users can select wheter to run the current site's script or
@@ -277,25 +387,8 @@ Version 0.6.3
 	-When modifying a site config, the settings were not being
 	commited.
 
-	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
-	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
-	* /trunk/protoeditor/src/settings/sitesettings.cpp:
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
-	* /trunk/protoeditor/src/settings/sitesettings.h:
-
-	-Added "default script" on Site settings.
-	-Users can select wheter to run the current site's script or
-	the active script on the editor.
-
-	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	-Added "default script" on Site settings.
-	-Users can select wheter to run the current site's script or
-	the active script on the editor.
-
-	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h:
 
 	-Added "default script" on Site settings.
 	-Users can select wheter to run the current site's script or
@@ -304,101 +397,27 @@ Version 0.6.3
 	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
 
 	Bug fixes:
-	-#1156552 (now its for real)
+	-#1156552 (still broken)
 
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
 
-	-Added mime icon to the tabs of the editor.
-	-Closing files through the tab icon.
+	Bug fixes:
+	-JIT is not started when Protoeditor starts
 
-	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
 	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
 
-	-Improved status bar
+	Bug fixes:
+	-Default shortcut for "Stop Debug"
 
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/document.h:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
-	* /trunk/protoeditor/src/protoeditor/document.cpp:
-
-	-Added "toggle breakpoint" and "add watch" to the editor
-	context menu.
-
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
-	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
 
-	-Added "toggle breakpoint" and "add watch" to the editor
-	context menu.
-
-	* /trunk/protoeditor/src/dbg/dbgconnection.cpp:
-
 	Bug fixes:
-	-emiting slotClosed twice
-
-	* /trunk/protoeditor/src/dbg/profiler/dbgprofilelistview.cpp:
-
-	Bug fixes:
-	-Deleting data already deleted
+	-JIT is not started when Protoeditor starts
+	-Toggle breakpoint through action wasn't adding bp properly.
 
 Version 0.6.2
-
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	Bug fixes:
-	-OpenRecent wasn't working (filepaths are marked to be
-	written, but are not flushed)
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
-	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	-Kate menus and toolbar merged
-
-	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	Bug fixes:
-	-Fixed slotEditToolBar
-	-Fixed xml action states
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
-
-	Bug fixes:
-	-Crash on document close
-	-Remotion of katepart toolbar when no document is opened
-
-	* /trunk/protoeditor/src/dbg/dbgsettings.cpp:
-
-	Bug fixes:
-	-Fixed "configure protoeditor" crash, wich uses an invalid
-	qwidget
-
-	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
-
-	-Added fancy notification on taskbar when debug starts (looks
-	good for JIT)
-
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
-
-	Bug fixes:
-	-When no file is opened and debug is running, hitting
-	"continue" causes protoeditor to show an open file dialog.
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/document.h:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
-	* /trunk/protoeditor/src/protoeditor/Makefile.am:
-	* /trunk/protoeditor/src/protoeditor/document.cpp:
-
-	Bug fixes:
-	-Run debugger, delete some lines before the execution point,
-	stop debugger. The execPoint icon is no deleted
 
 	* /trunk/protoeditor/src/dbg/dbgrequestpackbuilder.h:
 	* /trunk/protoeditor/src/dbg/dbgreceiver.cpp:
@@ -425,15 +444,80 @@ Version 0.6.2
 
 	-Front end for the dbg profiler.
 
-Version 0.6.1
-
-	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
-	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
 
 	Bug fixes:
-	-Workaround to get the actual global variables (on nested
-	functions, using GLOBAL_SCOPE_ID to request global vars
-	wasn't sufficient)
+	-Run debugger, delete some lines before the execution point,
+	stop debugger. The execPoint icon is no deleted
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	Bug fixes:
+	-When no file is opened and debug is running, hitting
+	"continue" causes protoeditor to show an open file dialog.
+
+	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
+
+	-Added fancy notification on taskbar when debug starts (looks
+	good for JIT)
+
+	* /trunk/protoeditor/src/dbg/dbgsettings.cpp:
+
+	Bug fixes:
+	-Fixed "configure protoeditor" crash, wich uses an invalid
+	qwidget
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+
+	Bug fixes:
+	-Crash on document close
+	-Remotion of katepart toolbar when no document is opened
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	Bug fixes:
+	-Fixed slotEditToolBar
+	-Fixed xml action states
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-Kate menus and toolbar merged
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	Bug fixes:
+	-OpenRecent wasn't working (filepaths are marked to be
+	written, but are not flushed)
+
+Version 0.6.1
+
+	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
+
+	-Copy variables to clipboard
+
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.h:
+
+	Bug fixes:
+	-Clear the site map and listbox before populating, so we
+	don't get replicates.
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+
+	Bug fixes:
+	-When clearSites(), remove it from the protoeditorrc.
 
 	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
 	* /trunk/protoeditor/src/dbg/dbgnet.h:
@@ -443,23 +527,13 @@ Version 0.6.1
 	functions, using GLOBAL_SCOPE_ID to request global vars
 	wasn't sufficient)
 
-	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
-	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
 
 	Bug fixes:
-	-When clearSites(), remove it from the protoeditorrc.
-
-	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp:
-	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.h:
-
-	Bug fixes:
-	-Clear the site map and listbox before populating, so we
-	don't get replicates.
-
-	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
-	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
-
-	-Copy variables to clipboard
+	-Workaround to get the actual global variables (on nested
+	functions, using GLOBAL_SCOPE_ID to request global vars
+	wasn't sufficient)
 
 Version 0.5.3.2
 
@@ -476,19 +550,68 @@ Version 0.5.3.2
 
 Version 0.5.3
 
+	* /trunk/protoeditor/src/dbg/dbgrequestor.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.h:
+
+	-Possibility to launch custom external browser when debugging
+	(tested only with Konqueror)
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	-Disabled breakpoint uses associated icon
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+
+	-Implemented Toggle Breakpoint Menu/Shortcut
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	-Implemented Toggle Breakpoint Menu/Shortcut
+
 	* /trunk/protoeditor/src/protoeditor/breakpointlistview.cpp:
 	* /trunk/protoeditor/src/protoeditor/breakpointlistview.h:
 
+	-Implemented Toggle Breakpoint Menu/Shortcut
+
+	* /trunk/protoeditor/src/commonphp/phpvariable.cpp:
+
+	Bug fixes:
+	-Changing value of objects need different name composition
+	from arrays
+
+	* /trunk/protoeditor/src/protoeditor/variableslistviewitem.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistviewitem.cpp:
+
+	-When debugger is not running, variables list and watches are
+	set to readonly
+
+	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
+
+	-When debugger is not running, variables list and watches are
+	set to readonly
 	-Items are appended to the end of the list
-	-Remember the status of the bp the user selected
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-Improved default action shortcuts
+	-Improved output window
+	-Save as...
+
+	* /trunk/protoeditor/src/protoeditor/loglistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/loglistview.h:
+
+	-Items are appended to the end of the list
 	-DblClick on item makes document/line visible
-	-Implemented persistent Breakpoints (ie. document closes and
-	its bps persists).
 
-	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.cpp:
-	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
 
-	-Remember the status of the bp the user selected
+	-Save as...
+	-Improved Breakpoint mark handling
 
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
@@ -500,66 +623,17 @@ Version 0.5.3
 	-When debugger is not running, variables list and watches are
 	set to read only
 
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.cpp:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.h:
 
-	-Save as...
-	-Improved Breakpoint mark handling
-
-	* /trunk/protoeditor/src/protoeditor/loglistview.cpp:
-	* /trunk/protoeditor/src/protoeditor/loglistview.h:
-
-	-Items are appended to the end of the list
-	-DblClick on item makes document/line visible
-
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	-Improved default action shortcuts
-	-Improved output window
-	-Save as...
-
-	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
-	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
-
-	-When debugger is not running, variables list and watches are
-	set to readonly
-	-Items are appended to the end of the list
-
-	* /trunk/protoeditor/src/protoeditor/variableslistviewitem.h:
-	* /trunk/protoeditor/src/protoeditor/variableslistviewitem.cpp:
-
-	-When debugger is not running, variables list and watches are
-	set to readonly
-
-	* /trunk/protoeditor/src/commonphp/phpvariable.cpp:
-
-	Bug fixes:
-	-Changing value of objects need different name composition
-	from arrays
+	-Remember the status of the bp the user selected
 
 	* /trunk/protoeditor/src/protoeditor/breakpointlistview.cpp:
 	* /trunk/protoeditor/src/protoeditor/breakpointlistview.h:
 
-	-Implemented Toggle Breakpoint Menu/Shortcut
-
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
-
-	-Implemented Toggle Breakpoint Menu/Shortcut
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
-
-	-Implemented Toggle Breakpoint Menu/Shortcut
-
-	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
-	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
-
-	-Disabled breakpoint uses associated icon
-
-	* /trunk/protoeditor/src/dbg/dbgrequestor.cpp:
-	* /trunk/protoeditor/src/dbg/dbgrequestor.h:
-
-	-Possibility to launch custom external browser when debugging
-	(tested only with Konqueror)
+	-Items are appended to the end of the list
+	-Remember the status of the bp the user selected
+	-DblClick on item makes document/line visible
+	-Implemented persistent Breakpoints (ie. document closes and
+	its bps persists).
 
