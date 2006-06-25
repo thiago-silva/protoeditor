@@ -34,9 +34,9 @@
       <Action name="debug_stop"/>
       <Action name="debug_interrupt"/>
       <Action name="debug_start_to_cursor"/>
-      <Separator />     
-      <Action name="debug_step_into"/>
+      <Separator />           
       <Action name="debug_step_over"/>      
+      <Action name="debug_step_into"/>
       <Action name="debug_step_out"/>
       <Separator />
       <Action name="script_profile"/>
