@@ -7,7 +7,7 @@ Project site: http://protoeditor.sourceforge.net
 
   Protoeditor is a small KDE text editor developed for debugging
   scripts interactively. The goal is to provide a simple editor supporting a
-  variety of debuggers for different languages. Currently (beta 0.9), it
+  variety of debuggers for different languages. Currently (v1.0), it
   only supports PHP and the following debuggers:
 
    - DBG debugger (free version 2.11) at http://dd.cron.ru/dbg/
@@ -26,21 +26,17 @@ Project site: http://protoeditor.sourceforge.net
 1.1 Requirements:
 
   * KDE 3.2 + should be fine (if not, let me know :)
+  * You might need PHP and, at least, one debugger installed if you
+    want to debug scripts locally.
 
+2.0 Configuration and use
 
-1.2 Upgrades:
-
-  Since Protoeditor has many things that changes over the releases, the 
-  file settings (default on ~/.kde/share/config/protoeditorrc) might not be 
-  valid for a newer version. So, if something is odd with configurations, 
-  try deleting this file  and run Protoeditor right after.
-
-
-2.0 Configuration
+  See Protoeditor manual for a description of the settings and
+  features Protoeditor provides (execute Protoeditor and
+  press F1 or Menu "Help" -> "Protoeditor's Handbook").
 
   For a walk through on installing and configuring the debuggers and 
   Protoeditor, see the "Tutorial" section on Protoeditor's homepage.
-
 
 2.1 Debugger Configuration
 
@@ -116,47 +112,5 @@ Project site: http://protoeditor.sourceforge.net
     Debugger        : DBG
 
 
-3.0 Main window
-
-    Now, some tricks, notes and features:
-
-      Variales list:
-
-        -Expanded array/object childs remains expanded through
-         step-in/step-out/break.
-
-        -To modify a variable value on the fly, simply double click on it's
-         value and edit it (as long as the debugger used supports it).
-
-        -Right button on a variable popup a menu to copy the variable to the
-         clipboard.
-
-      Breakpoints:
-
-        -Multiple breakpoints on the same file/line is _not_ supported.
-
-      Site script:
-        
-        -If you have set a Default file in a given Site configuration, everytime
-        you try to run/debug, Protoeditor will use this file. If you want
-        to run/debug another script using the same Site configuration, select
-        the option "Use Current Script" in the menu/toolbar so the active
-        script in the editor is used.
-
-      Site mappings:
-        
-        -When using scripts located in directories other than the base dirs 
-         (local/remote), it's possible to add more directory mappings. This is 
-         usefull, for example, if you add directories to "include_path" on 
-         php.ini and you want Protoeditor to be aware of scripts on these
-         directories.
-
-4.0 Profiler
-
-    The DBG Profiler, supported until Protoeditor 0.8, is not functional in 
-    this version (0.9). It might be active again in version 1.0.
-
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>
-
-$Id$
