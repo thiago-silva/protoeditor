@@ -28,16 +28,12 @@
 
 \NewEntry 1 v1.0
 
-\NewEntry 2 TODO
+\CurrentEntry 2 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Run to cursor</li>
-<li>fix green icon (stack position) </li>
-<ul type="disc"><li>DBG: run step by step until reaches a throw. </li>
-<li>Execution halt and you can change the execpoint</li>
-<li>when starting another session, the icon is not removed</li></ul>
-<li>When stoping a session, vars and stack should be there to be analysed.</li>
 <li>die script (see forum)<br /></li>
 <li>Release 1.0<br /></li>
+<li>Webpage: in &quot;tutorial&quot; remove the &quot;%1&quot; argments (old 0.8 version)<br /></li>
 <li>Test again (implemented sigNewConnection() in all debuggers, but didn't tested yet):</li>
 <ul type="disc"><li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
 <li>add settings for halt (halt on [x]error [x]warning [x]notice)</li>
@@ -64,7 +60,7 @@
 </body></html>
 
 
-\CurrentEntry 1 v2.0
+\NewEntry 1 v2.0
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
 <ul type="disc"><li>Support for 1+ of the following languages:</li>
 <ul type="disc"><li>perl</li>
