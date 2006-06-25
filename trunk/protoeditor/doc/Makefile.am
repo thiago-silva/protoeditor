@@ -1,0 +1,3 @@
+KDE_LANG = en
+KDE_DOCS = knowit
+SUBDIRS = $(AUTODIRS)
