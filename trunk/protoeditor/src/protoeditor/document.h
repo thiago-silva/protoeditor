@@ -85,7 +85,7 @@ private slots:
 
 private:
   void init();
-
+  void kdevelopShortCutHack();
   void setupMarks();
   void addMark(int line, unsigned int type);
   void removeMark(int line, unsigned int type);
