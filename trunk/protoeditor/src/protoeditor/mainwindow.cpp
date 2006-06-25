@@ -194,22 +194,23 @@ void MainWindow::setupActions()
 
   m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
-  (void)new KAction(i18n("Run in Console"), "gear", "F9", this,
+  (void)new KAction(i18n("Run in Console"), "gear", "Shift+F9", this,
                     SLOT(slotScriptRun()), actionCollection(), "script_run");
 
-  (void)new KAction(i18n("Start Debug"), "dbgstart", "F5", this,
+  (void)new KAction(i18n("Start Debug"), "dbgstart", "F9", this,
                     SLOT(slotDebugStart()), actionCollection(), "debug_start");
 
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
-  (void)new KAction(i18n("Step Into"), "dbgstep", "F6", m_debugger_manager,
-                    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
-
-  (void)new KAction(i18n("Step Over"), "dbgnext", "F7", m_debugger_manager,
+  (void)new KAction(i18n("Step Over"), "dbgnext", "F10", m_debugger_manager,
                     SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
 
-  (void)new KAction(i18n("Step Out"), "dbgstepout", "F8", m_debugger_manager,
+  (void)new KAction(i18n("Step Into"), "dbgstep", "F11", m_debugger_manager,
+                    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
+
+
+  (void)new KAction(i18n("Step Out"), "dbgstepout", "F12", m_debugger_manager,
                     SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
 
  (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
