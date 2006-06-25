@@ -341,6 +341,16 @@ void DebuggerManager::slotDebugStop()
   m_activeDebugger->stop();
 }
 
+void DebuggerManager::slotDebugRunToCursor()
+{
+  if(!m_activeDebugger) return;
+
+  m_window->setDebugStatusMsg(i18n("Continuing..."));
+  m_activeDebugger->runToCursor(
+    m_window->tabEditor()->currentDocumentURL().path(),
+    m_window->tabEditor()->currentDocumentLine());
+}
+
 void DebuggerManager::slotDebugStepInto()
 {
   if(!m_activeDebugger) return;

@@ -55,11 +55,14 @@ public:
 
   /* commands commonly supported by a debugger. */
   virtual void start(const QString&, const QString& args, bool local)  = 0;
-  virtual void continueExecution()                = 0;
+  virtual void continueExecution()                = 0;  
   virtual void stop()                             = 0;
   virtual void stepInto()                         = 0;
   virtual void stepOver()                         = 0;
   virtual void stepOut()                          = 0;
+
+  virtual void runToCursor(const QString&, int)   = 0;
+
   //virtual void pause()           = 0; //TODO
 
   /* adds a list of breakpoints.

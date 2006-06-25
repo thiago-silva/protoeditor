@@ -65,15 +65,12 @@ public slots:
   void slotConfigurationChanged();
   void slotGotoLineAtFile(const KURL&, int);
 
-  void slotScriptRun();
-  void slotDebugStart();
-  
-private slots:
-  
   /* Application (Window) to DebuggerManager
      Those are called when the user manipulates the UI.
   */
-
+  void slotScriptRun();
+  void slotDebugStart();
+  
   void slotProfile();
 
   void slotDebugStop();
@@ -81,6 +78,9 @@ private slots:
   void slotDebugStepOver();
   void slotDebugStepOut();
   void slotDebugToggleBp();
+  void slotDebugRunToCursor();
+
+private slots:
 
   void slotAddWatch(); //from WatchList
   void slotAddWatch(const QString& expression); //from editor ctx menu

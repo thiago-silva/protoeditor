@@ -199,6 +199,15 @@ void DebuggerDBG::stop()
   }
 }
 
+void DebuggerDBG::runToCursor(const QString& filePath, int line)
+{
+  if(isRunning())
+  {
+    m_net->requestRunToCursor(filePath, line);
+    continueExecution();
+  }
+}
+
 void DebuggerDBG::stepInto()
 {
   if(isRunning())

@@ -203,6 +203,10 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
                     SLOT(slotDebugStop()), actionCollection(), "debug_stop");
 
+  (void)new KAction(i18n("Run to Cursor"), "dbgrunto", 0, m_debugger_manager,
+                    SLOT(slotDebugRunToCursor()), actionCollection(), "debug_run_to_cursor");
+
+
   (void)new KAction(i18n("Step Over"), "dbgnext", "F10", m_debugger_manager,
                     SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
 

@@ -51,6 +51,8 @@ public:
   //void requestBreakpoint(int modno, DebuggerBreakpoint*);
   void requestBreakpoint(int bpno, int modno, const QString& remoteFilePath, int line, const QString& condition, int status, int skiphits, bool istemp = false);
 
+  void requestTempBreakpoint(int modno, const QString& remoteFilePath, int line);
+
   //void requestBreakpointList(int bpno);
   void requestBreakpointRemoval(int bpid);
   void requestOptions(int op);

@@ -43,6 +43,8 @@ public:
   //transaction id's
   enum {
     GeneralId, //ID used for requesting common data
+    TempBpId,  //ID used for requesting temp breakpoints
+    RunToCursorId, //ID used to request "run to cursor"
 
     LocalScopeId, //ID for requesting local variables
     GlobalScopeId, //ID for requesting global variables
@@ -67,6 +69,8 @@ public:
 
   void requestContinue();
   void requestStop();
+
+  void requestRunToCursor(const QString&, int);
   void requestStepInto();
   void requestStepOver();
   void requestStepOut();
@@ -119,6 +123,7 @@ private:
   
   void error(const QString&);
 
+  long             m_tempBreakpointId;
   SiteSettings     *m_site;
   DebuggerXD       *m_debugger;
   Connection       *m_con;

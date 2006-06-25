@@ -73,9 +73,13 @@ public:
 
   void requestContinue();
   void requestStop();
+
+  void requestRunToCursor(const QString&, int);
+
   void requestStepInto();
   void requestStepOver();
   void requestStepOut();
+  
 
   void requestVariables(dbgint scopeid, bool isGglobal);
   void requestWatch(const QString& expression, dbgint scopeid);

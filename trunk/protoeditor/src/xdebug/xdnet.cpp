@@ -44,7 +44,8 @@
 #include <kmdcodec.h>
 
 XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
+    : QObject(parent, name), m_tempBreakpointId(0),
+       m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
 {
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
@@ -107,7 +108,8 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
 
 void XDNet::requestContinue()
 {
-  QString run = "run -i 1";
+  QString run = "run -i ";
+  run += QString::number(GeneralId);
   m_socket->writeBlock(run, run.length()+1);
 }
 
@@ -117,6 +119,35 @@ void XDNet::requestStop()
   stop += QString::number(GeneralId);
   m_socket->writeBlock(stop, stop.length()+1);
   m_con->closeClient();
+}
+
+void XDNet::requestRunToCursor(const QString& filePath, int line)
+{
+  QString breakpoint_set = "breakpoint_set -t line -f ";
+
+  if(m_site)
+  {
+    breakpoint_set += m_site->mapLocalToRemote(filePath);
+  }
+  else
+  {
+    breakpoint_set += filePath;
+  }
+
+  breakpoint_set += " -i ";
+  breakpoint_set += QString::number(TempBpId);
+  breakpoint_set += " -n ";
+  breakpoint_set += QString::number(line);
+  breakpoint_set += " -s ";
+  breakpoint_set += "enabled";
+  breakpoint_set += " -r 1";
+
+  m_socket->writeBlock(breakpoint_set, breakpoint_set.length()+1);
+
+  //request continue
+  QString run = "run -i ";
+  run += QString::number(RunToCursorId);
+  m_socket->writeBlock(run, run.length()+1);  
 }
 
 void XDNet::requestStepInto()
@@ -266,6 +297,8 @@ void XDNet::slotIncomingConnection(QSocket* socket)
   emit sigNewConnection();
 }
 
+// #include <iostream>
+
 void XDNet::slotReadBuffer()
 {
   long xmlSize;
@@ -309,12 +342,9 @@ void XDNet::slotReadBuffer()
 
 
     data[xmlSize] = 0;
-    //     if(m_superglobalsCount == 9) {
-//           std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
-    //     }
-
+    
     str.setAscii(data,xmlSize);
-
+//     std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
     processXML(str);
 
   }
@@ -364,10 +394,10 @@ void XDNet::processOutput(QDomElement& output)
   {
     m_debugger->addOutput(data);
   }
-  else
-  {
-    error(QString("todo: ") + type);
-  }
+//   else
+//   {
+//     error(QString("todo: ") + type);
+//   }
 }
 
 void XDNet::processInit(QDomElement& init)
@@ -416,6 +446,12 @@ void XDNet::processResponse(QDomElement& root)
       (cmd == "step_out") ||
       (cmd == "run"))
   {
+    if(root.attributeNode("transaction_id").value().toInt() == RunToCursorId) 
+    {
+      requestBreakpointRemoval(m_tempBreakpointId);
+      m_tempBreakpointId = 0;
+    }
+
     if((root.attribute("status") == "break"))
     {      
       if(root.attribute("reason") == "error")
@@ -560,7 +596,16 @@ void XDNet::processResponse(QDomElement& root)
   }
   else if((cmd == "breakpoint_set") || (cmd == "breakpoint_update"))
   {
-    requestBreakpointList();
+    if(root.attributeNode("transaction_id").value().toInt() == TempBpId)
+    {
+      m_tempBreakpointId = root.attributeNode("id").value().toLong();
+    }
+    else
+    {
+      //do not request for breakpoint list if the one we just setted is a 
+      //temporary one
+      requestBreakpointList();
+    }
   }
   else if(cmd == "breakpoint_list")
   {
@@ -579,7 +624,14 @@ void XDNet::processResponse(QDomElement& root)
     for(uint i = 0; i < list.count(); i++)
     {
       e = list.item(i).toElement();
+
       int id = e.attributeNode("id").value().toInt();
+//       if(id == m_tempBreakpointId)  
+//       {
+//         //do not dispatch this BP. It's a temp one (run to cursor)
+//         continue;
+//       }
+
       QString filePath = KURL::fromPathOrURL(e.attributeNode("filename").value()).path();
 
       if(m_site)

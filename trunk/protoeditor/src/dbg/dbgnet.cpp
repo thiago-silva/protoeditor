@@ -151,6 +151,13 @@ void DBGNet::requestStop()
   m_con->closeClient();
 }
 
+void DBGNet::requestRunToCursor(const QString& filePath, int line)
+{
+  m_requestor->requestTempBreakpoint(m_dbgFileInfo->moduleNumber(filePath)
+                                 , m_dbgFileInfo->mapLocalToRemote(filePath)
+                                 , line);
+}
+
 void DBGNet::requestStepInto()
 {
   m_requestor->requestStepInto();
@@ -165,7 +172,6 @@ void DBGNet::requestStepOut()
 {
   m_requestor->requestStepOut();
 }
-
 
 void DBGNet::requestVariables(dbgint scopeid, bool isGglobal)
 {
@@ -525,6 +531,11 @@ void DBGNet::processError(const DBGResponseTagError* error, DBGResponsePack* pac
 void DBGNet::processBreakpoint(const DBGTagBreakpoint* bp, DBGResponsePack* pack)
 {
   if(m_isProfiling) return;
+
+  //do nothing for temporary bp  
+  if(bp->isTemp()) {
+    return;
+  }
 
   QString modname;
   QString condition;

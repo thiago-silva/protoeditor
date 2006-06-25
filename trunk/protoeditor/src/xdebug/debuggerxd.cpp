@@ -101,31 +101,49 @@ void DebuggerXD::start(const QString& filepath, const QString& args, bool local)
 void DebuggerXD::continueExecution()
 {
   if(isRunning())
+  {
     m_net->requestContinue();
+  }
 }
 
 void DebuggerXD::stop()
 {
   if(isRunning())
+  {
     m_net->requestStop();
+  }
+}
+
+void DebuggerXD::runToCursor(const QString& filePath, int line)
+{
+  if(isRunning())
+  {
+    m_net->requestRunToCursor(filePath, line);    
+  }
 }
 
 void DebuggerXD::stepInto()
 {
   if(isRunning())
+  {
     m_net->requestStepInto();
+  }
 }
 
 void DebuggerXD::stepOver()
 {
   if(isRunning())
+  {
     m_net->requestStepOver();
+  }
 }
 
 void DebuggerXD::stepOut()
 {
   if(isRunning())
+  {
     m_net->requestStepOut();
+  }
 }
 
 void DebuggerXD::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps)

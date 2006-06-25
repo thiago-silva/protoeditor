@@ -111,6 +111,17 @@ void DBGRequestor::requestBreakpoint(int bpno, int modno, const QString& remoteF
   delete requestPack;
 }
 
+void DBGRequestor::requestTempBreakpoint(int modno, const QString& remoteFilePath, int line)
+{
+  if(!m_socket) return;
+
+  DBGRequestPack* requestPack = DBGRequestPackBuilder::buildBreakpoint(
+      0, modno, remoteFilePath, line, QString::null, DebuggerBreakpoint::ENABLED, 0, true);
+  requestPack->header()->setFlags(m_headerFlags);
+  requestPack->send(m_socket);
+  delete requestPack;  
+}
+
 void DBGRequestor::requestBreakpointRemoval(int bpid)
 {
   if(!m_socket) return;
