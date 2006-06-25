@@ -1,3 +1,3 @@
 KDE_LANG = en
-KDE_DOCS = knowit
+KDE_DOCS =  protoeditor
 SUBDIRS = $(AUTODIRS)
