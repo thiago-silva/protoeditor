@@ -45,7 +45,7 @@
 
 GBNet::GBNet(DebuggerGB* debugger, QObject *parent, const char *name)
     : QObject(parent, name), m_debugger(debugger), m_con(0), m_socket(0), m_site(0)
-    , m_watchingGlobal(false), m_continuing(false)
+    , m_watchingGlobal(false), m_continuing(false), m_runningToCursor(false)
 {
   m_con = new Connection();
   connect(m_con, SIGNAL(sigAccepted(QSocket*)), this, SLOT(slotIncomingConnection(QSocket*)));
@@ -89,12 +89,12 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
   else
   {
     QString relative = filePath;
-    relative = relative.remove(0, site->localBaseDir().directory().length());
+    relative = relative.remove(0, site->localBaseDir().path().length());
 
     KURL url = site->effectiveURL();
     url.setPath(m_debugger->settings()->startSessionScript());
 
-    QString query = "gbdScript=";
+    QString query = "gbdScript=/";
     query += relative;
 
     if(!uiargs.isEmpty())
@@ -119,6 +119,30 @@ void GBNet::requestStop()
   sendCommand("die", 0);
   m_socket->flush();
   m_con->closeClient();
+}
+
+void GBNet::requestRunToCursor(const QString& filePath, int line)
+{
+  QString fpath;
+  if(m_site) 
+  {    
+    fpath = m_site->mapLocalToRemote(filePath);
+  }
+
+  m_rcLine = QString::number(line-1);
+  m_rcFileName = fpath;
+
+
+  sendCommand("breakpoint", 
+              "type", "line",
+              "filename", m_rcFileName.ascii(),
+              "expression", "",
+              "line", m_rcLine.ascii(),
+              0);
+
+  requestContinue();
+  
+  m_runningToCursor = true;
 }
 
 void GBNet::requestStepInto()
@@ -286,10 +310,10 @@ void GBNet::slotReadBuffer()
       {
         processCommand(buff.mid(idx));
       }
-      else 
+/*      else 
       {
         processCommand(QString::null);
-      }
+      }*/
       buff.remove(0, idx+dsize);
       if(buff.length() == 0)
         break;
@@ -300,7 +324,7 @@ void GBNet::slotReadBuffer()
 // Process a gubed command
 void GBNet::processCommand(const QString& datas)
 {
-//   kdDebug() << "gbd command " << m_command << "\n";//" with data: " << datas << endl;
+//   kdDebug() << "gbd command " << m_command << endl; //" with data: " << datas << endl << endl << endl << endl;
 
   StringMap args = parseArgs(datas);
 
@@ -319,11 +343,25 @@ void GBNet::processCommand(const QString& datas)
   }
   else if(m_command == "forcebreak")
   {
+    if(m_runningToCursor) 
+    {
+      sendCommand("removebreakpoint",
+                  "type", "line",
+                  "filename", m_rcFileName.ascii(),
+                  "expression", "",
+                  "line", m_rcLine.ascii(),
+                  0);
+      m_runningToCursor = false;
+    }
+
     m_continuing = false;
     //sendCommand("pause",0);
   }
   else if(m_command == "initialize")
-  {    
+  {
+    emit sigGBStarted();
+    sendCommand("seterrormask", "errormask", QString::number(E_ALL).ascii(), 0);
+
     sendCommand("havesource", 0);
     requestStepInto();
   }
@@ -333,10 +371,8 @@ void GBNet::processCommand(const QString& datas)
   }
   // Send run mode to script
   else if(m_command == "getrunmode")
-  {
-    sendCommand("seterrormask", "errormask", QString::number(E_ALL).ascii(), 0);
-
-    emit sigGBStarted();
+  {    
+    
     if(!m_debugger->settings()->breakOnLoad())
     {
       sendCommand("sendbacktrace",0);
@@ -354,12 +390,7 @@ void GBNet::processCommand(const QString& datas)
   }
   else if(m_command == "error")
   {
-//     kdDebug() << "error data " << datas << endl;
-    QString msg = args["errmsg"];
-    QString filename = args["filename"];
-    QString line = args["line"];
-
-    processLog(datas);
+    m_debugger->updateMessage(args["errnum"].toInt(), args["errmsg"], args["filename"], args["line"].toInt());
 
     if(m_continuing)
     {
@@ -387,7 +418,7 @@ void GBNet::processCommand(const QString& datas)
   // Script requests breakpointlist
   else if(m_command == "sendbreakpoints")
   {
-
+    
   }
   // Parsing failed
   else if(m_command == "parsefailed")
@@ -469,50 +500,89 @@ StringMap GBNet::parseArgs(const QString &args)
 
   // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
 
-  // No args
   if(args.isEmpty() || args == "a:0:{}")
     return ca;
 
-  // Make sure we have a good string
-  if(!args.startsWith("a:"))
+  int idx = 0;
+  int asize;
+
+  QRegExp rx;  
+  QString key;
+  QString data;
+
+  rx.setPattern("a:(\\d*):\\{");  
+  if(rx.search(args, idx) == -1)
   {
-    kdDebug() << k_funcinfo << "An error occurred in the communication link, data received was:" << args << endl;
+    error(i18n("error receiving network data."));
     return ca;
   }
+  idx += rx.matchedLength();
 
-  cnt = args.mid(2, args.find("{") - 3).toLong();
-  QString data = args.mid(args.find("{") + 1);
-
-  QString tmp, func;
-  while(cnt > 0)
+  asize = rx.cap(1).toInt();
+  int s;
+  for(int i = 0; i < asize; i++) 
   {
-    tmp = data.left(data.find("\""));
-    length = tmp.mid(2, tmp.length() - 3).toLong();
-
-    func = data.mid(tmp.length() + 1, length);
-    data = data.mid( tmp.length() + length + 3);
-
-    if(data.left(1) == "i")
+    //rx.setPattern("s:(\\d*):\"([^;]*)\";");
+    rx.setPattern("s:(\\d*):");
+    if(rx.search(args, idx) == -1)
     {
-      // Integer data
-      tmp = data.mid(data.find(":") + 1);
-      tmp = tmp.left(tmp.find(";"));
-      ca[func] = tmp;
-      data = data.mid(tmp.length() + 3);
+      error(i18n("error receiving network data."));
+      return ca;
     }
-    else
+    idx += rx.matchedLength();
+    idx += 1; //eats "
+
+    s = rx.cap(1).toLong();
+    key = args.mid(idx, s);
+    idx += s + 2;
+        
+    char c = args[idx];
+    switch(args[idx]) 
     {
-      // String data
-      tmp = data.left(data.find("\""));
-      length = tmp.mid(2, tmp.length() - 3).toLong();
+      case 'N':
+        data = "";  
+        idx+=2;
+        break;
+      case 'i':
+        rx.setPattern("i:(\\d*);");    
+        if(rx.search(args, idx) == -1)
+        {
+          error(i18n("error receiving network data."));
+          return ca;
+        }
+        idx += rx.matchedLength();
+        data = rx.cap(1);
+        break;
+      case 's':
+        rx.setPattern("s:(\\d*):"); 
+        if(rx.search(args, idx) == -1)
+        {
+          error(i18n("error receiving network data."));
+          return ca;
+        }
+        idx += rx.matchedLength();
+        idx += 1; //eats "
+    
+        s = rx.cap(1).toLong();
+        data = args.mid(idx, s);
+        idx += s + 2;
+        break;
+      case 'a':
+        if(asize == 1) 
+        {
+          data = args.mid(idx);
+        } 
+        else 
+        {
+          kdDebug() << "Not supported!\n";
+          error(i18n("error receiving network data."));
+          return ca;
+        }
+        break;
+    }
 
-      ca[func] = data.mid(tmp.length() + 1, length);
-      data = data.mid( tmp.length() + length + 3);
-   }
- 
-    cnt--;
+    ca[key] = data;
   }
-
   return ca;
 }
 
@@ -687,26 +757,6 @@ void GBNet::processVariables(const QString& vars)
   int idx = rx.matchedLength();
 
   m_debugger->updateLocalVariables(rx.cap(1), vars.mid(idx));
-}
-
-
-void GBNet::processLog(const QString& log)
-{
-  QRegExp rx;
-  rx.setPattern("a:4:\\{s:\\d*:\"filename\";s:\\d*:\"([^;]*)\";s:\\d*:\"line\";i:(\\d*);s:\\d*:\"errnum\";i:(\\d*);s:\\d*:\"errmsg\";s:\\d*:\"([^;]*)\";");
-  if(rx.search(log, 0) == -1) {
-    error(i18n("Error receiving network data."));
-    return;
-  }
-
-  QString filePath = rx.cap(1);
-  
-  if(m_site)
-  {
-    filePath = m_site->mapRemoteToLocal(filePath);
-  }
-
-  m_debugger->updateMessage(rx.cap(3).toInt(), rx.cap(4), filePath, rx.cap(2).toInt());
 }
 
 

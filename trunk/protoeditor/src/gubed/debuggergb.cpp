@@ -104,31 +104,49 @@ GBSettings* DebuggerGB::settings()
 void DebuggerGB::continueExecution()
 {
   if(isRunning())
+  {
     m_net->requestContinue();
+  }
 }
 
 void DebuggerGB::stop()
 {
   if(isRunning())
+  {
     m_net->requestStop();
+  }
+}
+
+void DebuggerGB::runToCursor(const QString& filePath, int line)
+{
+  if(isRunning())
+  {
+    m_net->requestRunToCursor(filePath, line);
+  }
 }
 
 void DebuggerGB::stepInto()
 {
   if(isRunning())
+  {
     m_net->requestStepInto();
+  }
 }
 
 void DebuggerGB::stepOver()
 {
   if(isRunning())
+  {
     m_net->requestStepOver();
+  }
 }
 
 void DebuggerGB::stepOut()
 {
   if(isRunning())
+  {
     m_net->requestStepOut();
+  }
 }
 
 void DebuggerGB::addBreakpoints(const QValueList<DebuggerBreakpoint*>& bps)
@@ -366,11 +384,6 @@ void DebuggerGB::updateWatch(const QString& name, const QString& value)
 
 void DebuggerGB::updateMessage(int type, const QString& msg, const QString& filePath, int line)
 {
-  QString fpath;
-  if(filePath != "N") {
-    fpath = filePath;
-  }
-
   switch(type)
   {
     case E_ERROR:
@@ -378,19 +391,19 @@ void DebuggerGB::updateMessage(int type, const QString& msg, const QString& file
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, KURL::fromPathOrURL(fpath), line);      
+      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, KURL::fromPathOrURL(filePath), line);      
       break;
 
     case E_WARNING:
     case E_CORE_WARNING:
     case E_COMPILE_WARNING:
     case E_USER_WARNING:
-      manager()->debugMessage(DebuggerManager::WarningMsg, msg, KURL::fromPathOrURL(fpath), line);
+      manager()->debugMessage(DebuggerManager::WarningMsg, msg, KURL::fromPathOrURL(filePath), line);
       break;
     case E_NOTICE:
     case E_USER_NOTICE:
     case E_STRICT:
-      manager()->debugMessage(DebuggerManager::InfoMsg, msg, KURL::fromPathOrURL(fpath), line);
+      manager()->debugMessage(DebuggerManager::InfoMsg, msg, KURL::fromPathOrURL(filePath), line);
       break;
   }
 }

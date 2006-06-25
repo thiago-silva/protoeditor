@@ -50,6 +50,9 @@ public:
 
   void requestContinue();
   void requestStop();
+
+  void requestRunToCursor(const QString&, int);
+
   void requestStepInto();
   void requestStepOver();
   void requestStepOut();
@@ -91,7 +94,6 @@ private:
   void processVariable(const QString& var);
   void processVariables(const QString& vars);  
 
-  void processLog(const QString& log);
   void processFatalError(const QString&);
 
   DebuggerGB       *m_debugger;
@@ -100,7 +102,16 @@ private:
   SiteSettings     *m_site;
   bool             m_watchingGlobal;
   bool             m_continuing;
+
+  bool m_runningToCursor;
+  QString m_rcLine;
+  QString m_rcFileName;
+
   QString m_command;
+
+  
+  
+
 };
 
 #endif

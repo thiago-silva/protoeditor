@@ -42,6 +42,9 @@ public:
   virtual void start(const QString&, const QString&, bool local);
   virtual void continueExecution();
   virtual void stop();
+
+  virtual void runToCursor(const QString&, int);
+
   virtual void stepInto();
   virtual void stepOver();
   virtual void stepOut();
