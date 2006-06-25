@@ -88,12 +88,6 @@ Version 0.9
 	-Added extra directory mapping configuration for site
 	settings.
 
-	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
-	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
-	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
-
-	-Added Argument Toolbar to quickly edit scripts arguments.
-
 Version 0.8
 
 	* /trunk/protoeditor/src/protoeditor/watchlistview.h:

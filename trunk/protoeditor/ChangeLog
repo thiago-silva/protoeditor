@@ -1,4 +1,184 @@
+2006-06-25
+
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
+	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.cpp:
+	* /trunk/protoeditor/src/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/xdebug/debuggerxd.h:
+	* /trunk/protoeditor/src/dbg/dbgnet.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/xdebug/xdnet.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+	* /trunk/protoeditor/src/dbg/dbgrequestor.h:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	-Added command "Run to cursor"
+
+	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/gubed/gbnet.cpp:
+	* /trunk/protoeditor/src/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/gubed/gbnet.h:
+
+	-Improved network data parsing
+	-Added "Run to cursor"
+	-Starting debug session
+
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+
+	-Inverted step order
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-Using kdevelop shortcut keys for debugger
+	-Katepart and debugger shortcut keys conflict
+
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+
+	-Using kdevelop approach to debugger shortcuts
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	-Automatically saving script before run it
+	-Running script file that doesn't exists on disk
+	-Ghost execution point (backtrace) icon remaining through
+	debug sessions
+
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+
+	-show correct error line number
+
+	* /trunk/protoeditor/images/protoeditor.xcf:
+
+	-Improved the icons a little bit
+
+	* /trunk/protoeditor/data/icons/hi48-app-protoeditor.png:
+	* /trunk/protoeditor/data/icons/hi22-app-protoeditor.png:
+	* /trunk/protoeditor/data/icons/hi32-app-protoeditor.png:
+
+	-Improved the icons a little bit
+
+	* /trunk/protoeditor/doc/en/index.docbook:
+
+	-Finished handbook
+
+	* /trunk/protoeditor/doc/en:
+	* /trunk/protoeditor/doc/en/index.docbook:
+	* /trunk/protoeditor/doc/Makefile.am:
+	* /trunk/protoeditor/doc/en/Makefile.am:
+	* /trunk/protoeditor/doc/en/ss1.png:
+
+	-Adding protoeditor's manual
+
+	* /trunk/protoeditor/doc:
+	* /trunk/protoeditor/doc/Makefile.am:
+
+	-Adding protoeditor's manual
+
+2006-06-22
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+
+	-Saving all opened+existing documents when running or
+	starting a debug session
+
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-saving all documents before running or starting a debug
+	session
+	-enabled DBG profiler again
+
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+
+	-fix english
+
+2006-06-17
+
+	* /trunk/protoeditor/src/dbg/profiler/dbgprofiledialog.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/common/session.cpp:
+	* /trunk/protoeditor/src/dbg/dbgsettingswidget.cpp:
+	* /trunk/protoeditor/src/xdebug/xdsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.cpp:
+	* /trunk/protoeditor/src/dbg/profiler/dbgprofilelistview.cpp:
+	* /trunk/protoeditor/src/gubed/gbnet.cpp:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+	* /trunk/protoeditor/src/common/connection.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	* /trunk/protoeditor/src/common/php/phpvariableparser.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistview.cpp:
+	* /trunk/protoeditor/src/dbg/dbgnet.cpp:
+	* /trunk/protoeditor/src/common/php/phpvariable.cpp:
+	* /trunk/protoeditor/src/dbg/dbgreceiver.cpp:
+	* /trunk/protoeditor/src/common/variable.cpp:
+	* /trunk/protoeditor/src/dbg/dbgstack.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/protoeditor/messagelistview.cpp:
+	* /trunk/protoeditor/src/settings/widgets/extappsettingswidget.cpp:
+	* /trunk/protoeditor/src/gubed/gbsettings.cpp:
+	* /trunk/protoeditor/src/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/src/settings/widgets/configdlg.cpp:
+	* /trunk/protoeditor/src/gubed/gbsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/watchlistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
+	* /trunk/protoeditor/src/dbg/dbgsettings.cpp:
+	* /trunk/protoeditor/src/xdebug/xdsettings.cpp:
+
+	-i18n aware
+
+	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
+
+	-Removed version checking
+
+2006-04-06
+
+	* /trunk/protoeditor/src/common/session.cpp:
+
+	-"Press Enter..." -> "Press any key..."
+
+2006-04-05
+
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+
+	-switch step order
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-switch step order
+	-savedialog asking for text encoding when saving as
+	-savedialog should ask before overwrite existing file
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+
+	-savedialog asking for text encoding when saving as
+
+2006-03-28
+
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+
+	-use SiteSettings base dir, if available, to show SaveAs
+	filedialog
+
 2006-03-27
+
+	* /tags/BETA_0_9/src/protoeditor/protoeditorui.rc:
+
+	-Added Argument Toolbar to quickly edit scripts arguments.
 
 	* /tags/BETA_0_9:
 
