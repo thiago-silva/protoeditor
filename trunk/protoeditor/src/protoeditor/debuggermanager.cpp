@@ -204,6 +204,14 @@ void DebuggerManager::slotScriptRun()
       //couldn't open the file for some reason
       return;
     }
+  } else if(!m_window->tabEditor()->currentDocumentExistsOnDisk()) {
+    if(!m_window->saveCurrentFileAs()) {
+      //user didn't want to save the current file
+      return;
+    }
+  } else {
+    //saves the current file before execute
+    m_window->saveCurrentFile();
   }
 
   if(m_activeDebugger && m_activeDebugger->isRunning()) 
@@ -663,6 +671,19 @@ void DebuggerManager::slotDebugStarted(AbstractDebugger* debugger)
 
   //send all watches to the debugger
   m_activeDebugger->addWatches(m_window->watchList()->watches());
+
+  //removes any existing pre execution point
+  EditorTabWidget* ed = m_window->tabEditor();
+  DebuggerStack* stack = m_window->stackCombo()->stack();
+
+  if(stack)
+  {
+    DebuggerExecutionPoint* execPoint;
+    execPoint =
+      m_window->stackCombo()->selectedDebuggerExecutionPoint();
+
+    ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
+  }
 }
 
 void DebuggerManager::slotDebugEnded()
@@ -683,8 +704,8 @@ void DebuggerManager::slotDebugEnded()
   m_window->setDebugStatusMsg(i18n("Stopped"));
   m_window->setLedState(MainWindow::LedOff); //red led
 
+  //removes the current execution point
   EditorTabWidget* ed = m_window->tabEditor();
-
   DebuggerStack* stack = m_window->stackCombo()->stack();
 
   if(stack)
@@ -694,12 +715,6 @@ void DebuggerManager::slotDebugEnded()
     execPoint = stack->topExecutionPoint();
 
     ed->unmarkExecutionPoint(execPoint->url()/*, execPoint->line()*/);
-
-    //remove the pre execution line mark if any
-    execPoint =
-      m_window->stackCombo()->selectedDebuggerExecutionPoint();
-
-    ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
 
   m_activeDebugger = 0;
