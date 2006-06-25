@@ -3,7 +3,7 @@
   <general>
     <author>Thiago Silva</author>
     <email>thiago.silva@kdemail.net</email>
-    <version>0.9</version>
+    <version>1.0</version>
     <projectmanagement>KDevKDEAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <keywords>
