@@ -210,7 +210,7 @@ Sites are configured in the <link linkend="settings">Settings</link>
 <listitem>
 <para>
 Uses the active file opened when debugging, instead of the default file selected in the 
-current site configuration.
+current site configuration
 </para>
 </listitem>
 </varlistentry>
@@ -246,7 +246,7 @@ Run the current file opened in external console. The external console can be con
 <listitem>
 <para>
 Starts a debug session using the current site configuration or global configuration, case no site
-is currently selected.
+is currently selected
 </para>
 </listitem>
 </varlistentry>
@@ -263,7 +263,21 @@ is currently selected.
 </term>
 <listitem>
 <para>
-Stops an active debug session.
+Stops an active debug session
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term id="runtocursor">
+<menuchoice>
+<guimenu>Script</guimenu>
+<guimenuitem>Run to cursor</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>
+Continues execution until it reaches the cursor file and line
 </para>
 </listitem>
 </varlistentry>
