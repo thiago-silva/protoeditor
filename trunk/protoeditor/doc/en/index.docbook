@@ -86,22 +86,22 @@ the current debug action been executed, and text edit information.
 The debugger area has the following tabs:
 <itemizedlist>
 <listitem>
-  <para>Global: shows global scope variables and it's current value.</para>
+  <para>Global: shows global scope variables and it's current values</para>
 </listitem>
 <listitem>
-  <para>Local: shows local scope information, variables and it's current value.</para>
+  <para>Local: shows backtrace information, local scope variables and it's current values</para>
 </listitem>
 <listitem>
-  <para>Watch: shows user defined variables and it's current value.</para>
+  <para>Watch: shows selected variables and it's current values</para>
 </listitem>
 <listitem>
-  <para>Breakpoints: shows a list of breakpoints.</para>
+  <para>Breakpoints: shows a list of breakpoints currently in use</para>
 </listitem>
 <listitem>
-  <para>Messages: displays messages emited by the interpreter such as errors and warnings.</para>
+  <para>Messages: displays messages emited by the interpreter such as errors and warnings</para>
 </listitem>
 <listitem>
-  <para>Output: displays the script output.</para>
+  <para>Output: displays the script output</para>
 </listitem>
 </itemizedlist>
 
@@ -123,8 +123,8 @@ The debugger area has the following tabs:
 <sect1 id="keybindings">
 <title>Shortcuts</title>
 
-<para>Many of the shortcuts are configurable by way of the <link
- linkend="settings">Settings</link> menu. &protoeditor; honors the current &kwrite; shortcut
+<para>Many of the shortcuts are configurable by way of the <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure
+Shortcuts...</guimenuitem></menuchoice> menu. &protoeditor; honors the current &kwrite; shortcut
 settings in your system. The following is a list of additional shortcuts:</para>
 
 <informaltable>
@@ -138,7 +138,7 @@ action="simul">&Shift;<keycap>F9</keycap></keycombo></para></entry>
 
 <row><entry><para><keycombo
 action="simul"><keycap>F9</keycap></keycombo></para></entry>
-<entry><para>Starts a debug session.</para></entry>
+<entry><para>Starts a debug session</para></entry>
 </row>
 
 
@@ -480,14 +480,14 @@ Example of a local Site:
 
 <para>
 The second tab is for directory mapping. If you use PHP scripts in different directories wich
-are configured in your php.ini's "include_path" directive, you might want to map this directories here.
+are configured in your php.ini's "include_path" directive, you might want to map those directories here.
 </para>
 
 <para>
 The site settings can be selected in the main menu 
 <menuchoice><guimenu>Script</guimenu><guimenuitem>Site</guimenuitem></menuchoice>, 
 or in the toolbar's combo box. The "--Local--" setting is used when debugging scripts 
-locally, using the PHP binary application.
+locally, using the PHP binary application installed in your sytem.
 </para>
 
 </sect2>
@@ -497,7 +497,7 @@ locally, using the PHP binary application.
 
 <para>
 In this section, one can configure the external applications. 
-When debugging scripts remotely, a browser application can be chosen to execute the HTTP request.
+When debugging scripts remotely, a browser application can be selected to execute the HTTP request.
 Also, when debugging locally, a console application can be configured.
 </para>
 </sect2>
@@ -506,16 +506,16 @@ Also, when debugging locally, a console application can be configured.
 
 </chapter>
 
-<chapter id="more-features">
-<title>More &protoeditor; features</title>
+<chapter id="features">
+<title>&protoeditor; features</title>
 <para>
-  The following describes some tipcs and features of &protoeditor;.
+  The following describes some tips and features of &protoeditor;.
 </para>
 
 <sect1 id="editing">
 <title>Editing files</title>
 <para>
-  Files are manipulated like in kwrite. All it's menus appear when editing a file.
+  Files are manipulated like in &kwrite; and all it's menus appear when editing a file.
   Also, one can open files dragging and droping them into &protoeditor;'s main window.  
 </para>     
 
@@ -575,7 +575,7 @@ The script will be executed using the PHP binary selected in the
 
 <para>
   When debugging without any site settings (Local debug), &protoeditor; will
-  execute the local PHP interpreter with the editor's active file. If not file
+  execute the local PHP interpreter with the editor's active file. If no file
   is opened, it will ask you to open one. 
 </para>
 
@@ -595,7 +595,7 @@ The script will be executed using the PHP binary selected in the
 <sect2 id="breakpoints">
 <title>Managing breakpoints</title>
 <para>
-  When adding a breakpoint, an icon is placed in the editor's margin pointing to the line
+  When adding a breakpoint, an icon is placed in the editor's margin in the line
   it was added. Information about the breakpoints are displayed in the "Breakpoints" tab 
   where they can be enabled/disabled clicking in the checkbox button.
 
@@ -622,11 +622,11 @@ Plus, to remove them:
   <para>Using the "Breakpoints" tab context menu</para>
 </listitem>
 <listitem>
-  <para>Pressing the "delete" key in the keyboard</para>
+  <para>Pressing the "delete" key in the keyboard, to delete the selected breakpoint in the "Breakpoints" tab</para>
 </listitem>
 </itemizedlist>
 
-Double clicking a breakpoint in the "Breakpoint" tab activates the file and line it was setted. 
+Double clicking a breakpoint in the "Breakpoint" tab activates the file and line it belongs. 
 If the file is not currently opened, &protoeditor; will open it.
 </para>     
 </sect2>
@@ -636,11 +636,11 @@ If the file is not currently opened, &protoeditor; will open it.
 <title>Inspecting variables and backtrace</title>
 <para>
   When a debug session is active, it is possible to inspect the variables and the backtrace (function
-  call stack). Variables are displayed in the "Global", "Local" e "Watches" tabs.
+  call stack). Variables are displayed in the "Global", "Local" and "Watches" tabs.
 </para>
 
 <para>
-  Also, in the "Local" tab, backtrace informations are shown in a combo box.
+  In the "Local" tab, backtrace informations are shown in a combo box.
   Changing the item in the stack shows the file and line where the function was called.  
 </para>
 
@@ -656,7 +656,7 @@ If the file is not currently opened, &protoeditor; will open it.
 <para>
   Variables in any of the variables list (Global, Local and Watches)
   can have their values edited when a debug session is active, as simple as double 
-  clicking the target variable and typing the new value it should have.
+  clicking the target variable in the list and typing the new value it should receive.
 </para>
 
 <para>
@@ -723,7 +723,7 @@ and search for related problems. If there isn't any solution there, you're welco
 <para>What should I do if I find a bug?</para>
 </question>
 <answer>
-<para>Post a message on the protoeditor's sourceforge forum or send me an email.</para>
+<para>Post a message on the protoeditor's sourceforge <ulink url="http://sourceforge.net/forum/forum.php?forum_id=439825">forum</ulink> or send me an email.</para>
 </answer>
 </qandaentry>
 
