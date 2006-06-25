@@ -18,10 +18,16 @@ class NewsLog {
   function NewsLog() {    
     $vermap = $this->getVersions();
 
-    $oldr = null;
+    $newest= null;
     foreach($vermap as $tag => $rev) {
-      $xml = simplexml_load_string($this->getLog($oldr, $rev));
-      $oldr = $rev;
+
+      if(!$newest) {
+        $newest = $rev;
+        continue;
+      }
+
+      $xml = simplexml_load_string($this->getLog($newest, $rev));
+      $newest = $rev;
 
       foreach($xml->logentry as $log) {
         $this->processEntry($tag, $log);
@@ -31,35 +37,24 @@ class NewsLog {
 
   function getVersions() {
     $output = `svn ls --verbose https://svn.sourceforge.net/svnroot/protoeditor/tags`;
-    
-    $tags = array();
+
+    $versions = array();
     $lines = explode("\n", $output);
     foreach($lines as $line) {
-      if(strlen(trim($line)) == 0) continue;
+      $line = trim($line);
+      if(strlen($line) == 0) continue;
       $tokens = explode(' ', $line);
       $tkversion = array_slice($tokens, -1);      
-      array_push($tags, substr($tkversion[0], 0, strlen($tkversion[0])-1));
+      $versions[substr($tkversion[0], 0, strlen($tkversion[0])-1)] = $tokens[0];
     }
 
-      
-    $versions = array();  
-    foreach($tags as $tag) {
-      $output = `svn log -v --stop-on-copy https://svn.sourceforge.net/svnroot/protoeditor/tags/$tag`;
-      $lines = explode("\n", $output);
-      $words = explode(' ', $lines[1]);      
-      $versions[$tag] = substr($words[0], 1); //removes the prefix 'r'
-    }
-
-    return $versions;
+	asort($versions);
+	return $versions;
   }
 
-  function getLog($oldr, $rev) {
-    if(!$oldr) {
-      $filec = `svn log --xml -v -r $rev https://svn.sourceforge.net/svnroot/protoeditor/trunk`;
-    } else {
-      $filec = `svn log --xml -v -r $oldr:$rev https://svn.sourceforge.net/svnroot/protoeditor/trunk`;
-    }
-
+  function getLog($newest, $rev) {
+// 	echo "svn log --xml -v -r $rev:$newest https://svn.sourceforge.net/svnroot/protoeditor/trunk\n";
+    $filec = `svn log --xml -v -r $rev:$newest https://svn.sourceforge.net/svnroot/protoeditor/trunk`;
     return $filec;
   }
 
