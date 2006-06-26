@@ -21,7 +21,8 @@
 #include "mainwindow.h"
 #include "editortabwidget.h"
 #include "variableslistview.h"
-#include "watchlistview.h"
+// #include "watchlistview.h"
+#include "watchwidget.h"
 #include "messagelistview.h"
 #include "debuggercombostack.h"
 #include "breakpointlistview.h"
@@ -34,8 +35,8 @@
 #include <kapplication.h>
 #include <kstatusbar.h>
 #include <kaction.h>
-#include <klineedit.h>
-#include <kpushbutton.h>
+// #include <klineedit.h>
+// #include <kpushbutton.h>
 #include <ktextedit.h>
 #include <kurl.h>
 #include <kmessagebox.h>
@@ -288,31 +289,12 @@ void MainWindow::createWidgets()
   varTabLayout->addWidget(m_localVarList);
   tabDebug->insertTab(tabStack, i18n("Local"));
 
-  QWidget* tabWatch = new QWidget(tabDebug);
-  QVBoxLayout* watchTabLayout = new QVBoxLayout(tabWatch, 1, 1);
+  //----------watch
 
-  QHBoxLayout* addWatchLayout = new QHBoxLayout(0, 6, 6);
-
-  QLabel* addLabel = new QLabel(tabWatch);
-  addLabel->setText(i18n("Watch:"));
-  addWatchLayout->addWidget(addLabel);
-
-  m_edAddWatch = new KLineEdit(tabWatch);
-  m_edAddWatch->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, m_edAddWatch->sizePolicy().hasHeightForWidth()));
-  addWatchLayout->addWidget(m_edAddWatch);
-
-  m_btAddWatch = new KPushButton(tabWatch);
-  m_btAddWatch->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, m_btAddWatch->sizePolicy().hasHeightForWidth()));
-  m_btAddWatch->setText(i18n("Add"));
-  addWatchLayout->addWidget(m_btAddWatch);
-
-  QSpacerItem* spacer = new QSpacerItem(430, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  addWatchLayout->addItem(spacer);
-  watchTabLayout->addLayout(addWatchLayout);
-
-  m_watchList = new WatchListView(tabWatch);
-  watchTabLayout->addWidget(m_watchList);
+  WatchWidget* tabWatch = new WatchWidget(tabDebug);
   tabDebug->insertTab(tabWatch, i18n("Watch"));
+
+  //------------------------
 
   QWidget* breakpointTab = new QWidget(tabDebug);
   QVBoxLayout* breakpointTabLayout = new QVBoxLayout(breakpointTab, 1, 1);
