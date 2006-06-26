@@ -496,7 +496,6 @@ void GBNet::processCommand(const QString& datas)
 StringMap GBNet::parseArgs(const QString &args)
 {
   StringMap ca;
-  long cnt, length;
 
   // a:2:{s:4:"name";s:7:"Jessica";s:3:"age";s:2:"26";s:4:"test";i:1;}
 
@@ -536,7 +535,6 @@ StringMap GBNet::parseArgs(const QString &args)
     key = args.mid(idx, s);
     idx += s + 2;
         
-    char c = args[idx];
     switch(args[idx]) 
     {
       case 'N':
