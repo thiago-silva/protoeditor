@@ -1,1 +1,1 @@
-SUBDIRS = common settings dbg xdebug gubed protoeditor 
+SUBDIRS = common settings php perl protoeditor
