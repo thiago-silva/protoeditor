@@ -21,8 +21,8 @@
 #include "mainwindow.h"
 #include "editortabwidget.h"
 #include "variableslistview.h"
-// #include "watchlistview.h"
 #include "watchwidget.h"
+#include "localvariablelistwidget.h"
 #include "messagelistview.h"
 #include "debuggercombostack.h"
 #include "breakpointlistview.h"
@@ -35,8 +35,6 @@
 #include <kapplication.h>
 #include <kstatusbar.h>
 #include <kaction.h>
-// #include <klineedit.h>
-// #include <kpushbutton.h>
 #include <ktextedit.h>
 #include <kurl.h>
 #include <kmessagebox.h>
@@ -65,7 +63,6 @@
 
 
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-//     : KMainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
     : KParts::MainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
 {
   if(!name) { setName("MainWindow"); }
@@ -272,29 +269,11 @@ void MainWindow::createWidgets()
   globalVarTabLayout->addWidget(m_globaVarList);
   tabDebug->insertTab(globalVarTab, i18n("Global"));
 
-  QWidget* tabStack = new QWidget(tabDebug);
-  QVBoxLayout* varTabLayout = new QVBoxLayout(tabStack, 1, 1);
-  QHBoxLayout* stackComboLayout = new QHBoxLayout(0, 6, 6);
+  m_localWidget = new LocalWidget(tabDebug);
+  tabDebug->insertTab(m_localWidget, i18n("Local"));
 
-  QLabel* stackLabel = new QLabel(tabStack);
-  stackLabel->setText(i18n("Stack:"));
-  stackLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, stackLabel->sizePolicy().hasHeightForWidth()));
-  stackComboLayout->addWidget(stackLabel);
-
-  m_stackCombo = new DebuggerComboStack(tabStack);
-  stackComboLayout->addWidget(m_stackCombo);
-  varTabLayout->addLayout(stackComboLayout);
-
-  m_localVarList= new VariablesListView(tabStack);
-  varTabLayout->addWidget(m_localVarList);
-  tabDebug->insertTab(tabStack, i18n("Local"));
-
-  //----------watch
-
-  WatchWidget* tabWatch = new WatchWidget(tabDebug);
-  tabDebug->insertTab(tabWatch, i18n("Watch"));
-
-  //------------------------
+  m_watchWidget = new WatchWidget(tabDebug);
+  tabDebug->insertTab(m_watchWidget, i18n("Watch"));
 
   QWidget* breakpointTab = new QWidget(tabDebug);
   QVBoxLayout* breakpointTabLayout = new QVBoxLayout(breakpointTab, 1, 1);
@@ -707,34 +686,14 @@ EditorTabWidget* MainWindow::tabEditor()
   return m_tabEditor;
 }
 
-DebuggerComboStack* MainWindow::stackCombo()
-{
-  return m_stackCombo;
-}
-
 VariablesListView*  MainWindow::globalVarList()
 {
   return m_globaVarList;
 }
 
-VariablesListView*  MainWindow::localVarList()
+WatchWidget* MainWindow::watchWidget()
 {
-  return m_localVarList;
-}
-
-KLineEdit* MainWindow::edAddWatch()
-{
-  return m_edAddWatch;
-}
-
-KPushButton* MainWindow::btAddWatch()
-{
-  return m_btAddWatch;
-}
-
-WatchListView*  MainWindow::watchList()
-{
-  return m_watchList;
+  return m_watchWidget;
 }
 
 BreakpointListView* MainWindow::breakpointListView()

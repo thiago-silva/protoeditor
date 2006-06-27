@@ -27,14 +27,15 @@
 
 class EditorTabWidget;
 class DebuggerComboStack;
+class LocalWidget;
 class VariablesListView;
 class KLineEdit;
 class KPushButton;
 class WatchListView;
+class WatchWidget;
 class BreakpointListView;
 class MessageListView;
 class KTextEdit;
-class KPushButton;
 class KStatusBar;
 class DebuggerManager;
 class DebuggerSettingsWidget;
@@ -64,15 +65,12 @@ public:
   MainWindow(QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
   ~MainWindow();
 
-  EditorTabWidget*    tabEditor();
-  DebuggerComboStack* stackCombo();
+  EditorTabWidget*    tabEditor();  
   VariablesListView*  globalVarList();
-  VariablesListView*  localVarList();
-
+  LocalWidget*        localWidget();
+  DebuggerComboStack* comboStack();
+  WatchWidget*        watchWidget();
   KHistoryCombo*      cbArguments();
-  KLineEdit*          edAddWatch();
-  KPushButton*        btAddWatch();
-  WatchListView*      watchList();
   BreakpointListView* breakpointListView();
   MessageListView*    messageListView();
   KTextEdit*          edOutput();
@@ -146,12 +144,9 @@ private:
   QLabel *m_lbEditorMsg;
   KHistoryCombo* m_cbArguments;
   EditorTabWidget* m_tabEditor;
-  DebuggerComboStack* m_stackCombo;
   VariablesListView* m_globaVarList;
-  VariablesListView* m_localVarList;
-  KLineEdit* m_edAddWatch;
-  KPushButton* m_btAddWatch;
-  WatchListView* m_watchList;
+  LocalWidget* m_localWidget;
+  WatchWidget *m_watchWidget;
   BreakpointListView* m_breakpointList;
   MessageListView* m_messageListView;
   KTextEdit* m_edOutput;
