@@ -26,12 +26,31 @@ class KLineEdit;
 class KPushButton;
 class WatchListView;
 
+class Variable;
+
 class WatchWidget : public QWidget 
 {
   Q_OBJECT
 public:
   WatchWidget(QWidget *parent = 0, const char *name = 0);
   ~WatchWidget();
+
+  WatchListView * watchList();
+
+  void addWatch(Variable*);
+
+  void setReadOnly(bool);
+  void reset();
+  QStringList watches();
+
+signals:
+  void sigNewWatch(const QString&);
+
+  void sigWatchRemoved(Variable*);
+  void sigVarModified(Variable*);
+
+private slots:
+  void slotNewWatch();
 
 private:
   KLineEdit     *m_edAddWatch;

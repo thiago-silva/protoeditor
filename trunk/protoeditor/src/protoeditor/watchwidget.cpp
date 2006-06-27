@@ -25,6 +25,7 @@
 #include <kpushbutton.h>
 #include <klocale.h>
 #include "watchlistview.h"
+#include "variable.h"
 
 WatchWidget::WatchWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -52,12 +53,56 @@ WatchWidget::WatchWidget(QWidget *parent, const char *name)
 
   m_watchList = new WatchListView(this);
   watchTabLayout->addWidget(m_watchList);
-}
 
+  connect(m_btAddWatch, SIGNAL(clicked()),
+          this, SLOT(slotNewWatch()));
+
+  connect(m_edAddWatch, SIGNAL(returnPressed()),
+          this, SLOT(slotNewWatch()));
+
+  connect(m_watchList, SIGNAL(sigWatchRemoved(Variable*)),
+    this, SIGNAL(sigWatchRemoved(Variable*)));
+
+  connect(m_watchList, SIGNAL(sigVarModified(Variable*)),
+    this, SIGNAL(sigVarModified(Variable*)));
+}
 
 WatchWidget::~WatchWidget()
 {
 }
 
+void WatchWidget::addWatch(Variable* var)
+{
+  m_watchList->addWatch(var); 
+}
+
+void WatchWidget::setReadOnly(bool value)
+{
+  m_watchList->setReadOnly(value);
+}
+
+void WatchWidget::reset()
+{
+  m_watchList->reset();
+}
+
+QStringList WatchWidget::watches()
+{
+  return m_watchList->watches();
+}
+
+void WatchWidget::slotNewWatch()
+{
+  QString expression = m_edAddWatch->text();
+  m_edAddWatch->clear();
+  m_watchList->addWatch(expression);
+
+  emit sigNewWatch(expression);
+}
+
+WatchListView* WatchWidget::watchList()
+{
+  return m_watchList;
+}
 
 #include "watchwidget.moc"
