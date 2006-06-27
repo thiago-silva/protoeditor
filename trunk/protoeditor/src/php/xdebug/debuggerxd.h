@@ -70,7 +70,7 @@ public:
   //Communication with XDNet
 
   void updateStack(DebuggerStack* stack);
-  void updateVariables(VariablesList_t*, bool);
+  void updateVariables(VariableList_t*, bool);
 
   void updateWatch(Variable*);
   void updateBreakpoint(int id, const QString& filePath, int line, const QString& state, int hitcount, int skiphits,

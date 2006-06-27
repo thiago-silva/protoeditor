@@ -27,7 +27,7 @@
 class VariableValue;
 class Variable;
 
-typedef QPtrList<Variable> VariablesList_t;
+typedef QPtrList<Variable> VariableList_t;
 
 class Variable {
 public:
@@ -106,13 +106,13 @@ public:
   VariableListValue(Variable* owner);
   virtual ~VariableListValue();
 
-  void setList(VariablesList_t*);
-  VariablesList_t* list();
+  void setList(VariableList_t*);
+  VariableList_t* list();
 
   virtual QString toString(int indent = 0) = 0;
   virtual QString typeName() = 0;
 protected:  
-  VariablesList_t* m_list;
+  VariableList_t* m_list;
 };
 
 #endif

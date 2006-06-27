@@ -20,6 +20,7 @@
  
 #include "protoeditorsettings.h"
 #include "phpsettings.h"
+#include "perlsettings.h"
 #include "sitesettings.h"
 #include "extappsettings.h"
 #include "debuggersettingsinterface.h"
@@ -48,6 +49,8 @@ ProtoeditorSettings::ProtoeditorSettings()
   //--
 
   m_phpSettings = new PHPSettings();
+  m_perlSettings = new PerlSettings();
+
   m_extApptSettings = new ExtAppSettings();
 
   //load all Sites
@@ -71,6 +74,7 @@ void ProtoeditorSettings::loadSites()
 ProtoeditorSettings::~ProtoeditorSettings()
 {
   delete m_phpSettings;
+  delete m_perlSettings;
   delete m_extApptSettings;
 
 }
@@ -159,9 +163,15 @@ QValueList<SiteSettings*> ProtoeditorSettings::siteSettingsList()
 {
   return m_siteSettingsMap.values();
 }
+
 PHPSettings* ProtoeditorSettings::phpSettings()
 {
   return m_phpSettings;
+}
+
+PerlSettings* ProtoeditorSettings::perlSettings()
+{
+  return m_perlSettings;
 }
 
 ExtAppSettings* ProtoeditorSettings::extAppSettings()
@@ -197,6 +207,8 @@ void ProtoeditorSettings::writeConfig(bool silent)
   KConfigSkeleton::writeConfig();
 
   m_phpSettings->writeConfig();
+  m_perlSettings->writeConfig();
+
   m_extApptSettings->writeConfig();
 
   writeDebuggersConf();

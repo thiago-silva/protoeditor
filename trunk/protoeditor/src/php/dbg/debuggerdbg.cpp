@@ -399,7 +399,7 @@ void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGl
     //global vars
     PHPVariableParser p(result);
 
-    VariablesList_t* array = p.parseAnonymousArray();
+    VariableList_t* array = p.parseAnonymousArray();
 
     if(isGlobal)
     {

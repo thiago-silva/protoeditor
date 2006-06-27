@@ -339,7 +339,7 @@ void DebuggerGB::updateStack(DebuggerStack* stack)
 void DebuggerGB::updateGlobalVariables(const QString& vars)
 {
   PHPVariableParser p(vars);
-  VariablesList_t* array = p.parseAnonymousArray();    
+  VariableList_t* array = p.parseAnonymousArray();    
   manager()->updateGlobalVars(array);
 }
 
@@ -347,7 +347,7 @@ void DebuggerGB::updateLocalVariables(const QString& scope, const QString& vars)
 {
   if(scope == "Current Scope") {
     PHPVariableParser p(vars);
-    VariablesList_t* array = p.parseAnonymousArray();    
+    VariableList_t* array = p.parseAnonymousArray();    
     manager()->updateLocalVars(array);
   }
 }
@@ -358,7 +358,7 @@ void DebuggerGB::updateWatch(const QString& name, const QString& value)
   {
     //This watch is not on our list.
     //It might happen whe the user modifies the value of a variable (ie. "$var=123")
-    //through the VariablesListView or through evaluation of code.
+    //through the VariableListView or through evaluation of code.
     //Since, for evaluation and change of variable value,
     //we request a watch expression "$var=123", we receive "$var=123" as the name
     //of the variable and we don't want to add something like that to the watchlist

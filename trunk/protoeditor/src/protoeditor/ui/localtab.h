@@ -18,31 +18,26 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef LOCALWIDGET_H
+#define LOCALWIDGET_H
+#include <qwidget.h>
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+class VariableListView;
+class ComboStack;
 
-  AbstractDebugger* debugger;
+class LocalTab : public QWidget 
+{
+  Q_OBJECT
+public:
+  LocalTab(QWidget *parent = 0, const char *name = 0);
+  ~LocalTab();
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+  VariableListView* localVarList();
+  ComboStack*        comboStack();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+private:
+  ComboStack        *m_comboStack;
+  VariableListView *m_localVarList;
+};
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
-
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+#endif

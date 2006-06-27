@@ -42,7 +42,7 @@ PHPVariable* PHPVariableParser::parseVariable() {
   return var;
 }
 
-VariablesList_t* PHPVariableParser::parseAnonymousArray() {
+VariableList_t* PHPVariableParser::parseAnonymousArray() {
   //pretend that there is the first variable so the references
   //are set correctly
   m_indexedVarList.append(NULL);
@@ -50,10 +50,10 @@ VariablesList_t* PHPVariableParser::parseAnonymousArray() {
 }
 
 
-VariablesList_t* PHPVariableParser::parseArray(PHPVariable* var)
+VariableList_t* PHPVariableParser::parseArray(PHPVariable* var)
 {
   int size;
-  VariablesList_t* list = new VariablesList_t;
+  VariableList_t* list = new VariableList_t;
 
   QRegExp rx;
   rx.setPattern("a:(\\d*):\\{");
@@ -180,11 +180,11 @@ QString PHPVariableParser::parseClassType()
   return rx.cap(1);
 }
 
-VariablesList_t* PHPVariableParser::parseObjectMembers(PHPVariable* parent)
+VariableList_t* PHPVariableParser::parseObjectMembers(PHPVariable* parent)
 {
   //O:6:"Classe":3:{s:6:"membro";N;s:4:"mem2";N;s:4:"priv";N;}
   int size;
-  VariablesList_t* list = new VariablesList_t;
+  VariableList_t* list = new VariableList_t;
 
   QRegExp rx;
   rx.setPattern("(\\d*):\\{");

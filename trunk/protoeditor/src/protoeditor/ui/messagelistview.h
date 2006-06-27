@@ -18,31 +18,30 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef MESSAGELISTVIEW_H
+#define MESSAGELISTVIEW_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <klistview.h>
+class KURL;
 
-  AbstractDebugger* debugger;
+class MessageListView : public KListView
+{
+Q_OBJECT
+public:
+  MessageListView(QWidget *parent = 0, const char *name = 0);
+  ~MessageListView();
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+  void add(int, const QString&, int line, const KURL&);
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+signals:
+  void sigDoubleClick(const KURL&, int);
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+private slots:
+  void slotDoubleClick(QListViewItem *, const QPoint &, int);
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+private:
+  enum { TypeCol = 0, MessageCol, LineCol, FileCol };
+
+};
+
+#endif

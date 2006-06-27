@@ -17,32 +17,55 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "perlsettingswidget.h"
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include "protoeditorsettings.h"
+#include "debuggersettingsinterface.h"
+#include "perlsettings.h"
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qcombobox.h>
+#include <qtabwidget.h>
 
-  AbstractDebugger* debugger;
+#include <klineedit.h>
+#include <klocale.h>
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
+ : QWidget(parent, name)
+{
+  QVBoxLayout* mainLayout = new QVBoxLayout(this, 3, 10);
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  QGridLayout* grid = new QGridLayout(0, 2,2, 3, 10);
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
+  QLabel* lbPhp= new QLabel(this);
+  lbPhp->setText(i18n("Perl command:"));
+  grid->addWidget(lbPhp, 0, 0);
+
+
+  m_edPerlCommand = new KLineEdit(this);
+  grid->addWidget(m_edPerlCommand, 0, 1);
+  
+  mainLayout->addLayout(grid);
 }
+
+
+PerlSettingsWidget::~PerlSettingsWidget()
+{
+}
+
+void PerlSettingsWidget::populate()
+{
+  PerlSettings* settings = ProtoeditorSettings::self()->perlSettings();
+  m_edPerlCommand->setText(settings->PerlCommand());
+}
+
+void PerlSettingsWidget::updateSettings()
+{
+  PerlSettings* settings = ProtoeditorSettings::self()->perlSettings();
+
+  settings->setPerlCommand(m_edPerlCommand->text());
+}
+
+#include "perlsettingswidget.moc"

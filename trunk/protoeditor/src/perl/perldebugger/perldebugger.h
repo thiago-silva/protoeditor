@@ -17,32 +17,64 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef PERLDEBUGGER_H
+#define PERLDEBUGGER_H
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include "abstractdebugger.h"
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <qstring.h>
 
-  AbstractDebugger* debugger;
+// class PerlSettings;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class PerlDebugger : public AbstractDebugger
+{
+  Q_OBJECT
+public:
+  PerlDebugger(DebuggerManager*);
+  virtual ~PerlDebugger();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  virtual QString name()   const;
+  virtual bool isRunning() const;
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  virtual void init();
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+  virtual void start(const QString&, const QString& args, bool local);
+  virtual void continueExecution();
+  virtual void stop();
+  virtual void stepInto();
+  virtual void stepOver();
+  virtual void stepOut();
+
+  virtual void runToCursor(const QString&, int);
+
+  virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
+
+  virtual void addBreakpoint(DebuggerBreakpoint*);
+
+  virtual void changeBreakpoint(DebuggerBreakpoint*);
+  virtual void removeBreakpoint(DebuggerBreakpoint*);
+
+  virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
+
+  virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*);
+
+  virtual void addWatches(const QStringList&);
+  virtual void addWatch(const QString& expression);
+  virtual void removeWatch(const QString& expression);
+
+  virtual void profile(const QString&, const QString& args, bool local);
+
+private slots:
+  void slotSettingsChanged();
+
+private:
+
+  QString m_name;
+
+  bool m_isRunning;
+  bool m_isJITActive;
+  
+//   PerlSettings *m_perlSettings;
+};
+
+#endif

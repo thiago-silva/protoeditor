@@ -32,11 +32,11 @@ public:
   XDVariableParser();
   ~XDVariableParser();
   
-  VariablesList_t* parse(QDomNodeList&);
+  VariableList_t* parse(QDomNodeList&);
   PHPVariable* parse(QDomNode&);
 
 private:
-  VariablesList_t* parseList(const QDomNodeList& list, PHPVariable* parent);
+  VariableList_t* parseList(const QDomNodeList& list, PHPVariable* parent);
   PHPVariable*     parseVar(QDomNode& e, PHPVariable* parent);
 };
 

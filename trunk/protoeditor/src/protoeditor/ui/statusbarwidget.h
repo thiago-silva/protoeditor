@@ -18,31 +18,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef STATUSBARWIDGET_H
+#define STATUSBARWIDGET_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <kstatusbar.h>
+class QLabel;
 
-  AbstractDebugger* debugger;
+class StatusBarWidget : KStatusBar
+{
+  Q_OBJECT
+public:
+  enum { LedOn, LedOff /*, LedWait */};
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+  StatusBarWidget(QWidget* parent, const char *name = 0);
+  ~StatusBarWidget();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  void setEditorStatus(const QString&);
+  void setDebugStatusMsg(const QString&);
+  void setDebugStatusName(const QString&);
+  void setLedState(int);
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+private:
+  QLabel *m_lbLed;
+  QLabel *m_lbDebugMsg;
+  QLabel *m_lbDebugName;
+  QLabel *m_lbEditorMsg;
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+};
+
+#endif

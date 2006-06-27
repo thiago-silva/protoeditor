@@ -78,6 +78,7 @@ AC_CONFIG_FILES([ src/php/dbg/profiler/Makefile ])
 AC_CONFIG_FILES([ src/php/gubed/Makefile ])
 AC_CONFIG_FILES([ src/php/xdebug/Makefile ])
 AC_CONFIG_FILES([ src/protoeditor/Makefile ])
+AC_CONFIG_FILES([ src/protoeditor/ui/Makefile ])
 AC_CONFIG_FILES([ src/settings/Makefile ])
 AC_CONFIG_FILES([ src/settings/widgets/Makefile ])
 AC_OUTPUT

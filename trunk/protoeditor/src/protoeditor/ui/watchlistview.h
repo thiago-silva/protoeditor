@@ -18,31 +18,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef WATCHLISTVIEW_H
+#define WATCHLISTVIEW_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include "variablelistview.h"
 
-  AbstractDebugger* debugger;
+class Variable;
+class QStringList;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class WatchListView : public VariableListView
+{
+Q_OBJECT
+public:
+  WatchListView(QWidget *parent = 0, const char *name = 0);
+  virtual ~WatchListView();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  void addWatch(Variable*);
+  void addWatch(const QString&);
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  QStringList watches();
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+  void reset();
+signals:  
+  void sigWatchRemoved(Variable*);
+
+protected slots:
+  void slotContextMenuRequested(QListViewItem* item, const QPoint& p, int);
+
+protected:
+  void removeWatch(VariableListViewItem*);
+  void removeAllWatches();
+  virtual void keyPressEvent(QKeyEvent* e);
+
+};
+
+#endif

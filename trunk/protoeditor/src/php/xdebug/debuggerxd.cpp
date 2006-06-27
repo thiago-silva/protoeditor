@@ -353,7 +353,7 @@ void DebuggerXD::updateStack(DebuggerStack* stack)
 
 }
 
-void DebuggerXD::updateVariables(VariablesList_t* array, bool isGlobal)
+void DebuggerXD::updateVariables(VariableList_t* array, bool isGlobal)
 {
   if(isGlobal)
   {
@@ -371,7 +371,7 @@ void DebuggerXD::updateWatch(Variable* var)
   {
     //This watch is not on our list.
     //It might happen whe the user modifies the value of a variable (ie. "$var=123")
-    //through the VariablesListView or through evaluation of code.
+    //through the VariableListView or through evaluation of code.
     //Since, for evaluation and change of variable value,
     //we request a watch expression "$var=123", we receive "$var=123" as the name
     //of the variable and we don't want to add something like that to the watchlist

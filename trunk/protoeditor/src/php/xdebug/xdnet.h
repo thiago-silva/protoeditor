@@ -130,7 +130,7 @@ private:
 
   QSocket          *m_socket;
 
-  VariablesList_t* m_globalVars;
+  VariableList_t* m_globalVars;
   int m_superglobalsCount;
   
   class Error {

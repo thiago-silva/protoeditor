@@ -75,7 +75,7 @@ $_REQUEST
 
 */
 
-VariablesList_t* XDVariableParser::parse(QDomNodeList& list)
+VariableList_t* XDVariableParser::parse(QDomNodeList& list)
 {
   return parseList(list, 0);
 }
@@ -85,10 +85,10 @@ PHPVariable* XDVariableParser::parse(QDomNode& node)
   return parseVar(node, 0);
 }
 
-VariablesList_t* XDVariableParser::parseList(const QDomNodeList& list, PHPVariable* parent)
+VariableList_t* XDVariableParser::parseList(const QDomNodeList& list, PHPVariable* parent)
 {
   QDomElement e;
-  VariablesList_t* vlist = new VariablesList_t;
+  VariableList_t* vlist = new VariableList_t;
   PHPVariable* var;
   for(uint i = 0; i < list.count(); i++)
   {

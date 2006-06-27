@@ -17,32 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef PERLSETTINGSWIDGET_H
+#define PERLSETTINGSWIDGET_H
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include <qwidget.h>
+#include <qvaluelist.h>
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+class QComboBox;
+class KLineEdit;
+class DebuggerSettingsInterface;
 
-  AbstractDebugger* debugger;
+class PerlSettingsWidget : public QWidget
+{
+  Q_OBJECT
+public:
+  PerlSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  ~PerlSettingsWidget();
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+  void populate();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  void updateSettings();
+private:
+  KLineEdit         *m_edPerlCommand;
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;
+};
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+#endif

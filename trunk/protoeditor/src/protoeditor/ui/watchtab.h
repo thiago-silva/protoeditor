@@ -18,31 +18,35 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef WATCHWIDGET_H
+#define WATCHWIDGET_H
+#include <qwidget.h>
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+class KLineEdit;
+class KPushButton;
+class WatchListView;
 
-  AbstractDebugger* debugger;
+class Variable;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class WatchTab : public QWidget 
+{
+  Q_OBJECT
+public:
+  WatchTab(QWidget *parent = 0, const char *name = 0);
+  ~WatchTab();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  WatchListView * watchListView();
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+signals:
+  void sigWatchAdded(const QString&);
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+private slots:
+  void slotNewWatch();
+
+private:
+  KLineEdit     *m_edAddWatch;
+  KPushButton   *m_btAddWatch;
+  WatchListView *m_watchList;
+};
+
+#endif

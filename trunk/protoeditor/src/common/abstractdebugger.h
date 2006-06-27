@@ -81,7 +81,7 @@ public:
   */
   virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*) = 0;
 
-  /* The user modified a variable (probably through the VariablesListView) */
+  /* The user modified a variable (probably through the VariableListView) */
   virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*) = 0;
 
   virtual void addWatches(const QStringList&) = 0;

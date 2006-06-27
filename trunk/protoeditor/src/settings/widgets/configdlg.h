@@ -23,6 +23,7 @@
 #include <kdialogbase.h>
 
 class PHPSettingsWidget;
+class PerlSettingsWidget;
 class SiteSettingsWidget;
 class ExtAppSettingsWidget;
 
@@ -42,6 +43,7 @@ private:
   static ConfigDlg* m_self;
 
   PHPSettingsWidget     *m_phpSettingsWidget;
+  PerlSettingsWidget    *m_perlSettingsWidget;
   SiteSettingsWidget    *m_siteSettingsWidget;
   ExtAppSettingsWidget  *m_extAppSettingsWidget;
 };

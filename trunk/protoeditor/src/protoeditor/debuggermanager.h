@@ -53,8 +53,8 @@ public:
 
   /* for debugger to notify us */
   void updateStack(DebuggerStack*);
-  void updateGlobalVars(VariablesList_t*);
-  void updateLocalVars(VariablesList_t*);
+  void updateGlobalVars(VariableList_t*);
+  void updateLocalVars(VariableList_t*);
   void updateWatch(Variable*);
   void updateBreakpoint(DebuggerBreakpoint* bp);
   void debugMessage(int, const QString&, const KURL&, int);
@@ -82,9 +82,8 @@ public slots:
 
 private slots:
 
-  void slotAddWatch(); //from WatchList
-  void slotAddWatch(const QString& expression); //from editor ctx menu
-  void slotComboStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
+  void slotWatchAdded(const QString& expression);
+  void slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
   void slotGlobalVarModified(Variable* var);
   void slotLocalVarModified(Variable* var);
   void slotBreakpointCreated(DebuggerBreakpoint*);
@@ -106,6 +105,10 @@ private slots:
 
   //Debugger internal error (conection, listen port, etc)
   void slotError(const QString&);
+
+signals:
+  void sigDebugStarted();
+  void sigDebugEnded();
 
 private:
   KURL sessionPrologue(bool isProfiling);

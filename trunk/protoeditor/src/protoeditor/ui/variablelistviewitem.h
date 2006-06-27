@@ -18,31 +18,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef VARIABLESLISTVIEWITEM_H
+#define VARIABLESLISTVIEWITEM_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <klistview.h>
 
-  AbstractDebugger* debugger;
+class Variable;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class VariableListViewItem : public KListViewItem {
+public:
+  VariableListViewItem(KListView *parent);
+  VariableListViewItem(KListViewItem *parent);
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  VariableListViewItem(KListView *parent, Variable* variable);
+  VariableListViewItem(KListViewItem *parent, Variable* variable);
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  virtual ~VariableListViewItem();
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+  void setVariable(Variable* variable);
+  void clearChilds();
+
+  virtual void insertItem(VariableListViewItem *item);
+
+  QString stringPath();
+  Variable* variable();
+
+  virtual QListViewItem* lastItem();
+
+  virtual void setRenameEnabled( int col, bool b );
+
+  void showVariable();
+
+private:  
+  void deleteVar();
+
+  Variable* m_variable;
+  bool m_isRenameable;
+  bool m_isRoot;
+};
+
+#endif

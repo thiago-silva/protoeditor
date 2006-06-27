@@ -18,31 +18,47 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include "localtab.h"
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <qlayout.h>
+#include <qlabel.h>
+#include <klocale.h>
 
-  AbstractDebugger* debugger;
+#include "combostack.h"
+#include "variablelistview.h"
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+LocalTab::LocalTab(QWidget *parent, const char *name)
+  : QWidget(parent, name)
+{
+  QVBoxLayout* varTabLayout = new QVBoxLayout(this, 1, 1);
+  QHBoxLayout* stackComboLayout = new QHBoxLayout(0, 6, 6);
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  QLabel* stackLabel = new QLabel(this);
+  stackLabel->setText(i18n("Stack:"));
+  stackLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, stackLabel->sizePolicy().hasHeightForWidth()));
+  stackComboLayout->addWidget(stackLabel);
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  m_comboStack = new ComboStack(this);
+  stackComboLayout->addWidget(m_comboStack);
+  varTabLayout->addLayout(stackComboLayout);
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
+  m_localVarList= new VariableListView(this);
+  varTabLayout->addWidget(m_localVarList);
 }
+
+
+LocalTab::~LocalTab()
+{
+}
+
+VariableListView* LocalTab::localVarList()
+{
+  return m_localVarList;
+}
+
+ComboStack* LocalTab::comboStack()
+{
+  return m_comboStack;
+}
+
+#include "localtab.moc"

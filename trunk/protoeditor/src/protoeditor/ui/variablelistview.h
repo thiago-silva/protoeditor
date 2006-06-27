@@ -18,31 +18,58 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef VARIABLESLISTVIEW_H
+#define VARIABLESLISTVIEW_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <klistview.h>
+#include <qvaluelist.h>
+#include "variable.h"
 
-  AbstractDebugger* debugger;
+class VariableListViewItem;
+// class KPopupMenu;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class VariableListView : public KListView
+{
+  Q_OBJECT
+public:
+  enum { NameCol = 0, ValueCol, TypeCol };
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  VariableListView(QWidget *parent = 0, const char *name = 0);
+  virtual ~VariableListView();
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  void setVariables(VariableList_t* vars);
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+  void setReadOnly(bool);
+  bool isReadOnly();
+signals:
+  void sigVarModified(Variable*);
+
+protected slots:
+  void slotItemExpanded(QListViewItem * item);
+  void slotItemCollapsed(QListViewItem * item);
+  void slotItemRenamed(QListViewItem * item, int col, const QString & text);
+
+  void slotDoubleClick(QListViewItem *, const QPoint &, int );
+
+  virtual void slotContextMenuRequested(QListViewItem *, const QPoint &, int);
+
+protected:
+  VariableListViewItem* lastRootItem();
+
+  void addVariables(VariableList_t* vars, VariableListViewItem* parent = NULL);
+  void addVariable(Variable* variable, VariableListViewItem* parent = NULL);
+  
+  VariableListViewItem* getItemFromPath(QString path);
+private:
+  void markExpanded(VariableListViewItem* item);
+  void markColapsed(VariableListViewItem* item);
+
+  void populateChildren(VariableListViewItem* item);
+  void reexpandItems();
+
+  QValueList<QString> m_expanded;
+  VariableList_t*    m_variables;
+  bool m_isReadOnly;
+};
+
+#endif

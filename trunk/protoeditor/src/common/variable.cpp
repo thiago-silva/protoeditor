@@ -158,7 +158,7 @@ VariableListValue::~VariableListValue()
   delete m_list; //autoDelete must be set to true;
 }
 
-void VariableListValue::setList(VariablesList_t* list)
+void VariableListValue::setList(VariableList_t* list)
 {
   delete m_list;
 
@@ -166,7 +166,7 @@ void VariableListValue::setList(VariablesList_t* list)
   m_list->setAutoDelete(true);
 }
 
-VariablesList_t* VariableListValue::list()
+VariableList_t* VariableListValue::list()
 {
   return m_list;
 }

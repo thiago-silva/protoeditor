@@ -75,6 +75,9 @@ public:
   DebuggerExecutionPoint*     bottomExecutionPoint();
   DebuggerExecutionPoint*     topExecutionPoint();
   DebuggerExecutionPointList_t DebuggerExecutionPointList();
+
+  int count();
+  bool isEmpty();
 private:
   DebuggerExecutionPointList_t m_execPointList;
 };

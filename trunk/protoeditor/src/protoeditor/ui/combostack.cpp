@@ -18,31 +18,57 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include "combostack.h"
+#include "debuggerstack.h"
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
-
-  AbstractDebugger* debugger;
-
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
-
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
-
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
-
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
+ComboStack::ComboStack(QWidget* parent, const char* name)
+  : QComboBox(false, parent, name), m_currentExecutionPoint(NULL), m_stack(NULL)
+{
+  connect(this, SIGNAL(activated(int)), this, SLOT(slotChanged(int)));
+  m_stack = new DebuggerStack();
 }
+
+ComboStack::~ComboStack()
+{
+  delete m_stack;
+}
+
+void ComboStack::setStack(DebuggerStack* stack)
+{
+  clear();
+
+  DebuggerStack::DebuggerExecutionPointList_t execPointList
+    = stack->DebuggerExecutionPointList();
+
+  DebuggerExecutionPoint* execPoint;
+  for(execPoint = execPointList.first(); execPoint; execPoint = execPointList.next()) {
+    insertItem(execPoint->function() + " : " + QString::number(execPoint->line()));
+  }
+
+  setCurrentItem(0);
+  m_currentExecutionPoint = execPointList.first();
+
+  if(m_stack) delete m_stack;
+  m_stack = stack;
+}
+
+DebuggerStack* ComboStack::stack() {
+  return m_stack;
+}
+
+DebuggerExecutionPoint* ComboStack::selectedDebuggerExecutionPoint() {
+  return m_currentExecutionPoint;
+}
+
+void ComboStack::slotChanged(int index)
+{
+  DebuggerExecutionPoint* execPoint
+    = m_stack->DebuggerExecutionPointList().at(index);
+
+  emit changed(m_currentExecutionPoint, execPoint);
+
+  m_currentExecutionPoint = execPoint;
+}
+
+
+#include "combostack.moc"

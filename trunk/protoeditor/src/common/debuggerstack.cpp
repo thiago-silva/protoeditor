@@ -128,3 +128,13 @@ DebuggerStack::DebuggerExecutionPointList_t DebuggerStack::DebuggerExecutionPoin
 {
   return m_execPointList;
 }
+
+int DebuggerStack::count()
+{
+  return m_execPointList.count();
+}
+
+bool DebuggerStack::isEmpty()
+{
+  return m_execPointList.isEmpty();
+}

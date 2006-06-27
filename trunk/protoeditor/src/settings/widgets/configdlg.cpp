@@ -29,6 +29,7 @@
 #include <kapplication.h>
 
 #include "phpsettingswidget.h"
+#include "perlsettingswidget.h"
 #include "sitesettingswidget.h"
 #include "extappsettingswidget.h"
 
@@ -44,17 +45,24 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
 
 
   QStringList path;
-  path << i18n("Debuggers");
-  setFolderIcon(path, BarIcon("debug", KIcon::SizeSmall));
+  path << i18n("Languages");
+  setFolderIcon(path, BarIcon("protoeditor", KIcon::SizeSmall));
 
   QVBox *frame;
 
   path.clear();
-  path << i18n("Debuggers") << i18n("PHP");
+  path << i18n("Languages") << i18n("PHP");
   frame = addVBoxPage(path, "PHP", BarIcon("php", KIcon::SizeSmall));
   frame->setSpacing(0);
   frame->setMargin(0);
-  m_phpSettingsWidget = new PHPSettingsWidget(frame, "PHP");//->reparent(((QWidget*)frame), 0, QPoint());
+  m_phpSettingsWidget = new PHPSettingsWidget(frame, "PHP");
+
+  path.clear();
+  path << i18n("Languages") << i18n("Perl");
+  frame = addVBoxPage(path, "Perl", BarIcon("perl", KIcon::SizeSmall));
+  frame->setSpacing(0);
+  frame->setMargin(0);
+  m_perlSettingsWidget = new PerlSettingsWidget(frame, "Perl");
 
   path.clear();
   path << i18n("Sites");
@@ -65,7 +73,7 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
 
   path.clear();
   path << i18n("External Applications");
-  frame = addVBoxPage(path, i18n("External Applications"), BarIcon("konqueror", KIcon::SizeSmall));
+  frame = addVBoxPage(path, i18n("External Applications"), BarIcon("gear", KIcon::SizeSmall));
   frame->setSpacing(0);
   frame->setMargin(0);
   m_extAppSettingsWidget = new ExtAppSettingsWidget(frame, i18n("External Applications"));//->reparent(((QWidget*)frame), 0, QPoint());
@@ -102,6 +110,7 @@ void ConfigDlg::populateWidgets()
 {
   m_extAppSettingsWidget->populate();
   m_phpSettingsWidget->populate();
+  m_perlSettingsWidget->populate();
   m_siteSettingsWidget->populate();
 }
 
@@ -109,10 +118,10 @@ void ConfigDlg::slotOk()
 {
   KDialogBase::slotOk();
 
-
   m_siteSettingsWidget->updateSettings();
   m_extAppSettingsWidget->updateSettings();
   m_phpSettingsWidget->updateSettings();
+  m_perlSettingsWidget->updateSettings();
 
   ProtoeditorSettings::self()->writeConfig();
 }

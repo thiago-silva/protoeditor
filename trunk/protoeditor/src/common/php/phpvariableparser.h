@@ -37,7 +37,7 @@ public:
   ~PHPVariableParser();
 
   PHPVariable* parseVariable();
-  VariablesList_t* parseAnonymousArray();
+  VariableList_t* parseAnonymousArray();
 
   PHPVariable* parseVarName(PHPVariable*);
 
@@ -49,10 +49,10 @@ public:
   QString parseBool();
   QString parseResource();
 
-  VariablesList_t* parseArray(PHPVariable*);
+  VariableList_t* parseArray(PHPVariable*);
 
   QString parseClassType();
-  VariablesList_t* parseObjectMembers(PHPVariable*);
+  VariableList_t* parseObjectMembers(PHPVariable*);
 
   int parseSoftReference();
   int parseReference();

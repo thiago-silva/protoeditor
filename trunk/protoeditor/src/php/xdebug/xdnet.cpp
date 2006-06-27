@@ -543,7 +543,7 @@ void XDNet::processResponse(QDomElement& root)
     QDomNodeList list = root.childNodes();
     XDVariableParser p;
 
-    VariablesList_t* array = p.parse(list);
+    VariableList_t* array = p.parse(list);
 
     if(root.attributeNode("transaction_id").value().toInt() == LocalScopeId)
     {

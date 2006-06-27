@@ -18,31 +18,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#ifndef COMBOSTACK_H
+#define COMBOSTACK_H
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+#include <qcombobox.h>
 
-  AbstractDebugger* debugger;
+class DebuggerExecutionPoint;
+class DebuggerStack;
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+class ComboStack : public QComboBox
+{
+Q_OBJECT
+public:
+  ComboStack(QWidget* parent = 0, const char* name = 0);
+  ~ComboStack();
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+  void setStack(DebuggerStack*);
+  DebuggerStack* stack();
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  DebuggerExecutionPoint* selectedDebuggerExecutionPoint();
+signals:
+  void changed(DebuggerExecutionPoint*, DebuggerExecutionPoint*); //old,new
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+private slots:
+    virtual void slotChanged(int);
+private:
+  DebuggerExecutionPoint *m_currentExecutionPoint;
+  DebuggerStack          *m_stack;
+};
+
+
+#endif

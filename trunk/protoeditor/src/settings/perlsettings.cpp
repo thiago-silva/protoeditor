@@ -18,31 +18,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include "perlsettings.h"
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+PerlSettings::PerlSettings(  )
+  : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
+{
+  setCurrentGroup( QString::fromLatin1( "Perl" ) );
 
-  AbstractDebugger* debugger;
+  KConfigSkeleton::ItemString  *itemPerlCommand;
+  itemPerlCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerlCommand" ), mPerlCommand, "perl");
+  addItem( itemPerlCommand, QString::fromLatin1( "PerlCommand" ) );
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
-
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
-
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
-
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
+  readConfig();
 }
+
+PerlSettings::~PerlSettings()
+{
+}
+

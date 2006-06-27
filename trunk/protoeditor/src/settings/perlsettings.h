@@ -17,32 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef PERLSETTINGS_H
+#define PERLSETTINGS_H
 
-#include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
+#include <kconfigskeleton.h>
 
-QMap<QString, AbstractDebugger*> DebuggerFactory::buildDebuggers(DebuggerManager* manager) {
-  QMap<QString, AbstractDebugger*> map;
+class PerlSettings : public KConfigSkeleton
+{
+  public:
+    PerlSettings();
 
-  AbstractDebugger* debugger;
+    ~PerlSettings();
 
-  //DBG
-  debugger = new DebuggerDBG(manager);
-  map[debugger->name()] = debugger;
+    void setPerlCommand(const QString& cmd) {
+      mPerlCommand = cmd;
+    }
 
-  //Xdebug
-  debugger = new DebuggerXD(manager);
-  map[debugger->name()] = debugger;
+    QString PerlCommand() const {
+      return mPerlCommand ;
+    }
 
-  //Gubed
-  debugger = new DebuggerGB(manager);
-  map[debugger->name()] = debugger;
+  protected:
+    QString mPerlCommand;
 
-  //Perl
-  debugger = new PerlDebugger(manager);
-  map[debugger->name()] = debugger;
-  return map;
-}
+  private:
+};
+
+#endif

@@ -33,6 +33,7 @@ class DebuggerSettingsInterface;
 class DebuggerSettings;
 class SiteSettings;
 class PHPSettings;
+class PerlSettings;
 class ExtAppSettings;
 class KURL;
 
@@ -59,6 +60,7 @@ public:
   SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
   PHPSettings*                           phpSettings();
+  PerlSettings*                          perlSettings();
   ExtAppSettings*                        extAppSettings();  
 
   void clearSites();
@@ -85,6 +87,7 @@ private:
   static ProtoeditorSettings *m_self;
 
   PHPSettings              *m_phpSettings;
+  PerlSettings             *m_perlSettings;
   ExtAppSettings           *m_extApptSettings;
 
   QString                   m_currentSiteName;
