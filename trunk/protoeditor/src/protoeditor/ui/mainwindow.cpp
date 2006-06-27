@@ -95,18 +95,17 @@ void MainWindow::setupActions()
 {
   //menu "file"
   KStdAction::openNew(Protoeditor::self(), SLOT(slotAcNewFile()), actionCollection());
-  KStdAction::open(Protoeditor::self(), SLOT(slotAcOpenFile()), actionCollection());
+  KAction* open = KStdAction::open(Protoeditor::self(), SLOT(slotAcOpenFile()), actionCollection());
 
   m_actionRecent = KStdAction::openRecent(Protoeditor::self(), SLOT(slotAcFileRecent(const KURL&)), actionCollection());
   m_actionRecent->loadEntries(kapp->config());
+  connect(m_actionRecent, SIGNAL(activated()), open, SLOT(activate()));
 
   KStdAction::save(Protoeditor::self(), SLOT(slotAcSaveCurrentFile()), actionCollection());
   KStdAction::saveAs(Protoeditor::self(), SLOT(slotAcSaveCurrentFileAs()), actionCollection());
 
 
   KStdAction::close(Protoeditor::self(), SLOT(slotAcCloseFile()), actionCollection());
-  
-  
 
   (void)new KAction(i18n("Close All"), 0, Protoeditor::self(), SLOT(slotAcCloseAllFiles()), actionCollection(), "file_close_all");
 
@@ -122,8 +121,8 @@ void MainWindow::setupActions()
 
   m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
-  (void)new KAction(i18n("Run in Console"), "gear", "Shift+F9", Protoeditor::self(),
-                    SLOT(slotAcScriptRun()), actionCollection(), "script_run");
+  (void)new KAction(i18n("Execute in Console"), "gear", "Shift+F9", Protoeditor::self(),
+                    SLOT(slotAcScriptExecute()), actionCollection(), "script_execute");
 
   (void)new KAction(i18n("Start Debug"), "dbgstart", "F9", Protoeditor::self(),
                     SLOT(slotAcDebugStart()), actionCollection(), "debug_start");
