@@ -210,7 +210,7 @@ void EditorTabWidget::saveExistingFiles()
   QValueList<Document*>::iterator it;
   for(it = m_docList.begin(); it != m_docList.end(); ++it)
   {
-    if((*it)->existsOnDisk())
+    if((*it)->existsOnDisk() && (*it)->isModified())
     {
       (*it)->save();
     }
