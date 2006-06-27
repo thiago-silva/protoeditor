@@ -101,11 +101,25 @@
 <li>Site settings should have the complete list of debugger available</li></ul></ul>
 </body></html>
 
-
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Ignore ExecutionController for now..<br /></li>
-<li>Create the WatchWidget</li>
+<ul type="disc"><li>Check MainWindow if it can be more refactored (yey):</li>
+<ul type="disc"><li>Such as adding a third UI class: ActionUI</li>
+<ul type="disc"><li>toolbars (debug and argument)</li>
+<li>actions, oh well!<br /></li></ul></ul>
+<li>tadááá. MainWindow should be very tiny now!<br /></li>
+<li>Goto second round (the controller)<br /><br />Study how things will going to be</li>
+<ul type="disc"><li>having a execController &amp; debuggermanager</li>
+<li>Only a execController</li>
+<li>Only a dbManager<br /><br /></li></ul>
+<li>Add &quot;enabled&quot; to the settings of all debuggers</li>
+<li>Remake DebuggerFactory</li>
+<ul type="disc"><li>move the debuggerMap QMap to DebuggerFactory (it should load all enabled debuggers  on startup)</li>
+<li>create method getDebugger(QString lang, QString name)</li></ul>
+<li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
+<ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....<br /><br /><br /></li></ul>
+<li>---------------<br /></li>
+<li>XDebug doesn't add to GLOBALS argc and argv (when debugging locally+console)<br /></li>
 <li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)</li>
 <ul type="disc"><li>drop down toolbar button (like kdevelop &quot;new&quot; or kpdf open recent)<br /></li></ul>
 <li>Rethink the UI components to be configurable</li>
