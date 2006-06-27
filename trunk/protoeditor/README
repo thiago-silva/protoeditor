@@ -10,7 +10,7 @@ Project site: http://protoeditor.sourceforge.net
   variety of debuggers for different languages. Currently (v1.0), it
   only supports PHP and the following debuggers:
 
-   - DBG debugger (free version 2.11) at http://dd.cron.ru/dbg/
+   - DBG debugger (free version 2.13.1) at http://dd.cron.ru/dbg/
    - Xdebug (tested with CVS version 2.0.0beta3-dev).
    - Gubed 0.2.2
 
