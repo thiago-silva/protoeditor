@@ -12,3 +12,4 @@ libui_la_SOURCES = debuggerui.cpp breakpointlistview.cpp \
 noinst_HEADERS = breakpointlistview.h breakpointlistviewitem.h \
 	combostack.h	debuggerui.h document.h editorui.h localtab.h mainwindow.h	messagelistview.h \
 	variablelistview.h variablelistviewitem.h	watchlistview.h watchtab.h statusbarwidget.h
+

@@ -29,6 +29,7 @@
 #include "debuggerui.h"
 #include "editorui.h"
 #include "statusbarwidget.h"
+#include "protoeditor.h"
 
 #include "breakpointlistview.h"
 #include "combostack.h"
@@ -189,20 +190,20 @@ void DebuggerManager::slotScriptRun()
 {
   if(m_window->editorUI()->count() == 0)
   {
-    m_window->openFile();
+    Protoeditor::self()->openFile();
     if(m_window->editorUI()->count() == 0)
     {
       //couldn't open the file for some reason
       return;
     }
   } else if(!m_window->editorUI()->currentDocumentExistsOnDisk()) {
-    if(!m_window->saveCurrentFileAs()) {
+    if(!Protoeditor::self()->saveCurrentFileAs()) {
       //user didn't want to save the current file
       return;
     }
   } else {
     //saves the current file before execute
-    m_window->saveCurrentFile();
+    Protoeditor::self()->saveCurrentFile();
   }
 
   if(m_activeDebugger && m_activeDebugger->isRunning()) 
@@ -218,7 +219,7 @@ void DebuggerManager::slotScriptRun()
   }
   else
   {
-    Session::self()->start(url, m_window->cbArguments()->currentText());
+    Session::self()->start(url, m_window->argumentCombo()->currentText());
   }
 }
 
@@ -256,7 +257,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
   {
     m_activeDebugger = m_debuggerMap[currentSite->debuggerClient()];   
  
-    if(!m_window->useCurrentScript())
+    if(!Protoeditor::self()->useCurrentScript())
     {
       url = currentSite->defaultFile();
     }
@@ -277,7 +278,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
   {
     if(m_window->editorUI()->count() == 0)
     {
-      m_window->openFile();
+      Protoeditor::self()->openFile();
       if(m_window->editorUI()->count() == 0)
       {
         //couldn't open the file for some reason
@@ -300,11 +301,11 @@ void DebuggerManager::processSession(const KURL& url, bool local, bool isProfili
 {
   if(isProfiling)
   {
-    m_activeDebugger->profile(url.path(), m_window->cbArguments()->currentText(), local);
+    m_activeDebugger->profile(url.path(), m_window->argumentCombo()->currentText(), local);
   }
   else
   {
-    m_activeDebugger->start(url.path(), m_window->cbArguments()->currentText(), local);
+    m_activeDebugger->start(url.path(), m_window->argumentCombo()->currentText(), local);
   }
 }
 

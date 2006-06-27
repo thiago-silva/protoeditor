@@ -19,178 +19,54 @@
  ***************************************************************************/
 
 #include "mainwindow.h"
-#include "sitesettings.h"
-#include "debuggermanager.h"
-#include "configdlg.h"
-#include "protoeditorsettings.h"
-#include "phpsettings.h"
-
 #include "editorui.h"
 #include "debuggerui.h"
 #include "statusbarwidget.h"
 
+#include "protoeditor.h"
+#include "configdlg.h"
+
 #include <kapplication.h>
-#include <kaction.h>
-#include <kurl.h>
+
 #include <kmessagebox.h>
-#include <klocale.h>
+#include <kcombobox.h>
+#include <kconfig.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
-#include <kfiledialog.h>
-#include <kfileitem.h>
-#include <kcombobox.h>
-#include <qvaluelist.h>
 
-#include <kdialogbase.h>
-#include <kencodingfiledialog.h>
-
-#include <qlabel.h>
 #include <qlayout.h>
 #include <qsplitter.h>
 
 #include <ktexteditor/view.h> 
 
+#include <klocale.h>
+#include <kaction.h>
+
+#include "protoeditorsettings.h"
+#include <qaction.h>
+
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-    : KParts::MainWindow(parent, name, fl),  m_debuggerSettings(0), m_browserSettings(0)
+    : KParts::MainWindow(parent, name, fl)
 {
   if(!name) 
   { 
     setName("MainWindow"); 
   }
 
-  m_debugger_manager = new DebuggerManager(this);
-
-  createWidgets();
+  createWidgets();  
 
   setupActions();
 
   createGUI(0);
 
-  resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
-  clearWState(WState_Polished);
-
-  m_debugger_manager->init();
-
-  connect(kapp, SIGNAL(aboutToQuit()), this, SLOT(slotClose()));
-
-  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
-          this, SLOT(slotSettingsChanged()));
-
-  loadSites();
-
   stateChanged("init");
 
-  m_cbArguments->insertStringList(ProtoeditorSettings::self()->argumentsHistory());
-  m_cbArguments->clearEdit();
+  resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
+  clearWState(WState_Polished);  
 }
 
-void MainWindow::loadSites()
+MainWindow::~MainWindow()
 {
-  QString currentSiteName = m_siteAction->currentText();
-
-  QStringList strsites;
-
-  strsites << ProtoeditorSettings::LocalSiteName;
-
-  QValueList<SiteSettings*> sitesList = ProtoeditorSettings::self()->siteSettingsList();
-  QValueList<SiteSettings*>::iterator it;
-
-  int i = 0;
-  int curr = 0;
-  for(it = sitesList.begin(); it != sitesList.end(); ++it)
-  {
-    strsites << (*it)->name();
-    if((*it)->name() == currentSiteName) {
-      curr = i+1; //LocalSiteName already inserted
-    }
-    i++;
-  }
-    
-  m_siteAction->setItems(strsites);
-  m_siteAction->setCurrentItem(curr);
-    
-  ProtoeditorSettings::self()->slotCurrentSiteChanged(m_siteAction->currentText());  
-}
-
-void MainWindow::setupActions()
-{
-  //file menu
-  KStdAction::openNew(this, SLOT(slotNewFile()), actionCollection());
-
-  KStdAction::open(this, SLOT(slotOpenFile()), actionCollection());
-
-  KStdAction::save(this, SLOT(slotSaveCurrentFile()), actionCollection());
-  KStdAction::saveAs(this, SLOT(slotSaveCurrentFileAs()), actionCollection());
-
-  m_actionRecent = KStdAction::openRecent(this, SLOT(slotFileRecent(const KURL&)), actionCollection());
-  m_actionRecent->loadEntries(kapp->config());//,"Recent Files");
-
-  KStdAction::close(this, SLOT(slotCloseFile()), actionCollection());
-
-  (void)new KAction(i18n("Close All"), 0, this, SLOT(slotCloseAllFiles()), actionCollection(), "file_close_all");
-
-  KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
-
-  KStdAction::keyBindings(this, SLOT(slotEditKeys()), actionCollection());
-  KStdAction::configureToolbars(this, SLOT(slotEditToolbars()), actionCollection());
-
-  KStdAction::preferences(this, SLOT(slotShowSettings()), actionCollection(), "settings_protoeditor");
-
-  m_siteAction     = new KSelectAction(i18n("Site"), 0, actionCollection(), "site_selection");
-  m_siteAction->setComboWidth(150);
-
-  connect(m_siteAction, SIGNAL(activated(const QString&)),
-      ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
-
-  m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
-
-  (void)new KAction(i18n("Run in Console"), "gear", "Shift+F9", this,
-                    SLOT(slotScriptRun()), actionCollection(), "script_run");
-
-  (void)new KAction(i18n("Start Debug"), "dbgstart", "F9", this,
-                    SLOT(slotDebugStart()), actionCollection(), "debug_start");
-
-  (void)new KAction(i18n("Stop Debug"), "stop", "Escape", m_debugger_manager,
-                    SLOT(slotDebugStop()), actionCollection(), "debug_stop");
-
-  (void)new KAction(i18n("Run to Cursor"), "dbgrunto", 0, m_debugger_manager,
-                    SLOT(slotDebugRunToCursor()), actionCollection(), "debug_run_to_cursor");
-
-
-  (void)new KAction(i18n("Step Over"), "dbgnext", "F10", m_debugger_manager,
-                    SLOT(slotDebugStepOver()), actionCollection(), "debug_step_over");
-
-  (void)new KAction(i18n("Step Into"), "dbgstep", "F11", m_debugger_manager,
-                    SLOT(slotDebugStepInto()), actionCollection(), "debug_step_into");
-
-
-  (void)new KAction(i18n("Step Out"), "dbgstepout", "F12", m_debugger_manager,
-                    SLOT(slotDebugStepOut()), actionCollection(), "debug_step_out");
-
- (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
-      m_debugger_manager, SLOT(slotProfile()), actionCollection(), "script_profile");
-  
-  (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", m_debugger_manager,
-                    SLOT(slotDebugToggleBp()), actionCollection(), "debug_toggle_bp");
-
-  (void)new KAction(i18n("Add Watch"), "math_brace", 0, m_editorUI,
-                    SLOT(slotAddWatch()), actionCollection(), "editor_add_watch");
-
-
-  KWidgetAction* comboAction = new KWidgetAction( m_cbArguments, i18n("Argument Bar "), 0,
-                  0, 0, actionCollection(), "argument_combobox" );
-  comboAction->setShortcutConfigurable(false);
-  comboAction->setAutoSized(true);
-
-
-  (void)new KAction(i18n("Clear Arguments"), "clear_left", 0, m_cbArguments,
-                    SLOT(clearEdit()), actionCollection(), "argument_clear");
-
-  (void)new KWidgetAction(new QLabel(i18n("Arguments: "), this), i18n("Arguments "), "Alt+a", 
-      this, SLOT(slotFocusArgumentBar()), actionCollection(), "argument_label" );
-  
-
-  setStandardToolBarMenuEnabled(true);
 }
 
 void MainWindow::createWidgets()
@@ -204,8 +80,7 @@ void MainWindow::createWidgets()
 
   m_editorUI = new EditorUI(splitter, this);
   splitter->setCollapsible(m_editorUI, false);
-  splitter->setOpaqueResize(true);
- 
+  splitter->setOpaqueResize(true); 
   
   m_debuggerUI = new DebuggerUI(splitter);
   splitter->setCollapsible(m_debuggerUI, false);
@@ -216,271 +91,87 @@ void MainWindow::createWidgets()
   m_cbArguments = new KHistoryCombo(true, this);
 }
 
-MainWindow::~MainWindow()
+void MainWindow::setupActions()
 {
-  //removes the current text (wich might not have been used in debug/execution)
-  m_cbArguments->clearEdit();
+  //menu "file"
+  KStdAction::openNew(Protoeditor::self(), SLOT(slotAcNewFile()), actionCollection());
+  KStdAction::open(Protoeditor::self(), SLOT(slotAcOpenFile()), actionCollection());
 
-  ProtoeditorSettings::self()->setArgumentsHistory(m_cbArguments->historyItems());
+  m_actionRecent = KStdAction::openRecent(Protoeditor::self(), SLOT(slotAcFileRecent(const KURL&)), actionCollection());
+  m_actionRecent->loadEntries(kapp->config());
 
-  ProtoeditorSettings::self()->writeConfig(true);
-
-  delete m_debugger_manager;
-}
-
-bool MainWindow::useCurrentScript()
-{
-  return m_activeScriptAction->isChecked();
-}
-
-void MainWindow::slotSettingsChanged()
-{
-  loadSites();
-}
-
-void MainWindow::openFile()
-{
-  slotOpenFile();
-}
-
-void MainWindow::slotNewFile()
-{
-  m_editorUI->createNew();
-}
-
-void MainWindow::slotOpenFile()
-{
-  //Show KFileDialog on the current Site's "local base dir" or
-  //use ::protoeditor to retrieve the last folder used
-
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  QString location;
-  if(currentSite)
-  {
-    location = currentSite->localBaseDir().path();
-  }
-  else
-  {
-    location = ":protoeditor";
-  }
-
-  //note: the filter must be the same as SiteSettingsDialog::SiteSettingsDialog default file
-  QStringList strList =
-    KFileDialog::getOpenFileNames(
-      location, i18n("*.php| PHP Scripts\n*|All Files"), this);
-
-  if(strList.count())
-  {
-    for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it )
-    {
-      openFile(KURL::fromPathOrURL(*it));
-    }
-  }
-}
-
-void MainWindow::openFile(const KURL& url)
-{
-  KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
-  if(file.isReadable())
-  {
-    if(m_editorUI->openDocument(url))
-    {
-      m_actionRecent->addURL(url);
-      return;
-    }
-  }
-
-  m_actionRecent->removeURL(url);
-  showSorry(QString("\"") + url.prettyURL() + i18n("\" is unreadable."));
-}
+  KStdAction::save(Protoeditor::self(), SLOT(slotAcSaveCurrentFile()), actionCollection());
+  KStdAction::saveAs(Protoeditor::self(), SLOT(slotAcSaveCurrentFileAs()), actionCollection());
 
 
-void MainWindow::slotFileRecent(const KURL& url)
-{
-  openFile(url);
-}
+  KStdAction::close(Protoeditor::self(), SLOT(slotAcCloseFile()), actionCollection());
+  
+  
 
-void MainWindow::slotCloseFile()
-{
-  m_editorUI->closeCurrentDocument();
-}
+  (void)new KAction(i18n("Close All"), 0, Protoeditor::self(), SLOT(slotAcCloseAllFiles()), actionCollection(), "file_close_all");
 
-void MainWindow::slotSaveCurrentFile() 
-{
-  saveCurrentFile();
-}
+  KStdAction::quit(Protoeditor::self(), SLOT(slotAcQuit()), actionCollection());
+  
 
-void MainWindow::slotSaveCurrentFileAs()
-{
-  saveCurrentFileAs();
-}
+  //menu "script"
+  m_siteAction     = new KSelectAction(i18n("Site"), 0, actionCollection(), "site_selection");
+  m_siteAction->setComboWidth(150);
 
-bool MainWindow::saveCurrentFile()
-{
-  if(!m_editorUI->currentDocumentExistsOnDisk())
-  {
-    saveCurrentFileAs();
-  }
-  else if(!m_editorUI->saveCurrentFile())
-  {
-    //katepart already show an error message
-    //showSorry("Unable to save file");
-    return false;
-  }
-  return true;
-}
+  connect(m_siteAction, SIGNAL(activated(const QString&)),
+      ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
 
-bool MainWindow::saveCurrentFileAs()
-{
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
-  QString location;
-  if(currentSite)
-  {
-    location = currentSite->localBaseDir().path();
-  }
-  else
-  {
-    location = ":protoeditor";
-  }
+  m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
-    KEncodingFileDialog::Result res=KEncodingFileDialog::getSaveURLAndEncoding(
-      QString(),location,QString::null,this,i18n("Save File"));
+  (void)new KAction(i18n("Run in Console"), "gear", "Shift+F9", Protoeditor::self(),
+                    SLOT(slotAcScriptRun()), actionCollection(), "script_run");
+
+  (void)new KAction(i18n("Start Debug"), "dbgstart", "F9", Protoeditor::self(),
+                    SLOT(slotAcDebugStart()), actionCollection(), "debug_start");
+
+  (void)new KAction(i18n("Stop Debug"), "stop", "Escape", Protoeditor::self(),
+                    SLOT(slotAcDebugStop()), actionCollection(), "debug_stop");
+
+  (void)new KAction(i18n("Run to Cursor"), "dbgrunto", 0, Protoeditor::self(),
+                    SLOT(slotAcDebugRunToCursor()), actionCollection(), "debug_run_to_cursor");
 
 
+  (void)new KAction(i18n("Step Over"), "dbgnext", "F10", Protoeditor::self(),
+                    SLOT(slotAcDebugStepOver()), actionCollection(), "debug_step_over");
 
-  //KURL url = KFileDialog::getSaveURL(location, QString::null, this);
-  if(!res.URLs.isEmpty() && checkOverwrite( res.URLs.first() ) )
-//  if(!url.isEmpty() && checkOverwrite(url))
-  {
-    if(m_editorUI->saveCurrentFileAs(res.URLs.first(), res.encoding))
-    {
-      return true;
-    }
-  }
-  return false;
-}
+  (void)new KAction(i18n("Step Into"), "dbgstep", "F11", Protoeditor::self(),
+                    SLOT(slotAcDebugStepInto()), actionCollection(), "debug_step_into");
 
-bool MainWindow::checkOverwrite(KURL u)
-{
-  if(!u.isLocalFile())
-    return true;
 
-  QFileInfo info( u.path() );
-  if( !info.exists() )
-    return true;
+  (void)new KAction(i18n("Step Out"), "dbgstepout", "F12", Protoeditor::self(),
+                    SLOT(slotAcDebugStepOut()), actionCollection(), "debug_step_out");
 
-  return KMessageBox::Continue
-         == KMessageBox::warningContinueCancel
-              ( this,
-                i18n( "A file named \"%1\" already exists. Are you sure you want to overwrite it?" ).arg( info.fileName() ),
-                i18n( "Overwrite File?" ),
-                KGuiItem( i18n( "&Overwrite" ), "filesave", i18n( "Overwrite the file" ) )
-              );
-}
+ (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
+      Protoeditor::self(), SLOT(slotProfile()), actionCollection(), "script_profile");
+  
+  (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", Protoeditor::self(),
+                    SLOT(slotAcDebugToggleBp()), actionCollection(), "debug_toggle_bp");
 
-void MainWindow::slotCloseAllFiles()
-{
-  m_editorUI->closeAllDocuments();
-}
 
-void MainWindow::slotClose()
-{
-  m_actionRecent->saveEntries(kapp->config());
-  kapp->config()->sync();
-}
+  KWidgetAction* comboAction = new KWidgetAction(argumentCombo(), i18n("Argument Bar "), 0,
+                  0, 0, actionCollection(), "argument_combobox" );
 
-void MainWindow::slotQuit()
-{
-  if(m_editorUI->closeAllDocuments())
-  {
-    close();
-  }
-  kapp->config()->sync();
-}
+  comboAction->setShortcutConfigurable(false);
+  comboAction->setAutoSized(true);
 
-void MainWindow::closeEvent(QCloseEvent * e)
-{
-  if(m_editorUI->closeAllDocuments())
-  {
-    KMainWindow::closeEvent(e);
-  }
-}
+  (void)new KAction(i18n("Clear Arguments"), "clear_left", 0, argumentCombo(),
+                    SLOT(clearEdit()), actionCollection(), "argument_clear");
 
-void MainWindow::showError(const QString& msg) const
-{
-  KMessageBox::error(0, msg);
-}
+  (void)new KWidgetAction(new QLabel(i18n("Arguments: "), this), i18n("Arguments "), "Alt+a", 
+      this, SLOT(slotAcFocusArgumentBar()), actionCollection(), "argument_label" );
+  
 
-void MainWindow::slotEditKeys()
-{
-  KKeyDialog dlg;
-  dlg.insert(actionCollection());
+  //menu "settings"
+  KStdAction::keyBindings(this, SLOT(slotAcEditKeys()), actionCollection());
+  KStdAction::configureToolbars(this, SLOT(slotAcEditToolbars()), actionCollection());
+  KStdAction::preferences(this, SLOT(slotAcShowSettings()), actionCollection(), "settings_protoeditor");
 
-  if(m_editorUI->count() != 0)
-  {
-    KTextEditor::View* view  = m_editorUI->currentView();
-    if(view)
-    {
-      dlg.insert(view->actionCollection());
-    }
-  }
 
-  dlg.configure();
-}
-
-void MainWindow::actionStateChanged(const QString& str)
-{
-  stateChanged(str);
-}
-
-void MainWindow::slotEditToolbars()
-{
-  KEditToolbar dlg(guiFactory());
-  if (dlg.exec())
-  {
-    applyMainWindowSettings( KGlobal::config(), autoSaveGroup() );
-  }
-}
-
-void MainWindow::slotShowSettings()
-{
-  ConfigDlg::showDialog();
-}
-
-void MainWindow::slotScriptRun()
-{
-  QString arg = m_cbArguments->currentText();
-  if(!arg.isEmpty()) 
-  {
-    m_cbArguments->addToHistory(arg);    
-  }  
-
-  m_editorUI->saveExistingFiles();
-  m_debugger_manager->slotScriptRun();
-}
-
-void MainWindow::slotDebugStart()
-{
-  QString arg = m_cbArguments->currentText();
-  if(!arg.isEmpty()) 
-  {
-    m_cbArguments->addToHistory(arg);    
-  }
-
-  m_editorUI->saveExistingFiles();
-
-  m_debugger_manager->slotDebugStart();
-}
-
-void MainWindow::slotFocusArgumentBar()
-{
-  m_cbArguments->setFocus();
-  m_cbArguments->lineEdit()->selectAll();
-}
-
-void MainWindow::showSorry(const QString& msg) const
-{
-  KMessageBox::sorry(0, msg);
+  setStandardToolBarMenuEnabled(true);
 }
 
 EditorUI* MainWindow::editorUI()
@@ -498,9 +189,113 @@ StatusBarWidget*  MainWindow::statusBar()
   return m_statusBar;
 }
 
-KHistoryCombo* MainWindow::cbArguments()
+KHistoryCombo* MainWindow::argumentCombo()
 {
   return m_cbArguments;
+}
+
+void MainWindow::actionStateChanged(const QString& state)
+{
+  stateChanged(state);
+}
+
+void MainWindow::saveArgumentList()
+{
+  QString arg = argumentCombo()->currentText();
+  if(!arg.isEmpty()) 
+  {
+    argumentCombo()->addToHistory(arg);
+  }
+}
+
+QString MainWindow::currentSiteName()
+{
+  return m_siteAction->currentText();
+}
+
+void MainWindow::setSiteNames(const QStringList& sites)
+{
+  m_siteAction->setItems(sites);
+}
+
+void MainWindow::setCurrentSite(int idx)
+{
+  m_siteAction->setCurrentItem(idx);
+}
+
+void MainWindow::addRecentURL(const KURL& url)
+{
+  m_actionRecent->addURL(url);
+}
+
+void MainWindow::removeRecentURL(const KURL& url)
+{
+  m_actionRecent->removeURL(url);
+}
+
+bool MainWindow::isCurrentScriptActionChecked()
+{
+  return m_activeScriptAction->isChecked();
+}
+
+void MainWindow::saveRecentEntries()
+{
+  m_actionRecent->saveEntries(kapp->config());
+}
+
+void MainWindow::showError(const QString& msg) const
+{
+  KMessageBox::error(0, msg);
+}
+
+void MainWindow::showSorry(const QString& msg) const
+{
+  KMessageBox::sorry(0, msg);
+}
+
+void MainWindow::closeEvent(QCloseEvent * e)
+{
+  if(m_editorUI->closeAllDocuments())
+  {
+    KMainWindow::closeEvent(e);
+  }
+}
+
+void MainWindow::slotAcEditKeys()
+{
+  KKeyDialog dlg;
+  dlg.insert(actionCollection());
+
+  if(m_editorUI->count() != 0)
+  {
+    KTextEditor::View* view  = m_editorUI->currentView();
+    if(view)
+    {
+      dlg.insert(view->actionCollection());
+    }
+  }
+
+  dlg.configure();
+}
+
+void MainWindow::slotAcEditToolbars()
+{
+  KEditToolbar dlg(guiFactory());
+  if (dlg.exec())
+  {
+    applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
+  }
+}
+
+void MainWindow::slotAcShowSettings()
+{
+  ConfigDlg::showDialog();
+}
+
+void MainWindow::slotAcFocusArgumentBar()
+{
+  m_cbArguments->setFocus();
+  m_cbArguments->lineEdit()->selectAll();
 }
 
 #include "mainwindow.moc"

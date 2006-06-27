@@ -120,6 +120,8 @@
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....<br /><br /><br /></li></ul>
 <li>---------------<br /></li>
 <li>XDebug doesn't add to GLOBALS argc and argv (when debugging locally+console)<br /></li>
+<li>Don't let the editor without an opened file (like quanta)</li>
+<ul type="disc"><li>So editor settings is aways enabled<br /></li></ul>
 <li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)</li>
 <ul type="disc"><li>drop down toolbar button (like kdevelop &quot;new&quot; or kpdf open recent)<br /></li></ul>
 <li>Rethink the UI components to be configurable</li>

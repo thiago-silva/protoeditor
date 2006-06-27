@@ -25,10 +25,10 @@
 #include <qvaluelist.h>
 #include <ktexteditor/markinterface.h>
 
-class MainWindow;
 class KURL;
 class Document;
 class KAction;
+class MainWindow;
 
 namespace KTextEditor
 {
@@ -44,7 +44,7 @@ class EditorUI : public KTabWidget
 {
   Q_OBJECT
 public:
-  EditorUI(QWidget* parent, MainWindow *window, const char *name = 0);
+  EditorUI(QWidget* parent, MainWindow*, const char *name = 0);
   ~EditorUI();
 
   //void setMainWindow(MainWindow*);
@@ -87,16 +87,15 @@ signals:
   void sigBreakpointUnmarked(const KURL&, int);
   void sigNewPage();
   void sigEmpty();
+  void sigFirstPage();
   void sigAddWatch(const QString&);
-
-public slots:
-  void slotAddWatch();
 
 protected slots:
   virtual void   closeRequest(int);
   virtual void   contextMenu(int, const QPoint &);
+  
 
-private slots:
+private slots:  
   void slotCurrentChanged(QWidget*);
   void slotBreakpointMarked(Document* doc, int line, bool enabled);
   void slotBreakpointUnmarked(Document* doc, int line);
@@ -105,7 +104,8 @@ private slots:
   void slotStatusMsg(const QString&);
 
   void slotMenuAboutToShow();
-  
+  void slotAddWatch();
+
   void slotDropEvent(QDropEvent*);
 
   void slotDocumentSaved(Document*);
@@ -134,9 +134,6 @@ private:
 
   bool m_terminating;
   QValueList<Document*> m_docList;
-
-
-  MainWindow* m_window;
 
   KTextEditor::View* m_currentView;
 };

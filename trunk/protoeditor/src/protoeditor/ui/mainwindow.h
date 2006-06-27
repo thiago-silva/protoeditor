@@ -27,16 +27,11 @@
 class EditorUI;
 class DebuggerUI;
 class StatusBarWidget;
-
-class KRecentFilesAction;
-class KURL;
-class KSelectAction;
-class KToggleAction;
 class KHistoryCombo;
 
-class DebuggerManager;
-class DebuggerSettingsWidget;
-class BrowserSettingsWidget;
+class KSelectAction;
+class KToggleAction;
+class KRecentFilesAction;
 
 class MainWindow : public KParts::MainWindow
 {
@@ -51,52 +46,38 @@ public:
   DebuggerUI*         debuggerUI();
   StatusBarWidget*    statusBar();
 
-  KHistoryCombo*      cbArguments();
+  KHistoryCombo*      argumentCombo();
+
+  void actionStateChanged(const QString&);
+
+  void saveArgumentList();  
+
+  QString currentSiteName();
+  void setSiteNames(const QStringList&);
+  void setCurrentSite(int);
+
+  void addRecentURL(const KURL&);
+  void removeRecentURL(const KURL&);
+  bool isCurrentScriptActionChecked();
+
+  void saveRecentEntries();
 
   void showError(const QString&) const;
   void showSorry(const QString&) const;
 
-  void openFile();
-  void openFile(const KURL& url);
-  void actionStateChanged(const QString&);
-  
-  bool useCurrentScript();
-
-  bool saveCurrentFileAs();
-  bool saveCurrentFile();
-  
 private slots:
-  void slotSaveCurrentFile();
-  void slotSaveCurrentFileAs();
-  void slotNewFile();
-  void slotOpenFile();
-  void slotCloseFile();
-  void slotCloseAllFiles();
-  void slotQuit();
-  void slotEditKeys();
-  void slotEditToolbars();
+  void slotAcEditKeys();
+  void slotAcEditToolbars();
+  void slotAcShowSettings();
 
-  void slotShowSettings();
-  void slotFileRecent(const KURL&);
-
-  void slotClose();
-
-  void slotSettingsChanged();
-
-  void slotScriptRun();
-  void slotDebugStart();
-
-  void slotFocusArgumentBar();  
+  void slotAcFocusArgumentBar();
 
 protected:
   virtual void closeEvent(QCloseEvent * e);
-private:
-  void setupStatusBar();
-  void setupActions();
-  void createWidgets();
-  void loadSites();
 
-  bool checkOverwrite(KURL u);
+private:
+  void createWidgets();  
+  void setupActions();
 
   //main widgets
   EditorUI        *m_editorUI;
@@ -109,13 +90,6 @@ private:
   KSelectAction      *m_siteAction;
   KToggleAction      *m_activeScriptAction;
   KRecentFilesAction *m_actionRecent;
-
-  //settings
-  DebuggerSettingsWidget *m_debuggerSettings;
-  BrowserSettingsWidget  *m_browserSettings;
-
-  //controllers
-  DebuggerManager* m_debugger_manager;
 };
 
 #endif

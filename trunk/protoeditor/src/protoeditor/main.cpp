@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//#include "protoeditor.h"
-#include "mainwindow.h"
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
@@ -27,8 +25,8 @@
 
 #include <config.h>
 
-#include "protoeditorsettings.h"
-#include "session.h"
+#include "mainwindow.h"
+#include "protoeditor.h"
 
 static const char description[] =
   I18N_NOOP("A small PHP Debugger client");
@@ -52,10 +50,10 @@ int main(int argc, char **argv)
   KCmdLineArgs::addCmdLineOptions( options );
 
   KApplication app;
-  //ProtoEditor *protoeditor = 0;
-  //ProtoEditor protoeditor;
-  MainWindow *window = new MainWindow;
 
+  Protoeditor::self()->init();
+
+  MainWindow *window = Protoeditor::self()->mainWindow();
 
   if (app.isRestored())
   {
@@ -77,11 +75,8 @@ int main(int argc, char **argv)
 
   int ret = app.exec();  
 
-  delete window;
-
-  Session::dispose();
-  ProtoeditorSettings::dispose();
-
+  Protoeditor::self()->dispose();
+  
   return ret;
 }
 

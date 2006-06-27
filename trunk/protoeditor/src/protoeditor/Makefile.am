@@ -5,7 +5,7 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common -I$(top_srcdir)/src/php/
 	-I$(top_srcdir)/src/perl/perldebugger $(all_includes)
 
 # these are the headers for your project
-noinst_HEADERS = debuggerfactory.h debuggermanager.h
+noinst_HEADERS = debuggerfactory.h debuggermanager.h protoeditor.h
 
 
 # let automoc handle all of the meta source files (moc)
@@ -30,7 +30,7 @@ shellrc_DATA = protoeditorui.rc
 
 bin_PROGRAMS = protoeditor
 protoeditor_LDFLAGS = $(KDE_RPATH) $(all_libraries)
-protoeditor_SOURCES = debuggerfactory.cpp debuggermanager.cpp protoeditor.cpp
+protoeditor_SOURCES = debuggerfactory.cpp debuggermanager.cpp main.cpp protoeditor.cpp
 
 protoeditor_LDADD = $(top_builddir)/src/protoeditor/ui/libui.la $(top_builddir)/src/php/gubed/libgubed.la \
 	$(top_builddir)/src/php/xdebug/libxdebug.la $(top_builddir)/src/settings/widgets/libsettingswidget.la \
