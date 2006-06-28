@@ -41,6 +41,7 @@ public:
   bool sendSuperGlobals();
   bool breakOnLoad();
 
+  void setLangEnabled(bool);
   void populate();
 private:
   QSpinBox  *m_spListenPort;

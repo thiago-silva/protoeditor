@@ -26,6 +26,7 @@
 #include "debuggerstack.h"
 #include "debuggermanager.h"
 #include "protoeditorsettings.h"
+#include "phpsettings.h"
 
 #include "phpvariable.h"
 
@@ -38,12 +39,14 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_xdSettings(0), m_net(0)
 {
+  m_xdSettings = new XDSettings(m_name);
+
+  registerSettings(PHPSettings::lang, m_xdSettings);
+
+
   m_currentExecutionPoint = new DebuggerExecutionPoint();
   m_globalExecutionPoint = new DebuggerExecutionPoint();
 
-  m_xdSettings = new XDSettings(m_name);
-
-  ProtoeditorSettings::self()->registerDebuggerSettings(m_xdSettings, m_name);
 
   connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));

@@ -42,6 +42,7 @@ public:
   bool breakOnLoad();
 
   void populate();
+  void setLangEnabled(bool value);
 private:
   QSpinBox  *m_spListenPort;
   QCheckBox* m_ckBreakOnLoad;

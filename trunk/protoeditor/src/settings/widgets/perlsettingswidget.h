@@ -23,6 +23,7 @@
 #include <qwidget.h>
 #include <qvaluelist.h>
 
+class QCheckBox;
 class QComboBox;
 class KLineEdit;
 class DebuggerSettingsInterface;
@@ -37,7 +38,12 @@ public:
   void populate();
 
   void updateSettings();
+
+private slots:
+  void slotLangEnabled(int);
+
 private:
+  QCheckBox         *m_ckEnabled;
   KLineEdit         *m_edPerlCommand;
 
   QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;

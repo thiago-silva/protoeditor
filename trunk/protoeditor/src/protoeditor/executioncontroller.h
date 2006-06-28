@@ -17,45 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLSETTINGS_H
-#define PERLSETTINGS_H
 
-#include "languagesettings.h"
+#ifndef EXECUTIONCONTROLLER_H
+#define EXECUTIONCONTROLLER_H
 
-class PerlSettings : public LanguageSettings
+
+class ExecutionController
 {
-  public:
-    static QString lang;
+public:
+  ExecutionController();
+  ~ExecutionController();
 
-    PerlSettings();
-    ~PerlSettings();
+  void executeScript();  
 
-    QString languageName() 
-    {
-      return PerlSettings::lang;
-    }
+  void debugStart();
+  void debugStop();
 
-    void setEnabled(bool value)
-    {
-      mEnabled = value;
-    }
+  void debugRunToCursor();
 
-    bool isEnabled()
-    {
-      return mEnabled;
-    }
+  void debugStepOver();
+  void debugStepInto();
+  void debugStepOut();
 
-    void setPerlCommand(const QString& cmd) {
-      mPerlCommand = cmd;
-    }
-
-    QString PerlCommand() const {
-      return mPerlCommand ;
-    }
-
-  protected:
-    bool    mEnabled;
-    QString mPerlCommand;
+  void profile();  
 };
 
 #endif

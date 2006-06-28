@@ -26,6 +26,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qcombobox.h>
+#include <qcheckbox.h>
 #include <qtabwidget.h>
 
 #include <klineedit.h>
@@ -37,35 +38,42 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
 {
   QVBoxLayout* mainLayout = new QVBoxLayout(this, 3, 10);
 
-  QGridLayout* grid = new QGridLayout(0, 2,2, 3, 10);
+  QGridLayout* grid = new QGridLayout(0, 3, 2, 3, 10);
+
+  m_ckEnabled = new QCheckBox(this);
+  m_ckEnabled->setText(i18n("Enabled"));
+  grid->addWidget(m_ckEnabled, 0, 0);  
 
   QLabel* lbPhp= new QLabel(this);
   lbPhp->setText(i18n("PHP command:"));
-  grid->addWidget(lbPhp, 0, 0);
-
+  grid->addWidget(lbPhp, 1, 0);
 
   m_edPHPCommand = new KLineEdit(this);
-  grid->addWidget(m_edPHPCommand, 0, 1);
-  
+  grid->addWidget(m_edPHPCommand, 1, 1);
+
   QLabel* lbDefaultDebugger = new QLabel(this);
   lbDefaultDebugger->setText(i18n("Default debugger:"));
-  grid->addWidget(lbDefaultDebugger, 1, 0);
+  grid->addWidget(lbDefaultDebugger, 2, 0);
 
   m_cbDefaultDebugger = new QComboBox(this);
-  QValueList<DebuggerSettingsInterface*> list =
-      ProtoeditorSettings::self()->debuggerSettingsList();
+
+  m_debuggerSettingsList =
+    ProtoeditorSettings::self()->languageSettings(PHPSettings::lang)->debuggerSettingsList();
+
+      
   
-  for(QValueList<DebuggerSettingsInterface*>::iterator it = list.begin(); it != list.end(); it++) {
+  for(QValueList<DebuggerSettingsInterface*>::iterator it = m_debuggerSettingsList.begin();
+       it != m_debuggerSettingsList.end();
+       it++) 
+  {
     m_cbDefaultDebugger->insertItem((*it)->name());
   }  
-  grid->addWidget(m_cbDefaultDebugger,1, 1);
+  grid->addWidget(m_cbDefaultDebugger,2, 1);
 
   mainLayout->addLayout(grid);
 
   QTabWidget* debuggersTabWidget = new QTabWidget(this);
 
-  m_debuggerSettingsList =
-    ProtoeditorSettings::self()->debuggerSettingsList();
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
@@ -73,6 +81,10 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   }
 
   mainLayout->addWidget(debuggersTabWidget);
+
+  connect(m_ckEnabled, SIGNAL(stateChanged(int)), this, SLOT(slotLangEnabled(int)));
+
+  slotLangEnabled(false);
 }
 
 
@@ -82,7 +94,11 @@ PHPSettingsWidget::~PHPSettingsWidget()
 
 void PHPSettingsWidget::populate()
 {
-  PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
+  PHPSettings* settings = 
+    dynamic_cast<PHPSettings*>(ProtoeditorSettings::self()->languageSettings(PHPSettings::lang));
+
+  m_ckEnabled->setChecked(settings->isEnabled());
+
   if(!settings->defaultDebugger().isEmpty())
   {
     m_cbDefaultDebugger->setCurrentText(settings->defaultDebugger());
@@ -98,7 +114,11 @@ void PHPSettingsWidget::populate()
 
 void PHPSettingsWidget::updateSettings()
 {
-  PHPSettings* settings = ProtoeditorSettings::self()->phpSettings();
+  PHPSettings* settings = 
+    dynamic_cast<PHPSettings*>(ProtoeditorSettings::self()->languageSettings(PHPSettings::lang));
+
+
+  settings->setEnabled(m_ckEnabled->isChecked());
 
   settings->setDefaultDebugger(m_cbDefaultDebugger->currentText());
   settings->setPHPCommand(m_edPHPCommand->text());
@@ -106,6 +126,17 @@ void PHPSettingsWidget::updateSettings()
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
     (*it)->loadValuesFromWidget();
+  }
+}
+
+void PHPSettingsWidget::slotLangEnabled(int)
+{
+  m_edPHPCommand->setEnabled(m_ckEnabled->isChecked());
+  m_cbDefaultDebugger->setEnabled(m_ckEnabled->isChecked());
+
+  QValueList<DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+    (*it)->widget()->setLangEnabled(m_ckEnabled->isChecked());
   }
 }
 

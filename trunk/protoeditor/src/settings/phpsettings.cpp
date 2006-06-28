@@ -20,8 +20,10 @@
 
 #include "phpsettings.h"
 
+QString PHPSettings::lang = "PHP";
+
 PHPSettings::PHPSettings(  )
-  : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
+  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
 {
   setCurrentGroup( QString::fromLatin1( "PHP" ) );
 
@@ -32,6 +34,10 @@ PHPSettings::PHPSettings(  )
   KConfigSkeleton::ItemString  *itemPHPCommand;
   itemPHPCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PHPCommand" ), mPHPCommand, "php");
   addItem( itemPHPCommand, QString::fromLatin1( "PHPCommand" ) );
+
+  KConfigSkeleton::ItemBool  *itemEnabled;
+  itemEnabled = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "Enabled" ), mEnabled, false );
+  addItem(itemEnabled, QString::fromLatin1( "Enabled" ) );
 
   readConfig();
 }

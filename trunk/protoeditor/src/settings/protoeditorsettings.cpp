@@ -46,16 +46,11 @@ ProtoeditorSettings::ProtoeditorSettings()
   addItem( itemArgHistory, QString::fromLatin1( "ArgumentHistory" ) );
 
   readConfig();
-  //--
-
-  m_phpSettings = new PHPSettings();
-  m_perlSettings = new PerlSettings();
 
   m_extApptSettings = new ExtAppSettings();
 
   //load all Sites
   loadSites();
-
 }
 
 void ProtoeditorSettings::loadSites()
@@ -73,10 +68,14 @@ void ProtoeditorSettings::loadSites()
 
 ProtoeditorSettings::~ProtoeditorSettings()
 {
-  delete m_phpSettings;
-  delete m_perlSettings;
+  QMap<QString, LanguageSettings*>::iterator it;
+  LanguageSettings* l;
+  for(it = m_langSettingsMap.begin(); it != m_langSettingsMap.end(); ++it) {
+     l = it.data();
+     delete l;
+  }
+  
   delete m_extApptSettings;
-
 }
 
 void ProtoeditorSettings::dispose()
@@ -111,25 +110,16 @@ QStringList ProtoeditorSettings::argumentsHistory()
   return m_argumentsHistory;
 }
 
-QString ProtoeditorSettings::currentSiteName() {
-  return m_currentSiteName;
+void ProtoeditorSettings::registerLanguage(LanguageSettings* langSettings)
+{
+  m_langSettingsMap[langSettings->languageName()] = langSettings;
 }
 
-void ProtoeditorSettings::registerDebuggerSettings(DebuggerSettingsInterface* dsettings, const QString& name)
+LanguageSettings* ProtoeditorSettings::languageSettings(const QString& name)
 {
-  if(phpSettings()->defaultDebugger().isEmpty()) 
+  if(m_langSettingsMap.contains(name))
   {
-    phpSettings()->setDefaultDebugger(name);
-  }
-
-  m_debuggerSettingsMap[name] = dsettings;
-}
-
-DebuggerSettingsInterface*  ProtoeditorSettings::debuggerSettings(const QString& name)
-{
-  if(m_debuggerSettingsMap.contains(name))
-  {
-    return m_debuggerSettingsMap[name];
+    return m_langSettingsMap[name];
   }
   else
   {
@@ -137,9 +127,24 @@ DebuggerSettingsInterface*  ProtoeditorSettings::debuggerSettings(const QString&
   }
 }
 
-QValueList<DebuggerSettingsInterface*> ProtoeditorSettings::debuggerSettingsList()
+QValueList<LanguageSettings*> ProtoeditorSettings::languageSettingsList()
 {
-  return m_debuggerSettingsMap.values();
+  return m_langSettingsMap.values();
+}
+
+QString ProtoeditorSettings::currentSiteName() {
+  return m_currentSiteName;
+}
+
+
+QStringList ProtoeditorSettings::supportedLanguages()
+{
+  QStringList list;
+  QMap<QString, LanguageSettings*>::iterator it;
+  for(it = m_langSettingsMap.begin(); it != m_langSettingsMap.end(); ++it) {
+     list << it.data()->languageName();
+  }
+  return list;
 }
 
 SiteSettings* ProtoeditorSettings::currentSiteSettings()
@@ -162,16 +167,6 @@ SiteSettings* ProtoeditorSettings::siteSettings(const QString& name)
 QValueList<SiteSettings*> ProtoeditorSettings::siteSettingsList()
 {
   return m_siteSettingsMap.values();
-}
-
-PHPSettings* ProtoeditorSettings::phpSettings()
-{
-  return m_phpSettings;
-}
-
-PerlSettings* ProtoeditorSettings::perlSettings()
-{
-  return m_perlSettings;
 }
 
 ExtAppSettings* ProtoeditorSettings::extAppSettings()
@@ -204,26 +199,22 @@ void ProtoeditorSettings::addSite(int number, const QString& name, const KURL& u
 
 void ProtoeditorSettings::writeConfig(bool silent)
 {
+  //parent
   KConfigSkeleton::writeConfig();
 
-  m_phpSettings->writeConfig();
-  m_perlSettings->writeConfig();
+  //saves all language settings
+  QMap<QString, LanguageSettings*>::iterator it;
+  for(it = m_langSettingsMap.begin(); it != m_langSettingsMap.end(); ++it) {
+     it.data()->writeConfig();
+  }
 
+  //external applications
   m_extApptSettings->writeConfig();
 
-  writeDebuggersConf();
   writeSiteConf();
 
   if(!silent) {
     emit sigSettingsChanged();
-  }
-}
-
-void ProtoeditorSettings::writeDebuggersConf()
-{
-  QMap<QString, DebuggerSettingsInterface*>::iterator dit;
-  for(dit = m_debuggerSettingsMap.begin(); dit != m_debuggerSettingsMap.end(); ++dit) {
-    dit.data()->writeConfig();
   }
 }
 

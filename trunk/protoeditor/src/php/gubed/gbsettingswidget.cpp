@@ -82,6 +82,8 @@ GBSettingsWidget::GBSettingsWidget(GBSettings* settings, QWidget *parent, const 
   mainLayout->addWidget(groupbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+  setLangEnabled(false);
 }
 
 GBSettingsWidget::~GBSettingsWidget() {}
@@ -112,6 +114,14 @@ void GBSettingsWidget::populate()
   m_ckEnableJIT->setChecked(m_settings->enableJIT());
   m_edStartSessionScript->setText(m_settings->startSessionScript());
   m_ckBreakOnLoad->setChecked(m_settings->breakOnLoad());
+}
+
+void GBSettingsWidget::setLangEnabled(bool value)
+{
+  m_spListenPort->setEnabled(value);
+  m_ckEnableJIT->setEnabled(value);
+  m_edStartSessionScript->setEnabled(value);
+  m_ckBreakOnLoad->setEnabled(value);
 }
 
 #include "gbsettingswidget.moc"

@@ -22,6 +22,9 @@
 #include "debuggermanager.h"
 
 #include "abstractdebugger.h"
+#include "languagesettings.h"
+#include "protoeditorsettings.h"
+#include "debuggersettingsinterface.h"
 #include "debuggermanager.h"
 
 AbstractDebugger::AbstractDebugger(QObject *parent, const char* name)
@@ -32,6 +35,14 @@ AbstractDebugger::~AbstractDebugger() {
 
 DebuggerManager* AbstractDebugger::manager() {
   return dynamic_cast<DebuggerManager*>(parent());
+}
+
+void AbstractDebugger::registerSettings(const QString& lang, DebuggerSettingsInterface* dsettings)
+{
+  LanguageSettings* langSettings = 
+    ProtoeditorSettings::self()->languageSettings(lang);
+
+  langSettings->registerDebuggerSettings(dsettings->name(), dsettings);
 }
 
 #include "abstractdebugger.moc"

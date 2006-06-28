@@ -32,8 +32,7 @@
 class DebuggerSettingsInterface;
 class DebuggerSettings;
 class SiteSettings;
-class PHPSettings;
-class PerlSettings;
+class LanguageSettings;
 class ExtAppSettings;
 class KURL;
 
@@ -47,22 +46,24 @@ public:
 
   static void dispose();
   static ProtoeditorSettings* self();
+  
+  void                                   setArgumentsHistory(const QStringList&);
+  QStringList                            argumentsHistory();
 
-  void registerDebuggerSettings(DebuggerSettingsInterface*, const QString& name);
+  void                                   registerLanguage(LanguageSettings*);
 
-  void setArgumentsHistory(const QStringList&);
-  QStringList argumentsHistory();
+  LanguageSettings*                      languageSettings(const QString&);
+  QValueList<LanguageSettings*>          languageSettingsList();
 
-  DebuggerSettingsInterface*             debuggerSettings(const QString& name);
-  QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
+  QStringList                            supportedLanguages();
+
   QString                                currentSiteName();
   SiteSettings*                          siteSettings(const QString& name);
   SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
-  PHPSettings*                           phpSettings();
-  PerlSettings*                          perlSettings();
   ExtAppSettings*                        extAppSettings();  
 
+  
   void clearSites();
   void addSite(int number, const QString& name, const KURL& url,
                const KURL& remoteBaseDir, const KURL& localBaseDir,
@@ -81,21 +82,18 @@ private:
 
   void loadSites();
 
-  void writeDebuggersConf();
   void writeSiteConf();
 
   static ProtoeditorSettings *m_self;
 
-  PHPSettings              *m_phpSettings;
-  PerlSettings             *m_perlSettings;
   ExtAppSettings           *m_extApptSettings;
 
   QString                   m_currentSiteName;
 
   QStringList               m_argumentsHistory;
 
-  QMap<QString, DebuggerSettingsInterface*>  m_debuggerSettingsMap;
-  QMap<QString, SiteSettings*>               m_siteSettingsMap;  
+  QMap<QString, LanguageSettings*>           m_langSettingsMap;  
+  QMap<QString, SiteSettings*>               m_siteSettingsMap;
 };
 
 #endif

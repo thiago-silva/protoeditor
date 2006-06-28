@@ -38,6 +38,7 @@
 #include <qsplitter.h>
 
 #include <ktexteditor/view.h> 
+#include <kpopupmenu.h>
 
 #include <klocale.h>
 #include <kaction.h>
@@ -121,11 +122,22 @@ void MainWindow::setupActions()
 
   m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
-  (void)new KAction(i18n("Execute in Console"), "gear", "Shift+F9", Protoeditor::self(),
-                    SLOT(slotAcScriptExecute()), actionCollection(), "script_execute");
+  m_executeAction = new KToolBarPopupAction(i18n("Execute in Console"), "gear", "Shift+F9", 
+                      this, SLOT(slotAcExecuteScript()), actionCollection(), "script_execute");
 
-  (void)new KAction(i18n("Start Debug"), "dbgstart", "F9", Protoeditor::self(),
+  connect(m_executeAction->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotAcExecuteScript(int)));
+
+
+  connect(this, SIGNAL(sigExecuteScript(const QString&)), Protoeditor::self(),
+      SLOT(slotAcExecuteScript(const QString&)));
+
+  m_debugAction = new KToolBarPopupAction(i18n("Start Debug"), "dbgstart", "F9", this,
                     SLOT(slotAcDebugStart()), actionCollection(), "debug_start");
+
+  connect(m_debugAction->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotAcDebugStart(int)));
+
+  connect(this, SIGNAL(sigDebugScript(const QString&)), Protoeditor::self(),
+      SLOT(slotAcDebugStart(const QString&)));
 
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", Protoeditor::self(),
                     SLOT(slotAcDebugStop()), actionCollection(), "debug_stop");
@@ -242,6 +254,24 @@ void MainWindow::saveRecentEntries()
   m_actionRecent->saveEntries(kapp->config());
 }
 
+void MainWindow::addLanguage(const QString& langName)
+{
+  static int id = 0;
+  KPopupMenu *execpopup  = m_executeAction->popupMenu();
+  KPopupMenu *debugpopup = m_debugAction->popupMenu();
+
+  execpopup->insertItem(langName, id);
+  debugpopup->insertItem(langName, id);
+
+  m_langMap[id++] = langName;
+
+  //get the first language registered as our default language
+  if(m_lastLang.isEmpty()) 
+  {
+    m_lastLang = langName;
+  }
+}
+
 void MainWindow::showError(const QString& msg) const
 {
   KMessageBox::error(0, msg);
@@ -295,6 +325,29 @@ void MainWindow::slotAcFocusArgumentBar()
 {
   m_cbArguments->setFocus();
   m_cbArguments->lineEdit()->selectAll();
+}
+
+
+void MainWindow::slotAcDebugStart(int id)
+{
+  m_lastLang = m_langMap[id];
+  emit sigDebugScript(m_lastLang);
+}
+
+void MainWindow::slotAcDebugStart()
+{
+  emit sigDebugScript(m_lastLang);
+}
+
+void MainWindow::slotAcExecuteScript(int id)
+{
+  m_lastLang = m_langMap[id];
+  emit sigExecuteScript(m_lastLang);
+}
+
+void MainWindow::slotAcExecuteScript()
+{
+  emit sigExecuteScript(m_lastLang);
 }
 
 #include "mainwindow.moc"

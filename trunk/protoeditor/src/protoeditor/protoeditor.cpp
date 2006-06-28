@@ -2,18 +2,18 @@
  *   Copyright (C) 2004-2006 by Thiago Silva                               *
  *   thiago.silva@kdemail.net                                              *
  *                                                                         *
- *   m_window program is free software; you can redistribute it and/or modify  *
+ *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   m_window program is distributed in the hope that it will be useful,       *
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with m_window program; if not, write to the                         *
+ *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
@@ -27,6 +27,10 @@
 #include "protoeditorsettings.h"
 #include "sitesettings.h"
 
+#include "phpsettings.h"
+#include "perlsettings.h"
+
+#include "executioncontroller.h"
 
 #include <kaction.h>
 #include <kcombobox.h>
@@ -43,22 +47,12 @@ Protoeditor::Protoeditor()
 {
   connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
+
+  m_executionController = new ExecutionController();
 }
 
 
 Protoeditor::~Protoeditor()
-{
-}
-
-Protoeditor* Protoeditor::self()
-{
-  if(!Protoeditor::m_self) {
-    Protoeditor::m_self = new Protoeditor();
-  } 
-  return Protoeditor::m_self;
-}
-
-void Protoeditor::dispose()
 {
   //saves the recent opened files
   m_window->saveRecentEntries();  
@@ -79,6 +73,18 @@ void Protoeditor::dispose()
 
   Session::dispose();
   ProtoeditorSettings::dispose();
+}
+
+Protoeditor* Protoeditor::self()
+{
+  if(!Protoeditor::m_self) {
+    Protoeditor::m_self = new Protoeditor();
+  } 
+  return Protoeditor::m_self;
+}
+
+void Protoeditor::dispose()
+{
   delete Protoeditor::m_self;
 }
 
@@ -92,7 +98,13 @@ void Protoeditor::init()
   connect(m_window->editorUI(), SIGNAL(sigFirstPage()),
     this, SLOT(slotFirstDocumentOpened()));
 
-  /** Init debugger **/
+  registerLanguages();
+
+  /** Init debugger?? **/
+  /** LoadSites??     **/
+  /** Load debuggers  **/
+
+  loadLanguages();
 
   m_window->argumentCombo()->insertStringList(ProtoeditorSettings::self()->argumentsHistory());
   m_window->argumentCombo()->clearEdit();
@@ -212,6 +224,12 @@ void Protoeditor::slotFirstDocumentOpened()
   m_window->actionStateChanged("has_fileopened");
 }
 
+void Protoeditor::registerLanguages()
+{
+  ProtoeditorSettings::self()->registerLanguage(new PHPSettings());
+  ProtoeditorSettings::self()->registerLanguage(new PerlSettings());
+}
+
 void Protoeditor::loadSites()
 {
   QString currentSiteName = m_window->currentSiteName();
@@ -238,6 +256,40 @@ void Protoeditor::loadSites()
   m_window->setCurrentSite(curr);
     
   ProtoeditorSettings::self()->slotCurrentSiteChanged(m_window->currentSiteName());  
+}
+
+void Protoeditor::loadLanguages()
+{
+  QValueList<LanguageSettings*> langs = 
+    ProtoeditorSettings::self()->languageSettingsList();
+
+  QValueList<LanguageSettings*>::iterator it;
+  for(it = langs.begin(); it != langs.end(); ++it)
+  {
+    m_window->addLanguage((*it)->languageName());
+  }
+
+/*
+
+  MainWindow::addLanguage(name) {
+    KAction* ac = new Action('langicon', name);
+  }
+
+  //if user selects "execute" with PHP, "debug" will be set to PHP as well
+  MainWindow::currentLanguage()  {
+    return m_currentLanguage
+  }
+
+  ExecutionController::executeScript(QString lang, QString file) {
+    QString interpreterPath = getInterpreterPathFor(lang);
+    Sesssion::Start(interpreterPath, file);
+  }
+
+  slotExecute() {
+    lang = mainWindow->currentLang();
+    filePath = mainWindow->editorUI()->currentDocumentURL()
+  }
+*/
 }
 
 bool Protoeditor::checkOverwrite(const KURL& u)
@@ -305,46 +357,50 @@ void Protoeditor::slotAcQuit()
 
 /************************* Script menu slots *********************************/
 
-void Protoeditor::slotAcScriptRun()
+void Protoeditor::executionPrologue()
 {
   m_window->saveArgumentList();
   m_window->editorUI()->saveExistingFiles();
-
-  /** Run **/
 }
 
-void Protoeditor::slotAcDebugStart()
+void Protoeditor::slotAcExecuteScript(const QString& langName)
 {
-  m_window->saveArgumentList();
+  executionPrologue();
+}
 
-  m_window->editorUI()->saveExistingFiles();
-
-  /** Start debug **/
+void Protoeditor::slotAcDebugStart(const QString& langName)
+{
+  executionPrologue();
 }
 
 void Protoeditor::slotAcDebugStop()
 {
-  
+  m_executionController->debugStop();
 }
 
 void Protoeditor::slotAcDebugRunToCursor()
 {
+  m_executionController->debugRunToCursor();
 }
 
 void Protoeditor::slotAcDebugStepOver()
 {
+  m_executionController->debugStepOver();
 }
 
 void Protoeditor::slotAcDebugStepInto()
 {
+  m_executionController->debugStepInto();
 }
 
 void Protoeditor::slotAcDebugStepOut()
 {
+  m_executionController->debugStepOut();
 }
 
 void Protoeditor::slotProfile()
 {
+  m_executionController->profile();
 }
 
 void Protoeditor::slotAcDebugToggleBp()

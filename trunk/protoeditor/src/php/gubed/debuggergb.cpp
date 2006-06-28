@@ -21,6 +21,7 @@
 #include "debuggergb.h"
 #include "debuggermanager.h"
 #include "protoeditorsettings.h"
+#include "phpsettings.h"
 
 #include "gbsettings.h"
 #include "gbnet.h"
@@ -40,12 +41,14 @@ DebuggerGB::DebuggerGB(DebuggerManager* manager)
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_gbSettings(0), m_net(0)
 {
+  m_gbSettings = new GBSettings(m_name);
+
+  registerSettings(PHPSettings::lang, m_gbSettings);
+
+
   m_currentExecutionPoint = new DebuggerExecutionPoint();
   m_globalExecutionPoint = new DebuggerExecutionPoint();
 
-  m_gbSettings = new GBSettings(m_name);
-
-  ProtoeditorSettings::self()->registerDebuggerSettings(m_gbSettings, m_name);
 
   connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));

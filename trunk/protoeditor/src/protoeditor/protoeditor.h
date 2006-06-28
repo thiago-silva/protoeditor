@@ -25,10 +25,8 @@
 
 class MainWindow;
 class KURL;
-/*
-class KSelectAction;
-class KToggleAction;
-class KRecentFilesAction;*/
+
+class ExecutionController;
 
 class Protoeditor : public QObject
 {
@@ -67,8 +65,8 @@ public slots:
   void slotAcQuit();
   
   //menu "script"
-  void slotAcDebugStart();
-  void slotAcScriptRun();  
+  void slotAcExecuteScript(const QString&);
+  void slotAcDebugStart(const QString&);  
 
   void slotAcDebugStop();
   void slotAcDebugRunToCursor();
@@ -89,15 +87,18 @@ private:
   Protoeditor();
 
   void loadSites();
+  void registerLanguages();
+  void loadLanguages();
+
   bool checkOverwrite(const KURL&);
 
-  static Protoeditor* m_self;
+  void executionPrologue();
 
-  MainWindow *m_window;
+  static Protoeditor *m_self;
 
-//   KSelectAction      *m_siteAction;
-//   KToggleAction      *m_activeScriptAction;
-//   KRecentFilesAction *m_actionRecent;
+  MainWindow          *m_window;
+
+  ExecutionController *m_executionController;
 };
 
 #endif

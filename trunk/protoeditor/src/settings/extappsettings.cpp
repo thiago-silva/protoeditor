@@ -28,6 +28,7 @@ ExtAppSettings::ExtAppSettings(  )
   KConfigSkeleton::ItemBool  *itemUseExternalApp;
   itemUseExternalApp = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "UseExternalApp" ), mUseExternalApp, false );
   addItem( itemUseExternalApp, QString::fromLatin1( "UseExternalApp" ) );
+
   QValueList<KConfigSkeleton::ItemEnum::Choice> valuesApp;
   {
     KConfigSkeleton::ItemEnum::Choice choice;

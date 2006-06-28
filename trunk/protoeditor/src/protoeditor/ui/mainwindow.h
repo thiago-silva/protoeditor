@@ -23,11 +23,14 @@
 
 #include <kparts/mainwindow.h>
 #include <qstring.h>
+#include <qmap.h>
 
 class EditorUI;
 class DebuggerUI;
 class StatusBarWidget;
 class KHistoryCombo;
+
+class KToolBarPopupAction;
 
 class KSelectAction;
 class KToggleAction;
@@ -62,8 +65,14 @@ public:
 
   void saveRecentEntries();
 
+  void addLanguage(const QString&);
+
   void showError(const QString&) const;
   void showSorry(const QString&) const;
+
+signals:
+  void sigExecuteScript(const QString&);
+  void sigDebugScript(const QString&);
 
 private slots:
   void slotAcEditKeys();
@@ -72,6 +81,10 @@ private slots:
 
   void slotAcFocusArgumentBar();
 
+  void slotAcExecuteScript(int);
+  void slotAcExecuteScript();
+  void slotAcDebugStart(int);  
+  void slotAcDebugStart();
 protected:
   virtual void closeEvent(QCloseEvent * e);
 
@@ -85,11 +98,16 @@ private:
   StatusBarWidget *m_statusBar;
 
   //toolbar
-  KHistoryCombo* m_cbArguments;
+  KHistoryCombo       *m_cbArguments;
 
-  KSelectAction      *m_siteAction;
-  KToggleAction      *m_activeScriptAction;
-  KRecentFilesAction *m_actionRecent;
+  KSelectAction       *m_siteAction;
+  KToggleAction       *m_activeScriptAction;
+  KRecentFilesAction  *m_actionRecent;
+  KToolBarPopupAction *m_executeAction;
+  KToolBarPopupAction *m_debugAction;
+
+  QString             m_lastLang;
+  QMap<int, QString>  m_langMap;                
 };
 
 #endif

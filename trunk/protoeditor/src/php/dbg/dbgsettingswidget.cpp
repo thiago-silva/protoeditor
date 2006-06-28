@@ -87,6 +87,8 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   mainLayout->addWidget(groupbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+  setLangEnabled(false);
 }
 
 DBGSettingsWidget::~DBGSettingsWidget() {}
@@ -137,6 +139,18 @@ void DBGSettingsWidget::populate()
 
   m_spListenPort->setValue(m_settings->listenPort());
   m_ckEnableJIT->setChecked(m_settings->enableJIT());
+}
+
+void DBGSettingsWidget::setLangEnabled(bool value)
+{
+  m_ckBreakOnLoad->setEnabled(value);
+  m_ckSendErrors->setEnabled(value);
+  m_ckSendLogs->setEnabled(value);
+  m_ckSendOutput->setEnabled(value);
+  m_ckSendDetailedOutput->setEnabled(value);
+
+  m_spListenPort->setEnabled(value);
+  m_ckEnableJIT->setEnabled(value);
 }
 
 #include "dbgsettingswidget.moc"

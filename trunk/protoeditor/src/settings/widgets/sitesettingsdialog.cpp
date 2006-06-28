@@ -310,11 +310,10 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   grid->addWidget(label, 5, 0);
 
   m_cbDebuggerClient = new QComboBox(sitewidget);
-  QValueList<DebuggerSettingsInterface*> list =
-      ProtoeditorSettings::self()->debuggerSettingsList();
+  QStringList list = ProtoeditorSettings::self()->supportedLanguages();
   
-  for(QValueList<DebuggerSettingsInterface*>::iterator it = list.begin(); it != list.end(); it++) {
-    m_cbDebuggerClient->insertItem((*it)->name());
+  for(QStringList::iterator it = list.begin(); it != list.end(); it++) {
+    m_cbDebuggerClient->insertItem((*it));
   }
   
   grid->addWidget(m_cbDebuggerClient, 5, 1);

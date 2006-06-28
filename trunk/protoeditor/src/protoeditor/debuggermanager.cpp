@@ -264,7 +264,7 @@ KURL DebuggerManager::sessionPrologue(bool isProfiling)
   }
   else
   {
-    m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
+    //m_activeDebugger = m_debuggerMap[ProtoeditorSettings::self()->phpSettings()->defaultDebugger()];
   }
   
   

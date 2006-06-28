@@ -20,14 +20,30 @@
 #ifndef PHPSETTINGS_H
 #define PHPSETTINGS_H
 
-#include <kconfigskeleton.h>
+#include "languagesettings.h"
 
-class PHPSettings : public KConfigSkeleton
+class PHPSettings : public LanguageSettings
 {
   public:
-    PHPSettings();
+    static QString lang;
 
+    PHPSettings();
     ~PHPSettings();
+
+    QString languageName() 
+    {
+      return PHPSettings::lang;
+    }
+
+    void setEnabled(bool value)
+    {
+      mEnabled = value;
+    }
+
+    bool isEnabled()
+    {
+      return mEnabled;
+    }
 
     void setDefaultDebugger(QString name)
     {
@@ -49,11 +65,10 @@ class PHPSettings : public KConfigSkeleton
 
   protected:
 
-    // PHP Debugger    
+    bool    mEnabled;
+
     QString mDefaultDebugger;
     QString mPHPCommand;
-
-  private:
 };
 
 #endif

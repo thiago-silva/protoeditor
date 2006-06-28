@@ -17,45 +17,51 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLSETTINGS_H
-#define PERLSETTINGS_H
 
 #include "languagesettings.h"
+#include "debuggersettingsinterface.h"
 
-class PerlSettings : public LanguageSettings
+#include <qstring.h>
+
+LanguageSettings::LanguageSettings(const QString& conf)
+    : KConfigSkeleton(conf) 
 {
-  public:
-    static QString lang;
+}
 
-    PerlSettings();
-    ~PerlSettings();
+LanguageSettings::~LanguageSettings() 
+{
+}
+  
+void LanguageSettings::writeConfig()
+{
+  KConfigSkeleton::writeConfig();
 
-    QString languageName() 
-    {
-      return PerlSettings::lang;
-    }
+  QMap<QString, DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsMap.begin(); it != m_debuggerSettingsMap.end(); ++it) {
+    it.data()->writeConfig();
+  }
+}
 
-    void setEnabled(bool value)
-    {
-      mEnabled = value;
-    }
+void LanguageSettings::registerDebuggerSettings(const QString& name, DebuggerSettingsInterface* dbsettings)
+{
+  m_debuggerSettingsMap[name] = dbsettings;
+}
 
-    bool isEnabled()
-    {
-      return mEnabled;
-    }
+DebuggerSettingsInterface* LanguageSettings::debuggerSettings(const QString& name)
+{
+  if(m_debuggerSettingsMap.contains(name))
+  {
+    return m_debuggerSettingsMap[name];
+  }
+  else
+  {
+    return NULL;
+  }
+}
 
-    void setPerlCommand(const QString& cmd) {
-      mPerlCommand = cmd;
-    }
+QValueList<DebuggerSettingsInterface*> LanguageSettings::debuggerSettingsList()
+{
+  return m_debuggerSettingsMap.values();
+}
+  
 
-    QString PerlCommand() const {
-      return mPerlCommand ;
-    }
-
-  protected:
-    bool    mEnabled;
-    QString mPerlCommand;
-};
-
-#endif

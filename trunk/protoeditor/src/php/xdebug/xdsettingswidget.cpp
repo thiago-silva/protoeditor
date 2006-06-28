@@ -76,6 +76,8 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
   mainLayout->addWidget(groupbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+  setLangEnabled(false);
 }
 
 XDSettingsWidget::~XDSettingsWidget() {}
@@ -104,6 +106,14 @@ void XDSettingsWidget::populate()
   m_ckEnableJIT->setChecked(m_settings->enableJIT());
   m_ckSendSuperGlobals->setChecked(m_settings->sendSuperGlobals());
   m_ckBreakOnLoad->setChecked(m_settings->breakOnLoad());
+}
+
+void XDSettingsWidget::setLangEnabled(bool value)
+{
+  m_spListenPort->setEnabled(value);
+  m_ckEnableJIT->setEnabled(value);  
+  m_ckBreakOnLoad->setEnabled(value);;
+  m_ckSendSuperGlobals->setEnabled(value);
 }
 
 #include "xdsettingswidget.moc"

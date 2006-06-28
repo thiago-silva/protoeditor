@@ -34,7 +34,8 @@ public:
 
   virtual ~DebuggerTab() {}
 
-  virtual void populate() = 0;
+  virtual void setLangEnabled(bool) = 0;
+  virtual void populate()       = 0;
 };
 
 //------------------------------------------------------------------

@@ -20,14 +20,20 @@
 
 #include "perlsettings.h"
 
+QString PerlSettings::lang = "Perl";
+
 PerlSettings::PerlSettings(  )
-  : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
+  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
 {
   setCurrentGroup( QString::fromLatin1( "Perl" ) );
 
   KConfigSkeleton::ItemString  *itemPerlCommand;
   itemPerlCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerlCommand" ), mPerlCommand, "perl");
   addItem( itemPerlCommand, QString::fromLatin1( "PerlCommand" ) );
+
+  KConfigSkeleton::ItemBool  *itemEnabled;
+  itemEnabled = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "Enabled" ), mEnabled, false );
+  addItem(itemEnabled, QString::fromLatin1( "Enabled" ) );
 
   readConfig();
 }

@@ -17,45 +17,58 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLSETTINGS_H
-#define PERLSETTINGS_H
 
-#include "languagesettings.h"
+#include "executioncontroller.h"
+#include "protoeditor.h"
+#include "mainwindow.h"
+#include "editorui.h"
 
-class PerlSettings : public LanguageSettings
+#include <kurl.h>
+
+ExecutionController::ExecutionController()
 {
-  public:
-    static QString lang;
+}
 
-    PerlSettings();
-    ~PerlSettings();
 
-    QString languageName() 
-    {
-      return PerlSettings::lang;
-    }
+ExecutionController::~ExecutionController()
+{
+}
 
-    void setEnabled(bool value)
-    {
-      mEnabled = value;
-    }
+void ExecutionController::executeScript()
+{
+  //1: get the URL of the file to execute
+//   KURL url = Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL();
 
-    bool isEnabled()
-    {
-      return mEnabled;
-    }
+  //2: figure what interpreter to use (mime, settings, etc)
+  //
+}
 
-    void setPerlCommand(const QString& cmd) {
-      mPerlCommand = cmd;
-    }
 
-    QString PerlCommand() const {
-      return mPerlCommand ;
-    }
+void ExecutionController::debugStart()
+{
+}
 
-  protected:
-    bool    mEnabled;
-    QString mPerlCommand;
-};
+void ExecutionController::debugStop()
+{
+}
 
-#endif
+void ExecutionController::debugRunToCursor()
+{
+}
+
+
+void ExecutionController::debugStepOver()
+{
+}
+
+void ExecutionController::debugStepInto()
+{
+}
+
+void ExecutionController::debugStepOut()
+{
+}
+
+void ExecutionController::profile()
+{
+}

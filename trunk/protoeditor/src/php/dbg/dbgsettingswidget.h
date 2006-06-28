@@ -42,6 +42,7 @@ public:
   bool enableJIT();
 
   void populate();
+  void setLangEnabled(bool value);
 private:
 
   QCheckBox *m_ckBreakOnLoad;

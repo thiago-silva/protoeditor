@@ -25,6 +25,7 @@
 #include <qstring.h>
 
 class KDialog;
+class DebuggerSettingsInterface;
 class DebuggerManager;
 class DebuggerBreakpoint;
 class DebuggerConfigurations;
@@ -93,6 +94,7 @@ public:
 protected:
   virtual DebuggerManager* manager();
 
+  virtual void registerSettings(const QString&, DebuggerSettingsInterface*);
 signals:
   /*
     emitted right before starting the session. Normally, it should be emited

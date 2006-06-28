@@ -26,6 +26,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qcombobox.h>
+#include <qcheckbox.h>
 #include <qtabwidget.h>
 
 #include <klineedit.h>
@@ -37,17 +38,24 @@ PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
 {
   QVBoxLayout* mainLayout = new QVBoxLayout(this, 3, 10);
 
-  QGridLayout* grid = new QGridLayout(0, 2,2, 3, 10);
+  QGridLayout* grid = new QGridLayout(0, 3,2, 3, 10);
+
+  m_ckEnabled = new QCheckBox(this);
+  m_ckEnabled->setText(i18n("Enabled"));
+  grid->addWidget(m_ckEnabled, 0, 0);
 
   QLabel* lbPhp= new QLabel(this);
   lbPhp->setText(i18n("Perl command:"));
-  grid->addWidget(lbPhp, 0, 0);
+  grid->addWidget(lbPhp, 1, 0);
 
 
   m_edPerlCommand = new KLineEdit(this);
-  grid->addWidget(m_edPerlCommand, 0, 1);
+  grid->addWidget(m_edPerlCommand, 1, 1);
   
   mainLayout->addLayout(grid);
+
+  connect(m_ckEnabled, SIGNAL(stateChanged(int)), this, SLOT(slotLangEnabled(int)));
+  slotLangEnabled(false);
 }
 
 
@@ -57,15 +65,27 @@ PerlSettingsWidget::~PerlSettingsWidget()
 
 void PerlSettingsWidget::populate()
 {
-  PerlSettings* settings = ProtoeditorSettings::self()->perlSettings();
+  PerlSettings* settings = 
+    dynamic_cast<PerlSettings*>(ProtoeditorSettings::self()->languageSettings(PerlSettings::lang));
+
+
+  m_ckEnabled->setChecked(settings->isEnabled());
   m_edPerlCommand->setText(settings->PerlCommand());
 }
 
 void PerlSettingsWidget::updateSettings()
 {
-  PerlSettings* settings = ProtoeditorSettings::self()->perlSettings();
+  PerlSettings* settings = 
+    dynamic_cast<PerlSettings*>(ProtoeditorSettings::self()->languageSettings(PerlSettings::lang));
 
+
+  settings->setEnabled(m_ckEnabled->isChecked());
   settings->setPerlCommand(m_edPerlCommand->text());
+}
+
+void PerlSettingsWidget::slotLangEnabled(int)
+{
+  m_edPerlCommand->setEnabled(m_ckEnabled->isChecked());
 }
 
 #include "perlsettingswidget.moc"

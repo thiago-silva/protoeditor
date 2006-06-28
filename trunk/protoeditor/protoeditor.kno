@@ -103,11 +103,8 @@
 
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Check MainWindow if it can be more refactored (yey):</li>
-<ul type="disc"><li>Such as adding a third UI class: ActionUI</li>
-<ul type="disc"><li>toolbars (debug and argument)</li>
-<li>actions, oh well!<br /></li></ul></ul>
-<li>tadááá. MainWindow should be very tiny now!<br /></li>
+<ul type="disc"><li>Set the toolbar buttons and menus (run/debug/profile) </li>
+<ul type="disc"><li>to be dropdown/list like KDevelop::new toolbuton and KPDF::openRecent<br /></li></ul>
 <li>Goto second round (the controller)<br /><br />Study how things will going to be</li>
 <ul type="disc"><li>having a execController &amp; debuggermanager</li>
 <li>Only a execController</li>
@@ -122,6 +119,7 @@
 <li>XDebug doesn't add to GLOBALS argc and argv (when debugging locally+console)<br /></li>
 <li>Don't let the editor without an opened file (like quanta)</li>
 <ul type="disc"><li>So editor settings is aways enabled<br /></li></ul>
+<li>Remember the current Site selected in the combobox<br /></li>
 <li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)</li>
 <ul type="disc"><li>drop down toolbar button (like kdevelop &quot;new&quot; or kpdf open recent)<br /></li></ul>
 <li>Rethink the UI components to be configurable</li>

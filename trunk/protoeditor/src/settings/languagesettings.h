@@ -17,45 +17,36 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLSETTINGS_H
-#define PERLSETTINGS_H
 
-#include "languagesettings.h"
+#ifndef LANGUAGESETTINGSINTERFACE_H
+#define LANGUAGESETTINGSINTERFACE_H
 
-class PerlSettings : public LanguageSettings
+#include <kconfigskeleton.h>
+#include <qmap.h>
+
+class QString;
+class DebuggerSettingsInterface;
+
+class LanguageSettings : public KConfigSkeleton
 {
-  public:
-    static QString lang;
+public:
+  LanguageSettings(const QString&);
 
-    PerlSettings();
-    ~PerlSettings();
+  virtual         ~LanguageSettings();
+  
+  virtual bool    isEnabled()    = 0;
+  virtual QString languageName() = 0;
 
-    QString languageName() 
-    {
-      return PerlSettings::lang;
-    }
+  virtual void writeConfig();
 
-    void setEnabled(bool value)
-    {
-      mEnabled = value;
-    }
+  void registerDebuggerSettings(const QString& name, DebuggerSettingsInterface* dbsettings);
 
-    bool isEnabled()
-    {
-      return mEnabled;
-    }
+  DebuggerSettingsInterface* debuggerSettings(const QString& name);
 
-    void setPerlCommand(const QString& cmd) {
-      mPerlCommand = cmd;
-    }
-
-    QString PerlCommand() const {
-      return mPerlCommand ;
-    }
-
-  protected:
-    bool    mEnabled;
-    QString mPerlCommand;
+  QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
+  
+protected:
+  QMap<QString, DebuggerSettingsInterface*>  m_debuggerSettingsMap;
 };
 
 #endif

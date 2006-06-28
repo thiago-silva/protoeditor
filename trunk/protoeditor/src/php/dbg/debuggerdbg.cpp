@@ -26,14 +26,14 @@
 #include "phpvariable.h"
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
-#include "dbgsettings.h"
 #include "phpdefs.h"
-// #include "dbgprofile.h"
 #include "dbgprofiledialog.h"
 #include "dbgprofilelistview.h"
 #include "dbgprofiledata.h"
 
 #include "protoeditorsettings.h"
+#include "phpsettings.h"
+#include "dbgsettings.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -47,9 +47,9 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
     m_listenPort(-1), m_dbgSettings(0), m_net(0), m_profileDialog(0),
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
-  m_dbgSettings = new DBGSettings(m_name);
 
-  ProtoeditorSettings::self()->registerDebuggerSettings(m_dbgSettings, m_name);
+  m_dbgSettings = new DBGSettings(m_name);
+  registerSettings(PHPSettings::lang, m_dbgSettings);
 
   connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
