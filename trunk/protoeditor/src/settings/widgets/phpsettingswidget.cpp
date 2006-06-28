@@ -104,7 +104,7 @@ void PHPSettingsWidget::populate()
     m_cbDefaultDebugger->setCurrentText(settings->defaultDebugger());
   }
   
-  m_edPHPCommand->setText(settings->PHPCommand());
+  m_edPHPCommand->setText(settings->interpreterCommand());
   
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
@@ -121,7 +121,7 @@ void PHPSettingsWidget::updateSettings()
   settings->setEnabled(m_ckEnabled->isChecked());
 
   settings->setDefaultDebugger(m_cbDefaultDebugger->currentText());
-  settings->setPHPCommand(m_edPHPCommand->text());
+  settings->setInterpreterCommand(m_edPHPCommand->text());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {

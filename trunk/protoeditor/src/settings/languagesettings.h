@@ -34,8 +34,9 @@ public:
 
   virtual         ~LanguageSettings();
   
-  virtual bool    isEnabled()    = 0;
-  virtual QString languageName() = 0;
+  virtual bool    isEnabled()          const = 0;
+  virtual QString languageName()       const = 0;
+  virtual QString interpreterCommand() const = 0;
 
   virtual void writeConfig();
 

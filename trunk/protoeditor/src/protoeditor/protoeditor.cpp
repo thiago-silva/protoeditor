@@ -260,36 +260,19 @@ void Protoeditor::loadSites()
 
 void Protoeditor::loadLanguages()
 {
+  m_window->clearLanguages();
+
   QValueList<LanguageSettings*> langs = 
     ProtoeditorSettings::self()->languageSettingsList();
 
   QValueList<LanguageSettings*>::iterator it;
   for(it = langs.begin(); it != langs.end(); ++it)
   {
-    m_window->addLanguage((*it)->languageName());
+    if((*it)->isEnabled())
+    {
+      m_window->addLanguage((*it)->languageName());
+    }
   }
-
-/*
-
-  MainWindow::addLanguage(name) {
-    KAction* ac = new Action('langicon', name);
-  }
-
-  //if user selects "execute" with PHP, "debug" will be set to PHP as well
-  MainWindow::currentLanguage()  {
-    return m_currentLanguage
-  }
-
-  ExecutionController::executeScript(QString lang, QString file) {
-    QString interpreterPath = getInterpreterPathFor(lang);
-    Sesssion::Start(interpreterPath, file);
-  }
-
-  slotExecute() {
-    lang = mainWindow->currentLang();
-    filePath = mainWindow->editorUI()->currentDocumentURL()
-  }
-*/
 }
 
 bool Protoeditor::checkOverwrite(const KURL& u)
@@ -357,20 +340,14 @@ void Protoeditor::slotAcQuit()
 
 /************************* Script menu slots *********************************/
 
-void Protoeditor::executionPrologue()
-{
-  m_window->saveArgumentList();
-  m_window->editorUI()->saveExistingFiles();
-}
-
 void Protoeditor::slotAcExecuteScript(const QString& langName)
-{
-  executionPrologue();
+{  
+  m_executionController->executeScript(langName);
 }
 
 void Protoeditor::slotAcDebugStart(const QString& langName)
-{
-  executionPrologue();
+{  
+//   m_executionController->debugStart(langName);
 }
 
 void Protoeditor::slotAcDebugStop()
@@ -400,7 +377,8 @@ void Protoeditor::slotAcDebugStepOut()
 
 void Protoeditor::slotProfile()
 {
-  m_executionController->profile();
+//   KURL url = m_window->editorUI()->currentDocumentURL();
+//   m_executionController->profile(langName, url);
 }
 
 void Protoeditor::slotAcDebugToggleBp()
@@ -410,6 +388,18 @@ void Protoeditor::slotAcDebugToggleBp()
 void Protoeditor::slotSettingsChanged()
 {
   loadSites();
+  loadLanguages();
 }
+
+void Protoeditor::showError(const QString& msg) const
+{
+  m_window->showError(msg);
+}
+
+void Protoeditor::showSorry(const QString& msg) const
+{
+  m_window->showSorry(msg);
+}
+
 
 #include "protoeditor.moc"

@@ -23,7 +23,12 @@
 #include "mainwindow.h"
 #include "editorui.h"
 
+#include "protoeditorsettings.h"
+#include "languagesettings.h"
+
 #include <kurl.h>
+#include <klocale.h>
+
 
 ExecutionController::ExecutionController()
 {
@@ -34,13 +39,51 @@ ExecutionController::~ExecutionController()
 {
 }
 
-void ExecutionController::executeScript()
+bool ExecutionController::executionPrologue()
 {
-  //1: get the URL of the file to execute
-//   KURL url = Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL();
+  //saves the argument in the history
+  Protoeditor::self()->mainWindow()->saveArgumentList();
 
-  //2: figure what interpreter to use (mime, settings, etc)
-  //
+  //save all opened+existing files
+  Protoeditor::self()->mainWindow()->editorUI()->saveExistingFiles();
+
+  //check for opened+existing+saved file
+  if(Protoeditor::self()->mainWindow()->editorUI()->count() == 0)
+  {
+    Protoeditor::self()->openFile();
+    if(Protoeditor::self()->mainWindow()->editorUI()->count() == 0)
+    {
+      //couldn't open the file for some reason
+      return false;
+    }
+  } else if(!Protoeditor::self()->mainWindow()->editorUI()->currentDocumentExistsOnDisk()) {
+    if(!Protoeditor::self()->saveCurrentFileAs()) {
+      //user didn't want to save the current file
+      return false;
+    }
+  }
+
+  //check for any session running
+  //if(hasActiveSession()) { kill session? ask to kill before kill?; }
+
+  //check if file is in the local system
+  if(!Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().isLocalFile())
+  {
+    Protoeditor::self()->showSorry(i18n("Unable to run non-local file"));
+  }
+
+  return true;
+}
+
+void ExecutionController::executeScript(const QString& langName)
+{
+  if(!executionPrologue()) return;
+
+  KURL url = Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL();
+
+  QString cmd = ProtoeditorSettings::self()->languageSettings(langName)->interpreterCommand();
+
+  Protoeditor::self()->showSorry(cmd + " and " + url.prettyURL());
 }
 
 

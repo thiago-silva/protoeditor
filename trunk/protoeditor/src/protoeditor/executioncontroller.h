@@ -21,6 +21,7 @@
 #ifndef EXECUTIONCONTROLLER_H
 #define EXECUTIONCONTROLLER_H
 
+#include <qstring.h>
 
 class ExecutionController
 {
@@ -28,7 +29,7 @@ public:
   ExecutionController();
   ~ExecutionController();
 
-  void executeScript();  
+  void executeScript(const QString&);
 
   void debugStart();
   void debugStop();
@@ -40,6 +41,9 @@ public:
   void debugStepOut();
 
   void profile();  
+
+private:
+  bool executionPrologue();
 };
 
 #endif

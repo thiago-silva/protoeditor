@@ -65,6 +65,7 @@ public:
 
   void saveRecentEntries();
 
+  void clearLanguages();
   void addLanguage(const QString&);
 
   void showError(const QString&) const;

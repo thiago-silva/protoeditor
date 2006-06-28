@@ -254,6 +254,12 @@ void MainWindow::saveRecentEntries()
   m_actionRecent->saveEntries(kapp->config());
 }
 
+void MainWindow::clearLanguages()
+{
+  m_executeAction->popupMenu()->clear();
+  m_debugAction->popupMenu()->clear();
+}
+
 void MainWindow::addLanguage(const QString& langName)
 {
   static int id = 0;

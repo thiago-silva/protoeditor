@@ -30,7 +30,7 @@ class PerlSettings : public LanguageSettings
     PerlSettings();
     ~PerlSettings();
 
-    QString languageName() 
+    QString languageName() const
     {
       return PerlSettings::lang;
     }
@@ -40,16 +40,16 @@ class PerlSettings : public LanguageSettings
       mEnabled = value;
     }
 
-    bool isEnabled()
+    bool isEnabled() const
     {
       return mEnabled;
     }
 
-    void setPerlCommand(const QString& cmd) {
+    void setInterpreterCommand(const QString& cmd) {
       mPerlCommand = cmd;
     }
 
-    QString PerlCommand() const {
+    QString interpreterCommand() const {
       return mPerlCommand ;
     }
 

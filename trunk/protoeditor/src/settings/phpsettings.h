@@ -30,7 +30,7 @@ class PHPSettings : public LanguageSettings
     PHPSettings();
     ~PHPSettings();
 
-    QString languageName() 
+    QString languageName() const
     {
       return PHPSettings::lang;
     }
@@ -40,7 +40,7 @@ class PHPSettings : public LanguageSettings
       mEnabled = value;
     }
 
-    bool isEnabled()
+    bool isEnabled() const
     {
       return mEnabled;
     }
@@ -55,11 +55,11 @@ class PHPSettings : public LanguageSettings
       return mDefaultDebugger;
     }
 
-    void setPHPCommand(const QString& cmd) {
+    void setInterpreterCommand(const QString& cmd) {
       mPHPCommand = cmd;
     }
 
-    QString PHPCommand() const {
+    QString interpreterCommand() const {
       return mPHPCommand ;
     }
 

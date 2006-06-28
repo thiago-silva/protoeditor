@@ -70,7 +70,7 @@ void PerlSettingsWidget::populate()
 
 
   m_ckEnabled->setChecked(settings->isEnabled());
-  m_edPerlCommand->setText(settings->PerlCommand());
+  m_edPerlCommand->setText(settings->interpreterCommand());
 }
 
 void PerlSettingsWidget::updateSettings()
@@ -80,7 +80,7 @@ void PerlSettingsWidget::updateSettings()
 
 
   settings->setEnabled(m_ckEnabled->isChecked());
-  settings->setPerlCommand(m_edPerlCommand->text());
+  settings->setInterpreterCommand(m_edPerlCommand->text());
 }
 
 void PerlSettingsWidget::slotLangEnabled(int)

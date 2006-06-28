@@ -50,6 +50,10 @@ public:
   
   bool useCurrentScript();
 
+  void showError(const QString&) const;
+  void showSorry(const QString&) const;
+
+
 public slots:
   //menu "file"
   void slotAcNewFile();
@@ -91,8 +95,6 @@ private:
   void loadLanguages();
 
   bool checkOverwrite(const KURL&);
-
-  void executionPrologue();
 
   static Protoeditor *m_self;
 

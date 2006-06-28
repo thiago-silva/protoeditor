@@ -474,8 +474,7 @@ void ConsoleRequestor::doRequest(const KURL& url)
 
   //find the mimetype of filePath, and use the proper interpreter
   QString cmd = 
-    dynamic_cast<PHPSettings*>(
-      ProtoeditorSettings::self()->languageSettings(PHPSettings::lang))->PHPCommand();
+    ProtoeditorSettings::self()->languageSettings(PHPSettings::lang)->interpreterCommand();
 
   QString consoleApp = ProtoeditorSettings::self()->extAppSettings()->console();
 
