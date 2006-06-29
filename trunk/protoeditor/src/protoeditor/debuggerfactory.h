@@ -27,9 +27,25 @@
 class AbstractDebugger;
 class DebuggerManager;
 
-class DebuggerFactory{
+class DebuggerFactory
+{
 public:
-  static QMap<QString, AbstractDebugger*> buildDebuggers(DebuggerManager* manager);
+  static DebuggerFactory* self();
+
+  ~DebuggerFactory();
+
+  void init();
+
+  AbstractDebugger* getDebugger(const QString&);
+private:
+  DebuggerFactory();  
+
+  static DebuggerFactory* m_self;
+
+  
+  void registerDebugger(AbstractDebugger*);
+
+  QMap<QString, AbstractDebugger*> m_debuggerMap;
 };
 
 #endif

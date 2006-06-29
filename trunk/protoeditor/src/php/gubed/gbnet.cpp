@@ -26,6 +26,7 @@
 #include "phpdefs.h"
 #include "connection.h"
 #include "sitesettings.h"
+#include "phpsettings.h"
 #include "gbsettings.h"
 #include "session.h"
 
@@ -84,7 +85,7 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
     {
       args += " " + uiargs;
     }
-    Session::self()->start(KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
+    Session::self()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
   }
   else
   {
@@ -103,7 +104,7 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
     }
     url.setQuery(query); 
   
-    Session::self()->start(url);
+    Session::self()->startRemote(url);
   }
 }
 

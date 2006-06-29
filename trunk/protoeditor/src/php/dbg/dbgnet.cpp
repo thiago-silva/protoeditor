@@ -33,6 +33,7 @@
 #include "dbgfileinfo.h"
 
 #include "sitesettings.h"
+#include "phpsettings.h"
 #include "session.h"
 
 #include <klocale.h>
@@ -113,7 +114,7 @@ void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
                  + "@clienthost:"
                  + QString::number(listenPort);
 
-    Session::self()->start(KURL::fromPathOrURL(filePath), args);
+    Session::self()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath), args);
   }
   else
   {
@@ -130,7 +131,7 @@ void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
     }
 
     url.setQuery(query);
-    Session::self()->start(url);
+    Session::self()->startRemote(url);
   }  
 }
 

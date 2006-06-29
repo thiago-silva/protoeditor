@@ -28,27 +28,22 @@ class KProcess;
 class DCOPClient;
 class QHttp;
 class KURL;
+
+class ExternalApp;
 class Browser;
-
-
-class ExternalAppRequestor;
-class ConsoleRequestor;
 
 class Session : public QObject
 {
   Q_OBJECT
   public:
-    
     ~Session();
 
     static void dispose();
     static Session* self();
     
-    void start(const KURL& url);
-    void start(const KURL& url, const QString& args, const QStringList& env = QStringList());
+    void startRemote(const KURL& url);
+    void startLocal(const QString& lang, const KURL& url, const QString& args, const QStringList& env = QStringList());
 
-    const QString&     arguments();
-    const QStringList& environment();
   signals:
     void sigError(const QString& error);
 
@@ -63,39 +58,56 @@ class Session : public QObject
     static Session* m_self;
 
     QHttp                *m_http;
-    ExternalAppRequestor *m_extAppRequestor;
-
-    QString     m_args;
-    QStringList m_env;
+    ExternalApp          *m_externalApp;
 };
 
-class ExternalAppRequestor : public QObject
+class ExternalApp : public QObject
 {
   Q_OBJECT
   public:
-    ExternalAppRequestor();
-    virtual ~ExternalAppRequestor();
+    ExternalApp();
+    virtual ~ExternalApp();
 
-    static ExternalAppRequestor* retrieveExternalApp(int, Session*);
-
-    virtual void doRequest(const KURL&) = 0;
-    virtual int  id() = 0;
   signals:
     void sigError(const QString&);
+
+  protected slots:
+    void slotProcessExited(KProcess*);
 
   protected:
     void init();
 
-    static ExternalAppRequestor *m_extAppRequestor;
-
     KProcess         *m_process;
     bool              m_processRunning;
-
-  private slots:
-    void slotProcessExited(KProcess*);
 };
 
-class KonquerorRequestor : public ExternalAppRequestor
+class Console : public ExternalApp
+{
+  Q_OBJECT
+  public:
+    Console();
+    ~Console();
+
+    void execute(const QString& lang, const KURL& url, const QString& args, const QStringList& env);
+};
+
+class Browser : public ExternalApp
+{
+  Q_OBJECT
+  public:
+    Browser();
+    virtual ~Browser();
+
+    static Browser* retrieveBrowser(int, Session*);
+
+    virtual void doRequest(const KURL&) = 0;
+    virtual int  id() = 0;
+
+  protected:
+    static Browser   *m_browser;
+};
+
+class KonquerorRequestor : public Browser
 {
   Q_OBJECT
   public:
@@ -110,7 +122,7 @@ class KonquerorRequestor : public ExternalAppRequestor
 };
 
 
-class MozillaRequestor : public ExternalAppRequestor
+class MozillaRequestor : public Browser
 {
   Q_OBJECT
   public:
@@ -120,7 +132,7 @@ class MozillaRequestor : public ExternalAppRequestor
     virtual int  id();
 };
 
-class FirefoxRequestor : public ExternalAppRequestor
+class FirefoxRequestor : public Browser
 {
   Q_OBJECT
   public:
@@ -130,7 +142,7 @@ class FirefoxRequestor : public ExternalAppRequestor
     virtual int  id();
 };
 
-class OperaRequestor : public ExternalAppRequestor
+class OperaRequestor : public Browser
 {
   Q_OBJECT
   public:
@@ -138,20 +150,6 @@ class OperaRequestor : public ExternalAppRequestor
     ~OperaRequestor();
     virtual void doRequest(const KURL&);
     virtual int  id();
-};
-
-class ConsoleRequestor : public ExternalAppRequestor
-{
-  Q_OBJECT
-  public:
-    ConsoleRequestor(Session*);
-    ~ConsoleRequestor();
-    virtual void doRequest(const KURL&);
-    virtual int  id();
-
-  private:
-    QString     m_args;
-    QStringList m_env;
 };
 
 

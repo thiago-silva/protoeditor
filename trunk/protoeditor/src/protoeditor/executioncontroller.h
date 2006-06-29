@@ -29,7 +29,7 @@ public:
   ExecutionController();
   ~ExecutionController();
 
-  void executeScript(const QString&);
+  void executeScript(const QString&, const QString&);
 
   void debugStart();
   void debugStop();

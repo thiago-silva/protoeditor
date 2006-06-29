@@ -25,38 +25,34 @@ ExtAppSettings::ExtAppSettings(  )
 {
   setCurrentGroup( QString::fromLatin1( "ExternalApp" ) );
 
-  KConfigSkeleton::ItemBool  *itemUseExternalApp;
-  itemUseExternalApp = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "UseExternalApp" ), mUseExternalApp, false );
-  addItem( itemUseExternalApp, QString::fromLatin1( "UseExternalApp" ) );
+  KConfigSkeleton::ItemBool  *itemUseExternalBrowser;
+  itemUseExternalBrowser = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "UseExternalBrowser" ), mUseExternalBrowser, false );
+  addItem( itemUseExternalBrowser, QString::fromLatin1( "UseExternalBrowser" ) );
 
-  QValueList<KConfigSkeleton::ItemEnum::Choice> valuesApp;
+  QValueList<KConfigSkeleton::ItemEnum::Choice> valuesBrowser;
   {
     KConfigSkeleton::ItemEnum::Choice choice;
     choice.name = QString::fromLatin1( "Konqueror" );
-    valuesApp.append( choice );
+    valuesBrowser.append( choice );
   }
   {
     KConfigSkeleton::ItemEnum::Choice choice;
     choice.name = QString::fromLatin1( "Mozilla" );
-    valuesApp.append( choice );
+    valuesBrowser.append( choice );
   }
   {
     KConfigSkeleton::ItemEnum::Choice choice;
     choice.name = QString::fromLatin1( "Firefox" );
-    valuesApp.append( choice );
+    valuesBrowser.append( choice );
   }
   {
     KConfigSkeleton::ItemEnum::Choice choice;
     choice.name = QString::fromLatin1( "Opera" );
-    valuesApp.append( choice );
+    valuesBrowser.append( choice );
   }
-//   {
-//     KConfigSkeleton::ItemEnum::Choice choice;
-//     choice.name = QString::fromLatin1( "Console" );
-//     valuesApp.append( choice );
-//   }
+
   KConfigSkeleton::ItemEnum  *itemExtApp;
-  itemExtApp = new KConfigSkeleton::ItemEnum( currentGroup(), QString::fromLatin1( "App" ), mExternalApp, valuesApp, EnumExtApp::Konqueror );
+  itemExtApp = new KConfigSkeleton::ItemEnum( currentGroup(), QString::fromLatin1( "Browser" ), mExternalBrowser, valuesBrowser, EnumBrowser::Konqueror );
   addItem( itemExtApp, QString::fromLatin1( "Session" ) );
 
   KConfigSkeleton::ItemBool  *itemUseConsole;
@@ -66,10 +62,6 @@ ExtAppSettings::ExtAppSettings(  )
   KConfigSkeleton::ItemString  *itemConsole;
   itemConsole = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "Console" ), mConsole, "konsole -e");
   addItem( itemConsole, QString::fromLatin1( "Console" ) );
-/*
-  KConfigSkeleton::ItemString  *itemShellExec;
-  itemShellExec = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "ShellExec" ), mShellExec);
-  addItem( itemShellExec, QString::fromLatin1( "ShellExec" ) );*/
 
   readConfig();
 }

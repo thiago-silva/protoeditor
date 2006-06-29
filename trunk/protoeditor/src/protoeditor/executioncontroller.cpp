@@ -23,6 +23,8 @@
 #include "mainwindow.h"
 #include "editorui.h"
 
+#include "session.h"
+
 #include "protoeditorsettings.h"
 #include "languagesettings.h"
 
@@ -75,7 +77,7 @@ bool ExecutionController::executionPrologue()
   return true;
 }
 
-void ExecutionController::executeScript(const QString& langName)
+void ExecutionController::executeScript(const QString& langName, const QString& args)
 {
   if(!executionPrologue()) return;
 
@@ -83,7 +85,7 @@ void ExecutionController::executeScript(const QString& langName)
 
   QString cmd = ProtoeditorSettings::self()->languageSettings(langName)->interpreterCommand();
 
-  Protoeditor::self()->showSorry(cmd + " and " + url.prettyURL());
+  Session::self()->startLocal(langName, url, args);  
 }
 
 

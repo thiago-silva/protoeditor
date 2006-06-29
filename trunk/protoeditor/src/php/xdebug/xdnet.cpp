@@ -25,6 +25,7 @@
 
 #include "connection.h"
 #include "sitesettings.h"
+#include "phpsettings.h"
 #include "debuggerstack.h"
 #include "variable.h"
 #include "debuggerbreakpoint.h"
@@ -88,7 +89,7 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
         << "XDEBUG_SESSION_START"
         << QString::number(id);
 
-    Session::self()->start(KURL::fromPathOrURL(filePath),uiargs, env);
+    Session::self()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath),uiargs, env);
   } 
   else
   {
@@ -102,7 +103,7 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
     }
 
     url.setQuery(query);
-    Session::self()->start(url);
+    Session::self()->startRemote(url);
   }
 }
 

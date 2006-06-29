@@ -41,7 +41,16 @@
 #include <kencodingfiledialog.h>
 #include <kmessagebox.h>
 
+
 Protoeditor* Protoeditor::m_self = 0;
+
+//TODO: i18n this
+QString Protoeditor::fileFilter = "*.php *.pl| Scripts\n"
+                                  "*.php| PHP Scripts\n"
+                                  "*.pl| Perl Scripts\n"
+                                  "*| All Files";
+
+
 
 Protoeditor::Protoeditor()
 {
@@ -98,14 +107,14 @@ void Protoeditor::init()
   connect(m_window->editorUI(), SIGNAL(sigFirstPage()),
     this, SLOT(slotFirstDocumentOpened()));
 
+  //Load all languages
   registerLanguages();
-
-  /** Init debugger?? **/
-  /** LoadSites??     **/
-  /** Load debuggers  **/
-
   loadLanguages();
 
+  //Load all language debuggers
+  DebuggerFactory::self()->init();  
+
+  //setup the argument toolbar
   m_window->argumentCombo()->insertStringList(ProtoeditorSettings::self()->argumentsHistory());
   m_window->argumentCombo()->clearEdit();
 }
@@ -134,7 +143,7 @@ void Protoeditor::openFile()
   //note: the filter must be the same as SiteSettingsDialog::SiteSettingsDialog default file
   QStringList strList =
     KFileDialog::getOpenFileNames(
-      location, i18n("*.php| PHP Scripts\n*|All Files"), m_window);
+      location, Protoeditor::fileFilter, m_window);
 
   if(strList.count())
   {
@@ -342,10 +351,11 @@ void Protoeditor::slotAcQuit()
 
 void Protoeditor::slotAcExecuteScript(const QString& langName)
 {  
-  m_executionController->executeScript(langName);
+  m_executionController->executeScript(langName, m_window->argumentCombo()->currentText());
+  m_window->statusBar()->setDebugStatusMsg(langName + i18n(" executed"));
 }
 
-void Protoeditor::slotAcDebugStart(const QString& langName)
+void Protoeditor::slotAcDebugStart(const QString&)
 {  
 //   m_executionController->debugStart(langName);
 }

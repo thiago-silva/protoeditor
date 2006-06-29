@@ -36,20 +36,20 @@ ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
   QVBoxLayout* vbox = new QVBoxLayout(this, 10, 10);
   QGridLayout* grid = new QGridLayout(this, 2, 2, 3, 10);
 
-  m_ckUseExternalApp = new QCheckBox(this);
-  m_ckUseExternalApp->setText(i18n("Use external browser"));
+  m_ckUseExternalBrowser = new QCheckBox(this);
+  m_ckUseExternalBrowser->setText(i18n("Use external browser"));
 
-  m_cbExtApp = new QComboBox(this);
-  m_cbExtApp->insertItem(i18n("Konqueror"));
-  m_cbExtApp->insertItem(i18n("Mozilla"));
-  m_cbExtApp->insertItem(i18n("Firefox"));
-  m_cbExtApp->insertItem(i18n("Opera"));
-  m_cbExtApp->setEnabled(false);
+  m_cbExtBrowser = new QComboBox(this);
+  m_cbExtBrowser->insertItem(i18n("Konqueror"));
+  m_cbExtBrowser->insertItem(i18n("Mozilla"));
+  m_cbExtBrowser->insertItem(i18n("Firefox"));
+  m_cbExtBrowser->insertItem(i18n("Opera"));
+  m_cbExtBrowser->setEnabled(false);
 
-  grid->addWidget(m_ckUseExternalApp, 0, 0);
-  grid->addWidget(m_cbExtApp, 0, 1);
+  grid->addWidget(m_ckUseExternalBrowser, 0, 0);
+  grid->addWidget(m_cbExtBrowser, 0, 1);
   
-  connect(m_ckUseExternalApp, SIGNAL(stateChanged(int)), this, SLOT(slotUseExtApp(int)));
+  connect(m_ckUseExternalBrowser, SIGNAL(stateChanged(int)), this, SLOT(slotUseExtBrowser(int)));
 
   m_ckUseConsole = new QCheckBox(this);
   m_ckUseConsole->setText(i18n("External console:"));
@@ -67,18 +67,18 @@ ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
 
 void ExtAppSettingsWidget::populate()
 {
-  m_cbExtApp->setCurrentItem(ProtoeditorSettings::self()->extAppSettings()->externalApp());
-  m_ckUseExternalApp->setChecked(ProtoeditorSettings::self()->extAppSettings()->useExternalApp());
+  m_cbExtBrowser->setCurrentItem(ProtoeditorSettings::self()->extAppSettings()->externalBrowser());
+  m_ckUseExternalBrowser->setChecked(ProtoeditorSettings::self()->extAppSettings()->useExternalBrowser());
   m_ckUseConsole->setChecked(ProtoeditorSettings::self()->extAppSettings()->useConsole());
   m_edConsole->setText(ProtoeditorSettings::self()->extAppSettings()->console());
 }
 
-void ExtAppSettingsWidget::slotUseExtApp(int value)
+void ExtAppSettingsWidget::slotUseExtBrowser(int value)
 {
   if(QButton::On == value) {
-    m_cbExtApp->setEnabled(true);
+    m_cbExtBrowser->setEnabled(true);
   } else {
-    m_cbExtApp->setEnabled(false);
+    m_cbExtBrowser->setEnabled(false);
   }
 }
 
@@ -97,10 +97,10 @@ ExtAppSettingsWidget::~ExtAppSettingsWidget()
 
 void ExtAppSettingsWidget::updateSettings()
 {
-  ProtoeditorSettings::self()->extAppSettings()->setExternalApp(m_cbExtApp->currentItem());
+  ProtoeditorSettings::self()->extAppSettings()->setExternalBrowser(m_cbExtBrowser->currentItem());
 
-  ProtoeditorSettings::self()->extAppSettings()->setUseExternalApp(
-    m_ckUseExternalApp->isChecked());
+  ProtoeditorSettings::self()->extAppSettings()->setUseExternalBrowser(
+    m_ckUseExternalBrowser->isChecked());
 
   ProtoeditorSettings::self()->extAppSettings()->setUseConsole(
     m_ckUseConsole->isChecked());

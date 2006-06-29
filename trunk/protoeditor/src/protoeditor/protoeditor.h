@@ -33,6 +33,8 @@ class Protoeditor : public QObject
   Q_OBJECT
 
 public:
+  static QString fileFilter;
+
   ~Protoeditor();
 
   static Protoeditor* self();

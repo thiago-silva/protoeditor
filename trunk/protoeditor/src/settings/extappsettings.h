@@ -26,33 +26,33 @@
 class ExtAppSettings : public KConfigSkeleton
 {
   public:
-    class EnumExtApp
+    class EnumBrowser
     {
       public:
-      enum { Konqueror, Mozilla, Firefox, Opera, Console, COUNT };
+      enum { Konqueror, Mozilla, Firefox, Opera, COUNT };
     };
 
     ExtAppSettings( );
     ~ExtAppSettings();
 
-    void setUseExternalApp(bool value)
+    void setUseExternalBrowser(bool value)
     {
-      mUseExternalApp = value;
+      mUseExternalBrowser = value;
     }
 
-    bool useExternalApp() const
+    bool useExternalBrowser() const
     {
-      return mUseExternalApp;
+      return mUseExternalBrowser;
     }
 
-    void setExternalApp(int value)
+    void setExternalBrowser(int value)
     {
-      mExternalApp = value;
+      mExternalBrowser = value;
     }
 
-    int externalApp() const
+    int externalBrowser() const
     {
-      return mExternalApp;
+      return mExternalBrowser;
     }
 
     void setUseConsole(bool value) 
@@ -73,20 +73,11 @@ class ExtAppSettings : public KConfigSkeleton
       return mConsole;
     }    
 
-//     QString shellExec() const {
-//       return mShellExec;
-//     }
-
   protected:
-
-    // ExternalOutput
-    bool mUseExternalApp;
-    int mExternalApp;
+    bool mUseExternalBrowser;
+    int mExternalBrowser;
     bool mUseConsole;
     QString mConsole;
-//     QString mShellExec;
-    
-  private:
 };
 
 #endif

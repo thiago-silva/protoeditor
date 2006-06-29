@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "sitesettingsdialog.h"
+#include "protoeditor.h"
 
 #include <qlabel.h>
 #include <qcombobox.h>
@@ -467,7 +468,7 @@ QMap<QString,QString> SiteSettingsDialog::mappings()
 void SiteSettingsDialog::slotOpenFileDialog(KURLRequester* /*default file*/)
 {
   //note: this filter must be the same as in void MainWindow::slotOpenFile()
-  m_edDefaultFile->setFilter(i18n("*.php| PHP Scripts\n*|All Files"));
+  m_edDefaultFile->setFilter(Protoeditor::fileFilter);
   if(!m_edLocalBaseDir->url().isEmpty())
   {
     m_edDefaultFile->fileDialog()->setURL(m_edLocalBaseDir->url());

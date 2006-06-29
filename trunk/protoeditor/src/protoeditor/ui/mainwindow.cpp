@@ -258,6 +258,7 @@ void MainWindow::clearLanguages()
 {
   m_executeAction->popupMenu()->clear();
   m_debugAction->popupMenu()->clear();
+  m_lastLang = QString::null;
 }
 
 void MainWindow::addLanguage(const QString& langName)

@@ -35,12 +35,12 @@
 Session* Session::m_self = 0;
 
 Session::Session()
-    : m_http(0), m_extAppRequestor(0)
+    : m_http(0), m_externalApp(0)
 {}
 
 Session::~Session()
 {
-  delete m_extAppRequestor;
+  delete m_externalApp;
   delete m_http;
 }
 
@@ -58,9 +58,9 @@ Session* Session::self()
   return m_self;
 }
 
-void Session::start(const KURL& url)
+void Session::startRemote(const KURL& url)
 {
-  if(ProtoeditorSettings::self()->extAppSettings()->useExternalApp())
+  if(ProtoeditorSettings::self()->extAppSettings()->useExternalBrowser())
   {
     doExternalRequest(url);
   }
@@ -68,16 +68,17 @@ void Session::start(const KURL& url)
   {
     doHTTPRequest(url);
   }
-  m_env.clear();
 }
 
-void Session::start(const KURL& url, const QString& args, const QStringList& env)
+void Session::startLocal(const QString& lang, const KURL& url, const QString& args, const QStringList& env)
 {
-  m_args = args;
-  m_env  = env;
+  if(m_externalApp) delete m_externalApp;
 
-  m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(ExtAppSettings::EnumExtApp::Console, this);
-  m_extAppRequestor->doRequest(url);  
+  Console* c = new Console();
+
+  m_externalApp = c;
+
+  c->execute(lang, url, args, env);
 }
 
 void Session::initHTTPCommunication()
@@ -119,85 +120,40 @@ void Session::slotHttpDone(bool error)
 
 void Session::doExternalRequest(const KURL& url)
 {
-  m_extAppRequestor = ExternalAppRequestor::retrieveExternalApp(
-                        ProtoeditorSettings::self()->extAppSettings()->externalApp(), this);
+  if(m_externalApp) delete m_externalApp;
 
-  m_extAppRequestor->doRequest(url);
+  Browser *b = Browser::retrieveBrowser(
+                        ProtoeditorSettings::self()->extAppSettings()->externalBrowser(), this);
+
+  m_externalApp = b;
+
+  b->doRequest(url);  
 }
 
-const QString& Session::arguments()
+
+/************************* ExternalApp **************************************************/
+
+ExternalApp::ExternalApp()
+  : m_process(0), m_processRunning(false)
 {
-  return m_args;
 }
-
-const QStringList& Session::environment()
+ExternalApp::~ExternalApp()
 {
-  return m_env;
-}
+  if(m_process)
+  {
+    m_process->kill();
+  }
 
-/***************************** ExternalAppRequestor *****************************************/
-
-ExternalAppRequestor* ExternalAppRequestor::m_extAppRequestor = 0;
-
-ExternalAppRequestor::ExternalAppRequestor()
-    : m_process(0), m_processRunning(false)
-
-{}
-
-ExternalAppRequestor::~ExternalAppRequestor()
-{
   delete m_process;
 }
 
-ExternalAppRequestor* ExternalAppRequestor::retrieveExternalApp(int extApp, Session* session)
+
+void ExternalApp::slotProcessExited(KProcess*)
 {
-  switch(extApp)
-  {
-    case ExtAppSettings::EnumExtApp::Konqueror:
-      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Konqueror))
-      {
-        return m_extAppRequestor;
-      }
-      delete m_extAppRequestor;
-      m_extAppRequestor = new KonquerorRequestor(session);
-      break;
-    case ExtAppSettings::EnumExtApp::Mozilla:
-      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Mozilla))
-      {
-        return m_extAppRequestor;
-      }
-      delete m_extAppRequestor;
-      m_extAppRequestor = new MozillaRequestor(session);
-      break;
-    case ExtAppSettings::EnumExtApp::Firefox:
-      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Firefox))
-      {
-        return m_extAppRequestor;
-      }
-      delete m_extAppRequestor;
-      m_extAppRequestor = new FirefoxRequestor(session);
-      break;
-    case ExtAppSettings::EnumExtApp::Opera:
-      if(m_extAppRequestor && (m_extAppRequestor->id() == ExtAppSettings::EnumExtApp::Opera))
-      {
-        return m_extAppRequestor;
-      }
-      delete m_extAppRequestor;
-      m_extAppRequestor = new OperaRequestor(session);
-      break;
-    case ExtAppSettings::EnumExtApp::Console:
-      delete m_extAppRequestor;
-      m_extAppRequestor = new ConsoleRequestor(session);
-      break;
-  }
-
-  connect(m_extAppRequestor, SIGNAL(sigError(const QString&)), session,
-          SIGNAL(sigError(const QString&)));
-
-  return m_extAppRequestor;
+  m_processRunning = false;
 }
 
-void ExternalAppRequestor::init()
+void ExternalApp::init()
 {
   if(!m_processRunning)
   {
@@ -210,16 +166,147 @@ void ExternalAppRequestor::init()
   }
 }
 
-void ExternalAppRequestor::slotProcessExited(KProcess*)
+/***************************** Console *****************************************/
+
+Console::Console()
+ :  ExternalApp()
 {
-  m_processRunning = false;
+}
+
+Console::~Console()
+{
+}
+
+void Console::execute(const QString& lang, const KURL& url, const QString& args, const QStringList& env)
+{
+  init();
+
+  if(m_processRunning)
+  {
+    m_process->detach();
+  }
+
+  m_process->clearArguments();
+
+  QString cmd = 
+    ProtoeditorSettings::self()->languageSettings(lang)->interpreterCommand();
+
+  QString consoleApp = ProtoeditorSettings::self()->extAppSettings()->console();
+
+  QStringList::const_iterator it = env.begin();
+  QString name;
+  QString val;
+  while(it != env.end()) {
+    name = (*it);
+    ++it;
+    val = (*it);
+    ++it;
+    m_process->setEnvironment(name, val);
+  }
+
+  if(ProtoeditorSettings::self()->extAppSettings()->useConsole()) 
+  {
+    //use external console
+
+    kdDebug() << "executing console: " << (consoleApp + " /bin/sh") << " -c "              
+              << env.join(" ") << " " 
+              << QString("cd ") <<  url.directory() << ";"
+              << (cmd + " " + url.path() + " " + args) + (";echo " + 
+                  i18n("\"Press Enter to continue...\"") + ";read")
+              << endl;
+  
+    //KProcess::quote(filePath)
+    *m_process << QStringList::split(' ',consoleApp + " /bin/sh") << "-c"
+      << (
+          QString("cd ") +  url.directory() + ";"
+          + (cmd + " " + url.path() + " " + args) + (";echo " + 
+            i18n("\"Press Enter to continue...\"") + ";read"));
+  }
+  else
+  {
+    //use current terminal
+    kdDebug() << "executing : " << "/bin/sh" << " -c "
+              << QString("cd ") <<  url.directory() << ";"
+              << (cmd + " " + url.path() + " " + args + ";echo " +
+                 i18n("\"Press Enter to continue...\"") + ";read")
+              << endl;
+  
+    *m_process << "/bin/sh" << "-c" << 
+      (QString("cd ") +  url.directory() + ";" + cmd + " " + url.path() + " " + args);
+  }
+
+  if(!m_process->start())
+  {
+    emit sigError(i18n("Error executing console."));
+  }
+  else
+  {
+    m_processRunning = true;
+  }  
+}
+
+
+/***************************** Browser *****************************************/
+
+Browser* Browser::m_browser = 0;
+
+Browser::Browser()
+    : ExternalApp()
+{}
+
+Browser::~Browser()
+{  
+}
+
+Browser* Browser::retrieveBrowser(int browserno, Session* session)
+{
+  switch(browserno)
+  {
+    case ExtAppSettings::EnumBrowser::Konqueror:
+      if(m_browser && (m_browser->id() == ExtAppSettings::EnumBrowser::Konqueror))
+      {
+        return m_browser;
+      }
+      delete m_browser;
+      m_browser = new KonquerorRequestor(session);
+      break;
+    case ExtAppSettings::EnumBrowser::Mozilla:
+      if(m_browser && (m_browser->id() == ExtAppSettings::EnumBrowser::Mozilla))
+      {
+        return m_browser;
+      }
+      delete m_browser;
+      m_browser = new MozillaRequestor(session);
+      break;
+    case ExtAppSettings::EnumBrowser::Firefox:
+      if(m_browser && (m_browser->id() == ExtAppSettings::EnumBrowser::Firefox))
+      {
+        return m_browser;
+      }
+      delete m_browser;
+      m_browser = new FirefoxRequestor(session);
+      break;
+    case ExtAppSettings::EnumBrowser::Opera:
+      if(m_browser && (m_browser->id() == ExtAppSettings::EnumBrowser::Opera))
+      {
+        return m_browser;
+      }
+      delete m_browser;
+      m_browser = new OperaRequestor(session);
+      break;
+  }
+
+  connect(m_browser, SIGNAL(sigError(const QString&)), session,
+          SIGNAL(sigError(const QString&)));
+
+  return m_browser;
 }
 
 
 /***************************** KONQUEROR *****************************************/
 
 KonquerorRequestor::KonquerorRequestor(Session*)
-    : ExternalAppRequestor(), m_dcopClient(0)
+    : Browser(), m_dcopClient(0)
 {}
 KonquerorRequestor::~KonquerorRequestor()
 {}
@@ -276,12 +363,12 @@ void KonquerorRequestor::openNewKonqueror(const KURL& url)
 
 int KonquerorRequestor::id()
 {
-  return ExtAppSettings::EnumExtApp::Konqueror;
+  return ExtAppSettings::EnumBrowser::Konqueror;
 }
 
 void KonquerorRequestor::init()
 {
-  ExternalAppRequestor::init();
+  Browser::init();
 
   if(!m_dcopClient)
   {
@@ -297,7 +384,7 @@ void KonquerorRequestor::init()
 
 /******************* MOZILLA *********************************/
 MozillaRequestor::MozillaRequestor(Session*)
-    : ExternalAppRequestor()
+    : Browser()
 {}
 MozillaRequestor::~MozillaRequestor()
 {}
@@ -347,13 +434,13 @@ void MozillaRequestor::doRequest(const KURL& url)
 
 int MozillaRequestor::id()
 {
-  return ExtAppSettings::EnumExtApp::Mozilla;
+  return ExtAppSettings::EnumBrowser::Mozilla;
 }
 
 
 /************************ FIREFOX ***********************************************/
 FirefoxRequestor::FirefoxRequestor(Session*)
-    : ExternalAppRequestor()
+    : Browser()
 {}
 FirefoxRequestor::~FirefoxRequestor()
 {}
@@ -403,14 +490,14 @@ void FirefoxRequestor::doRequest(const KURL& url)
 
 int FirefoxRequestor::id()
 {
-  return ExtAppSettings::EnumExtApp::Firefox;
+  return ExtAppSettings::EnumBrowser::Firefox;
 }
 
 
 /**************************** Opera **********************************************/
 
 OperaRequestor::OperaRequestor(Session*)
-    : ExternalAppRequestor()
+    : Browser()
 {}
 OperaRequestor::~OperaRequestor()
 {}
@@ -446,95 +533,7 @@ void OperaRequestor::doRequest(const KURL& url)
 
 int OperaRequestor::id()
 {
-  return ExtAppSettings::EnumExtApp::Opera;
-}
-
-/**************************** Console **********************************************/
-
-ConsoleRequestor::ConsoleRequestor(Session* session)
-    : ExternalAppRequestor()
-{
-  m_args = session->arguments();
-  m_env = session->environment();
-}
-
-ConsoleRequestor::~ConsoleRequestor()
-{}
-
-void ConsoleRequestor::doRequest(const KURL& url)
-{
-  init();
-
-  if(m_processRunning)
-  {
-    m_process->detach();
-  }
-
-  m_process->clearArguments();
-
-  //find the mimetype of filePath, and use the proper interpreter
-  QString cmd = 
-    ProtoeditorSettings::self()->languageSettings(PHPSettings::lang)->interpreterCommand();
-
-  QString consoleApp = ProtoeditorSettings::self()->extAppSettings()->console();
-
-  QStringList::Iterator it = m_env.begin();
-  QString name;
-  QString val;
-  while(it != m_env.end()) {
-    name = (*it);
-    ++it;
-    val = (*it);
-    ++it;
-    m_process->setEnvironment(name, val);
-  }
-
-  if(ProtoeditorSettings::self()->extAppSettings()->useConsole()) 
-  {
-    //use external console
-
-    kdDebug() << "executing console: " << (consoleApp + " /bin/sh") << " -c "              
-              << m_env.join(" ") << " " 
-              << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + m_args) + (";echo " + 
-                  i18n("\"Press Enter to continue...\"") + ";read")
-              << endl;
-  
-    //KProcess::quote(filePath)
-    *m_process << QStringList::split(' ',consoleApp + " /bin/sh") << "-c"
-      << (
-          QString("cd ") +  url.directory() + ";"
-          + (cmd + " " + url.path() + " " + m_args) + (";echo " + 
-            i18n("\"Press Enter to continue...\"") + ";read"));
-  }
-  else
-  {
-    //use current terminal
-
-    kdDebug() << "executing : " << "/bin/sh" << " -c "
-              << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + m_args + ";echo " +
-                 i18n("\"Press Enter to continue...\"") + ";read")
-              << endl;
-  
-    //KProcess::quote(filePath)
-    *m_process << "/bin/sh" << "-c" << 
-      (QString("cd ") +  url.directory() + ";" + cmd + " " + url.path() + " " + m_args);
-  }
-
-  if(!m_process->start())
-  {
-    emit sigError(i18n("Error executing console."));
-  }
-  else
-  {
-    m_processRunning = true;
-  }  
-}
-
-int ConsoleRequestor::id()
-{
-  return ExtAppSettings::EnumExtApp::Console;
+  return ExtAppSettings::EnumBrowser::Opera;
 }
 
 #include "session.moc"

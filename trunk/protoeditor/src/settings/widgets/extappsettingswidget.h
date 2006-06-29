@@ -36,12 +36,12 @@ public:
   void populate();
   void updateSettings();
 private slots:
-  void slotUseExtApp(int);
+  void slotUseExtBrowser(int);
   void slotUseConsole(int);
 
 private:
-  QCheckBox *m_ckUseExternalApp;
-  QComboBox *m_cbExtApp;
+  QCheckBox *m_ckUseExternalBrowser;
+  QComboBox *m_cbExtBrowser;
 
   QCheckBox *m_ckUseConsole;
   KLineEdit* m_edConsole;
