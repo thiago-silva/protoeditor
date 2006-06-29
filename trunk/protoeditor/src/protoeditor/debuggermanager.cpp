@@ -219,7 +219,7 @@ void DebuggerManager::slotScriptRun()
   }
   else
   {
-    Session::self()->start(url, m_window->argumentCombo()->currentText());
+    //Session::self()->startLocal(url, m_window->argumentCombo()->currentText());
   }
 }
 
