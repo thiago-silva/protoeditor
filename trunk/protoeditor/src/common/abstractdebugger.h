@@ -119,7 +119,6 @@ signals:
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);
-
 };
 
 #endif

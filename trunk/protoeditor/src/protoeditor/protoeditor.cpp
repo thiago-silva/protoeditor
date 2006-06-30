@@ -102,6 +102,9 @@ void Protoeditor::init()
   m_settings = new ProtoeditorSettings();
   m_session = new Session();
 
+  m_executionController = new ExecutionController();
+  m_dataController = new DataController();  
+
   m_window = new MainWindow();
 
   connect(Protoeditor::self()->session(), SIGNAL(sigError(const QString&)),
@@ -120,48 +123,38 @@ void Protoeditor::init()
   connect(m_window->debuggerUI(), SIGNAL(sigGotoFileAndLine( const KURL&, int )),
           this, SLOT(slotGotoLineAtFile(const KURL&, int)));
  
-  //Listen to DebuggerUI
+  //datacontroller
   connect(m_window->debuggerUI(), SIGNAL(sigGlobalVarModified(Variable*)),
-          this, SLOT(slotGlobalVarModified(Variable*)));
+          m_dataController, SLOT(slotGlobalVarModified(Variable*)));
 
   connect(m_window->debuggerUI(), SIGNAL(sigLocalVarModified(Variable*)),
-          this, SLOT(slotLocalVarModified(Variable*)));
+          m_dataController, SLOT(slotLocalVarModified(Variable*)));
 
   connect(m_window->debuggerUI(), SIGNAL(sigWatchAdded(const QString&)),
-          this, SLOT(slotWatchAdded(const QString&)));
+          m_dataController, SLOT(slotWatchAdded(const QString&)));
 
   connect(m_window->debuggerUI(), SIGNAL(sigWatchRemoved(Variable*)),
-          this, SLOT(slotWatchRemoved(Variable*)));
+          m_dataController, SLOT(slotWatchRemoved(Variable*)));
 
   connect(m_window->debuggerUI(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
-          this, SLOT(slotBreakpointCreated(DebuggerBreakpoint*)));
+          m_dataController, SLOT(slotBreakpointCreated(DebuggerBreakpoint*)));
 
   connect(m_window->debuggerUI(), SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
-          this, SLOT(slotBreakpointChanged(DebuggerBreakpoint*)));
+          m_dataController, SLOT(slotBreakpointChanged(DebuggerBreakpoint*)));
 
   connect(m_window->debuggerUI(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
-          this, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
+          m_dataController, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
 
   connect(m_window->debuggerUI(),SIGNAL(sigStackchanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)), 
-          this, SLOT(slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));
+          m_dataController, SLOT(slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));
 
-
-  m_executionController = new ExecutionController();
-
+  
+  //execution controller
   connect(m_executionController, SIGNAL(sigDebugStarted(const QString&)),
           this, SLOT(slotDebugStarted(const QString&)));
 
   connect(m_executionController, SIGNAL(sigDebugEnded()),
-          this, SLOT(slotDebugEnded()));  
-
-
-  connect(m_executionController, SIGNAL(sigDebugStarted()),
-      Protoeditor::self()->mainWindow()->debuggerUI(), SLOT(slotDebugStarted()));
-
-  connect(m_executionController, SIGNAL(sigDebugEnded()),
-    Protoeditor::self()->mainWindow()->debuggerUI(), SLOT(slotDebugEnded()));
-
-  m_dataController = new DataController();  
+          this, SLOT(slotDebugEnded()));    
 
   //Load all languages
   registerLanguages();
@@ -535,6 +528,7 @@ void Protoeditor::slotDebugStarted(const QString& debuggerName)
   m_window->actionCollection()->action("debug_start")->setText(i18n("Continue"));
 
   m_window->actionCollection()->action("site_selection")->setEnabled(false);
+  m_window->debuggerUI()->prepareForSession();
 }
 
 void Protoeditor::slotDebugEnded()
@@ -548,6 +542,7 @@ void Protoeditor::slotDebugEnded()
   m_window->statusBar()->setLedState(StatusBarWidget::LedOff); //red led
 
   m_window->statusBar()->setDebuggerName("");
+  m_window->debuggerUI()->cleanSession();
 }
 
 #include "protoeditor.moc"

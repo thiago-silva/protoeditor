@@ -119,31 +119,6 @@ void DebuggerUI::setGlobalVariables(VariableList_t* vars)
   m_globalVariableListView->setVariables(vars);
 }
 
-void DebuggerUI::slotDebugStarted()
-{
-  m_globalVariableListView->setReadOnly(false);
-  m_localTab->localVarList()->setReadOnly(false);
-  m_watchTab->watchListView()->setReadOnly(false);
-  m_watchTab->watchListView()->reset();
-
-  m_globalVariableListView->clear();
-  m_localTab->localVarList()->clear();
-  m_messageListView->clear();
-  m_localTab->comboStack()->clear();
-  m_edOutput->clear();
-
-}
-
-void DebuggerUI::slotDebugEnded()
-{
-  m_breakpointListView->resetBreakpointItems();
-
-  //do not let the user change variables anymore
-  m_globalVariableListView->setReadOnly(true);
-  m_localTab->localVarList()->setReadOnly(true);
-  m_watchTab->watchListView()->setReadOnly(true);
-}
-
 //Local VariablesListView
 void DebuggerUI::setLocalVariables(VariableList_t* vars)
 {
@@ -229,5 +204,30 @@ void DebuggerUI::appendOutput(const QString& str)
 {
   m_edOutput->append(str);
 }
+
+void DebuggerUI::prepareForSession()
+{
+  m_globalVariableListView->setReadOnly(false);
+  m_localTab->localVarList()->setReadOnly(false);
+  m_watchTab->watchListView()->setReadOnly(false);
+  m_watchTab->watchListView()->reset();
+
+  m_globalVariableListView->clear();
+  m_localTab->localVarList()->clear();
+  m_messageListView->clear();
+  m_localTab->comboStack()->clear();
+  m_edOutput->clear();
+}
+
+void DebuggerUI::cleanSession()
+{
+  m_breakpointListView->resetBreakpointItems();
+
+  //do not let the user change variables anymore
+  m_globalVariableListView->setReadOnly(true);
+  m_localTab->localVarList()->setReadOnly(true);
+  m_watchTab->watchListView()->setReadOnly(true);
+}
+
 
 #include "debuggerui.moc"

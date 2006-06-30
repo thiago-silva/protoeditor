@@ -78,6 +78,9 @@ public:
   //Output
   void appendOutput(const QString&);
 
+  void prepareForSession();
+  void cleanSession();
+
 signals:
   //Global VariableListView
   void sigGlobalVarModified(Variable*);
@@ -100,9 +103,6 @@ signals:
   void sigGotoFileAndLine(const KURL&, int);
 
 public slots:
-  void slotDebugStarted();
-  void slotDebugEnded();  
-
   //BreakpointListView
   void slotBreakpointMarked(const KURL&, int, bool);
   void slotBreakpointUnmarked(const KURL&, int);

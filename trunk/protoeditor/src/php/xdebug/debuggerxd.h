@@ -94,17 +94,6 @@ private:
   bool startJIT();
   void stopJIT();
 
-  /*
-  signals:
-  void sigDebugStarted();
-  void sigDebugEnded();
-  void sigStepDone();
-  void sigBreakpointReached();
-
-  //Debugger client error (conection, listen port, etc)
-  void sigInternalError(const QString&);
-  */
-
   QString m_name;
   bool m_isRunning;
   bool m_isJITActive;
