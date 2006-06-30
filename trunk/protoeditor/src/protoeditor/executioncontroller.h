@@ -21,29 +21,65 @@
 #ifndef EXECUTIONCONTROLLER_H
 #define EXECUTIONCONTROLLER_H
 
+#include <qobject.h>
 #include <qstring.h>
 
-class ExecutionController
+class Variable;
+class DebuggerBreakpoint;
+class DebuggerExecutionPoint;
+class AbstractDebugger;
+
+class ExecutionController : public QObject
 {
+  Q_OBJECT
+
 public:
+
   ExecutionController();
   ~ExecutionController();
 
+  //Protoeditor commands us
+
   void executeScript(const QString&, const QString&);
 
-  void debugStart();
+  void debugStart(const QString&, const QString&, bool);
+
+  void profileScript(const QString&, const QString&, bool);
+
   void debugStop();
 
   void debugRunToCursor();
 
   void debugStepOver();
   void debugStepInto();
-  void debugStepOut();
+  void debugStepOut();  
 
-  void profile();  
+  void modifyGlobalVariable(Variable*);
+  void modifyLocalVariable(Variable*);
+  void addWatch(const QString&);
+  void removeWatch(Variable*);
+  void addBreakpoint(DebuggerBreakpoint*);
+  void changeBreakpoint(DebuggerBreakpoint*);
+  void removeBreakpoint(DebuggerBreakpoint*);
+  void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
+
+
+signals:
+  void sigDebugStarted(const QString&);
+  void sigDebugEnded();
+
+public slots:
+  void slotDebugStarted(AbstractDebugger*);
+  void slotDebugEnded();  
+  void slotDebugPaused();
+  void slotJITStarted(AbstractDebugger*);
+
+  void slotError(const QString&);
 
 private:
-  bool executionPrologue();
+  void sessionPrologue();
+  bool checkForOpenedFile();
+  bool debugPrologue(const QString&, bool);
 };
 
 #endif
