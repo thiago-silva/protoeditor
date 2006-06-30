@@ -44,6 +44,10 @@ ProtoeditorSettings::ProtoeditorSettings()
   itemArgHistory = new ItemStringList(currentGroup(), QString::fromLatin1("ArgumentHistory"), m_argumentsHistory);
   addItem( itemArgHistory, QString::fromLatin1( "ArgumentHistory" ) );
 
+  KConfigSkeleton::ItemString  *itemCurrentSiteSite;
+  itemCurrentSiteSite = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "CurrentSite" ), m_currentSiteName );
+  addItem( itemCurrentSiteSite, QString::fromLatin1( "CurrentSite" ) );
+
   readConfig();
 
   m_extApptSettings = new ExtAppSettings();
