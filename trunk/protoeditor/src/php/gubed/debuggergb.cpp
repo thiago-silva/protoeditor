@@ -19,7 +19,8 @@
  ***************************************************************************/
 
 #include "debuggergb.h"
-#include "debuggermanager.h"
+#include "protoeditor.h"
+#include "datacontroller.h"
 #include "protoeditorsettings.h"
 #include "phpsettings.h"
 
@@ -36,8 +37,8 @@
 #include "phpvariableparser.h"
 
 
-DebuggerGB::DebuggerGB(DebuggerManager* manager)
-    : AbstractDebugger(manager), m_name("Gubed"), m_isRunning(false), m_isJITActive(false),
+DebuggerGB::DebuggerGB()
+    : AbstractDebugger(), m_name("Gubed"), m_isRunning(false), m_isJITActive(false),
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_gbSettings(0), m_net(0)
 {
@@ -50,7 +51,7 @@ DebuggerGB::DebuggerGB(DebuggerManager* manager)
   m_globalExecutionPoint = new DebuggerExecutionPoint();
 
 
-  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
+  connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
 
   m_net = new GBNet(this);
@@ -86,7 +87,7 @@ void DebuggerGB::init()
 
 void DebuggerGB::start(const QString& filePath, const QString& args, bool local)
 {
-  SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* site  = Protoeditor::self()->settings()->currentSiteSettings();
 
   //we need JIT active (listening on port)
   if(!m_isJITActive && !startJIT())
@@ -334,7 +335,7 @@ void DebuggerGB::updateStack(DebuggerStack* stack)
 {
 //   m_currentExecutionPoint = stack->topExecutionPoint();
 //   m_globalExecutionPoint  = stack->bottomExecutionPoint();
-  manager()->updateStack(stack);
+  Protoeditor::self()->dataController()->updateStack(stack);
 
   emit sigDebugPaused(); 
 }
@@ -343,7 +344,7 @@ void DebuggerGB::updateGlobalVariables(const QString& vars)
 {
   PHPVariableParser p(vars);
   VariableList_t* array = p.parseAnonymousArray();    
-  manager()->updateGlobalVars(array);
+  Protoeditor::self()->dataController()->updateGlobalVars(array);
 }
 
 void DebuggerGB::updateLocalVariables(const QString& scope, const QString& vars)
@@ -351,7 +352,7 @@ void DebuggerGB::updateLocalVariables(const QString& scope, const QString& vars)
   if(scope == "Current Scope") {
     PHPVariableParser p(vars);
     VariableList_t* array = p.parseAnonymousArray();    
-    manager()->updateLocalVars(array);
+    Protoeditor::self()->dataController()->updateLocalVars(array);
   }
 }
 
@@ -382,7 +383,7 @@ void DebuggerGB::updateWatch(const QString& name, const QString& value)
     var = p.parseVariable();
     var->setName(name);
   }
-  manager()->updateWatch(var);
+  Protoeditor::self()->dataController()->updateWatch(var);
 }
 
 void DebuggerGB::updateMessage(int type, const QString& msg, const QString& filePath, int line)
@@ -394,33 +395,33 @@ void DebuggerGB::updateMessage(int type, const QString& msg, const QString& file
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, msg, KURL::fromPathOrURL(filePath), line);      
+      Protoeditor::self()->dataController()->debugMessage(DataController::ErrorMsg, msg, KURL::fromPathOrURL(filePath), line);
       break;
 
     case E_WARNING:
     case E_CORE_WARNING:
     case E_COMPILE_WARNING:
     case E_USER_WARNING:
-      manager()->debugMessage(DebuggerManager::WarningMsg, msg, KURL::fromPathOrURL(filePath), line);
+      Protoeditor::self()->dataController()->debugMessage(DataController::WarningMsg, msg, KURL::fromPathOrURL(filePath), line);
       break;
     case E_NOTICE:
     case E_USER_NOTICE:
     case E_STRICT:
-      manager()->debugMessage(DebuggerManager::InfoMsg, msg, KURL::fromPathOrURL(filePath), line);
+      Protoeditor::self()->dataController()->debugMessage(DataController::InfoMsg, msg, KURL::fromPathOrURL(filePath), line);
       break;
   }
 }
 
 void DebuggerGB::updateError(const QString& filePath)
 {
-  manager()->debugMessage(DebuggerManager::ErrorMsg, i18n("Fatal error"), KURL::fromPathOrURL(filePath), 0);  
+  Protoeditor::self()->dataController()->debugMessage(DataController::ErrorMsg, i18n("Fatal error"), KURL::fromPathOrURL(filePath), 0);  
 }
 
 void DebuggerGB::slotNewConnection()
 {
   //we don't know if it is requested session or JIT, so we have
   //to update the m_net site
-  m_net->setSite(ProtoeditorSettings::self()->currentSiteSettings());
+  m_net->setSite(Protoeditor::self()->settings()->currentSiteSettings());
 
   //tell debuggermanager to cleanup any pending session
   emit sigJITStarted(this);

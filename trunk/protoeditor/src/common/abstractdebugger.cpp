@@ -13,34 +13,54 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
+ *   along with manager program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
 #include "abstractdebugger.h"
-#include "debuggermanager.h"
 
-#include "abstractdebugger.h"
 #include "languagesettings.h"
 #include "protoeditorsettings.h"
+#include "protoeditor.h"
+#include "executioncontroller.h"
 #include "debuggersettingsinterface.h"
-#include "debuggermanager.h"
 
-AbstractDebugger::AbstractDebugger(QObject *parent, const char* name)
-  : QObject(parent, name) { }
+AbstractDebugger::AbstractDebugger()
+  : QObject()
+{
+  connect(this, SIGNAL(sigDebugStarted(AbstractDebugger*)),
+          Protoeditor::self()->executionController(), 
+          SLOT(slotDebugStarted(AbstractDebugger*)));
 
-AbstractDebugger::~AbstractDebugger() {
+  connect(this, SIGNAL(sigDebugEnded()),
+          Protoeditor::self()->executionController(), 
+          SLOT(slotDebugEnded()));
+
+//   connect(this, SIGNAL(sigDebugStarting()),
+//           m_controller, SLOT(slotDebugStarting()));
+
+  connect(this, SIGNAL(sigDebugPaused()),
+          Protoeditor::self()->executionController(), 
+          SLOT(slotDebugPaused()));
+
+  connect(this, SIGNAL(sigJITStarted(AbstractDebugger*)),
+          Protoeditor::self()->executionController(), 
+          SLOT(slotJITStarted(AbstractDebugger*)));
+
+  connect(this, SIGNAL(sigInternalError(const QString&)),
+          Protoeditor::self(), SLOT(slotError(const QString&)));
+
 }
 
-DebuggerManager* AbstractDebugger::manager() {
-  return dynamic_cast<DebuggerManager*>(parent());
+AbstractDebugger::~AbstractDebugger() 
+{
 }
 
 void AbstractDebugger::registerSettings(const QString& lang, DebuggerSettingsInterface* dsettings)
 {
   LanguageSettings* langSettings = 
-    ProtoeditorSettings::self()->languageSettings(lang);
+    Protoeditor::self()->settings()->languageSettings(lang);
 
   langSettings->registerDebuggerSettings(dsettings->name(), dsettings);
 }

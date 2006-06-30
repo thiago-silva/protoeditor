@@ -20,20 +20,23 @@
 
 #include "perldebugger.h"
 #include "perlsettings.h"
-#include "protoeditorsettings.h"
-#include "debuggermanager.h"
 
-PerlDebugger::PerlDebugger(DebuggerManager* manager)
-  : AbstractDebugger(manager), m_name("Perl debugger"), m_isRunning(false), m_isJITActive(false)
+#include "protoeditor.h"
+#include "datacontroller.h"
+#include "protoeditorsettings.h"
+
+
+PerlDebugger::PerlDebugger()
+  : AbstractDebugger(), m_name("Perl debugger"), m_isRunning(false), m_isJITActive(false)
 {
 //   m_currentExecutionPoint = new DebuggerExecutionPoint();
 //   m_globalExecutionPoint = new DebuggerExecutionPoint();
 
 //   m_perlSettings = new PerlSettings(m_name);
 
-//   ProtoeditorSettings::self()->registerDebuggerSettings(m_perlSettings, m_name);
+//   Protoeditor::self()->settings()->registerDebuggerSettings(m_perlSettings, m_name);
 
-  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
+  connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
 }
 

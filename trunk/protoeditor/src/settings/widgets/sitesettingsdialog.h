@@ -74,13 +74,13 @@ public:
   KURL    remoteBaseDir();
   KURL    localBaseDir();
   KURL    defaultFile();
-  QString debuggerClient();
+  QString debuggerNme();
   
   QMap<QString,QString> mappings();
 
   void populate(const QString& name, const KURL& url,
                 const KURL& remoteBaseDir, const KURL& localBaseDir,
-                const KURL& defaultFile, const QString& debuggerClient,
+                const KURL& defaultFile, const QString& debuggerNme,
                 QMap<QString,QString>&);
 
   void setUpdate();
@@ -94,7 +94,7 @@ private:
   KLineEdit        *m_edRemoteBaseDir;
   KURLRequester    *m_edLocalBaseDir;
   KURLRequester    *m_edDefaultFile;
-  QComboBox        *m_cbDebuggerClient;
+  QComboBox        *m_cbDebuggerName;
 };
 
 #endif

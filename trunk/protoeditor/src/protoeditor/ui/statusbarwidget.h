@@ -34,8 +34,8 @@ public:
   ~StatusBarWidget();
 
   void setEditorStatus(const QString&);
-  void setDebugStatusMsg(const QString&);
-  void setDebugStatusName(const QString&);
+  void setDebugMsg(const QString&);
+  void setDebuggerName(const QString&);
   void setLedState(int);
 
 private:

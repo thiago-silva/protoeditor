@@ -36,7 +36,7 @@ class DebuggerXD : public AbstractDebugger
 {
   Q_OBJECT
 public:
-  DebuggerXD(DebuggerManager*);
+  DebuggerXD();
   virtual ~DebuggerXD();
 
   virtual QString name() const;

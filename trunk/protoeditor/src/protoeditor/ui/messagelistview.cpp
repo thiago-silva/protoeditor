@@ -19,13 +19,11 @@
  ***************************************************************************/
 
 #include "messagelistview.h"
-
-#include "debuggermanager.h"
+#include "datacontroller.h"
 
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kurl.h>
-
 
 MessageListView::MessageListView(QWidget *parent, const char *name)
  : KListView(parent, name)
@@ -60,13 +58,13 @@ void MessageListView::add(int type, const QString& message, int line, const KURL
   item->setSelectable(true);
 
   switch(type) {
-    case DebuggerManager::InfoMsg:
+    case DataController::InfoMsg:
       item->setPixmap(MessageListView::TypeCol, SmallIcon("info"));
       break;
-    case DebuggerManager::WarningMsg:
+    case DataController::WarningMsg:
       item->setPixmap(MessageListView::TypeCol, SmallIcon("messagebox_warning"));
       break;
-    case DebuggerManager::ErrorMsg:
+    case DataController::ErrorMsg:
       item->setPixmap(MessageListView::TypeCol, SmallIcon("cancel"));
       break;
   }

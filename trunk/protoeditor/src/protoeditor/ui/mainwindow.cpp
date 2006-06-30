@@ -90,6 +90,14 @@ void MainWindow::createWidgets()
   m_statusBar = new StatusBarWidget(this);
 
   m_cbArguments = new KHistoryCombo(true, this);
+
+  //connects the EditorUI to DebuggerUI
+  connect(m_editorUI, SIGNAL(sigBreakpointMarked(const KURL&, int, bool)),
+    m_debuggerUI, SLOT(slotBreakpointMarked(const KURL&, int, bool)));
+
+  connect(m_editorUI, SIGNAL(sigBreakpointUnmarked(const KURL&, int)),
+    m_debuggerUI, SLOT(slotBreakpointUnmarked(const KURL&, int)));
+
 }
 
 void MainWindow::setupActions()
@@ -118,7 +126,7 @@ void MainWindow::setupActions()
   m_siteAction->setComboWidth(150);
 
   connect(m_siteAction, SIGNAL(activated(const QString&)),
-      ProtoeditorSettings::self(), SLOT(slotCurrentSiteChanged(const QString&)));
+      Protoeditor::self()->settings(), SLOT(slotCurrentSiteChanged(const QString&)));
 
   m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
@@ -156,8 +164,11 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F12", Protoeditor::self(),
                     SLOT(slotAcDebugStepOut()), actionCollection(), "debug_step_out");
 
- (void)new KAction(i18n("Profile (DBG only)"), "math_sum", "Alt+P", 
-      Protoeditor::self(), SLOT(slotProfile()), actionCollection(), "script_profile");
+ (void)new KAction(i18n("Profile"), "math_sum", "Alt+P", 
+      this, SLOT(slotAcProfileScript()), actionCollection(), "script_profile");
+
+  connect(this, SIGNAL(sigProfileScript(const QString&)), Protoeditor::self(),
+      SLOT(slotAcProfileScript(const QString&)));
   
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", Protoeditor::self(),
                     SLOT(slotAcDebugToggleBp()), actionCollection(), "debug_toggle_bp");
@@ -355,6 +366,11 @@ void MainWindow::slotAcExecuteScript(int id)
 void MainWindow::slotAcExecuteScript()
 {
   emit sigExecuteScript(m_lastLang);
+}
+
+void MainWindow::slotAcProfileScript()
+{
+  emit sigProfileScript(m_lastLang);
 }
 
 #include "mainwindow.moc"

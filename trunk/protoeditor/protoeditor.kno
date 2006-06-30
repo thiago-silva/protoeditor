@@ -80,6 +80,43 @@
 <li>Ressurrection of LedWait?</li></ul></ul>
 </body></html>
 
+\CurrentEntry 2 NOW
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
+<ul type="disc"><li>Rename &quot;executioncontroller&quot; -&gt; &quot;scriptcontroller&quot;</li>
+<li>Move all &quot;File menu&quot; related to a &quot;filecontroller&quot; class</li>
+<li>Rename &quot;datacontroller&quot; to &quot;datarepository&quot;</li>
+<li>Move language settings to the apropriate language folder?<br /></li>
+<li><br />Study how things will going to be</li>
+<ul type="disc"><li>having a execController &amp; debuggermanager</li>
+<li>Only a execController</li>
+<li>Only a dbManager<br /><br /></li></ul>
+<li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
+<ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
+<li>Maybe, ask only if the debugger is a different from the current one<br /><br /><br /></li></ul>
+<li>---------------<br /></li>
+<li>i18n Protoeditor::fileFilter!<br /></li>
+<li>Make &quot;stop&quot; kill the execution process (the console)<br /></li>
+<li>XDebug doesn't add to GLOBALS argc and argv (when debugging locally+console)</li>
+<li>XDebug/Gubed doesn't allow change variable value or conditional BP</li>
+<ul type="disc"><li>Add AbstractDebugger::config() &lt;&lt; XML (QDom)? to configure the UI?<br /></li></ul>
+<li>Don't let the editor without an opened file (like quanta)</li>
+<ul type="disc"><li>So editor settings is aways enabled<br /></li></ul>
+<li>Remember the current Site selected in the combobox</li>
+<li>Remember the last language executed/debugged<br /></li>
+<li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)</li>
+<ul type="disc"><li>drop down toolbar button (like kdevelop &quot;new&quot; or kpdf open recent)<br /></li></ul>
+<li>Rethink the UI components to be configurable</li>
+<ul type="disc"><li>variableslistview</li>
+<ul type="disc"><li>supporting variable changing or not</li></ul>
+<li>Breakpointlistview</li>
+<ul type="disc"><li>supporting hitcount/hits, conditional, etc</li></ul>
+<li>Watches:</li>
+<ul type="disc"><li>are supported?</li></ul>
+<li>Messageslistview:</li>
+<ul type="disc"><li>does the debugger uses it? (Xdebug doesn't so far)</li></ul></ul></ul>
+</body></html>
+
+
 \NewEntry 2 Core changes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Create a class ExecutionController</li>
@@ -100,44 +137,6 @@
 <ul type="disc"><li>All debuggers must have a new entry: &quot;enabled&quot;<br />this way, the only debuggers the user uses will be loaded</li></ul>
 <li>Site settings should have the complete list of debugger available</li></ul></ul>
 </body></html>
-
-\CurrentEntry 2 NOW
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Rething Session.</li>
-<ul type="disc"><li>Rethink about what paams should one provide, sufficient for execution of a script</li>
-<li>how to abstract console/browser/http execution.</li>
-<li>how to pass arguments, enviromnent (test new DBG see if works with PHP-CLI), interpreter command, script URL<br /></li></ul>
-<li>Once this is done, execution is done!<br /><br /></li>
-<li>Study how things will going to be</li>
-<ul type="disc"><li>having a execController &amp; debuggermanager</li>
-<li>Only a execController</li>
-<li>Only a dbManager<br /><br /></li></ul>
-<li>Remake DebuggerFactory</li>
-<ul type="disc"><li>move the debuggerMap QMap to DebuggerFactory (it should load all enabled debuggers  on startup)</li>
-<li>create method getDebugger(QString lang, QString name)</li></ul>
-<li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
-<ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....<br /><br /><br /></li></ul>
-<li>---------------<br /></li>
-<li>i18n Protoeditor::fileFilter!<br /></li>
-<li>Make &quot;stop&quot; kill the execution process (the console)<br /></li>
-<li>XDebug doesn't add to GLOBALS argc and argv (when debugging locally+console)<br /></li>
-<li>Don't let the editor without an opened file (like quanta)</li>
-<ul type="disc"><li>So editor settings is aways enabled<br /></li></ul>
-<li>Remember the current Site selected in the combobox</li>
-<li>Remember the last language executed/debugged<br /></li>
-<li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)</li>
-<ul type="disc"><li>drop down toolbar button (like kdevelop &quot;new&quot; or kpdf open recent)<br /></li></ul>
-<li>Rethink the UI components to be configurable</li>
-<ul type="disc"><li>variableslistview</li>
-<ul type="disc"><li>supporting variable changing or not</li></ul>
-<li>Breakpointlistview</li>
-<ul type="disc"><li>supporting hitcount/hits, conditional, etc</li></ul>
-<li>Watches:</li>
-<ul type="disc"><li>are supported?</li></ul>
-<li>Messageslistview:</li>
-<ul type="disc"><li>does the debugger uses it? (Xdebug doesn't so far)</li></ul></ul></ul>
-</body></html>
-
 
 \NewEntry 0 KDE faqs, howtos, standards
 

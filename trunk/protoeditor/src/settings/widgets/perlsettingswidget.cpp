@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "perlsettingswidget.h"
 
+#include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "debuggersettingsinterface.h"
 #include "perlsettings.h"
@@ -66,7 +67,7 @@ PerlSettingsWidget::~PerlSettingsWidget()
 void PerlSettingsWidget::populate()
 {
   PerlSettings* settings = 
-    dynamic_cast<PerlSettings*>(ProtoeditorSettings::self()->languageSettings(PerlSettings::lang));
+    dynamic_cast<PerlSettings*>(Protoeditor::self()->settings()->languageSettings(PerlSettings::lang));
 
 
   m_ckEnabled->setChecked(settings->isEnabled());
@@ -76,7 +77,7 @@ void PerlSettingsWidget::populate()
 void PerlSettingsWidget::updateSettings()
 {
   PerlSettings* settings = 
-    dynamic_cast<PerlSettings*>(ProtoeditorSettings::self()->languageSettings(PerlSettings::lang));
+    dynamic_cast<PerlSettings*>(Protoeditor::self()->settings()->languageSettings(PerlSettings::lang));
 
 
   settings->setEnabled(m_ckEnabled->isChecked());

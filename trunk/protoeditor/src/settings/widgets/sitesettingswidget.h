@@ -62,7 +62,7 @@ private:
     Site(const QString& n, const KURL& u,
          const KURL& r, const KURL& l, const KURL& d, const QString& c, const QMap<QString,QString>& m)
         : name(n), url(u), remoteBaseDir(r), localBaseDir(l), defaultFile(d),
-          debuggerClient(c), mappings(m) {}
+          debuggerNme(c), mappings(m) {}
     ~Site() {}
 
     QString name;
@@ -70,7 +70,7 @@ private:
     KURL    remoteBaseDir;
     KURL    localBaseDir;
     KURL    defaultFile;
-    QString debuggerClient;
+    QString debuggerNme;
     QMap<QString,QString> mappings;
   };
 

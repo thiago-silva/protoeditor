@@ -22,7 +22,7 @@
 #include "debuggerxd.h"
 #include "xdvariableparser.h"
 #include "xdsettings.h"
-
+#include "protoeditor.h"
 #include "connection.h"
 #include "sitesettings.h"
 #include "phpsettings.h"
@@ -89,7 +89,7 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
         << "XDEBUG_SESSION_START"
         << QString::number(id);
 
-    Session::self()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath),uiargs, env);
+    Protoeditor::self()->session()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath),uiargs, env);
   } 
   else
   {
@@ -103,7 +103,7 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
     }
 
     url.setQuery(query);
-    Session::self()->startRemote(url);
+    Protoeditor::self()->session()->startRemote(url);
   }
 }
 

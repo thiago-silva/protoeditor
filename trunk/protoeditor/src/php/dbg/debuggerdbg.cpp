@@ -19,7 +19,8 @@
  ***************************************************************************/
 
 #include "debuggerdbg.h"
-#include "debuggermanager.h"
+#include "protoeditor.h"
+#include "datacontroller.h"
 #include "dbgnet.h"
 #include "dbg_defs.h"
 #include "phpvariableparser.h"
@@ -42,8 +43,8 @@
 
 #include <qregexp.h>
 
-DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
-    : AbstractDebugger(parent), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
+DebuggerDBG::DebuggerDBG()
+    : AbstractDebugger(), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
     m_listenPort(-1), m_dbgSettings(0), m_net(0), m_profileDialog(0),
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
@@ -51,7 +52,7 @@ DebuggerDBG::DebuggerDBG(DebuggerManager* parent)
   m_dbgSettings = new DBGSettings(m_name);
   registerSettings(PHPSettings::lang, m_dbgSettings);
 
-  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
+  connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
 
   m_net = new DBGNet(this);
@@ -140,7 +141,7 @@ void DebuggerDBG::stopJIT()
 
 void DebuggerDBG::start(const QString& filePath, const QString& args, bool local)
 {
-  SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* site  = Protoeditor::self()->settings()->currentSiteSettings();
 
   dbgint sessionid = kapp->random();
 
@@ -344,7 +345,7 @@ void DebuggerDBG::profile(const QString& filePath, const QString& args, bool loc
 {
   profileDialog()->clear();
 
-  SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* site  = Protoeditor::self()->settings()->currentSiteSettings();
 
   dbgint sessionid = kapp->random();
 
@@ -365,7 +366,7 @@ DBGProfileDialog* DebuggerDBG::profileDialog()
     m_profileDialog = new DBGProfileDialog(0, "profile");
     
     connect(m_profileDialog->listview(), SIGNAL(sigDoubleClick(const QString&, int)),
-            manager(), SLOT(slotGotoLineAtFile(const QString&, int )));
+            Protoeditor::self(), SLOT(slotGotoLineAtFile(const QString&, int )));
   }
 
   return m_profileDialog;
@@ -389,7 +390,7 @@ void DebuggerDBG::updateStack(DebuggerStack* stack)
 {
   m_currentExecutionPointID = stack->topExecutionPoint()->id();
   m_globalExecutionPointID  = stack->bottomExecutionPoint()->id();
-  manager()->updateStack(stack);
+  Protoeditor::self()->dataController()->updateStack(stack);
 }
 
 void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGlobal)
@@ -403,11 +404,11 @@ void DebuggerDBG::updateVar(const QString& result, const QString& str, bool isGl
 
     if(isGlobal)
     {
-      manager()->updateGlobalVars(array);
+      Protoeditor::self()->dataController()->updateGlobalVars(array);
     }
     else
     {
-      manager()->updateLocalVars(array);
+      Protoeditor::self()->dataController()->updateLocalVars(array);
     }
   }
 }
@@ -439,7 +440,7 @@ void DebuggerDBG::updateWatch(const QString& result, const QString& str)
     var->setValue(value);
   }
 
-  manager()->updateWatch(var);
+  Protoeditor::self()->dataController()->updateWatch(var);
 }
 
 void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, int state, int hitcount, int skiphits,
@@ -463,7 +464,7 @@ void DebuggerDBG::updateBreakpoint(int id, const QString& filePath, int line, in
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(id, KURL::fromPathOrURL(filePath), 
       line, status, condition, hitcount, skiphits);
 
-  manager()->updateBreakpoint(bp);
+  Protoeditor::self()->dataController()->updateBreakpoint(bp);
 }
 
 void DebuggerDBG::addProfileData(int modid, const QString& filePath, int ctxid, const QString ctxname, int line, long hitcount, double min, double max, double sum)
@@ -481,7 +482,7 @@ void DebuggerDBG::debugError(/*int type,*/ const QString&)
 {
   //NOTE: When a PHP error ocurr, I'm not sure why DBG some times
   //sends a TagError and some times not. So, we are sending errors through the Log
-  //manager()->debugError(msg);
+  //Protoeditor::self()->dataController()->debugError(msg);
 }
 
 void DebuggerDBG::debugLog(int type, const QString& msg, int line, const QString& filePath, int extInfo)
@@ -505,25 +506,25 @@ void DebuggerDBG::debugLog(int type, const QString& msg, int line, const QString
         case E_PARSE:
         case E_COMPILE_ERROR:
         case E_USER_ERROR:
-          manager()->debugMessage(DebuggerManager::ErrorMsg, message, KURL::fromPathOrURL(filePath), line);
+          Protoeditor::self()->dataController()->debugMessage(DataController::ErrorMsg, message, KURL::fromPathOrURL(filePath), line);
           break;
 
         case E_WARNING:
         case E_CORE_WARNING:
         case E_COMPILE_WARNING:
         case E_USER_WARNING:
-          manager()->debugMessage(DebuggerManager::WarningMsg, message, KURL::fromPathOrURL(filePath), line);
+          Protoeditor::self()->dataController()->debugMessage(DataController::WarningMsg, message, KURL::fromPathOrURL(filePath), line);
           break;
         case E_NOTICE:
         case E_USER_NOTICE:
         case E_STRICT:
-          manager()->debugMessage(DebuggerManager::InfoMsg, message, KURL::fromPathOrURL(filePath), line);
+          Protoeditor::self()->dataController()->debugMessage(DataController::InfoMsg, message, KURL::fromPathOrURL(filePath), line);
           break;
       }
       break;
     case LT_OUTPUT:
 //       m_output += msg;
-      manager()->addOutput(msg);
+      Protoeditor::self()->dataController()->addOutput(msg);
       break;
     case LT_FATALERROR:
       break;
@@ -614,7 +615,7 @@ void DebuggerDBG::slotNewConnection()
 {
   //we don't know if it is requested session or JIT, so we have
   //to update the m_net site
-  m_net->setSite(ProtoeditorSettings::self()->currentSiteSettings());
+  m_net->setSite(Protoeditor::self()->settings()->currentSiteSettings());
 
   //tell debuggermanager to cleanup any pending session
   emit sigJITStarted(this);

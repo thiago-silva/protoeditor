@@ -24,19 +24,17 @@
 #include "abstractdebugger.h"
 #include <qstringlist.h>
 
-class DebuggerManager;
 class DBGSettings;
 class DBGNet;
 class DebuggerStack;
 class PHPVariable;
 class DBGProfileDialog;
 
-
 class DebuggerDBG : public AbstractDebugger
 {
 Q_OBJECT
 public:
-  DebuggerDBG(DebuggerManager*);
+  DebuggerDBG();
   virtual ~DebuggerDBG();
 
   /* Interface of AbstractDebugger */

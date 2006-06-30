@@ -23,10 +23,18 @@
 
 #include <qobject.h>
 
+class ExecutionController;
+class DataController;
+
+class DebuggerStack;
+
 class MainWindow;
+class EditorUI;
+class DebuggerUI;
+class ProtoeditorSettings;
+class Session;
 class KURL;
 
-class ExecutionController;
 
 class Protoeditor : public QObject
 {
@@ -43,6 +51,15 @@ public:
   void dispose();
 
   MainWindow* mainWindow();
+  EditorUI*   editorUI();
+  DebuggerUI* debuggerUI();
+
+  ProtoeditorSettings* settings();
+  Session*             session();
+
+  ExecutionController* executionController();
+  DataController*      dataController();
+
 
   void openFile();
   void openFile(const KURL& url);
@@ -54,7 +71,6 @@ public:
 
   void showError(const QString&) const;
   void showSorry(const QString&) const;
-
 
 public slots:
   //menu "file"
@@ -73,36 +89,48 @@ public slots:
   //menu "script"
   void slotAcExecuteScript(const QString&);
   void slotAcDebugStart(const QString&);  
+  void slotAcProfileScript(const QString&);
 
   void slotAcDebugStop();
   void slotAcDebugRunToCursor();
   void slotAcDebugStepOver();
   void slotAcDebugStepInto();
-  void slotAcDebugStepOut();
-  void slotProfile();
-  void slotAcDebugToggleBp();
+  void slotAcDebugStepOut();  
+  void slotAcDebugToggleBp();  
 
-  void slotSettingsChanged();
+  //UI slots
+  void slotGotoLineAtFile(const KURL&, int);
 
 private slots:
-  void slotNoDocumentOpened();
+  //UI slots
   void slotFirstDocumentOpened();
+  void slotNoDocumentOpened();  
 
+  //Debug state slots
+  void slotDebugStarted(const QString&);
+  void slotDebugEnded();
 
+  void slotError(const QString& message);
+
+  void slotSettingsChanged();
 private:
   Protoeditor();
 
-  void loadSites();
   void registerLanguages();
   void loadLanguages();
+  void loadSites();  
+  
 
   bool checkOverwrite(const KURL&);
 
   static Protoeditor *m_self;
 
   MainWindow          *m_window;
+  ProtoeditorSettings *m_settings;
+  Session             *m_session;
 
   ExecutionController *m_executionController;
+  DataController      *m_dataController;
 };
 
 #endif

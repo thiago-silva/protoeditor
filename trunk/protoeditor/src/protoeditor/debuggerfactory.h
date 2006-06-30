@@ -25,24 +25,15 @@
 #include <qmap.h>
 
 class AbstractDebugger;
-class DebuggerManager;
 
 class DebuggerFactory
 {
 public:
-  static DebuggerFactory* self();
-
+  DebuggerFactory();
   ~DebuggerFactory();
-
-  void init();
 
   AbstractDebugger* getDebugger(const QString&);
 private:
-  DebuggerFactory();  
-
-  static DebuggerFactory* m_self;
-
-  
   void registerDebugger(AbstractDebugger*);
 
   QMap<QString, AbstractDebugger*> m_debuggerMap;

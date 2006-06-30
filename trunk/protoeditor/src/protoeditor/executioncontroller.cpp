@@ -21,12 +21,20 @@
 #include "executioncontroller.h"
 #include "protoeditor.h"
 #include "mainwindow.h"
+#include "statusbarwidget.h"
 #include "editorui.h"
+#include "debuggerui.h"
 
 #include "session.h"
 
 #include "protoeditorsettings.h"
 #include "languagesettings.h"
+#include "sitesettings.h"
+
+#include "abstractdebugger.h"
+#include "debuggerfactory.h"
+
+#include "debuggerstack.h"
 
 #include <kurl.h>
 #include <klocale.h>
@@ -34,6 +42,7 @@
 
 ExecutionController::ExecutionController()
 {
+  m_debuggerFactory = new DebuggerFactory();
 }
 
 ExecutionController::~ExecutionController()
@@ -80,14 +89,14 @@ bool ExecutionController::checkForOpenedFile()
 
 void ExecutionController::executeScript(const QString& langName, const QString& args)
 {
-  if(!executionPrologue()) return;
+  if(!checkForOpenedFile()) return;
   sessionPrologue();
 
   KURL url = Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL();
 
-  QString cmd = ProtoeditorSettings::self()->languageSettings(langName)->interpreterCommand();
+  QString cmd = Protoeditor::self()->settings()->languageSettings(langName)->interpreterCommand();
 
-  Session::self()->startLocal(langName, url, args);  
+  Protoeditor::self()->session()->startLocal(langName, url, args);  
 }
 
 
@@ -119,15 +128,15 @@ bool ExecutionController::debugPrologue(const QString& debuggerName, bool willPr
     else
     {
       m_activeDebugger->continueExecution();
-      Protoeditor::self()->mainWindow()->statusBar()->setDebugStatusMsg(i18n("Continuing..."));
+      Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg(i18n("Continuing..."));
       return false;
     }
   }
   
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* currentSite = Protoeditor::self()->settings()->currentSiteSettings();
   if(currentSite)
   {
-    DebuggerFactory::self()->getDebugger(currentSite->debuggerName());
+    m_debuggerFactory->getDebugger(currentSite->debuggerName());
  
     if(!Protoeditor::self()->useCurrentScript() &&
         currentSite->defaultFile().isEmpty()    &&
@@ -139,12 +148,12 @@ bool ExecutionController::debugPrologue(const QString& debuggerName, bool willPr
   }
   else
   {
-    m_activeDebugger = DebuggerFactory::self()->getDebugger(debuggerName);
+    m_activeDebugger = m_debuggerFactory->getDebugger(debuggerName);
   }  
   
   if(!m_activeDebugger)
   {
-    m_window->showSorry(i18n("Error loading debugger."));
+    Protoeditor::self()->mainWindow()->showSorry(i18n("Error loading debugger."));
     return false;
   }
 
@@ -157,7 +166,7 @@ void ExecutionController::debugStart(const QString& langName, const QString& arg
 
   sessionPrologue();
 
-  m_activeDebugger->start(m_window->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
+  m_activeDebugger->start(Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
 }
 
 void ExecutionController::profileScript(const QString& langName, const QString& args, bool isLocalDebug)
@@ -166,14 +175,14 @@ void ExecutionController::profileScript(const QString& langName, const QString& 
 
   sessionPrologue();
 
-  m_activeDebugger->profile(m_window->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
+  m_activeDebugger->profile(Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
 }
 
 void ExecutionController::debugStop()
 {
   if(m_activeDebugger)
   {
-    Protoeditor::self()->mainWindow()->statusBar()->setDebugStatusMsg(i18n("Stopping..."));
+    Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg(i18n("Stopping..."));
     m_activeDebugger->stop();
   }
 }
@@ -182,11 +191,11 @@ void ExecutionController::debugRunToCursor()
 {
   if(m_activeDebugger)
   {
-    Protoeditor::self()->mainWindow()->statusBar()->setDebugStatusMsg(i18n("Continuing..."));
+    Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg(i18n("Continuing..."));
 
     m_activeDebugger->runToCursor(
-      m_window->editorUI()->currentDocumentURL().path(),
-      m_window->editorUI()->currentDocumentLine());
+      Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().path(),
+      Protoeditor::self()->mainWindow()->editorUI()->currentDocumentLine());
   }
 }
 
@@ -195,7 +204,7 @@ void ExecutionController::debugStepOver()
 {
   if(m_activeDebugger)
   {
-     Protoeditor::self()->mainWindow()->statusBar()->setDebugStatusMsg(i18n("Stepping..."));
+     Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg(i18n("Stepping..."));
     m_activeDebugger->stepOver();
   }
 }
@@ -204,7 +213,7 @@ void ExecutionController::debugStepInto()
 {
   if(m_activeDebugger)
   {
-    Protoeditor::self()->mainWindow()->statusBar()->setDebugStatusMsg(i18n("Stepping..."));
+    Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg(i18n("Stepping..."));
     m_activeDebugger->stepInto();
   }
 }
@@ -213,7 +222,7 @@ void ExecutionController::debugStepOut()
 {
   if(m_activeDebugger)
   {
-    Protoeditor::self()->mainWindow()->statusBar()->setDebugStatusMsg(i18n("Stepping..."));
+    Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg(i18n("Stepping..."));
     m_activeDebugger->stepOut();
   }
 }
@@ -223,7 +232,7 @@ void ExecutionController::modifyGlobalVariable(Variable* var)
   if(m_activeDebugger)
   {
     m_activeDebugger->modifyVariable(
-      var, m_window->debuggerUI()->stack()->bottomExecutionPoint());
+      var, Protoeditor::self()->mainWindow()->debuggerUI()->stack()->bottomExecutionPoint());
   }
 }
 
@@ -232,7 +241,7 @@ void ExecutionController::modifyLocalVariable(Variable* var)
   if(m_activeDebugger)
   {
     m_activeDebugger->modifyVariable(
-      var, m_window->debuggerUI()->selectedDebuggerExecutionPoint());
+      var, Protoeditor::self()->mainWindow()->debuggerUI()->selectedDebuggerExecutionPoint());
   }
 }
 
@@ -286,7 +295,7 @@ void ExecutionController::changeCurrentExecutionPoint(DebuggerExecutionPoint* ex
 }
 
 
-void DebuggerController::slotDebugStarted(AbstractDebugger* debugger)
+void ExecutionController::slotDebugStarted(AbstractDebugger* debugger)
 {
   emit sigDebugStarted(debugger->name());
   
@@ -294,25 +303,25 @@ void DebuggerController::slotDebugStarted(AbstractDebugger* debugger)
   
   //send all breakpoints to the debugger 
   m_activeDebugger->addBreakpoints(
-    m_window->debuggerUI()->breakpoints());
+    Protoeditor::self()->mainWindow()->debuggerUI()->breakpoints());
 
   //send all watches to the debugger
-  m_activeDebugger->addWatches(m_window->debuggerUI()->watches());
+  m_activeDebugger->addWatches(Protoeditor::self()->mainWindow()->debuggerUI()->watches());
 }
 
-void DebuggerController::slotDebugEnded()
+void ExecutionController::slotDebugEnded()
 {
   emit sigDebugEnded();
   m_activeDebugger = 0;
 }
 
-void DebuggerController::slotDebugPaused()
+void ExecutionController::slotDebugPaused()
 {
   //step(into/over/out) or a breakpoint or something like happened. We don't care too mutch about it :)
-  m_window->statusBar()->setDebugStatusMsg("Done");
+  Protoeditor::self()->mainWindow()->statusBar()->setDebugMsg("Done");
 }
 
-void DebuggerController::slotJITStarted(AbstractDebugger* debugger)
+void ExecutionController::slotJITStarted(AbstractDebugger* debugger)
 {
   if(m_activeDebugger && (debugger != m_activeDebugger) && m_activeDebugger->isRunning())
   {

@@ -24,7 +24,6 @@
 #include <abstractdebugger.h>
 #include <qmap.h>
 
-class DebuggerManager;
 class GBSettings;
 class GBNet;
 
@@ -32,7 +31,7 @@ class DebuggerGB : public AbstractDebugger
 {
   Q_OBJECT
 public:
-  DebuggerGB(DebuggerManager*);
+  DebuggerGB();
   virtual ~DebuggerGB();
 
   virtual QString name() const;

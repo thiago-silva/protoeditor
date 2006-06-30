@@ -50,9 +50,9 @@ SiteSettings::SiteSettings(const QString &number)
 //   itemMatchFileInLowerCase = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "MatchFileInLowerCase" ), mMatchFileInLowerCase, false );
 //   addItem( itemMatchFileInLowerCase, QString::fromLatin1( "MatchFileInLowerCase" ) );
 
-  KConfigSkeleton::ItemString  *itemDebuggerClient;
-  itemDebuggerClient = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DebuggerClient" ), mDebuggerClient, "DBG" );
-  addItem( itemDebuggerClient, QString::fromLatin1( "DebuggerClient" ) );
+  KConfigSkeleton::ItemString  *itemDebuggerName;
+  itemDebuggerName = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DebuggerName" ), mDebuggerName, "DBG" );
+  addItem( itemDebuggerName, QString::fromLatin1( "DebuggerName" ) );
 
   readConfig();
 }
@@ -65,14 +65,14 @@ SiteSettings::~SiteSettings()
 void SiteSettings::load(const QString& name, const KURL& url,
      const KURL& remoteBaseDir, const KURL& localBaseDir,
      const KURL& defaultFile, /*bool matchFileInLowerCase,*/
-     const QString& debuggerClient, const QMap<QString,QString>& maps)
+     const QString& debuggerNme, const QMap<QString,QString>& maps)
 {
   mName = name;
   mUrl = url.url();
   mRemoteBaseDir = remoteBaseDir.pathOrURL();
   mLocalBaseDir = localBaseDir.pathOrURL();
 //   mMatchFileInLowerCase = matchFileInLowerCase;
-  mDebuggerClient = debuggerClient;
+  mDebuggerName = debuggerNme;
   mDefaultFile = defaultFile.pathOrURL();
   mMappings = maps;
 }
@@ -145,14 +145,14 @@ KURL SiteSettings::defaultFile() const
 //   return mMatchFileInLowerCase;
 // }
 
-void SiteSettings::setDebuggerClient(const QString& name)
+void SiteSettings::setDebuggerName(const QString& name)
 {
-  mDebuggerClient = name;
+  mDebuggerName = name;
 }
 
-QString SiteSettings::debuggerClient() const
+QString SiteSettings::debuggerName() const
 {
-  return mDebuggerClient;
+  return mDebuggerName;
 }
 
 

@@ -32,6 +32,7 @@
 #include "debuggerbreakpoint.h"
 #include "dbgfileinfo.h"
 
+#include "protoeditor.h"
 #include "sitesettings.h"
 #include "phpsettings.h"
 #include "session.h"
@@ -114,7 +115,7 @@ void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
                  + "@clienthost:"
                  + QString::number(listenPort);
 
-    Session::self()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath), args);
+    Protoeditor::self()->session()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath), args);
   }
   else
   {
@@ -131,7 +132,7 @@ void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
     }
 
     url.setQuery(query);
-    Session::self()->startRemote(url);
+    Protoeditor::self()->session()->startRemote(url);
   }  
 }
 

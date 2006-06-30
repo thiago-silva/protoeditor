@@ -27,6 +27,7 @@
 class Variable;
 class DebuggerBreakpoint;
 class DebuggerExecutionPoint;
+class DebuggerFactory;
 class AbstractDebugger;
 
 class ExecutionController : public QObject
@@ -74,12 +75,13 @@ public slots:
   void slotDebugPaused();
   void slotJITStarted(AbstractDebugger*);
 
-  void slotError(const QString&);
-
 private:
   void sessionPrologue();
   bool checkForOpenedFile();
   bool debugPrologue(const QString&, bool);
+
+  AbstractDebugger  *m_activeDebugger;
+  DebuggerFactory   *m_debuggerFactory;
 };
 
 #endif

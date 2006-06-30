@@ -22,9 +22,10 @@
 #include "xdnet.h"
 #include "xdsettings.h"
 
+#include "protoeditor.h"
+#include "datacontroller.h"
 #include "debuggerbreakpoint.h"
 #include "debuggerstack.h"
-#include "debuggermanager.h"
 #include "protoeditorsettings.h"
 #include "phpsettings.h"
 
@@ -34,8 +35,8 @@
 #include <klocale.h>
 #include "phpdefs.h"
 
-DebuggerXD::DebuggerXD(DebuggerManager* manager)
-    : AbstractDebugger(manager), m_name("Xdebug"), m_isRunning(false), m_isJITActive(false),
+DebuggerXD::DebuggerXD()
+    : AbstractDebugger(), m_name("Xdebug"), m_isRunning(false), m_isJITActive(false),
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_xdSettings(0), m_net(0)
 {
@@ -48,7 +49,7 @@ DebuggerXD::DebuggerXD(DebuggerManager* manager)
   m_globalExecutionPoint = new DebuggerExecutionPoint();
 
 
-  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
+  connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
 
   m_net = new XDNet(this);
@@ -88,7 +89,7 @@ void DebuggerXD::init()
 
 void DebuggerXD::start(const QString& filepath, const QString& args, bool local)
 {
-  SiteSettings* site  = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* site  = Protoeditor::self()->settings()->currentSiteSettings();
 
   //we need JIT active (listening on port)
   if(!m_isJITActive && !startJIT())
@@ -352,7 +353,7 @@ void DebuggerXD::updateStack(DebuggerStack* stack)
 {
   m_currentExecutionPoint = stack->topExecutionPoint();
   m_globalExecutionPoint  = stack->bottomExecutionPoint();
-  manager()->updateStack(stack);
+  Protoeditor::self()->dataController()->updateStack(stack);
 
 }
 
@@ -360,11 +361,11 @@ void DebuggerXD::updateVariables(VariableList_t* array, bool isGlobal)
 {
   if(isGlobal)
   {
-    manager()->updateGlobalVars(array);
+    Protoeditor::self()->dataController()->updateGlobalVars(array);
   }
   else
   {
-    manager()->updateLocalVars(array);
+    Protoeditor::self()->dataController()->updateLocalVars(array);
   }
 }
 
@@ -382,7 +383,7 @@ void DebuggerXD::updateWatch(Variable* var)
     return;
   }
 
-  manager()->updateWatch(var);
+  Protoeditor::self()->dataController()->updateWatch(var);
 }
 
 void DebuggerXD::updateBreakpoint(int id, const QString& filePath, int line, const QString& state, int hitcount, int skiphits,
@@ -405,12 +406,12 @@ void DebuggerXD::updateBreakpoint(int id, const QString& filePath, int line, con
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(id, KURL::fromPathOrURL(filePath),
        line, status, condition, hitcount, skiphits);
 
-  manager()->updateBreakpoint(bp);
+  Protoeditor::self()->dataController()->updateBreakpoint(bp);
 }
 
 void DebuggerXD::addOutput(const QString& msg)
 {
-  manager()->addOutput(msg);
+  Protoeditor::self()->dataController()->addOutput(msg);
 }
 
 void DebuggerXD::debugError(int code, const QString& filePath, int line, const QString& message)
@@ -425,19 +426,19 @@ void DebuggerXD::debugError(int code, const QString& filePath, int line, const Q
     case E_PARSE:
     case E_COMPILE_ERROR:
     case E_USER_ERROR:
-      manager()->debugMessage(DebuggerManager::ErrorMsg, message, KURL::fromPathOrURL(filePath), line);
+      Protoeditor::self()->dataController()->debugMessage(DataController::ErrorMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
 
     case E_WARNING:
     case E_CORE_WARNING:
     case E_COMPILE_WARNING:
     case E_USER_WARNING:
-      manager()->debugMessage(DebuggerManager::WarningMsg, message, KURL::fromPathOrURL(filePath), line);
+      Protoeditor::self()->dataController()->debugMessage(DataController::WarningMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
     case E_NOTICE:
     case E_USER_NOTICE:
     case E_STRICT:
-      manager()->debugMessage(DebuggerManager::InfoMsg, message, KURL::fromPathOrURL(filePath), line);
+      Protoeditor::self()->dataController()->debugMessage(DataController::InfoMsg, message, KURL::fromPathOrURL(filePath), line);
       break;
   }
 }
@@ -446,7 +447,7 @@ void DebuggerXD::slotNewConnection()
 {
   //we don't know if it is requested session or JIT, so we have
   //to update the m_net site
-  m_net->setSite(ProtoeditorSettings::self()->currentSiteSettings());
+  m_net->setSite(Protoeditor::self()->settings()->currentSiteSettings());
 
   //tell debuggermanager to cleanup any pending session
   emit sigJITStarted(this);

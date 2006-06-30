@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "session.h"
+#include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "extappsettings.h"
 #include "phpsettings.h"
@@ -32,8 +33,6 @@
 #include <klocale.h>
 
 
-Session* Session::m_self = 0;
-
 Session::Session()
     : m_http(0), m_externalApp(0)
 {}
@@ -44,23 +43,9 @@ Session::~Session()
   delete m_http;
 }
 
-void Session::dispose()
-{
-  delete Session::m_self;
-}
-
-Session* Session::self()  
-{
-  if(!Session::m_self)
-  {
-    Session::m_self = new Session();
-  }
-  return m_self;
-}
-
 void Session::startRemote(const KURL& url)
 {
-  if(ProtoeditorSettings::self()->extAppSettings()->useExternalBrowser())
+  if(Protoeditor::self()->settings()->extAppSettings()->useExternalBrowser())
   {
     doExternalRequest(url);
   }
@@ -123,7 +108,7 @@ void Session::doExternalRequest(const KURL& url)
   if(m_externalApp) delete m_externalApp;
 
   Browser *b = Browser::retrieveBrowser(
-                        ProtoeditorSettings::self()->extAppSettings()->externalBrowser(), this);
+                        Protoeditor::self()->settings()->extAppSettings()->externalBrowser(), this);
 
   m_externalApp = b;
 
@@ -189,9 +174,9 @@ void Console::execute(const QString& lang, const KURL& url, const QString& args,
   m_process->clearArguments();
 
   QString cmd = 
-    ProtoeditorSettings::self()->languageSettings(lang)->interpreterCommand();
+    Protoeditor::self()->settings()->languageSettings(lang)->interpreterCommand();
 
-  QString consoleApp = ProtoeditorSettings::self()->extAppSettings()->console();
+  QString consoleApp = Protoeditor::self()->settings()->extAppSettings()->console();
 
   QStringList::const_iterator it = env.begin();
   QString name;
@@ -204,7 +189,7 @@ void Console::execute(const QString& lang, const KURL& url, const QString& args,
     m_process->setEnvironment(name, val);
   }
 
-  if(ProtoeditorSettings::self()->extAppSettings()->useConsole()) 
+  if(Protoeditor::self()->settings()->extAppSettings()->useConsole()) 
   {
     //use external console
 

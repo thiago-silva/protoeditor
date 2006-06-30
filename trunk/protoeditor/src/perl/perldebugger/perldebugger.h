@@ -24,13 +24,11 @@
 
 #include <qstring.h>
 
-// class PerlSettings;
-
 class PerlDebugger : public AbstractDebugger
 {
   Q_OBJECT
 public:
-  PerlDebugger(DebuggerManager*);
+  PerlDebugger();
   virtual ~PerlDebugger();
 
   virtual QString name()   const;

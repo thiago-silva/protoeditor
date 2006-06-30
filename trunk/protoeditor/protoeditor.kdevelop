@@ -21,7 +21,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>src/settings/libsettings.la</activetarget>
+      <activetarget>src/protoeditor/protoeditor</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>

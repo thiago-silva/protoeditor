@@ -39,6 +39,7 @@
 
 #include "debuggerstack.h"
 #include "debuggerbreakpoint.h"
+#include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "sitesettings.h"
 
@@ -85,7 +86,7 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
     {
       args += " " + uiargs;
     }
-    Session::self()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
+    Protoeditor::self()->session()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
   }
   else
   {
@@ -104,7 +105,7 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
     }
     url.setQuery(query); 
   
-    Session::self()->startRemote(url);
+    Protoeditor::self()->session()->startRemote(url);
   }
 }
 

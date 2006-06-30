@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include "extappsettingswidget.h"
+
+#include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "extappsettings.h"
 
@@ -67,10 +69,10 @@ ExtAppSettingsWidget::ExtAppSettingsWidget(QWidget *parent, const char *name)
 
 void ExtAppSettingsWidget::populate()
 {
-  m_cbExtBrowser->setCurrentItem(ProtoeditorSettings::self()->extAppSettings()->externalBrowser());
-  m_ckUseExternalBrowser->setChecked(ProtoeditorSettings::self()->extAppSettings()->useExternalBrowser());
-  m_ckUseConsole->setChecked(ProtoeditorSettings::self()->extAppSettings()->useConsole());
-  m_edConsole->setText(ProtoeditorSettings::self()->extAppSettings()->console());
+  m_cbExtBrowser->setCurrentItem(Protoeditor::self()->settings()->extAppSettings()->externalBrowser());
+  m_ckUseExternalBrowser->setChecked(Protoeditor::self()->settings()->extAppSettings()->useExternalBrowser());
+  m_ckUseConsole->setChecked(Protoeditor::self()->settings()->extAppSettings()->useConsole());
+  m_edConsole->setText(Protoeditor::self()->settings()->extAppSettings()->console());
 }
 
 void ExtAppSettingsWidget::slotUseExtBrowser(int value)
@@ -97,15 +99,15 @@ ExtAppSettingsWidget::~ExtAppSettingsWidget()
 
 void ExtAppSettingsWidget::updateSettings()
 {
-  ProtoeditorSettings::self()->extAppSettings()->setExternalBrowser(m_cbExtBrowser->currentItem());
+  Protoeditor::self()->settings()->extAppSettings()->setExternalBrowser(m_cbExtBrowser->currentItem());
 
-  ProtoeditorSettings::self()->extAppSettings()->setUseExternalBrowser(
+  Protoeditor::self()->settings()->extAppSettings()->setUseExternalBrowser(
     m_ckUseExternalBrowser->isChecked());
 
-  ProtoeditorSettings::self()->extAppSettings()->setUseConsole(
+  Protoeditor::self()->settings()->extAppSettings()->setUseConsole(
     m_ckUseConsole->isChecked());
 
-  ProtoeditorSettings::self()->extAppSettings()->setConsole(
+  Protoeditor::self()->settings()->extAppSettings()->setConsole(
     m_edConsole->text());
 }
 

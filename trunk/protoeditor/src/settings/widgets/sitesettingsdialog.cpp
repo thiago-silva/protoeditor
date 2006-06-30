@@ -310,14 +310,14 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   label->setText(i18n("Debugger:"));
   grid->addWidget(label, 5, 0);
 
-  m_cbDebuggerClient = new QComboBox(sitewidget);
-  QStringList list = ProtoeditorSettings::self()->supportedLanguages();
+  m_cbDebuggerName = new QComboBox(sitewidget);
+  QStringList list = Protoeditor::self()->settings()->supportedLanguages();
   
   for(QStringList::iterator it = list.begin(); it != list.end(); it++) {
-    m_cbDebuggerClient->insertItem((*it));
+    m_cbDebuggerName->insertItem((*it));
   }
   
-  grid->addWidget(m_cbDebuggerClient, 5, 1);
+  grid->addWidget(m_cbDebuggerName, 5, 1);
     
   siteLayout->addLayout(grid);
   siteLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
@@ -385,7 +385,7 @@ void SiteSettingsDialog::slotOk()
 
 void SiteSettingsDialog::populate(const QString& name, const KURL& url,
                                   const KURL& remoteBaseDir, const KURL& localBaseDir,
-                                  const KURL& defaultFile, const QString& debuggerClient,
+                                  const KURL& defaultFile, const QString& debuggerNme,
                                   QMap<QString,QString>& mappings)
 {
   m_edName->setText(name);
@@ -393,7 +393,7 @@ void SiteSettingsDialog::populate(const QString& name, const KURL& url,
   m_edRemoteBaseDir->setText(remoteBaseDir.pathOrURL());
   m_edLocalBaseDir->setURL(localBaseDir.pathOrURL());
   m_edDefaultFile->setURL(defaultFile.pathOrURL());
-  m_cbDebuggerClient->setCurrentText(debuggerClient);
+  m_cbDebuggerName->setCurrentText(debuggerNme);
   m_mappingWidget->setMappings(mappings);
 }
 
@@ -455,9 +455,9 @@ KURL SiteSettingsDialog::defaultFile()
   }
 }
 
-QString SiteSettingsDialog::debuggerClient()
+QString SiteSettingsDialog::debuggerNme()
 {
-  return m_cbDebuggerClient->currentText();
+  return m_cbDebuggerName->currentText();
 }
 
 QMap<QString,QString> SiteSettingsDialog::mappings()

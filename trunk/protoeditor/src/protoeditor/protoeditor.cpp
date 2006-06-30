@@ -21,6 +21,7 @@
 #include "protoeditor.h"
 #include "mainwindow.h"
 #include "editorui.h"
+#include "debuggerui.h"
 #include "statusbarwidget.h"
 
 #include "session.h"
@@ -30,7 +31,10 @@
 #include "phpsettings.h"
 #include "perlsettings.h"
 
+#include "datacontroller.h"
 #include "executioncontroller.h"
+
+#include "debuggerfactory.h"
 
 #include <kaction.h>
 #include <kcombobox.h>
@@ -54,10 +58,7 @@ QString Protoeditor::fileFilter = "*.php *.pl| Scripts\n"
 
 Protoeditor::Protoeditor()
 {
-  connect(ProtoeditorSettings::self(), SIGNAL(sigSettingsChanged()),
-          this, SLOT(slotSettingsChanged()));
-
-  m_executionController = new ExecutionController();
+  
 }
 
 
@@ -70,18 +71,17 @@ Protoeditor::~Protoeditor()
   //removes the current text (wich might not have been used in debug/execution)
   //and saves the arguments
   m_window->argumentCombo()->clearEdit();
-  ProtoeditorSettings::self()->setArgumentsHistory(
+  settings()->setArgumentsHistory(
     m_window->argumentCombo()->historyItems());
 
   //write all settings
-  ProtoeditorSettings::self()->writeConfig(true);
+  m_settings->writeConfig(true);
 
   //start getting rid of things
   
   delete m_window;
-
-  Session::dispose();
-  ProtoeditorSettings::dispose();
+  delete m_settings;
+  delete m_session;
 }
 
 Protoeditor* Protoeditor::self()
@@ -99,23 +99,79 @@ void Protoeditor::dispose()
 
 void Protoeditor::init()
 {
+  m_settings = new ProtoeditorSettings();
+  m_session = new Session();
+
   m_window = new MainWindow();
 
-  connect(m_window->editorUI(), SIGNAL(sigEmpty()),
-    this, SLOT(slotNoDocumentOpened()));
+  connect(Protoeditor::self()->session(), SIGNAL(sigError(const QString&)),
+      this, SLOT(slotError(const QString&)));
+
+
+  connect(m_settings, SIGNAL(sigSettingsChanged()),
+          this, SLOT(slotSettingsChanged()));
 
   connect(m_window->editorUI(), SIGNAL(sigFirstPage()),
-    this, SLOT(slotFirstDocumentOpened()));
+          this, SLOT(slotFirstDocumentOpened()));
+
+  connect(m_window->editorUI(), SIGNAL(sigEmpty()),
+          this, SLOT(slotNoDocumentOpened()));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigGotoFileAndLine( const KURL&, int )),
+          this, SLOT(slotGotoLineAtFile(const KURL&, int)));
+ 
+  //Listen to DebuggerUI
+  connect(m_window->debuggerUI(), SIGNAL(sigGlobalVarModified(Variable*)),
+          this, SLOT(slotGlobalVarModified(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigLocalVarModified(Variable*)),
+          this, SLOT(slotLocalVarModified(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigWatchAdded(const QString&)),
+          this, SLOT(slotWatchAdded(const QString&)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigWatchRemoved(Variable*)),
+          this, SLOT(slotWatchRemoved(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
+          this, SLOT(slotBreakpointCreated(DebuggerBreakpoint*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
+          this, SLOT(slotBreakpointChanged(DebuggerBreakpoint*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
+          this, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
+
+  connect(m_window->debuggerUI(),SIGNAL(sigStackchanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)), 
+          this, SLOT(slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));
+
+
+  m_executionController = new ExecutionController();
+
+  connect(m_executionController, SIGNAL(sigDebugStarted(const QString&)),
+          this, SLOT(slotDebugStarted(const QString&)));
+
+  connect(m_executionController, SIGNAL(sigDebugEnded()),
+          this, SLOT(slotDebugEnded()));  
+
+
+  connect(m_executionController, SIGNAL(sigDebugStarted()),
+      Protoeditor::self()->mainWindow()->debuggerUI(), SLOT(slotDebugStarted()));
+
+  connect(m_executionController, SIGNAL(sigDebugEnded()),
+    Protoeditor::self()->mainWindow()->debuggerUI(), SLOT(slotDebugEnded()));
+
+  m_dataController = new DataController();  
 
   //Load all languages
   registerLanguages();
   loadLanguages();
+  loadSites();
 
   //Load all language debuggers
-  DebuggerFactory::self()->init();  
 
   //setup the argument toolbar
-  m_window->argumentCombo()->insertStringList(ProtoeditorSettings::self()->argumentsHistory());
+  m_window->argumentCombo()->insertStringList(m_settings->argumentsHistory());
   m_window->argumentCombo()->clearEdit();
 }
 
@@ -124,12 +180,42 @@ MainWindow* Protoeditor::mainWindow()
   return m_window;
 }
 
+EditorUI* Protoeditor::editorUI()
+{
+  return m_window->editorUI();
+}
+
+DebuggerUI* Protoeditor::debuggerUI()
+{
+  return m_window->debuggerUI();
+}
+
+ProtoeditorSettings* Protoeditor::settings()
+{
+  return m_settings;
+}
+
+Session* Protoeditor::session()
+{
+  return m_session;
+}
+
+ExecutionController* Protoeditor::executionController()
+{
+  return m_executionController;
+}
+
+DataController*  Protoeditor::dataController()
+{
+  return m_dataController;
+}
+
 void Protoeditor::openFile()
 {
   //Show KFileDialog on the current Site's "local base dir" or
   //use ::protoeditor to retrieve the last folder used
 
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* currentSite = m_settings->currentSiteSettings();
   QString location;
   if(currentSite)
   {
@@ -187,7 +273,7 @@ bool Protoeditor::saveCurrentFile()
 
 bool Protoeditor::saveCurrentFileAs()
 {
-  SiteSettings* currentSite = ProtoeditorSettings::self()->currentSiteSettings();
+  SiteSettings* currentSite = m_settings->currentSiteSettings();
   QString location;
   if(currentSite)
   {
@@ -218,91 +304,18 @@ bool Protoeditor::useCurrentScript()
   return m_window->isCurrentScriptActionChecked();
 }
 
-
-/***************************************************************/
-
-void Protoeditor::slotNoDocumentOpened()
+void Protoeditor::showError(const QString& msg) const
 {
-    m_window->actionStateChanged("has_nofileopened");
-    m_window->setCaption(QString::null);
-    m_window->statusBar()->setEditorStatus(QString::null);
+  m_window->showError(msg);
 }
 
-void Protoeditor::slotFirstDocumentOpened()
+
+void Protoeditor::showSorry(const QString& msg) const
 {
-  m_window->actionStateChanged("has_fileopened");
+  m_window->showSorry(msg);
 }
 
-void Protoeditor::registerLanguages()
-{
-  ProtoeditorSettings::self()->registerLanguage(new PHPSettings());
-  ProtoeditorSettings::self()->registerLanguage(new PerlSettings());
-}
-
-void Protoeditor::loadSites()
-{
-  QString currentSiteName = m_window->currentSiteName();
-
-  QStringList strsites;
-
-  strsites << ProtoeditorSettings::LocalSiteName;
-
-  QValueList<SiteSettings*> sitesList = ProtoeditorSettings::self()->siteSettingsList();
-  QValueList<SiteSettings*>::iterator it;
-
-  int i = 0;
-  int curr = 0;
-  for(it = sitesList.begin(); it != sitesList.end(); ++it)
-  {
-    strsites << (*it)->name();
-    if((*it)->name() == currentSiteName) {
-      curr = i+1; //LocalSiteName already inserted
-    }
-    i++;
-  }
-    
-  m_window->setSiteNames(strsites);
-  m_window->setCurrentSite(curr);
-    
-  ProtoeditorSettings::self()->slotCurrentSiteChanged(m_window->currentSiteName());  
-}
-
-void Protoeditor::loadLanguages()
-{
-  m_window->clearLanguages();
-
-  QValueList<LanguageSettings*> langs = 
-    ProtoeditorSettings::self()->languageSettingsList();
-
-  QValueList<LanguageSettings*>::iterator it;
-  for(it = langs.begin(); it != langs.end(); ++it)
-  {
-    if((*it)->isEnabled())
-    {
-      m_window->addLanguage((*it)->languageName());
-    }
-  }
-}
-
-bool Protoeditor::checkOverwrite(const KURL& u)
-{
-  if(!u.isLocalFile())
-    return true;
-
-  QFileInfo info( u.path() );
-  if( !info.exists() )
-    return true;
-
-  return KMessageBox::Continue
-         == KMessageBox::warningContinueCancel
-              ( m_window,
-                i18n("A file named \"%1\" already exists. Are you sure you want to overwrite it?").arg(info.fileName()),
-                i18n("Overwrite File?"),
-                KGuiItem(i18n("&Overwrite"), "filesave", i18n("Overwrite the file"))
-              );
-}
-
-/****************** File menu slots *****************************/
+/*********** File Menu Slots *********************/
 
 void Protoeditor::slotAcNewFile()
 {
@@ -347,21 +360,31 @@ void Protoeditor::slotAcQuit()
   }
 }
 
-/************************* Script menu slots *********************************/
+/*********** Script Menu Slots *********************/
 
 void Protoeditor::slotAcExecuteScript(const QString& langName)
 {  
   m_executionController->executeScript(langName, m_window->argumentCombo()->currentText());
-  m_window->statusBar()->setDebugStatusMsg(langName + i18n(" executed"));
+  m_window->statusBar()->setDebugMsg(langName + i18n(" executed"));
 }
 
-void Protoeditor::slotAcDebugStart(const QString&)
-{  
-//   m_executionController->debugStart(langName);
+void Protoeditor::slotAcDebugStart(const QString& langName)
+{
+  m_executionController->debugStart(langName
+                                  , m_window->argumentCombo()->currentText()
+                                  ,m_settings->currentSiteSettings()?true:false);
+}
+
+void Protoeditor::slotAcProfileScript(const QString& langName)
+{
+  m_executionController->profileScript(langName
+                                  , m_window->argumentCombo()->currentText()
+                                  , m_settings->currentSiteSettings()?true:false);
 }
 
 void Protoeditor::slotAcDebugStop()
 {
+  m_window->statusBar()->setDebugMsg(i18n("Stoping..."));
   m_executionController->debugStop();
 }
 
@@ -385,15 +408,22 @@ void Protoeditor::slotAcDebugStepOut()
   m_executionController->debugStepOut();
 }
 
-void Protoeditor::slotProfile()
-{
-//   KURL url = m_window->editorUI()->currentDocumentURL();
-//   m_executionController->profile(langName, url);
-}
-
 void Protoeditor::slotAcDebugToggleBp()
 {
+  KURL url = m_window->editorUI()->currentDocumentURL();
+  int line = m_window->editorUI()->currentDocumentLine();
+
+  if(!m_window->editorUI()->hasBreakpointAt(url, line))
+  {
+    m_window->editorUI()->markActiveBreakpoint(url, line);
+  }
+  else
+  {
+    m_window->editorUI()->unmarkActiveBreakpoint(url, line);
+  }
 }
+
+/*********** Global settings changed *********************/
 
 void Protoeditor::slotSettingsChanged()
 {
@@ -401,15 +431,123 @@ void Protoeditor::slotSettingsChanged()
   loadLanguages();
 }
 
-void Protoeditor::showError(const QString& msg) const
+/*********** UI slots *********************/
+
+void Protoeditor::slotFirstDocumentOpened()
 {
-  m_window->showError(msg);
+  m_window->actionStateChanged("has_fileopened");
 }
 
-void Protoeditor::showSorry(const QString& msg) const
+void Protoeditor::slotNoDocumentOpened()
 {
-  m_window->showSorry(msg);
+  m_window->actionStateChanged("has_nofileopened");
+  m_window->setCaption(QString::null);
+  m_window->statusBar()->setEditorStatus(QString::null);
 }
 
+void Protoeditor::slotGotoLineAtFile(const KURL& url, int line)
+{
+  m_window->editorUI()->gotoLineAtFile(url, line-1);
+}
+
+void Protoeditor::slotError(const QString& message)
+{
+  showError(message);
+}
+
+void Protoeditor::registerLanguages()
+{
+  m_settings->registerLanguage(new PHPSettings());
+  m_settings->registerLanguage(new PerlSettings());
+}
+
+void Protoeditor::loadLanguages()
+{
+  m_window->clearLanguages();
+
+  QValueList<LanguageSettings*> langs = 
+    m_settings->languageSettingsList();
+
+  QValueList<LanguageSettings*>::iterator it;
+  for(it = langs.begin(); it != langs.end(); ++it)
+  {
+    if((*it)->isEnabled())
+    {
+      m_window->addLanguage((*it)->languageName());
+    }
+  }
+}
+
+void Protoeditor::loadSites()
+{
+  QString currentSiteName = m_window->currentSiteName();
+
+  QStringList strsites;
+
+  strsites << ProtoeditorSettings::LocalSiteName;
+
+  QValueList<SiteSettings*> sitesList = m_settings->siteSettingsList();
+  QValueList<SiteSettings*>::iterator it;
+
+  int i = 0;
+  int curr = 0;
+  for(it = sitesList.begin(); it != sitesList.end(); ++it)
+  {
+    strsites << (*it)->name();
+    if((*it)->name() == currentSiteName) {
+      curr = i+1; //LocalSiteName already inserted
+    }
+    i++;
+  }
+    
+  m_window->setSiteNames(strsites);
+  m_window->setCurrentSite(curr);
+    
+  m_settings->slotCurrentSiteChanged(m_window->currentSiteName());  
+}
+
+bool Protoeditor::checkOverwrite(const KURL& u)
+{
+  if(!u.isLocalFile())
+    return true;
+
+  QFileInfo info( u.path() );
+  if( !info.exists() )
+    return true;
+
+  return KMessageBox::Continue
+         == KMessageBox::warningContinueCancel
+              ( m_window,
+                i18n("A file named \"%1\" already exists. Are you sure you want to overwrite it?").arg(info.fileName()),
+                i18n("Overwrite File?"),
+                KGuiItem(i18n("&Overwrite"), "filesave", i18n("Overwrite the file"))
+              );
+}
+
+void Protoeditor::slotDebugStarted(const QString& debuggerName)
+{
+  m_window->statusBar()->setDebugMsg(i18n("Debug started"));
+  m_window->statusBar()->setDebuggerName(debuggerName); //show the name of the debugger on the StatusBar
+  m_window->statusBar()->setLedState(StatusBarWidget::LedOn);          //green led
+
+  //setup the actions stuff
+  m_window->actionStateChanged("debug_started");
+  m_window->actionCollection()->action("debug_start")->setText(i18n("Continue"));
+
+  m_window->actionCollection()->action("site_selection")->setEnabled(false);
+}
+
+void Protoeditor::slotDebugEnded()
+{
+  //setup the actions stuff
+  m_window->actionCollection()->action("site_selection")->setEnabled(true);
+  m_window->actionStateChanged("debug_stopped");
+  m_window->actionCollection()->action("debug_start")->setText(i18n("Start Debug"));
+  
+  m_window->statusBar()->setDebugMsg(i18n("Stopped"));
+  m_window->statusBar()->setLedState(StatusBarWidget::LedOff); //red led
+
+  m_window->statusBar()->setDebuggerName("");
+}
 
 #include "protoeditor.moc"

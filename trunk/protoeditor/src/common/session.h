@@ -36,11 +36,9 @@ class Session : public QObject
 {
   Q_OBJECT
   public:
+    Session();
     ~Session();
 
-    static void dispose();
-    static Session* self();
-    
     void startRemote(const KURL& url);
     void startLocal(const QString& lang, const KURL& url, const QString& args, const QStringList& env = QStringList());
 
@@ -49,13 +47,10 @@ class Session : public QObject
 
   private slots:
     void slotHttpDone(bool);
-  private:
-    Session();
+  private:    
     void doHTTPRequest(const KURL& url);
     void doExternalRequest(const KURL&);    
     void initHTTPCommunication();
-
-    static Session* m_self;
 
     QHttp                *m_http;
     ExternalApp          *m_externalApp;

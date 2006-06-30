@@ -26,7 +26,6 @@
 
 class KDialog;
 class DebuggerSettingsInterface;
-class DebuggerManager;
 class DebuggerBreakpoint;
 class DebuggerConfigurations;
 class DebuggerExecutionPoint;
@@ -37,7 +36,7 @@ class AbstractDebugger : public QObject
 {
   Q_OBJECT
 public:
-  AbstractDebugger(QObject *parent, const char* name = 0);
+  AbstractDebugger();
   virtual ~AbstractDebugger();
 
   /* Most (if not all) of those functions are meant to be called from the DebuggerManager
@@ -67,7 +66,9 @@ public:
   //virtual void pause()           = 0; //TODO
 
   /* adds a list of breakpoints.
-  Its normaly (I guess, _only_!) called when the DebuggerManager is notified with the sigDebugStarted() signal*/
+      Its normaly (I guess, _only_!) called when the ExecutionController 
+      is notified with the sigDebugStarted() signal
+  */
   virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&) = 0;
 
   /* DebuggerManager says: add a single breakpoint! */
@@ -92,8 +93,6 @@ public:
   virtual void profile(const QString&, const QString& args, bool local) = 0;
 
 protected:
-  virtual DebuggerManager* manager();
-
   virtual void registerSettings(const QString&, DebuggerSettingsInterface*);
 signals:
   /*
@@ -120,6 +119,7 @@ signals:
 
   //Debugger client error (conection, listen port, etc)
   void sigInternalError(const QString&);
+
 };
 
 #endif

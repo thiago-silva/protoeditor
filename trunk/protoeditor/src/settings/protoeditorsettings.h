@@ -39,14 +39,11 @@ class KURL;
 class ProtoeditorSettings  : public QObject, KConfigSkeleton  {
   Q_OBJECT
 public:
-
   static QString LocalSiteName;
 
+  ProtoeditorSettings();
   ~ProtoeditorSettings();
 
-  static void dispose();
-  static ProtoeditorSettings* self();
-  
   void                                   setArgumentsHistory(const QStringList&);
   QStringList                            argumentsHistory();
 
@@ -67,7 +64,7 @@ public:
   void clearSites();
   void addSite(int number, const QString& name, const KURL& url,
                const KURL& remoteBaseDir, const KURL& localBaseDir,
-               const KURL& defaultFile, const QString& debuggerClient, 
+               const KURL& defaultFile, const QString& debuggerNme, 
                const QMap<QString,QString>&);
 
   void writeConfig(bool silent = false);
@@ -78,13 +75,9 @@ signals:
 public slots:
   void slotCurrentSiteChanged(const QString&);
 private:
-  ProtoeditorSettings();
-
   void loadSites();
 
   void writeSiteConf();
-
-  static ProtoeditorSettings *m_self;
 
   ExtAppSettings           *m_extApptSettings;
 

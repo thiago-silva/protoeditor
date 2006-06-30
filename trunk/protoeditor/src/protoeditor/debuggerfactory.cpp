@@ -25,40 +25,27 @@
 #include "perldebugger.h"
 
 
-DebuggerFactory* DebuggerFactory::self()
-{
-  if(!DebuggerFactory::m_self)
-  {
-    DebuggerFactory::m_self = new DebuggerFactory();
-  }
-  return m_self;
-}
-
 DebuggerFactory::DebuggerFactory()
 {
-}
-
-void DebuggerFactory::init()
-{
-  AbstractDebugger* debugger;
+//   AbstractDebugger* debugger;
 
   //PHP/DBG
-  debugger = new DebuggerDBG(manager);
-  registerDebugger(debugger);
-
-  //PHP/Xdebug
-  debugger = new DebuggerXD(manager);
-  registerDebugger(debugger);
-
-  //PHP/Gubed
-  debugger = new DebuggerGB(manager);
-  registerDebugger(debugger);
-
-  //Perl Local
-  debugger = new PerlDebugger(manager);
-  registerDebugger(debugger);
-
+//   debugger = new DebuggerDBG(manager);
+//   registerDebugger(debugger);
+// 
+//   //PHP/Xdebug
+//   debugger = new DebuggerXD(manager);
+//   registerDebugger(debugger);
+// 
+//   //PHP/Gubed
+//   debugger = new DebuggerGB(manager);
+//   registerDebugger(debugger);
+// 
+//   //Perl Local
+//   debugger = new PerlDebugger(manager);
+//   registerDebugger(debugger);
 }
+
 
 DebuggerFactory::~DebuggerFactory()
 {
@@ -73,7 +60,7 @@ void DebuggerFactory::registerDebugger(AbstractDebugger* debugger)
   m_debuggerMap[debugger->name()] = debugger;
 }
 
-AbstractDebugger* getDebugger(const QString& name)
+AbstractDebugger* DebuggerFactory::getDebugger(const QString& name)
 {
   if(m_debuggerMap.contains(name))
   {

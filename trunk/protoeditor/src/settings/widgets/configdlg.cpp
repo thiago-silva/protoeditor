@@ -32,7 +32,7 @@
 #include "perlsettingswidget.h"
 #include "sitesettingswidget.h"
 #include "extappsettingswidget.h"
-
+#include "protoeditor.h"
 #include "protoeditorsettings.h"
 
 ConfigDlg* ConfigDlg::m_self = 0;
@@ -123,7 +123,7 @@ void ConfigDlg::slotOk()
   m_phpSettingsWidget->updateSettings();
   m_perlSettingsWidget->updateSettings();
 
-  ProtoeditorSettings::self()->writeConfig();
+  Protoeditor::self()->settings()->writeConfig();
 }
 
 

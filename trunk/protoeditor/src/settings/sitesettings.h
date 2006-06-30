@@ -34,7 +34,7 @@ public:
   void load(const QString& name, const KURL& url,
             const KURL& remoteBaseDir, const KURL& localBaseDir,
             const KURL& defaultFile, /*bool matchFileInLowerCase,*/
-            const QString& debuggerClient, const QMap<QString,QString>&);
+            const QString& debuggerNme, const QMap<QString,QString>&);
 
   void setName(const QString& name);
   QString name() const;
@@ -50,8 +50,8 @@ public:
   KURL defaultFile() const;
 //   void setMatchFileInLowerCase(bool value);
 //   bool matchFileInLowerCase() const;
-  void setDebuggerClient(const QString& name);
-  QString debuggerClient() const;
+  void setDebuggerName(const QString& name);
+  QString debuggerName() const;
 
   void setMappings(const QMap<QString,QString>&);
   QMap<QString,QString> mappings();
@@ -77,8 +77,7 @@ protected:
   QString mRemoteBaseDir;
   QString mLocalBaseDir;
   QString mDefaultFile;
-//   bool mMatchFileInLowerCase;
-  QString mDebuggerClient;
+  QString mDebuggerName;
   QMap<QString,QString> mMappings;
 private:
 };

@@ -74,6 +74,7 @@ public:
 signals:
   void sigExecuteScript(const QString&);
   void sigDebugScript(const QString&);
+  void sigProfileScript(const QString&);
 
 private slots:
   void slotAcEditKeys();
@@ -86,6 +87,8 @@ private slots:
   void slotAcExecuteScript();
   void slotAcDebugStart(int);  
   void slotAcDebugStart();
+  void slotAcProfileScript();
+
 protected:
   virtual void closeEvent(QCloseEvent * e);
 

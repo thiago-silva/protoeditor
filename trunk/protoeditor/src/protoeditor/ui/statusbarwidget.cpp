@@ -63,12 +63,12 @@ void StatusBarWidget::setEditorStatus(const QString& msg)
   m_lbEditorMsg->setText(msg);
 }
 
-void StatusBarWidget::setDebugStatusMsg(const QString& msg)
+void StatusBarWidget::setDebugMsg(const QString& msg)
 {
   m_lbDebugMsg->setText(msg);
 }
 
-void StatusBarWidget::setDebugStatusName(const QString& name)
+void StatusBarWidget::setDebuggerName(const QString& name)
 {
   m_lbDebugName->setText(name);
 }

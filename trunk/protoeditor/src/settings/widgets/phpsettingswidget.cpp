@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "phpsettingswidget.h"
 
+#include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "debuggersettingsinterface.h"
 #include "phpsettings.h"
@@ -58,7 +59,7 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   m_cbDefaultDebugger = new QComboBox(this);
 
   m_debuggerSettingsList =
-    ProtoeditorSettings::self()->languageSettings(PHPSettings::lang)->debuggerSettingsList();
+    Protoeditor::self()->settings()->languageSettings(PHPSettings::lang)->debuggerSettingsList();
 
       
   
@@ -95,7 +96,7 @@ PHPSettingsWidget::~PHPSettingsWidget()
 void PHPSettingsWidget::populate()
 {
   PHPSettings* settings = 
-    dynamic_cast<PHPSettings*>(ProtoeditorSettings::self()->languageSettings(PHPSettings::lang));
+    dynamic_cast<PHPSettings*>(Protoeditor::self()->settings()->languageSettings(PHPSettings::lang));
 
   m_ckEnabled->setChecked(settings->isEnabled());
 
@@ -115,7 +116,7 @@ void PHPSettingsWidget::populate()
 void PHPSettingsWidget::updateSettings()
 {
   PHPSettings* settings = 
-    dynamic_cast<PHPSettings*>(ProtoeditorSettings::self()->languageSettings(PHPSettings::lang));
+    dynamic_cast<PHPSettings*>(Protoeditor::self()->settings()->languageSettings(PHPSettings::lang));
 
 
   settings->setEnabled(m_ckEnabled->isChecked());

@@ -30,7 +30,6 @@
 #include <kurl.h>
 
 QString ProtoeditorSettings::LocalSiteName = "-- Local --";
-ProtoeditorSettings* ProtoeditorSettings::m_self = 0;
 
 ProtoeditorSettings::ProtoeditorSettings()
   :  QObject(), KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
@@ -76,20 +75,6 @@ ProtoeditorSettings::~ProtoeditorSettings()
   }
   
   delete m_extApptSettings;
-}
-
-void ProtoeditorSettings::dispose()
-{
-  delete ProtoeditorSettings::m_self;
-}
-
-ProtoeditorSettings* ProtoeditorSettings::self()
-{
-  if(!m_self) {
-    m_self = new ProtoeditorSettings();
-  }
-
-  return m_self;
 }
 
 void ProtoeditorSettings::setArgumentsHistory(const QStringList& args)
@@ -188,11 +173,11 @@ void ProtoeditorSettings::clearSites()
 
 void ProtoeditorSettings::addSite(int number, const QString& name, const KURL& url,
                const KURL& remoteBaseDir, const KURL& localBaseDir, const KURL& defaultFile,
-               const QString& debuggerClient, const QMap<QString,QString>& mappings)
+               const QString& debuggerNme, const QMap<QString,QString>& mappings)
 
 {
   SiteSettings* s = new SiteSettings(QString::number(number));
-  s->load(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerClient, mappings);
+  s->load(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerNme, mappings);
 
   m_siteSettingsMap[s->name()] = s;
 }
