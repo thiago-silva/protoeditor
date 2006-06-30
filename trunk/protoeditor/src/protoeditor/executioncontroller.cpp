@@ -41,14 +41,31 @@
 
 
 ExecutionController::ExecutionController()
+  : m_activeDebugger(0), m_debuggerFactory(0)
 {
-  m_debuggerFactory = new DebuggerFactory();
+  
 }
 
 ExecutionController::~ExecutionController()
 {
 }
 
+void ExecutionController::init()
+{
+  m_debuggerFactory = new DebuggerFactory();
+}
+
+QString ExecutionController::currentDebuggerName()
+{
+  if(m_activeDebugger) 
+  {
+    return m_activeDebugger->name();
+  }
+  else
+  {
+    return QString::null;
+  }
+}
 
 void ExecutionController::sessionPrologue()
 {
@@ -136,14 +153,26 @@ bool ExecutionController::debugPrologue(const QString& debuggerName, bool willPr
   SiteSettings* currentSite = Protoeditor::self()->settings()->currentSiteSettings();
   if(currentSite)
   {
-    m_debuggerFactory->getDebugger(currentSite->debuggerName());
+    m_activeDebugger = m_debuggerFactory->getDebugger(currentSite->debuggerName());
  
-    if(!Protoeditor::self()->useCurrentScript() &&
-        currentSite->defaultFile().isEmpty()    &&
-        !checkForOpenedFile())
+    if(!Protoeditor::self()->useCurrentScript())
     {
-      //could not in any way have a opened file to debug
-      return false;
+      if(currentSite->defaultFile().isEmpty())
+      {
+        if(!checkForOpenedFile())
+        {
+          //could not in any way have a opened file to debug
+          return false;
+        }
+      }
+      else
+      {
+        Protoeditor::self()->openFile(currentSite->defaultFile());
+      }
+    }
+    else
+    {
+      Protoeditor::self()->openFile(currentSite->defaultFile());
     }
   }
   else
@@ -297,7 +326,7 @@ void ExecutionController::changeCurrentExecutionPoint(DebuggerExecutionPoint* ex
 
 void ExecutionController::slotDebugStarted(AbstractDebugger* debugger)
 {
-  emit sigDebugStarted(debugger->name());
+  emit sigDebugStarted();
   
   m_activeDebugger = debugger;
   

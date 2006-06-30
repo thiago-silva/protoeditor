@@ -82,6 +82,9 @@ Protoeditor::~Protoeditor()
   delete m_window;
   delete m_settings;
   delete m_session;
+
+  delete m_executionController;
+  delete m_dataController;
 }
 
 Protoeditor* Protoeditor::self()
@@ -102,7 +105,12 @@ void Protoeditor::init()
   m_settings = new ProtoeditorSettings();
   m_session = new Session();
 
+  registerLanguages();
+
   m_executionController = new ExecutionController();
+
+  m_executionController->init();
+
   m_dataController = new DataController();  
 
   m_window = new MainWindow();
@@ -150,14 +158,52 @@ void Protoeditor::init()
 
   
   //execution controller
-  connect(m_executionController, SIGNAL(sigDebugStarted(const QString&)),
-          this, SLOT(slotDebugStarted(const QString&)));
+  connect(m_executionController, SIGNAL(sigDebugStarted()),
+          this, SLOT(slotDebugStarted()));
 
   connect(m_executionController, SIGNAL(sigDebugEnded()),
-          this, SLOT(slotDebugEnded()));    
+          this, SLOT(slotDebugEnded()));
 
-  //Load all languages
-  registerLanguages();
+  //data controller
+  connect(m_executionController, SIGNAL(sigDebugStarted()),
+          m_dataController, SLOT(slotDebugStarted()));
+
+  connect(m_executionController, SIGNAL(sigDebugEnded()),
+          m_dataController, SLOT(slotDebugEnded()));
+
+  connect(m_window->editorUI(), SIGNAL(sigNewPage()),
+          m_dataController, SLOT(slotNewDocument()));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigGlobalVarModified(Variable*)),
+          m_dataController, SLOT(slotGlobalVarModified(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigLocalVarModified(Variable*)),
+          m_dataController, SLOT(slotLocalVarModified(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigStackchanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)),
+          m_dataController, SLOT(slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigWatchAdded(const QString&)),
+          m_dataController, SLOT(slotWatchAdded(const QString&)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigWatchModified(Variable*)),
+          m_dataController, SLOT(slotLocalVarModified(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigWatchRemoved(Variable*)),
+          m_dataController, SLOT(slotWatchRemoved(Variable*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
+          m_dataController, SLOT(slotBreakpointCreated(DebuggerBreakpoint*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
+          m_dataController, SLOT(slotBreakpointChanged(DebuggerBreakpoint*)));
+
+  connect(m_window->debuggerUI(), SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
+          m_dataController, SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
+
+
+
+  //Load all languages  
   loadLanguages();
   loadSites();
 
@@ -165,7 +211,7 @@ void Protoeditor::init()
 
   //setup the argument toolbar
   m_window->argumentCombo()->insertStringList(m_settings->argumentsHistory());
-  m_window->argumentCombo()->clearEdit();
+  m_window->argumentCombo()->clearEdit();  
 }
 
 MainWindow* Protoeditor::mainWindow()
@@ -365,19 +411,19 @@ void Protoeditor::slotAcDebugStart(const QString& langName)
 {
   m_executionController->debugStart(langName
                                   , m_window->argumentCombo()->currentText()
-                                  ,m_settings->currentSiteSettings()?true:false);
+                                  , m_settings->currentSiteSettings()?false:true);
 }
 
 void Protoeditor::slotAcProfileScript(const QString& langName)
 {
   m_executionController->profileScript(langName
                                   , m_window->argumentCombo()->currentText()
-                                  , m_settings->currentSiteSettings()?true:false);
+                                  , m_settings->currentSiteSettings()?false:true);
 }
 
 void Protoeditor::slotAcDebugStop()
 {
-  m_window->statusBar()->setDebugMsg(i18n("Stoping..."));
+  m_window->statusBar()->setDebugMsg(i18n("Stopping..."));
   m_executionController->debugStop();
 }
 
@@ -473,7 +519,7 @@ void Protoeditor::loadLanguages()
 
 void Protoeditor::loadSites()
 {
-  QString currentSiteName = m_window->currentSiteName();
+  QString currentSiteName = m_settings->currentSiteName();
 
   QStringList strsites;
 
@@ -517,10 +563,10 @@ bool Protoeditor::checkOverwrite(const KURL& u)
               );
 }
 
-void Protoeditor::slotDebugStarted(const QString& debuggerName)
+void Protoeditor::slotDebugStarted()
 {
   m_window->statusBar()->setDebugMsg(i18n("Debug started"));
-  m_window->statusBar()->setDebuggerName(debuggerName); //show the name of the debugger on the StatusBar
+  m_window->statusBar()->setDebuggerName(m_executionController->currentDebuggerName()); //show the name of the debugger on the StatusBar
   m_window->statusBar()->setLedState(StatusBarWidget::LedOn);          //green led
 
   //setup the actions stuff

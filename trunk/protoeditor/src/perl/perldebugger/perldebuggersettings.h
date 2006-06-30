@@ -17,64 +17,54 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLDEBUGGER_H
-#define PERLDEBUGGER_H
 
-#include "abstractdebugger.h"
+#ifndef PERLDEBUGGERSETTINS_H
+#define PERLDEBUGGERSETTINS_H
 
-#include <qstring.h>
+#include "debuggersettingsinterface.h"
 
-class PerlDebuggerSettings;
+class PerlDebuggerSettingsWidget;
 
-class PerlDebugger : public AbstractDebugger
+class PerlDebuggerSettings : public DebuggerSettingsInterface
 {
-  Q_OBJECT
 public:
-  PerlDebugger();
-  virtual ~PerlDebugger();
+  PerlDebuggerSettings(const QString& name);
+  ~PerlDebuggerSettings();
 
-  virtual QString name()   const;
-  virtual bool isRunning() const;
+    int listenPort() const
+    {
+      return mListenPort;
+    }
 
-  virtual void init();
+    bool enableJIT() const
+    {
+      return mEnableJIT;
+    }
 
-  virtual void start(const QString&, const QString& args, bool local);
-  virtual void continueExecution();
-  virtual void stop();
-  virtual void stepInto();
-  virtual void stepOver();
-  virtual void stepOut();
+    bool sendSuperGlobals() const {
+      return mSendSuperGlobals;
+    }
 
-  virtual void runToCursor(const QString&, int);
+    bool breakOnLoad() const {
+      return mBreakOnLoad;
+    }
 
-  virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
+    virtual QString name() {
+      return m_name;
+    }
 
-  virtual void addBreakpoint(DebuggerBreakpoint*);
+    virtual void loadValuesFromWidget();
+    virtual DebuggerTab* widget();
+  protected:
 
-  virtual void changeBreakpoint(DebuggerBreakpoint*);
-  virtual void removeBreakpoint(DebuggerBreakpoint*);
+    int  mListenPort;
+    bool mEnableJIT;
+    bool mSendSuperGlobals;
+    bool mBreakOnLoad;
 
-  virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
-
-  virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*);
-
-  virtual void addWatches(const QStringList&);
-  virtual void addWatch(const QString& expression);
-  virtual void removeWatch(const QString& expression);
-
-  virtual void profile(const QString&, const QString& args, bool local);
-
-private slots:
-  void slotSettingsChanged();
-
-private:
-
-  QString m_name;
-
-  bool m_isRunning;
-  bool m_isJITActive;
-  
-  PerlDebuggerSettings *m_perlDebuggerSettings;
+    QString m_name;
+  private:
+    PerlDebuggerSettingsWidget* m_widget;
 };
 
 #endif

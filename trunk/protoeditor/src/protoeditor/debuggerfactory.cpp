@@ -27,23 +27,23 @@
 
 DebuggerFactory::DebuggerFactory()
 {
-//   AbstractDebugger* debugger;
+  AbstractDebugger* debugger;
 
   //PHP/DBG
-//   debugger = new DebuggerDBG(manager);
-//   registerDebugger(debugger);
-// 
-//   //PHP/Xdebug
-//   debugger = new DebuggerXD(manager);
-//   registerDebugger(debugger);
-// 
-//   //PHP/Gubed
-//   debugger = new DebuggerGB(manager);
-//   registerDebugger(debugger);
-// 
-//   //Perl Local
-//   debugger = new PerlDebugger(manager);
-//   registerDebugger(debugger);
+  debugger = new DebuggerDBG();
+  registerDebugger(debugger);
+
+  //PHP/Xdebug
+  debugger = new DebuggerXD();
+  registerDebugger(debugger);
+
+  //PHP/Gubed
+  debugger = new DebuggerGB();
+  registerDebugger(debugger);
+
+  //Perl Local
+  debugger = new PerlDebugger();
+  registerDebugger(debugger);
 }
 
 

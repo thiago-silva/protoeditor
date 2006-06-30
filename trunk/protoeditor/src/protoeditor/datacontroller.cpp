@@ -131,9 +131,55 @@ void DataController::addOutput(const QString& output)
    Protoeditor::self()->mainWindow()->debuggerUI()->appendOutput(output);
 }
 
-
 /***************** SLOTS **********************/
 
+
+void DataController::slotDebugStarted()
+{
+  //removes any existing pre execution point
+  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
+  DebuggerStack* stack = Protoeditor::self()->mainWindow()->debuggerUI()->stack();
+
+  if(!stack->isEmpty())
+  {
+    DebuggerExecutionPoint* execPoint;
+    execPoint =
+      Protoeditor::self()->mainWindow()->debuggerUI()->selectedDebuggerExecutionPoint();
+
+    ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
+  }
+}
+
+void DataController::slotDebugEnded()
+{
+  //removes the current execution point
+  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
+  DebuggerStack* stack = Protoeditor::self()->mainWindow()->debuggerUI()->stack();
+
+  if(!stack->isEmpty())
+  {
+    //remove the execution line mark
+    DebuggerExecutionPoint* execPoint;
+    execPoint = stack->topExecutionPoint();
+
+    ed->unmarkExecutionPoint(execPoint->url());
+  }  
+}
+
+
+void DataController::slotNewDocument()
+{
+  //if the new document has breakpoints, mark them.
+  QValueList<DebuggerBreakpoint*> bplist =
+    Protoeditor::self()->mainWindow()->debuggerUI()->breakpointsFrom(
+      Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL());
+
+  QValueList<DebuggerBreakpoint*>::iterator it;
+  for(it = bplist.begin(); it != bplist.end(); ++it)
+  {
+    Protoeditor::self()->mainWindow()->editorUI()->markActiveBreakpoint((*it)->url(), (*it)->line());
+  }
+}
 
 void DataController::slotGlobalVarModified(Variable* var)
 {
@@ -143,6 +189,33 @@ void DataController::slotGlobalVarModified(Variable* var)
 void DataController::slotLocalVarModified(Variable* var)
 {
   Protoeditor::self()->executionController()->modifyLocalVariable(var);
+}
+
+void DataController::slotStackChanged(DebuggerExecutionPoint* old, DebuggerExecutionPoint* nw)
+{
+  //Glossary:
+  //  -PreExecutionPoint: a DebuggerExecutionPoint representing a point in the stack of the backtrace.
+  //                      This is used when the user selects a point on the stack ComboBox that is not the
+  //                      topmost (the active line the debugger is running)
+  
+  
+  //-set the current document/line according to the new stack context
+  //-unmark the (possibly) previously PreExecutionPoint according to the old stack context
+  //-mark the PreExecutionPoint of the new stack context
+  //-request the variables for this context
+
+  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
+
+  ed->gotoLineAtFile(nw->url(), nw->line()-1);
+
+  ed->unmarkPreExecutionPoint(old->url()/*, old->line()*/);
+
+  if(nw != Protoeditor::self()->mainWindow()->debuggerUI()->stack()->topExecutionPoint())
+  {
+    ed->markPreExecutionPoint(nw->url(), nw->line());
+  }
+
+  Protoeditor::self()->executionController()->changeCurrentExecutionPoint(nw);
 }
 
 void DataController::slotWatchAdded(const QString& expression)
@@ -191,78 +264,5 @@ void DataController::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   Protoeditor::self()->executionController()->removeBreakpoint(bp);
 }
 
-void DataController::slotStackChanged(DebuggerExecutionPoint* old, DebuggerExecutionPoint* nw)
-{
-  //Glossary:
-  //  -PreExecutionPoint: a DebuggerExecutionPoint representing a point in the stack of the backtrace.
-  //                      This is used when the user selects a point on the stack ComboBox that is not the
-  //                      topmost (the active line the debugger is running)
-  
-  
-  //-set the current document/line according to the new stack context
-  //-unmark the (possibly) previously PreExecutionPoint according to the old stack context
-  //-mark the PreExecutionPoint of the new stack context
-  //-request the variables for this context
-
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
-
-  ed->gotoLineAtFile(nw->url(), nw->line()-1);
-
-  ed->unmarkPreExecutionPoint(old->url()/*, old->line()*/);
-
-  if(nw != Protoeditor::self()->mainWindow()->debuggerUI()->stack()->topExecutionPoint())
-  {
-    ed->markPreExecutionPoint(nw->url(), nw->line());
-  }
-
-  Protoeditor::self()->executionController()->changeCurrentExecutionPoint(nw);
-}
-
-
-void DataController::slotNewDocument()
-{
-  //if the new document has breakpoints, mark them.
-  QValueList<DebuggerBreakpoint*> bplist =
-    Protoeditor::self()->mainWindow()->debuggerUI()->breakpointsFrom(
-      Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL());
-
-  QValueList<DebuggerBreakpoint*>::iterator it;
-  for(it = bplist.begin(); it != bplist.end(); ++it)
-  {
-    Protoeditor::self()->mainWindow()->editorUI()->markActiveBreakpoint((*it)->url(), (*it)->line());
-  }
-}
-
-void DataController::slotDebugStarted(const QString&)
-{
-  //removes any existing pre execution point
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
-  DebuggerStack* stack = Protoeditor::self()->mainWindow()->debuggerUI()->stack();
-
-  if(!stack->isEmpty())
-  {
-    DebuggerExecutionPoint* execPoint;
-    execPoint =
-      Protoeditor::self()->mainWindow()->debuggerUI()->selectedDebuggerExecutionPoint();
-
-    ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
-  }
-}
-
-void DataController::slotDebugEnded()
-{
-  //removes the current execution point
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
-  DebuggerStack* stack = Protoeditor::self()->mainWindow()->debuggerUI()->stack();
-
-  if(!stack->isEmpty())
-  {
-    //remove the execution line mark
-    DebuggerExecutionPoint* execPoint;
-    execPoint = stack->topExecutionPoint();
-
-    ed->unmarkExecutionPoint(execPoint->url()/*, execPoint->line()*/);
-  }  
-}
 
 #include "datacontroller.moc"

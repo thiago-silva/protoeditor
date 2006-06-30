@@ -60,7 +60,6 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
 
   m_debuggerSettingsList =
     Protoeditor::self()->settings()->languageSettings(PHPSettings::lang)->debuggerSettingsList();
-
       
   
   for(QValueList<DebuggerSettingsInterface*>::iterator it = m_debuggerSettingsList.begin();
@@ -68,7 +67,8 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
        it++) 
   {
     m_cbDefaultDebugger->insertItem((*it)->name());
-  }  
+  }
+
   grid->addWidget(m_cbDefaultDebugger,2, 1);
 
   mainLayout->addLayout(grid);

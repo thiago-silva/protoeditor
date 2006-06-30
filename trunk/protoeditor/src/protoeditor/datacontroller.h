@@ -50,17 +50,21 @@ public:
   void addOutput(const QString&);
 
 public slots:
+  void slotDebugStarted();
+  void slotDebugEnded();
+  void slotNewDocument();
+
   void slotGlobalVarModified(Variable*);
   void slotLocalVarModified(Variable*);
+  void slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
+
   void slotWatchAdded(const QString&);
   void slotWatchRemoved(Variable*);
+
   void slotBreakpointCreated(DebuggerBreakpoint*);
   void slotBreakpointChanged(DebuggerBreakpoint*);
-  void slotBreakpointRemoved(DebuggerBreakpoint*);
-  void slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*);
-  void slotNewDocument();
-  void slotDebugStarted(const QString&);
-  void slotDebugEnded();
+  void slotBreakpointRemoved(DebuggerBreakpoint*);  
+  
 };
 
 #endif

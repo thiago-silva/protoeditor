@@ -39,6 +39,9 @@ public:
   ExecutionController();
   ~ExecutionController();
 
+  void init();
+  QString currentDebuggerName();
+
   //Protoeditor commands us
 
   void executeScript(const QString&, const QString&);
@@ -66,7 +69,7 @@ public:
 
 
 signals:
-  void sigDebugStarted(const QString&);
+  void sigDebugStarted();
   void sigDebugEnded();
 
 public slots:

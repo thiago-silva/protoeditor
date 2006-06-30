@@ -17,64 +17,40 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLDEBUGGER_H
-#define PERLDEBUGGER_H
 
-#include "abstractdebugger.h"
+#ifndef PERLDEBUGGERSETTINGSWIDGET_H
+#define PERLDEBUGGERSETTINGSWIDGET_H
 
-#include <qstring.h>
+#include "debuggersettingsinterface.h"
+
+class QCheckBox;
+class QSpinBox;
 
 class PerlDebuggerSettings;
 
-class PerlDebugger : public AbstractDebugger
+
+class PerlDebuggerSettingsWidget : public DebuggerTab
 {
   Q_OBJECT
 public:
-  PerlDebugger();
-  virtual ~PerlDebugger();
+  PerlDebuggerSettingsWidget(PerlDebuggerSettings*, QWidget *parent = 0, const char *name = 0);
+  ~PerlDebuggerSettingsWidget();
 
-  virtual QString name()   const;
-  virtual bool isRunning() const;
+  int  listenPort();
+  bool enableJIT();
+  bool sendSuperGlobals();
+  bool breakOnLoad();
 
-  virtual void init();
-
-  virtual void start(const QString&, const QString& args, bool local);
-  virtual void continueExecution();
-  virtual void stop();
-  virtual void stepInto();
-  virtual void stepOver();
-  virtual void stepOut();
-
-  virtual void runToCursor(const QString&, int);
-
-  virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
-
-  virtual void addBreakpoint(DebuggerBreakpoint*);
-
-  virtual void changeBreakpoint(DebuggerBreakpoint*);
-  virtual void removeBreakpoint(DebuggerBreakpoint*);
-
-  virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
-
-  virtual void modifyVariable(Variable* v, DebuggerExecutionPoint*);
-
-  virtual void addWatches(const QStringList&);
-  virtual void addWatch(const QString& expression);
-  virtual void removeWatch(const QString& expression);
-
-  virtual void profile(const QString&, const QString& args, bool local);
-
-private slots:
-  void slotSettingsChanged();
-
+  void setLangEnabled(bool);
+  void populate();
 private:
+  QSpinBox  *m_spListenPort;
+  QCheckBox *m_ckEnableJIT;
+  QCheckBox *m_ckBreakOnLoad;
+  QCheckBox *m_ckSendSuperGlobals;
 
-  QString m_name;
+  PerlDebuggerSettings* m_settings;
 
-  bool m_isRunning;
-  bool m_isJITActive;
-  
-  PerlDebuggerSettings *m_perlDebuggerSettings;
 };
 
 #endif

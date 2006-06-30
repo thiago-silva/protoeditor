@@ -107,7 +107,7 @@ private slots:
   void slotNoDocumentOpened();  
 
   //Debug state slots
-  void slotDebugStarted(const QString&);
+  void slotDebugStarted();
   void slotDebugEnded();
 
   void slotError(const QString& message);

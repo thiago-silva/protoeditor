@@ -55,6 +55,19 @@ PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
   
   mainLayout->addLayout(grid);
 
+  m_debuggerSettingsList =
+    Protoeditor::self()->settings()->languageSettings(PerlSettings::lang)->debuggerSettingsList();
+
+  QTabWidget* debuggersTabWidget = new QTabWidget(this);
+
+
+  QValueList<DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+    debuggersTabWidget->addTab((*it)->widget(), (*it)->name());
+  }
+
+  mainLayout->addWidget(debuggersTabWidget);
+
   connect(m_ckEnabled, SIGNAL(stateChanged(int)), this, SLOT(slotLangEnabled(int)));
   slotLangEnabled(false);
 }
@@ -72,6 +85,11 @@ void PerlSettingsWidget::populate()
 
   m_ckEnabled->setChecked(settings->isEnabled());
   m_edPerlCommand->setText(settings->interpreterCommand());
+
+  QValueList<DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+    (*it)->widget()->populate();
+  }
 }
 
 void PerlSettingsWidget::updateSettings()
@@ -82,11 +100,21 @@ void PerlSettingsWidget::updateSettings()
 
   settings->setEnabled(m_ckEnabled->isChecked());
   settings->setInterpreterCommand(m_edPerlCommand->text());
+
+  QValueList<DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+    (*it)->loadValuesFromWidget();
+  }
 }
 
 void PerlSettingsWidget::slotLangEnabled(int)
 {
   m_edPerlCommand->setEnabled(m_ckEnabled->isChecked());
+
+  QValueList<DebuggerSettingsInterface*>::iterator it;
+  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+    (*it)->widget()->setLangEnabled(m_ckEnabled->isChecked());
+  }
 }
 
 #include "perlsettingswidget.moc"

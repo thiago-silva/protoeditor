@@ -19,12 +19,12 @@
  ***************************************************************************/
 
 #include "perldebugger.h"
-#include "perlsettings.h"
+#include "perldebuggersettings.h"
 
 #include "protoeditor.h"
 #include "datacontroller.h"
 #include "protoeditorsettings.h"
-
+#include "perlsettings.h"
 
 PerlDebugger::PerlDebugger()
   : AbstractDebugger(), m_name("Perl debugger"), m_isRunning(false), m_isJITActive(false)
@@ -32,9 +32,9 @@ PerlDebugger::PerlDebugger()
 //   m_currentExecutionPoint = new DebuggerExecutionPoint();
 //   m_globalExecutionPoint = new DebuggerExecutionPoint();
 
-//   m_perlSettings = new PerlSettings(m_name);
+  m_perlDebuggerSettings = new PerlDebuggerSettings(m_name);
 
-//   Protoeditor::self()->settings()->registerDebuggerSettings(m_perlSettings, m_name);
+  registerSettings(PerlSettings::lang, m_perlDebuggerSettings);
 
   connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
@@ -136,4 +136,5 @@ void PerlDebugger::profile(const QString&, const QString& args, bool local)
 void PerlDebugger::slotSettingsChanged()
 {
 }
+
 #include "perldebugger.moc"

@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
     : KParts::MainWindow(parent, name, fl)
 {
   if(!name) 
-  { 
+  {
     setName("MainWindow"); 
   }
 
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   stateChanged("init");
 
-  resize( QSize(633, 533).expandedTo(minimumSizeHint()) );
+  resize(QSize(633, 533).expandedTo(minimumSizeHint()));
   clearWState(WState_Polished);  
 }
 
@@ -97,7 +97,6 @@ void MainWindow::createWidgets()
 
   connect(m_editorUI, SIGNAL(sigBreakpointUnmarked(const KURL&, int)),
     m_debuggerUI, SLOT(slotBreakpointUnmarked(const KURL&, int)));
-
 }
 
 void MainWindow::setupActions()
@@ -108,7 +107,8 @@ void MainWindow::setupActions()
 
   m_actionRecent = KStdAction::openRecent(Protoeditor::self(), SLOT(slotAcFileRecent(const KURL&)), actionCollection());
   m_actionRecent->loadEntries(kapp->config());
-  connect(m_actionRecent, SIGNAL(activated()), open, SLOT(activate()));
+  m_actionRecent->setEnabled(true);
+  connect(m_actionRecent, SIGNAL(activated()), open, SLOT(activate()));  
 
   KStdAction::save(Protoeditor::self(), SLOT(slotAcSaveCurrentFile()), actionCollection());
   KStdAction::saveAs(Protoeditor::self(), SLOT(slotAcSaveCurrentFileAs()), actionCollection());
@@ -118,8 +118,7 @@ void MainWindow::setupActions()
 
   (void)new KAction(i18n("Close All"), 0, Protoeditor::self(), SLOT(slotAcCloseAllFiles()), actionCollection(), "file_close_all");
 
-  KStdAction::quit(Protoeditor::self(), SLOT(slotAcQuit()), actionCollection());
-  
+  KStdAction::quit(Protoeditor::self(), SLOT(slotAcQuit()), actionCollection());  
 
   //menu "script"
   m_siteAction     = new KSelectAction(i18n("Site"), 0, actionCollection(), "site_selection");
@@ -134,7 +133,6 @@ void MainWindow::setupActions()
                       this, SLOT(slotAcExecuteScript()), actionCollection(), "script_execute");
 
   connect(m_executeAction->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotAcExecuteScript(int)));
-
 
   connect(this, SIGNAL(sigExecuteScript(const QString&)), Protoeditor::self(),
       SLOT(slotAcExecuteScript(const QString&)));

@@ -34,6 +34,7 @@
 #include <klocale.h>
 
 #include "debuggersettingsinterface.h"
+#include "languagesettings.h"
 #include "sitesettings.h"
 #include "protoeditorsettings.h"
 
@@ -311,10 +312,15 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   grid->addWidget(label, 5, 0);
 
   m_cbDebuggerName = new QComboBox(sitewidget);
-  QStringList list = Protoeditor::self()->settings()->supportedLanguages();
+  QValueList<LanguageSettings*> llist = Protoeditor::self()->settings()->languageSettingsList();
   
-  for(QStringList::iterator it = list.begin(); it != list.end(); it++) {
-    m_cbDebuggerName->insertItem((*it));
+  QValueList<DebuggerSettingsInterface*> dlist;
+  for(QValueList<LanguageSettings*>::iterator it = llist.begin(); it != llist.end(); it++) {
+    dlist = (*it)->debuggerSettingsList();
+    for(QValueList<DebuggerSettingsInterface*>::iterator dit = dlist.begin(); dit != dlist.end(); dit++)
+    {
+      m_cbDebuggerName->insertItem((*dit)->name());
+    }    
   }
   
   grid->addWidget(m_cbDebuggerName, 5, 1);

@@ -82,14 +82,8 @@
 
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Rename &quot;executioncontroller&quot; -&gt; &quot;scriptcontroller&quot;</li>
-<li>Move all &quot;File menu&quot; related to a &quot;filecontroller&quot; class</li>
-<li>Rename &quot;datacontroller&quot; to &quot;datarepository&quot;</li>
+<ul type="disc"><li>Start Perl/ConsoleWidget implementation<br /><br /></li>
 <li>Move language settings to the apropriate language folder?<br /></li>
-<li><br />Study how things will going to be</li>
-<ul type="disc"><li>having a execController &amp; debuggermanager</li>
-<li>Only a execController</li>
-<li>Only a dbManager<br /><br /></li></ul>
 <li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
 <li>Maybe, ask only if the debugger is a different from the current one<br /><br /><br /></li></ul>

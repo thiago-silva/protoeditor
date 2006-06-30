@@ -58,7 +58,7 @@ WatchTab::WatchTab(QWidget *parent, const char *name)
           this, SLOT(slotNewWatch()));
 
   connect(m_edAddWatch, SIGNAL(returnPressed()),
-          this, SLOT(slotNewWatch()));
+          this, SLOT(slotNewWatch()));          
 }
 
 WatchTab::~WatchTab()

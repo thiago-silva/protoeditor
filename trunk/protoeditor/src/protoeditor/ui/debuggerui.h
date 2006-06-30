@@ -100,6 +100,7 @@ signals:
   void sigBreakpointCreated(DebuggerBreakpoint*);
   void sigBreakpointChanged(DebuggerBreakpoint*);
   void sigBreakpointRemoved(DebuggerBreakpoint*);
+
   void sigGotoFileAndLine(const KURL&, int);
 
 public slots:
