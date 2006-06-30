@@ -21,7 +21,6 @@
 #include "xdsettings.h"
 #include "xdsettingswidget.h"
 
-#include <qwidget.h>
 
 XDSettings::XDSettings(const QString& name)
   : DebuggerSettingsInterface(), m_name(name)
