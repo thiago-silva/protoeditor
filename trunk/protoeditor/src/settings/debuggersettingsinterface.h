@@ -25,6 +25,7 @@
 #include <qstring.h>
 #include <kconfigskeleton.h>
 
+class LanguageSettings;
 
 //------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ public:
   virtual ~DebuggerTab() {}
 
   virtual void setLangEnabled(bool) = 0;
-  virtual void populate()       = 0;
+  virtual void populate()           = 0;
 };
 
 //------------------------------------------------------------------
@@ -43,14 +44,34 @@ public:
 class DebuggerSettingsInterface : public KConfigSkeleton {
 public:
 
-  DebuggerSettingsInterface()
-      :  KConfigSkeleton(QString::fromLatin1("protoeditorrc")) {}
-
+  DebuggerSettingsInterface(const QString& name, const QString& label, LanguageSettings* langs)
+      :  KConfigSkeleton(QString::fromLatin1("protoeditorrc")),
+         m_name(name), m_label(label), m_langsettings(langs) {}
+  
   virtual ~DebuggerSettingsInterface() {}
 
-  virtual QString      name()                 = 0;
+  LanguageSettings*    languageSettings()
+  {
+    return m_langsettings;
+  }
+
+  QString debuggerName() const 
+  {
+    return m_name;
+  }
+
+  QString debuggerLabel() const
+  {
+    return m_label;
+  }
+
   virtual void         loadValuesFromWidget() = 0;
   virtual DebuggerTab* widget()               = 0;
+
+private:
+  QString m_name;
+  QString m_label;
+  LanguageSettings* m_langsettings;
 };
 
 #endif
