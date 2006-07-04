@@ -30,8 +30,8 @@
 #include <qclipboard.h>
 
 
-VariableListView::VariableListView(QWidget *parent, const char *name)
-    : KListView(parent, name), m_variables(0), m_isReadOnly(false)
+VariableListView::VariableListView(int id, QWidget *parent, const char *name)
+    : KListView(parent, name), m_id(id), m_variables(0), m_isReadOnly(false)
 {
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
@@ -57,8 +57,8 @@ VariableListView::VariableListView(QWidget *parent, const char *name)
   connect(this, SIGNAL(itemRenamed(QListViewItem*, int, const QString&)),
           this, SLOT(slotItemRenamed(QListViewItem*, int, const QString&)));
 
-  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )),
-          this, SLOT(slotDoubleClick( QListViewItem *, const QPoint &, int )));
+  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int)),
+          this, SLOT(slotDoubleClick(QListViewItem *, const QPoint &, int)));
 
   //connect(m_menu, SIGNAL(activated(int)), this, SLOT(slotCopyVarToClipboard(int)));
 
@@ -66,6 +66,11 @@ VariableListView::VariableListView(QWidget *parent, const char *name)
           this, SLOT(slotContextMenuRequested(QListViewItem *, const QPoint &, int)));
 
   m_variables = new VariableList_t;
+}
+
+int VariableListView::id()
+{
+  return m_id;
 }
 
 void VariableListView::setReadOnly(bool readOnly)
@@ -124,7 +129,7 @@ void VariableListView::slotItemCollapsed(QListViewItem* item)
 
 void VariableListView::slotItemExpanded(QListViewItem* item)
 {
-  VariableListViewItem* converted = dynamic_cast<VariableListViewItem*>(item);
+  VariableListViewItem* converted = dynamic_cast<VariableListViewItem*>(item);  
   populateChildren(converted);
   markExpanded(converted);
 }
@@ -170,12 +175,12 @@ void VariableListView::slotContextMenuRequested(QListViewItem* item, const QPoin
 
 void VariableListView::markColapsed(VariableListViewItem* item)
 {
-  m_expanded.remove(item->stringPath());
+  m_expanded.remove(item->variable()->stringPath());  
 }
 
 void VariableListView::markExpanded(VariableListViewItem* item)
 {
-  m_expanded.push_back(item->stringPath());
+  m_expanded.push_back(item->variable()->stringPath());
 }
 
 void VariableListView::populateChildren(VariableListViewItem* item)
@@ -190,10 +195,16 @@ void VariableListView::populateChildren(VariableListViewItem* item)
     return;
   }
 
-  VariableList_t* list =
-    dynamic_cast<VariableListValue*>((item)->variable()->value())->list();
-
-  addVariables(list, item);
+  VariableListValue* v = dynamic_cast<VariableListValue*>((item)->variable()->value());
+  if(!v->initialized())
+  {
+    emit sigNeedChildren(id(), item->variable());    
+  }
+  else
+  {
+    VariableList_t* list = v->list();
+    addVariables(list, item);
+  }  
 }
 
 void VariableListView::setVariables(VariableList_t* vars)
@@ -212,7 +223,7 @@ void VariableListView::setVariables(VariableList_t* vars)
   item = dynamic_cast<VariableListViewItem*>(selectedItem());
   if(item)
   {
-    currentSelected = item->stringPath();
+    currentSelected = item->variable()->stringPath();
   }
 
   clear();
@@ -230,6 +241,16 @@ void VariableListView::setVariables(VariableList_t* vars)
   setContentsPos(contentX, contentY);
 
   delete vars;
+}
+
+void VariableListView::updateVariable(Variable* var)
+{
+  VariableListViewItem* item = getItemFromPath(var->stringPath());
+  if(item) 
+  {
+    item->setOpen(false);
+    item->setOpen(true);
+  }
 }
 
 void VariableListView::addVariables(VariableList_t* vars, VariableListViewItem* parent)

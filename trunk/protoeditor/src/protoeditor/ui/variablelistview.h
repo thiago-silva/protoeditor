@@ -34,15 +34,19 @@ class VariableListView : public KListView
 public:
   enum { NameCol = 0, ValueCol, TypeCol };
 
-  VariableListView(QWidget *parent = 0, const char *name = 0);
+  VariableListView(int id, QWidget *parent = 0, const char *name = 0);
   virtual ~VariableListView();
 
+  int id();
+
   void setVariables(VariableList_t* vars);
+  void updateVariable(Variable*);
 
   void setReadOnly(bool);
   bool isReadOnly();
 signals:
   void sigVarModified(Variable*);
+  void sigNeedChildren(int, Variable*);
 
 protected slots:
   void slotItemExpanded(QListViewItem * item);
@@ -67,6 +71,7 @@ private:
   void populateChildren(VariableListViewItem* item);
   void reexpandItems();
 
+  int m_id;
   QValueList<QString> m_expanded;
   VariableList_t*    m_variables;
   bool m_isReadOnly;
