@@ -26,6 +26,7 @@
 
 #include "combostack.h"
 #include "variablelistview.h"
+#include "debuggerui.h"
 
 LocalTab::LocalTab(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -42,7 +43,7 @@ LocalTab::LocalTab(QWidget *parent, const char *name)
   stackComboLayout->addWidget(m_comboStack);
   varTabLayout->addLayout(stackComboLayout);
 
-  m_localVarList= new VariableListView(this);
+  m_localVarList= new VariableListView(DebuggerUI::LocalVarListID, this);
   varTabLayout->addWidget(m_localVarList);
 }
 
