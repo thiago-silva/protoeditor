@@ -79,6 +79,8 @@ public:
   void requestVariables(int scope, int id);
   void requestSuperGlobals(int scope);
 
+  void requestModifyVar(Variable*, int);
+
   void requestBreakpoint(DebuggerBreakpoint* bp);
   void requestBreakpointUpdate(DebuggerBreakpoint* bp);
   void requestBreakpointRemoval(int bpid);

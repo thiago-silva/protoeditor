@@ -83,13 +83,13 @@ void XDNet::startDebugging(const QString& filePath, const QString& uiargs,
     QStringList env;
     env << "XDEBUG_CONFIG"
         << ("remote_port=" 
-            + QString::number(m_debugger->settings()->listenPort())
-            + "\\ remote_host=localhost"
+            + QString::number(m_debugger->settings()->listenPort()) + " remote_host=localhost"
            )
         << "XDEBUG_SESSION_START"
         << QString::number(id);
 
-    Protoeditor::self()->session()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath),uiargs, env);
+    QString cmd = m_debugger->langSettings()->interpreterCommand();
+    Protoeditor::self()->session()->startLocal(cmd, KURL::fromPathOrURL(filePath),uiargs, env);
   } 
   else
   {
@@ -211,6 +211,21 @@ void XDNet::requestSuperGlobals(int scope)
   requestProperty("$_SESSION", scope, SuperGlobalId);
 }
 
+void XDNet::requestModifyVar(Variable* var, int scope)
+{
+  QString value = dynamic_cast<VariableScalarValue*>(var->value())->toString();
+ 
+  QString property_set = "property_set -n ";
+  property_set += var->compositeName();
+  property_set += " -d ";
+  property_set += QString::number(scope);
+  property_set += " -i " ;
+  property_set += QString::number(GeneralId);
+  property_set += " -- ";
+  property_set += KCodecs::base64Encode(value.utf8());
+  m_socket->writeBlock(property_set, property_set.length()+1);
+}
+
 void XDNet::requestWatch(const QString& expression, int ctx_id)
 {
   requestProperty(expression, ctx_id, 1);
@@ -298,7 +313,7 @@ void XDNet::slotIncomingConnection(QSocket* socket)
   emit sigNewConnection();
 }
 
-// #include <iostream>
+#include <iostream>
 
 void XDNet::slotReadBuffer()
 {
@@ -345,7 +360,7 @@ void XDNet::slotReadBuffer()
     data[xmlSize] = 0;
     
     str.setAscii(data,xmlSize);
-//     std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+    std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
     processXML(str);
 
   }
@@ -545,15 +560,15 @@ void XDNet::processResponse(QDomElement& root)
     XDVariableParser p;
 
     VariableList_t* array = p.parse(list);
+    int trans = root.attributeNode("transaction_id").value().toInt();
 
-    if(root.attributeNode("transaction_id").value().toInt() == LocalScopeId)
+    if(trans == LocalScopeId)
     {
       m_debugger->updateVariables(array, false);
     }
-    else if(root.attributeNode("transaction_id").value().toInt() == GlobalScopeId)
+    else if(trans == GlobalScopeId)
     {
-      if(root.attributeNode("transaction_id").value().toInt() ==
-          GlobalScopeId && m_debugger->settings()->sendSuperGlobals())
+      if(trans ==GlobalScopeId && m_debugger->settings()->sendSuperGlobals())
       {
         m_globalVars = array;
       }
@@ -591,7 +606,8 @@ void XDNet::processResponse(QDomElement& root)
   else if((cmd == "stop") ||
           (cmd == "breakpoint_remove") ||
           (cmd == "stdout") ||
-          (cmd == "stderr"))
+          (cmd == "stderr") ||
+          (cmd == "property_set"))
   {
     //nothing..
   }
@@ -651,7 +667,7 @@ void XDNet::processResponse(QDomElement& root)
   }
   else
   {
-    error(i18n("Unknow network packet: ") + cmd);
+    error(i18n("Unknow command: ") + cmd);
   }
 }
 
@@ -695,6 +711,7 @@ void XDNet::dispatchErrorData()
 void XDNet::slotXDClosed()
 {
   emit sigXDClosed();
+  m_socket = 0;
 }
 
 void XDNet::slotError(const QString& msg)
