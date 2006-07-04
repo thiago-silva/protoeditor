@@ -314,12 +314,15 @@ SiteSettingsDialog::SiteSettingsDialog(QWidget *parent, const char *name)
   m_cbDebuggerName = new QComboBox(sitewidget);
   QValueList<LanguageSettings*> llist = Protoeditor::self()->settings()->languageSettingsList();
   
+  QString dlabel;
   QValueList<DebuggerSettingsInterface*> dlist;
   for(QValueList<LanguageSettings*>::iterator it = llist.begin(); it != llist.end(); it++) {
     dlist = (*it)->debuggerSettingsList();
     for(QValueList<DebuggerSettingsInterface*>::iterator dit = dlist.begin(); dit != dlist.end(); dit++)
     {
-      m_cbDebuggerName->insertItem((*dit)->name());
+      dlabel = (*it)->languageName() + " " + (*dit)->debuggerLabel();
+      m_debuggerMap[dlabel] = (*dit)->debuggerName();
+      m_cbDebuggerName->insertItem(dlabel);
     }    
   }
   
@@ -391,7 +394,7 @@ void SiteSettingsDialog::slotOk()
 
 void SiteSettingsDialog::populate(const QString& name, const KURL& url,
                                   const KURL& remoteBaseDir, const KURL& localBaseDir,
-                                  const KURL& defaultFile, const QString& debuggerNme,
+                                  const KURL& defaultFile, const QString& debuggerName,
                                   QMap<QString,QString>& mappings)
 {
   m_edName->setText(name);
@@ -399,7 +402,22 @@ void SiteSettingsDialog::populate(const QString& name, const KURL& url,
   m_edRemoteBaseDir->setText(remoteBaseDir.pathOrURL());
   m_edLocalBaseDir->setURL(localBaseDir.pathOrURL());
   m_edDefaultFile->setURL(defaultFile.pathOrURL());
-  m_cbDebuggerName->setCurrentText(debuggerNme);
+
+  QMap<QString, QString>::iterator it;
+  QString dlabel;
+  for(it = m_debuggerMap.begin(); it != m_debuggerMap.end(); ++it) 
+  {
+    if(it.data() == debuggerName)
+    {
+      dlabel = it.key();
+      break;
+    }
+  }
+  if(!dlabel.isEmpty())
+  {
+    m_cbDebuggerName->setCurrentText(dlabel);
+  }
+  
   m_mappingWidget->setMappings(mappings);
 }
 
@@ -461,9 +479,9 @@ KURL SiteSettingsDialog::defaultFile()
   }
 }
 
-QString SiteSettingsDialog::debuggerNme()
+QString SiteSettingsDialog::debuggerName()
 {
-  return m_cbDebuggerName->currentText();
+  return m_debuggerMap[m_cbDebuggerName->currentText()];
 }
 
 QMap<QString,QString> SiteSettingsDialog::mappings()

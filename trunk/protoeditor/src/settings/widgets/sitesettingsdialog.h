@@ -22,6 +22,7 @@
 
 #include <kdialogbase.h>
 #include <kurl.h>
+#include <qmap.h>
 
 class KLineEdit;
 class QSpinBox;
@@ -74,7 +75,7 @@ public:
   KURL    remoteBaseDir();
   KURL    localBaseDir();
   KURL    defaultFile();
-  QString debuggerNme();
+  QString debuggerName();
   
   QMap<QString,QString> mappings();
 
@@ -95,6 +96,7 @@ private:
   KURLRequester    *m_edLocalBaseDir;
   KURLRequester    *m_edDefaultFile;
   QComboBox        *m_cbDebuggerName;
+  QMap<QString,QString> m_debuggerMap;
 };
 
 #endif
