@@ -40,7 +40,6 @@ public:
 
   virtual void insertItem(VariableListViewItem *item);
 
-  QString stringPath();
   Variable* variable();
 
   virtual QListViewItem* lastItem();

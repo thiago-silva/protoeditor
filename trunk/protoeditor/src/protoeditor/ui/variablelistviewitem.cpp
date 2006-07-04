@@ -86,14 +86,14 @@ void VariableListViewItem::insertItem(VariableListViewItem *item) {
 }
 
 
-QString VariableListViewItem::stringPath() {
-  QListViewItem* item = this;
-  QString str = item->text(VariableListView::NameCol);
-  while((item = item->parent()) != NULL) {
-    str = item->text(VariableListView::NameCol) + "/" + str;
-  }
-  return str;
-}
+// QString VariableListViewItem::stringPath() {
+//   QListViewItem* item = this;
+//   QString str = item->text(VariableListView::NameCol);
+//   while((item = item->parent()) != NULL) {
+//     str = item->text(VariableListView::NameCol) + "/" + str;
+//   }
+//   return str;
+// }
 
 
 Variable* VariableListViewItem::variable() {
