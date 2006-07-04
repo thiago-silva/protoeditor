@@ -31,19 +31,25 @@ class DebuggerConfigurations;
 class DebuggerExecutionPoint;
 class DebuggerStack;
 class Variable;
+class LanguageSettings;
 
 class AbstractDebugger : public QObject
 {
   Q_OBJECT
 public:
-  AbstractDebugger();
-  virtual ~AbstractDebugger();
+  AbstractDebugger(LanguageSettings*);
+  virtual ~AbstractDebugger();  
+
+  LanguageSettings* langSettings();
 
   /* Most (if not all) of those functions are meant to be called from the DebuggerManager
   */
 
-  /* the name of the debugger */
+  /* A unique name of the debugger */
   virtual QString name()   const = 0;
+
+  /* A label so the user identifies this debugger */
+  virtual QString label() const = 0;
 
   //virtual int     id() const = 0; // might have some use in the future to have this
 
@@ -90,10 +96,16 @@ public:
   virtual void addWatch(const QString& expression) = 0;
   virtual void removeWatch(const QString& expression) = 0;
 
-  virtual void profile(const QString&, const QString& args, bool local) = 0;
+  /*   optional interface  */
 
-protected:
-  virtual void registerSettings(const QString&, DebuggerSettingsInterface*);
+  virtual void profile(const QString&, const QString&,  bool) {}
+
+  /* Executes a command. For console based debuggers */
+  virtual void executeCmd(const QString&) {}
+  
+  /* retrieve the children from var (where var is an array/hash/object, etc */
+  virtual void getChildren(int, Variable*) {}
+
 signals:
   /*
     emitted right before starting the session. Normally, it should be emited
@@ -117,8 +129,15 @@ signals:
   /* When a step(in/over/out) is done, or a breakpoint is reached, and so on */
   void sigDebugPaused();
 
+  /* Output for console based debuggers */
+  void sigConsoleDebuggerOutput(const QString&);
+  void sigConsoleUserOutput(const QString&);
+
   //Debugger client error (conection, listen port, etc)
-  void sigInternalError(const QString&);
+  void sigInternalError(const QString&);  
+  
+private:
+  LanguageSettings* m_langSettings;
 };
 
 #endif

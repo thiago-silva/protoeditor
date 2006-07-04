@@ -13,7 +13,7 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with manager program; if not, write to the                         *
+ *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
@@ -24,10 +24,11 @@
 #include "protoeditorsettings.h"
 #include "protoeditor.h"
 #include "executioncontroller.h"
+#include "datacontroller.h"
 #include "debuggersettingsinterface.h"
 
-AbstractDebugger::AbstractDebugger()
-  : QObject()
+AbstractDebugger::AbstractDebugger(LanguageSettings* langs)
+  : QObject(), m_langSettings(langs)
 {
   connect(this, SIGNAL(sigDebugStarted(AbstractDebugger*)),
           Protoeditor::self()->executionController(), 
@@ -48,6 +49,14 @@ AbstractDebugger::AbstractDebugger()
           Protoeditor::self()->executionController(), 
           SLOT(slotJITStarted(AbstractDebugger*)));
 
+  connect(this, SIGNAL(sigConsoleDebuggerOutput(const QString&)),
+          Protoeditor::self()->dataController(),
+          SLOT(slotConsoleDebuggerOutput(const QString&)));
+
+  connect(this, SIGNAL(sigConsoleUserOutput(const QString&)),
+          Protoeditor::self()->dataController(),
+          SLOT(slotConsoleUserOutput(const QString&)));
+
   connect(this, SIGNAL(sigInternalError(const QString&)),
           Protoeditor::self(), SLOT(slotError(const QString&)));
 
@@ -57,12 +66,9 @@ AbstractDebugger::~AbstractDebugger()
 {
 }
 
-void AbstractDebugger::registerSettings(const QString& lang, DebuggerSettingsInterface* dsettings)
+LanguageSettings* AbstractDebugger::langSettings()
 {
-  LanguageSettings* langSettings = 
-    Protoeditor::self()->settings()->languageSettings(lang);
-
-  langSettings->registerDebuggerSettings(dsettings->name(), dsettings);
+  return m_langSettings;
 }
 
 #include "abstractdebugger.moc"
