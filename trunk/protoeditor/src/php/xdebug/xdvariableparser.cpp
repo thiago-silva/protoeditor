@@ -112,7 +112,7 @@ PHPVariable* XDVariableParser::parseVar(QDomNode& node, PHPVariable* parent)
   int children = e.attributeNode("numchildren").value().toInt();
   QString type = e.attributeNode("type").value();
   
-  var->setName(e.attributeNode("name").value());
+  var->setName(e.attributeNode("fullname").value());
 
   if(type == "object")
   {
