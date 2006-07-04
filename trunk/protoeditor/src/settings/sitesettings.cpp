@@ -51,7 +51,7 @@ SiteSettings::SiteSettings(const QString &number)
 //   addItem( itemMatchFileInLowerCase, QString::fromLatin1( "MatchFileInLowerCase" ) );
 
   KConfigSkeleton::ItemString  *itemDebuggerName;
-  itemDebuggerName = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DebuggerName" ), mDebuggerName, "DBG" );
+  itemDebuggerName = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DebuggerName" ), mDebuggerName );
   addItem( itemDebuggerName, QString::fromLatin1( "DebuggerName" ) );
 
   readConfig();
