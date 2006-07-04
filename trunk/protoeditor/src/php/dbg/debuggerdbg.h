@@ -29,18 +29,20 @@ class DBGNet;
 class DebuggerStack;
 class PHPVariable;
 class DBGProfileDialog;
+class LanguageSettings;
 
 class DebuggerDBG : public AbstractDebugger
 {
 Q_OBJECT
 public:
-  DebuggerDBG();
+  DebuggerDBG(LanguageSettings*);
   virtual ~DebuggerDBG();
 
   /* Interface of AbstractDebugger */
 
   virtual QString name()   const;
-  //virtual int     id() const;
+  virtual QString label()   const;
+
 
   virtual bool isRunning() const;
 

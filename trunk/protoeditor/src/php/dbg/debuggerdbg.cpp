@@ -43,14 +43,14 @@
 
 #include <qregexp.h>
 
-DebuggerDBG::DebuggerDBG()
-    : AbstractDebugger(), m_name("DBG"), m_isJITActive(false), m_isRunning(false),
+DebuggerDBG::DebuggerDBG(LanguageSettings* langs)
+    : AbstractDebugger(langs), m_name("dbg"), m_isJITActive(false), m_isRunning(false),
     m_listenPort(-1), m_dbgSettings(0), m_net(0), m_profileDialog(0),
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
-
-  m_dbgSettings = new DBGSettings(m_name);
-  registerSettings(PHPSettings::lang, m_dbgSettings);
+  
+  m_dbgSettings = new DBGSettings(name(), label(), langSettings());
+  langSettings()->registerDebuggerSettings(name(), m_dbgSettings);
 
   connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
@@ -64,6 +64,8 @@ DebuggerDBG::DebuggerDBG()
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
+
+  slotSettingsChanged();
 }
 
 DebuggerDBG::~DebuggerDBG()
@@ -81,6 +83,11 @@ void DebuggerDBG::init()
 QString DebuggerDBG::name() const
 {
   return m_name;
+}
+
+QString DebuggerDBG::label()   const
+{
+  return i18n("DBG");
 }
 
 bool DebuggerDBG::isRunning() const
@@ -617,7 +624,7 @@ void DebuggerDBG::slotNewConnection()
   //to update the m_net site
   m_net->setSite(Protoeditor::self()->settings()->currentSiteSettings());
 
-  //tell debuggermanager to cleanup any pending session
+  //tell everyone to cleanup any pending session
   emit sigJITStarted(this);
 }
 
