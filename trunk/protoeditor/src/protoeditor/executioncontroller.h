@@ -67,7 +67,6 @@ public:
   void removeBreakpoint(DebuggerBreakpoint*);
   void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
 
-
 signals:
   void sigDebugStarted();
   void sigDebugEnded();
@@ -78,6 +77,9 @@ public slots:
   void slotDebugPaused();
   void slotJITStarted(AbstractDebugger*);
 
+  void slotNeedChildren(int, Variable*);
+
+  void slotExecuteCmd(const QString&);
 private:
   void sessionPrologue();
   bool checkForOpenedFile();
