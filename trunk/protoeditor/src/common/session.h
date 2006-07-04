@@ -83,7 +83,7 @@ class Console : public ExternalApp
     Console();
     ~Console();
 
-    void execute(const QString& lang, const KURL& url, const QString& args, const QStringList& env);
+    void execute(const QString& interpreterCmd, const KURL& url, const QString& args, const QStringList& env);
 };
 
 class Browser : public ExternalApp

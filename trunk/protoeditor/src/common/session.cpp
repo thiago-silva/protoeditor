@@ -55,7 +55,7 @@ void Session::startRemote(const KURL& url)
   }
 }
 
-void Session::startLocal(const QString& lang, const KURL& url, const QString& args, const QStringList& env)
+void Session::startLocal(const QString& interpreterCmd, const KURL& url, const QString& args, const QStringList& env)
 {
   if(m_externalApp) delete m_externalApp;
 
@@ -63,7 +63,7 @@ void Session::startLocal(const QString& lang, const KURL& url, const QString& ar
 
   m_externalApp = c;
 
-  c->execute(lang, url, args, env);
+  c->execute(interpreterCmd, url, args, env);
 }
 
 void Session::initHTTPCommunication()
@@ -105,8 +105,6 @@ void Session::slotHttpDone(bool error)
 
 void Session::doExternalRequest(const KURL& url)
 {
-  if(m_externalApp) delete m_externalApp;
-
   Browser *b = Browser::retrieveBrowser(
                         Protoeditor::self()->settings()->extAppSettings()->externalBrowser(), this);
 
@@ -141,8 +139,7 @@ void ExternalApp::slotProcessExited(KProcess*)
 void ExternalApp::init()
 {
   if(!m_processRunning)
-  {
-
+  {    
     delete m_process;
 
     m_process = new KProcess;
@@ -162,7 +159,7 @@ Console::~Console()
 {
 }
 
-void Console::execute(const QString& lang, const KURL& url, const QString& args, const QStringList& env)
+void Console::execute(const QString& interpreterCmd, const KURL& url, const QString& args, const QStringList& env)
 {
   init();
 
@@ -173,51 +170,46 @@ void Console::execute(const QString& lang, const KURL& url, const QString& args,
 
   m_process->clearArguments();
 
-  QString cmd = 
-    Protoeditor::self()->settings()->languageSettings(lang)->interpreterCommand();
-
   QString consoleApp = Protoeditor::self()->settings()->extAppSettings()->console();
 
   QStringList::const_iterator it = env.begin();
   QString name;
   QString val;
+  QString verbose;
   while(it != env.end()) {
     name = (*it);
     ++it;
-    val = (*it);
+    val = KProcess::quote(*it);
     ++it;
-    m_process->setEnvironment(name, val);
+    verbose += name + "=" + val + " ";
   }
 
   if(Protoeditor::self()->settings()->extAppSettings()->useConsole()) 
   {
     //use external console
 
+    QString prologue = QString("cd ") +  url.directory() + " && ";
+
+    QString cmd = interpreterCmd + " " + url.path() + " " + args + "; echo " +
+                i18n("'Press Enter to continue...'") + "; read";
+
     kdDebug() << "executing console: " << (consoleApp + " /bin/sh") << " -c "              
-              << env.join(" ") << " " 
-              << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + args) + (";echo " + 
-                  i18n("\"Press Enter to continue...\"") + ";read")
-              << endl;
-  
-    //KProcess::quote(filePath)
+              << prologue + verbose + cmd << endl;
+
     *m_process << QStringList::split(' ',consoleApp + " /bin/sh") << "-c"
-      << (
-          QString("cd ") +  url.directory() + ";"
-          + (cmd + " " + url.path() + " " + args) + (";echo " + 
-            i18n("\"Press Enter to continue...\"") + ";read"));
+      << (prologue + verbose + cmd);
   }
   else
   {
-    //use current terminal
+    //no terminal
     kdDebug() << "executing : " << "/bin/sh" << " -c "
               << QString("cd ") <<  url.directory() << ";"
-              << (cmd + " " + url.path() + " " + args + ";echo " +
-                 i18n("\"Press Enter to continue...\"") + ";read")
+              << (interpreterCmd + " " + url.path() + " " + args + ";echo " +
+                 i18n("'Press Enter to continue...'") + ";read")
               << endl;
   
     *m_process << "/bin/sh" << "-c" << 
-      (QString("cd ") +  url.directory() + ";" + cmd + " " + url.path() + " " + args);
+      (QString("cd ") +  url.directory() + ";" + interpreterCmd + " " + url.path() + " " + args);
   }
 
   if(!m_process->start())
@@ -227,7 +219,7 @@ void Console::execute(const QString& lang, const KURL& url, const QString& args,
   else
   {
     m_processRunning = true;
-  }  
+  }
 }
 
 
@@ -240,7 +232,8 @@ Browser::Browser()
 {}
 
 Browser::~Browser()
-{  
+{
+
 }
 
 Browser* Browser::retrieveBrowser(int browserno, Session* session)
