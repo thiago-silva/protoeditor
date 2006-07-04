@@ -45,7 +45,8 @@ public:
   void updateGlobalVars(VariableList_t*);
   void updateLocalVars(VariableList_t*);
   void updateWatch(Variable*);
-  void updateBreakpoint(DebuggerBreakpoint* bp);
+  void updateVariable(Variable*, int);
+  void updateBreakpoint(DebuggerBreakpoint*);
   void debugMessage(int, const QString&, const KURL&, int);
   void addOutput(const QString&);
 
@@ -63,8 +64,10 @@ public slots:
 
   void slotBreakpointCreated(DebuggerBreakpoint*);
   void slotBreakpointChanged(DebuggerBreakpoint*);
-  void slotBreakpointRemoved(DebuggerBreakpoint*);  
-  
+  void slotBreakpointRemoved(DebuggerBreakpoint*);
+
+  void slotConsoleDebuggerOutput(const QString&);
+  void slotConsoleUserOutput(const QString&);
 };
 
 #endif

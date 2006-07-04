@@ -98,6 +98,11 @@ void DataController::updateWatch(Variable* var)
   Protoeditor::self()->mainWindow()->debuggerUI()->addWatch(var);
 }
 
+void DataController::updateVariable(Variable* var, int scopeId)
+{
+  Protoeditor::self()->mainWindow()->debuggerUI()->updateVariable(var, scopeId);
+}
+
 void DataController::updateBreakpoint(DebuggerBreakpoint* bp)
 {
   Protoeditor::self()->mainWindow()->debuggerUI()->updateBreakpoint(bp);
@@ -264,5 +269,13 @@ void DataController::slotBreakpointRemoved(DebuggerBreakpoint* bp)
   Protoeditor::self()->executionController()->removeBreakpoint(bp);
 }
 
+void DataController::slotConsoleDebuggerOutput(const QString& str)
+{
+  Protoeditor::self()->debuggerUI()->appendConsoleDebuggerText(str);
+}
 
+void DataController::slotConsoleUserOutput(const QString& str)
+{
+  Protoeditor::self()->debuggerUI()->appendConsoleUserText(str);
+}
 #include "datacontroller.moc"
