@@ -30,16 +30,18 @@
 class XDSettings;
 class XDNet;
 class DebuggerExecutionPoint;
-
+class LanguageSettings;
 
 class DebuggerXD : public AbstractDebugger
 {
   Q_OBJECT
 public:
-  DebuggerXD();
+  DebuggerXD(LanguageSettings*);
   virtual ~DebuggerXD();
 
   virtual QString name() const;
+  virtual QString label() const;
+
   virtual bool isRunning() const;
   virtual void init();
 
@@ -64,8 +66,6 @@ public:
   virtual void addWatches(const QStringList&);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
-
-  virtual void profile(const QString&, const QString&, bool local);
 
   //Communication with XDNet
 

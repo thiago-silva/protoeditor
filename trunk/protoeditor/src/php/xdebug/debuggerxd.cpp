@@ -35,14 +35,13 @@
 #include <klocale.h>
 #include "phpdefs.h"
 
-DebuggerXD::DebuggerXD()
-    : AbstractDebugger(), m_name("Xdebug"), m_isRunning(false), m_isJITActive(false),
+DebuggerXD::DebuggerXD(LanguageSettings* langs)
+    : AbstractDebugger(langs), m_name("xdebug"), m_isRunning(false), m_isJITActive(false),
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_xdSettings(0), m_net(0)
 {
-  m_xdSettings = new XDSettings(m_name);
-
-  registerSettings(PHPSettings::lang, m_xdSettings);
+  m_xdSettings = new XDSettings(name(), label(), langSettings());
+  langSettings()->registerDebuggerSettings(name(), m_xdSettings);
 
 
   m_currentExecutionPoint = new DebuggerExecutionPoint();
@@ -59,6 +58,8 @@ DebuggerXD::DebuggerXD()
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
   //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
+
+  slotSettingsChanged();
 }
 
 DebuggerXD::~DebuggerXD()
@@ -71,6 +72,11 @@ DebuggerXD::~DebuggerXD()
 QString DebuggerXD::name() const
 {
   return m_name;
+}
+
+QString DebuggerXD::label() const
+{
+  return i18n("Xdebug");
 }
 
 XDSettings* DebuggerXD::settings() {
@@ -199,14 +205,7 @@ void DebuggerXD::modifyVariable(Variable* var, DebuggerExecutionPoint* execPoint
 {
   if(isRunning())
   {
-    QString name  =  var->compositeName();
-    QString value =  var->value()->toString();
-
-    if(value.isEmpty()) value = "null";
-
-    m_net->requestWatch(name + "=" + value, execPoint->id());
-
-    //reload variables (global/local/watches) to get the new value.
+    m_net->requestModifyVar(var, execPoint->id());
     requestVars();
   }
 }
@@ -246,11 +245,6 @@ void DebuggerXD::removeWatch(const QString& expression)
   {
     m_wathcesList.remove(it);
   }
-}
-
-void DebuggerXD::profile(const QString&, const QString&, bool)
-{
-  /**/
 }
 
 void DebuggerXD::slotSettingsChanged()
@@ -449,7 +443,7 @@ void DebuggerXD::slotNewConnection()
   //to update the m_net site
   m_net->setSite(Protoeditor::self()->settings()->currentSiteSettings());
 
-  //tell debuggermanager to cleanup any pending session
+  //tell everyone  to cleanup any pending session
   emit sigJITStarted(this);
 }
 
