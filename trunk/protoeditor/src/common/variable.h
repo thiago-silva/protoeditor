@@ -58,6 +58,9 @@ public:
   virtual bool isReference();
 
   Variable* parent();
+
+  virtual QString stringPath();
+
 protected:
   Variable(Variable* parent);
 private:
@@ -70,6 +73,8 @@ private:
 
 class VariableValue {
 public:
+  enum { Undefined };
+
   static QString UndefinedType;
 
   VariableValue(Variable* owner);
@@ -79,7 +84,9 @@ public:
   bool isScalar();
   Variable* owner();
 
-  virtual QString typeName() = 0;
+  virtual int     type();
+  virtual QString typeName();
+
   virtual QString toString(int indent = 0) = 0;
 private:
   Variable* m_varOwner;
@@ -95,8 +102,7 @@ public:
 
   virtual void set(QString);
 
-  virtual QString typeName();
-  virtual QString toString(int indent = 0);  
+  virtual QString toString(int indent = 0);
 protected:  
   QString m_value;
 };
@@ -108,10 +114,12 @@ public:
 
   void setList(VariableList_t*);
   VariableList_t* list();
+ 
+  bool initialized();
 
-  virtual QString toString(int indent = 0) = 0;
-  virtual QString typeName() = 0;
+//   virtual QString toString(int indent = 0);
 protected:  
+  bool    m_initialized;
   VariableList_t* m_list;
 };
 

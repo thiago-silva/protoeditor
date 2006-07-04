@@ -101,6 +101,15 @@ Variable* Variable::parent()
   return m_parent;
 }
 
+QString Variable::stringPath() 
+{
+  Variable* v = this;
+  QString str = v->name();
+  while((v = v->parent()) != NULL) {
+    str = v->name() + "/" + str;
+  }
+  return str;
+}
 
 //--------------------------------------------------------------
 
@@ -121,6 +130,16 @@ Variable* VariableValue::owner()
   return m_varOwner;
 }
 
+int VariableValue::type()
+{
+  return Undefined;
+}
+
+QString VariableValue::typeName()
+{
+  return VariableValue::UndefinedType;
+}
+
 bool VariableValue::isScalar()
 {
   return m_isScalar;
@@ -138,11 +157,6 @@ void VariableScalarValue::set(QString value)
   m_value = value;
 }
 
-QString VariableScalarValue::typeName()
-{
-  return VariableValue::UndefinedType;
-}
-
 QString VariableScalarValue::toString(int)
 {
   return m_value;
@@ -151,7 +165,7 @@ QString VariableScalarValue::toString(int)
 //---------------------------------------------------------------------------
 
 VariableListValue::VariableListValue(Variable* owner)
-    : VariableValue(owner), m_list(NULL) {}
+    : VariableValue(owner), m_initialized(false), m_list(0) {}
 
 VariableListValue::~VariableListValue()
 {
@@ -160,10 +174,17 @@ VariableListValue::~VariableListValue()
 
 void VariableListValue::setList(VariableList_t* list)
 {
+  m_initialized = true;
+
   delete m_list;
 
   m_list = list;
   m_list->setAutoDelete(true);
+}
+
+bool VariableListValue::initialized()
+{
+  return m_initialized;
 }
 
 VariableList_t* VariableListValue::list()
