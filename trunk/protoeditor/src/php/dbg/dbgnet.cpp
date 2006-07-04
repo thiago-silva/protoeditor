@@ -115,7 +115,8 @@ void DBGNet::requestScript(const QString& filePath, const QString& uiargs,
                  + "@clienthost:"
                  + QString::number(listenPort);
 
-    Protoeditor::self()->session()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(filePath), args);
+    QString cmd = m_debugger->langSettings()->interpreterCommand();
+    Protoeditor::self()->session()->startLocal(cmd, KURL::fromPathOrURL(filePath), args);
   }
   else
   {
