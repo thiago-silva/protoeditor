@@ -31,6 +31,10 @@ PerlSettings::PerlSettings(  )
   itemPerlCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerlCommand" ), mPerlCommand, "perl");
   addItem( itemPerlCommand, QString::fromLatin1( "PerlCommand" ) );
 
+  KConfigSkeleton::ItemString  *itemDefaultDebugger;
+  itemDefaultDebugger = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DefaultDebugger" ), mDefaultDebugger );
+  addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
+
   KConfigSkeleton::ItemBool  *itemEnabled;
   itemEnabled = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "Enabled" ), mEnabled, false );
   addItem(itemEnabled, QString::fromLatin1( "Enabled" ) );

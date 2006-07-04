@@ -30,7 +30,7 @@ class PerlSettings : public LanguageSettings
     PerlSettings();
     ~PerlSettings();
 
-    QString languageName() const
+    virtual QString languageName() const
     {
       return PerlSettings::lang;
     }
@@ -40,22 +40,33 @@ class PerlSettings : public LanguageSettings
       mEnabled = value;
     }
 
-    bool isEnabled() const
+    virtual bool isEnabled() const
     {
       return mEnabled;
+    }
+
+    void setDefaultDebugger(QString name)
+    {
+      mDefaultDebugger = name;
+    }
+
+    virtual QString defaultDebugger() const
+    {
+      return mDefaultDebugger;
     }
 
     void setInterpreterCommand(const QString& cmd) {
       mPerlCommand = cmd;
     }
 
-    QString interpreterCommand() const {
+    virtual QString interpreterCommand() const {
       return mPerlCommand ;
     }
 
   protected:
-    bool    mEnabled;
+    bool    mEnabled;    
     QString mPerlCommand;
+    QString mDefaultDebugger;
 };
 
 #endif
