@@ -82,13 +82,26 @@
 
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Start Perl/ConsoleWidget implementation<br /><br /></li>
-<li>Move language settings to the apropriate language folder?<br /></li>
+<ul type="disc"><li>PerlDBGp</li>
+<ul type="disc"><li>Sites are not persisting between runs</li>
+<li>Konqueror window is not being reused (Session.cpp)</li>
+<li>Implement Messages<br /></li></ul>
+<li>Comment the console widget (remove it)<br /><br /></li>
+<li>Move languages/settings to each folder (php, perl, etc)<br /></li>
 <li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
-<li>Maybe, ask only if the debugger is a different from the current one<br /><br /><br /></li></ul>
+<li>Maybe, ask only if the debugger is a different from the current one<br /></li></ul>
+<li>--------------------------------------------<br /></li>
+<li>PHP Xdebug</li>
+<ul type="disc"><li>Implement conditional bps and all the new stuff (http://www.xdebug.org/updates.php)<br /><br /></li></ul>
 <li>---------------<br /></li>
 <li>i18n Protoeditor::fileFilter!<br /></li>
+<li>When a site is selected, the &quot;run/debug&quot; drop down menu should be removed (the debugger used will be from the current site config anyway). The menu is only for local debugging<br /></li>
+<li>DebuggerUI should have a &quot;show/hidden&quot; button or something.</li>
+<ul type="disc"><li>Tabs should have the same &quot;show/hidden&quot; -- the user controls what he wants to use.</li>
+<li>ConsoleWidget </li>
+<ul type="disc"><li>Not nescessarily should be hidden when using PHP for instance.</li>
+<li>Should be disabled (opaque)?<br /><br /></li></ul></ul>
 <li>Make &quot;stop&quot; kill the execution process (the console)<br /></li>
 <li>XDebug doesn't add to GLOBALS argc and argv (when debugging locally+console)</li>
 <li>XDebug/Gubed doesn't allow change variable value or conditional BP</li>
@@ -130,6 +143,15 @@
 <ul type="disc"><li>Debugger settings:</li>
 <ul type="disc"><li>All debuggers must have a new entry: &quot;enabled&quot;<br />this way, the only debuggers the user uses will be loaded</li></ul>
 <li>Site settings should have the complete list of debugger available</li></ul></ul>
+</body></html>
+
+\NewEntry 2 perl implementation
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
+<ul type="disc"><li>Perl implementation issues</li>
+<ul type="disc"><li>needs DBGp implementation from komodo</li>
+<ul type="disc"><li>So far, Protoeditor limits the array children size to 300</li>
+<li>Komodo's DBGp doesn't handle stack context very well (changing the stack doesn't show variables in that context)</li>
+<li>Variables are also an issue. Everytime an index in the array/hash is used, Komodo's DBGp send it as a new variable (ie. &quot;$arr[0][1]&quot;)</li></ul></ul></ul>
 </body></html>
 
 \NewEntry 0 KDE faqs, howtos, standards
