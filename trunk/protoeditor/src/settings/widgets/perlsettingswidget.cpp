@@ -55,15 +55,32 @@ PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
   
   mainLayout->addLayout(grid);
 
+  QLabel* lbDefaultDebugger = new QLabel(this);
+  lbDefaultDebugger->setText(i18n("Default debugger:"));
+  grid->addWidget(lbDefaultDebugger, 2, 0);
+
+  m_cbDefaultDebugger = new QComboBox(this);
+
   m_debuggerSettingsList =
     Protoeditor::self()->settings()->languageSettings(PerlSettings::lang)->debuggerSettingsList();
+      
+  
+  for(QValueList<DebuggerSettingsInterface*>::iterator it = m_debuggerSettingsList.begin();
+       it != m_debuggerSettingsList.end();
+       it++) 
+  {    
+    m_debuggerMap[(*it)->debuggerLabel()] = (*it)->debuggerName();
+    m_cbDefaultDebugger->insertItem((*it)->debuggerLabel());
+  }
+
+  grid->addWidget(m_cbDefaultDebugger,2, 1);
 
   QTabWidget* debuggersTabWidget = new QTabWidget(this);
 
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    debuggersTabWidget->addTab((*it)->widget(), (*it)->name());
+    debuggersTabWidget->addTab((*it)->widget(), (*it)->debuggerLabel());
   }
 
   mainLayout->addWidget(debuggersTabWidget);
@@ -84,6 +101,13 @@ void PerlSettingsWidget::populate()
 
 
   m_ckEnabled->setChecked(settings->isEnabled());
+
+  if(!settings->defaultDebugger().isEmpty())
+  {
+    m_cbDefaultDebugger->setCurrentText(
+      settings->debuggerSettings(settings->defaultDebugger())->debuggerLabel());
+  }
+
   m_edPerlCommand->setText(settings->interpreterCommand());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
@@ -97,8 +121,10 @@ void PerlSettingsWidget::updateSettings()
   PerlSettings* settings = 
     dynamic_cast<PerlSettings*>(Protoeditor::self()->settings()->languageSettings(PerlSettings::lang));
 
-
   settings->setEnabled(m_ckEnabled->isChecked());
+
+  settings->setDefaultDebugger(m_debuggerMap[m_cbDefaultDebugger->currentText()]);
+
   settings->setInterpreterCommand(m_edPerlCommand->text());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;

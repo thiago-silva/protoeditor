@@ -22,6 +22,7 @@
 
 #include <qwidget.h>
 #include <qvaluelist.h>
+#include <qmap.h>
 
 class QCheckBox;
 class QComboBox;
@@ -45,8 +46,10 @@ private slots:
 private:
   QCheckBox         *m_ckEnabled;
   KLineEdit         *m_edPerlCommand;
+  QComboBox         *m_cbDefaultDebugger;
 
-  QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;
+  QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;  
+  QMap<QString, QString> m_debuggerMap;
 };
 
 #endif
