@@ -26,6 +26,7 @@
 #include <klocale.h>
 #include "watchlistview.h"
 #include "variable.h"
+#include "debuggerui.h"
 
 WatchTab::WatchTab(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -51,7 +52,7 @@ WatchTab::WatchTab(QWidget *parent, const char *name)
   addWatchLayout->addItem(spacer);
   watchTabLayout->addLayout(addWatchLayout);
 
-  m_watchList = new WatchListView(this);
+  m_watchList = new WatchListView(DebuggerUI::WatchListID, this);
   watchTabLayout->addWidget(m_watchList);
 
   connect(m_btAddWatch, SIGNAL(clicked()),
