@@ -162,7 +162,7 @@ void MainWindow::setupActions()
   (void)new KAction(i18n("Step Out"), "dbgstepout", "F12", Protoeditor::self(),
                     SLOT(slotAcDebugStepOut()), actionCollection(), "debug_step_out");
 
- (void)new KAction(i18n("Profile"), "math_sum", "Alt+P", 
+ (void)new KAction(i18n("Profile (PHP+DBG)"), "math_sum", "Alt+P", 
       this, SLOT(slotAcProfileScript()), actionCollection(), "script_profile");
 
   connect(this, SIGNAL(sigProfileScript(const QString&)), Protoeditor::self(),
