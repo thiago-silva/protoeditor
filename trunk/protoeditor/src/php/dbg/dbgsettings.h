@@ -28,7 +28,7 @@ class DBGSettingsWidget;
 class DBGSettings : public DebuggerSettingsInterface
 {
   public:
-    DBGSettings(const QString& name);
+    DBGSettings(const QString& name, const QString& label, LanguageSettings*);
     ~DBGSettings();
 
     bool breakOnLoad() const

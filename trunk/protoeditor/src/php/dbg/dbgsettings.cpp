@@ -23,8 +23,8 @@
 
 #include <qwidget.h>
 
-DBGSettings::DBGSettings(const QString& name)
-  : DebuggerSettingsInterface(), m_name(name)
+DBGSettings::DBGSettings(const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(name, label, langs)
 {
   m_widget = 0;
   setCurrentGroup( QString::fromLatin1( m_name ) );
