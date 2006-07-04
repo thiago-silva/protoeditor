@@ -26,15 +26,18 @@
 
 class GBSettings;
 class GBNet;
+class LanguageSettings;
 
 class DebuggerGB : public AbstractDebugger
 {
   Q_OBJECT
 public:
-  DebuggerGB();
+  DebuggerGB(LanguageSettings*);
   virtual ~DebuggerGB();
 
   virtual QString name() const;
+  virtual QString label() const;
+
   virtual bool isRunning() const;
   virtual void init();
 
@@ -59,9 +62,6 @@ public:
   virtual void addWatches(const QStringList&);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
-
-  virtual void profile(const QString&, const QString&, bool local);
-
 
   GBSettings* settings();
 

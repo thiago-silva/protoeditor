@@ -37,14 +37,13 @@
 #include "phpvariableparser.h"
 
 
-DebuggerGB::DebuggerGB()
-    : AbstractDebugger(), m_name("Gubed"), m_isRunning(false), m_isJITActive(false),
+DebuggerGB::DebuggerGB(LanguageSettings* langs)
+    : AbstractDebugger(langs), m_name("gubed"), m_isRunning(false), m_isJITActive(false),
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_gbSettings(0), m_net(0)
 {
-  m_gbSettings = new GBSettings(m_name);
-
-  registerSettings(PHPSettings::lang, m_gbSettings);
+  m_gbSettings = new GBSettings(name(), label(), langSettings());
+  langSettings()->registerDebuggerSettings(name(), m_gbSettings);
 
 
   m_currentExecutionPoint = new DebuggerExecutionPoint();
@@ -60,6 +59,8 @@ DebuggerGB::DebuggerGB()
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
+
+  slotSettingsChanged();
 }
 
 
@@ -72,6 +73,11 @@ DebuggerGB::~DebuggerGB()
 QString DebuggerGB::name() const
 {
   return m_name;
+}
+
+QString DebuggerGB::label() const
+{
+  return i18n("Gubed");
 }
 
 bool DebuggerGB::isRunning() const
@@ -243,10 +249,6 @@ void DebuggerGB::removeWatch(const QString& expression)
     m_wathcesList.remove(it);
   }
 }
-
-void DebuggerGB::profile(const QString&, const QString&, bool)
-{}
-
 
 void DebuggerGB::slotSettingsChanged()
 {
@@ -423,7 +425,7 @@ void DebuggerGB::slotNewConnection()
   //to update the m_net site
   m_net->setSite(Protoeditor::self()->settings()->currentSiteSettings());
 
-  //tell debuggermanager to cleanup any pending session
+  //tell everyone  to cleanup any pending session
   emit sigJITStarted(this);
 }
 
