@@ -1,3 +1,3 @@
 INCLUDES = 
 METASOURCES = AUTO
-SUBDIRS = perldebugger
+SUBDIRS = perldb perldbgp
