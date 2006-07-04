@@ -23,12 +23,12 @@
 
 #include <qwidget.h>
 
-GBSettings::GBSettings(const QString& name)
-  : DebuggerSettingsInterface(), m_name(name)
+GBSettings::GBSettings(const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(name, label, langs)
 {
   m_widget = 0;
   
-  setCurrentGroup( QString::fromLatin1( m_name ) );
+  setCurrentGroup( QString::fromLatin1( debuggerName() ) );
 
   KConfigSkeleton::ItemInt  *itemListenPort;
   itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, GB_DEFAULT_PORT );
