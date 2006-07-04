@@ -28,7 +28,7 @@ class XDSettingsWidget;
 class XDSettings : public DebuggerSettingsInterface
 {
   public:
-    XDSettings(const QString& name);
+    XDSettings(const QString& name, const QString& label, LanguageSettings*);
     ~XDSettings();
 
     int listenPort() const
@@ -49,10 +49,6 @@ class XDSettings : public DebuggerSettingsInterface
       return mBreakOnLoad;
     }
 
-    virtual QString name() {
-      return m_name;
-    }
-
     virtual void loadValuesFromWidget();
     virtual DebuggerTab* widget();
   protected:
@@ -62,8 +58,6 @@ class XDSettings : public DebuggerSettingsInterface
     bool mEnableJIT;
     bool mSendSuperGlobals;
     bool mBreakOnLoad;
-
-    QString m_name;
   private:
     XDSettingsWidget* m_widget;
 };
