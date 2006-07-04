@@ -37,6 +37,7 @@ public:
   virtual bool    isEnabled()          const = 0;
   virtual QString languageName()       const = 0;
   virtual QString interpreterCommand() const = 0;
+  virtual QString defaultDebugger()    const = 0;
 
   virtual void writeConfig();
 
