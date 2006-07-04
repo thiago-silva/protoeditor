@@ -31,6 +31,8 @@
 #include "messagelistview.h"
 #include "watchlistview.h"
 #include "combostack.h"
+#include "consolewidget.h"
+#include "debuggerstack.h"
 
 
 DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
@@ -40,7 +42,7 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
   QWidget* globalVarTab = new QWidget(this);
   QVBoxLayout* globalVarTabLayout = new QVBoxLayout(globalVarTab, 1, 1);
 
-  m_globalVariableListView = new VariableListView(globalVarTab);
+  m_globalVariableListView = new VariableListView(DebuggerUI::GlobalVarListID, globalVarTab);
   globalVarTabLayout->addWidget(m_globalVariableListView);
   insertTab(globalVarTab, i18n("Global"));
 
@@ -74,11 +76,21 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
   m_edOutput->setPaper(QBrush(QColor("white")));
   insertTab(outputTab, i18n("Output"));
 
+  m_console = new ConsoleWidget(this);
+  insertTab(m_console, i18n("Console"));
+
+
   connect(m_globalVariableListView, SIGNAL(sigVarModified(Variable*)),
     this, SIGNAL(sigGlobalVarModified(Variable*)));
 
+  connect(m_globalVariableListView, SIGNAL(sigNeedChildren(int, Variable*)),
+    this, SLOT(slotNeedChildren( int, Variable* )));
+
   connect(m_localTab->localVarList(), SIGNAL(sigVarModified(Variable*)),
     this, SIGNAL(sigLocalVarModified(Variable*)));
+
+  connect(m_localTab->localVarList(), SIGNAL(sigNeedChildren(int, Variable*)),
+    this, SLOT(slotNeedChildren( int, Variable* )));
 
   connect(m_localTab->comboStack(), 
       SIGNAL(changed(DebuggerExecutionPoint*, DebuggerExecutionPoint*)),
@@ -92,6 +104,9 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
 
   connect(m_watchTab->watchListView(), SIGNAL(sigWatchRemoved(Variable*)),
     this, SIGNAL(sigWatchRemoved(Variable*)));
+
+  connect(m_watchTab->watchListView(), SIGNAL(sigNeedChildren(int, Variable*)),
+    this, SLOT(slotNeedChildren( int, Variable* )));
 
   connect(m_breakpointListView, SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
     this, SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)));
@@ -107,6 +122,9 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
 
   connect(m_messageListView, SIGNAL(sigDoubleClick(const KURL&, int)),
     this, SIGNAL(sigGotoFileAndLine(const KURL&, int)));
+
+  connect(m_console, SIGNAL(sigExecuteCmd(const QString&)),
+    this, SIGNAL(sigExecuteCmd(const QString&)));
 }
 
 DebuggerUI::~DebuggerUI()
@@ -123,6 +141,13 @@ void DebuggerUI::setGlobalVariables(VariableList_t* vars)
 void DebuggerUI::setLocalVariables(VariableList_t* vars)
 {
   m_localTab->localVarList()->setVariables(vars);
+}
+
+void DebuggerUI::updateVariable(Variable* var, int scopeId)
+{
+  //TODO!
+  m_localTab->localVarList()->updateVariable(var);
+  
 }
 
 //ComboStack
@@ -205,6 +230,17 @@ void DebuggerUI::appendOutput(const QString& str)
   m_edOutput->append(str);
 }
 
+//Console
+void DebuggerUI::appendConsoleDebuggerText(const QString& str)
+{
+  m_console->appendDebuggerText(str);
+}
+
+void DebuggerUI::appendConsoleUserText(const QString& str)
+{
+  m_console->appendUserText(str);
+}
+
 void DebuggerUI::prepareForSession()
 {
   m_globalVariableListView->setReadOnly(false);
@@ -229,5 +265,21 @@ void DebuggerUI::cleanSession()
   m_watchTab->watchListView()->setReadOnly(true);
 }
 
+void DebuggerUI::slotNeedChildren(int varlistID, Variable* var)
+{
+  switch(varlistID)
+  {
+    case DebuggerUI::GlobalVarListID:
+      emit sigNeedChildren(DebuggerStack::GlobalScopeID, var);
+      break;
+    case DebuggerUI::LocalVarListID:
+    case DebuggerUI::WatchListID:
+      emit sigNeedChildren(DebuggerStack::LocalScopeID, var);
+      break;
+    default:
+      //error
+      break;
+  }
+}
 
 #include "debuggerui.moc"

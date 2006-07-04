@@ -38,6 +38,7 @@ class WatchTab;
 class BreakpointListView;
 class MessageListView;
 class KTextEdit;
+class ConsoleWidget;
 
 /* Facade class */
 
@@ -45,6 +46,8 @@ class DebuggerUI : public KTabWidget
 {
   Q_OBJECT
 public:
+  enum { GlobalVarListID, LocalVarListID, WatchListID };
+
   DebuggerUI(QWidget* parent, const char *name = 0);
   ~DebuggerUI();
 
@@ -53,6 +56,9 @@ public:
 
   //Local VariablesListView
   void setLocalVariables(VariableList_t* vars);
+
+  //all variables
+  void updateVariable(Variable*, int);
 
   //ComboStack
   void setStack(DebuggerStack*);
@@ -78,10 +84,17 @@ public:
   //Output
   void appendOutput(const QString&);
 
+  //Console
+  void appendConsoleDebuggerText(const QString&);
+  void appendConsoleUserText(const QString&);
+
   void prepareForSession();
   void cleanSession();
 
 signals:
+  //All variableslistview
+  void sigNeedChildren(int, Variable*);
+
   //Global VariableListView
   void sigGlobalVarModified(Variable*);
 
@@ -101,6 +114,9 @@ signals:
   void sigBreakpointChanged(DebuggerBreakpoint*);
   void sigBreakpointRemoved(DebuggerBreakpoint*);
 
+  //Console
+  void sigExecuteCmd(const QString&);
+
   void sigGotoFileAndLine(const KURL&, int);
 
 public slots:
@@ -108,6 +124,7 @@ public slots:
   void slotBreakpointMarked(const KURL&, int, bool);
   void slotBreakpointUnmarked(const KURL&, int);
 
+  void slotNeedChildren(int, Variable*);
 private:
   VariableListView    *m_globalVariableListView;
   LocalTab            *m_localTab;
@@ -115,6 +132,7 @@ private:
   BreakpointListView  *m_breakpointListView;
   MessageListView     *m_messageListView;  
   KTextEdit           *m_edOutput;
+  ConsoleWidget       *m_console;
 };
 
 #endif
