@@ -60,8 +60,11 @@ private:
    Its used mainly by the Stack ComboBox, and also is responsable to inform
    where is the active point of execution.
 */
-class DebuggerStack{
+class DebuggerStack
+{
 public:
+  enum { GlobalScopeID, LocalScopeID };
+
   typedef QPtrList<DebuggerExecutionPoint> DebuggerExecutionPointList_t;
   DebuggerStack();
   ~DebuggerStack();
