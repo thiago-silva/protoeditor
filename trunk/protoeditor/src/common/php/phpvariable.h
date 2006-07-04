@@ -53,16 +53,30 @@ private:
 
 //---------------------------------------------------------------
 
-class PHPArrayValue : public VariableListValue {
+class PHPListValue : public VariableListValue {
 public:
-  PHPArrayValue(Variable* owner);
-  virtual ~PHPArrayValue();
+  PHPListValue(Variable* owner, int type);
+  virtual ~PHPListValue();
 
-  virtual QString toString(int indent = 0);
-  virtual QString typeName();
+  enum { Array, Object };
+
+  virtual int     type();
+private:
+  int m_type;
 };
 
-class PHPObjectValue : public VariableListValue {
+class PHPArrayValue : public PHPListValue {
+public:  
+
+  PHPArrayValue(Variable* owner);
+  virtual ~PHPArrayValue();  
+  
+  virtual QString typeName();  
+
+  virtual QString toString(int indent = 0);
+};
+
+class PHPObjectValue : public PHPListValue {
 public:
   PHPObjectValue(Variable* owner);
   virtual ~PHPObjectValue();

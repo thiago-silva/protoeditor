@@ -106,13 +106,43 @@ int PHPScalarValue::type()
 
 //----------------------------------------------------------------
 
+PHPListValue::PHPListValue(Variable* owner, int type)
+  : VariableListValue(owner), m_type(type)
+{
+}
+
+PHPListValue::~PHPListValue()
+{
+}
+
+int PHPListValue::type()
+{
+  return m_type;
+}
+
+//----------------------------------------------------------------
+
 PHPArrayValue::PHPArrayValue(Variable* owner)
-  : VariableListValue(owner)
+  : PHPListValue(owner, PHPListValue::Array)
 {
 }
 
 PHPArrayValue::~PHPArrayValue()
 {
+}
+
+
+QString PHPArrayValue::typeName()
+{  
+  QString s = i18n("Array");
+  s += "[";
+  if(m_list) {
+    s += QString::number(m_list->count()) + "]";
+  } else {
+    s += "0]";
+  }
+
+  return s;
 }
 
 QString PHPArrayValue::toString(int indent)
@@ -142,23 +172,11 @@ QString PHPArrayValue::toString(int indent)
   return s;
 }
 
-QString PHPArrayValue::typeName()
-{  
-  QString s = i18n("Array");
-  s += "[";
-  if(m_list) {
-    s += QString::number(m_list->count()) + "]";
-  } else {
-    s += "0]";
-  }
-
-  return s;
-}
 
 //----------------------------------------------------------------
 
 PHPObjectValue::PHPObjectValue(Variable* owner)
-  : VariableListValue(owner)
+  : PHPListValue(owner, PHPListValue::Object)
 {
 }
 
