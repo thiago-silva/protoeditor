@@ -86,7 +86,8 @@ void GBNet::startDebugging(const QString& filePath, const QString& uiargs,
     {
       args += " " + uiargs;
     }
-    Protoeditor::self()->session()->startLocal(PHPSettings::lang, KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
+    QString cmd = m_debugger->langSettings()->interpreterCommand();
+    Protoeditor::self()->session()->startLocal(cmd, KURL::fromPathOrURL(m_debugger->settings()->startSessionScript()), args);
   }
   else
   {
