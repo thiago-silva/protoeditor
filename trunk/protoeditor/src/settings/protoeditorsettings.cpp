@@ -77,7 +77,9 @@ ProtoeditorSettings::~ProtoeditorSettings()
      l = it.data();
      delete l;
   }
-  
+
+  clearSites();
+
   delete m_extApptSettings;
 }
 
