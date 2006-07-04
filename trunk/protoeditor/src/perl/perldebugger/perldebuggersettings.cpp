@@ -21,15 +21,15 @@
 #include "perldebuggersettings.h"
 #include "perldebuggersettingswidget.h"
 
-PerlDebuggerSettings::PerlDebuggerSettings(const QString& name)
-  : DebuggerSettingsInterface(), m_name(name)
+PerlDebuggerSettings::PerlDebuggerSettings(const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(name, label, langs)
 {
   m_widget = 0;
   
-  setCurrentGroup( QString::fromLatin1( m_name ) );
+  setCurrentGroup( QString::fromLatin1( debuggerName() ) );
 
   KConfigSkeleton::ItemInt  *itemListenPort;
-  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, 9000 );
+  itemListenPort = new KConfigSkeleton::ItemInt( currentGroup(), QString::fromLatin1( "ListenPort" ), mListenPort, 7680 );
   addItem( itemListenPort, QString::fromLatin1( "ListenPort" ) );
 
   KConfigSkeleton::ItemBool  *itemEnableJIT;

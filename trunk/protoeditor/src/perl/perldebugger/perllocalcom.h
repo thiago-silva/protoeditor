@@ -17,77 +17,38 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLDEBUGGER_H
-#define PERLDEBUGGER_H
 
-#include "abstractdebugger.h"
+#ifndef PERLLOCALCOM_H
+#define PERLLOCALCOM_H
 
-#include <qstring.h>
-#include <qstringlist.h>
+#include "perlcom.h"
 
-class PerlDebuggerSettings;
-class PerlCom;
-class LanguageSettings;
+class KProcess;
+class QString;
 
-class PerlDebugger : public AbstractDebugger
+class PerlLocalCom : public PerlCom 
 {
   Q_OBJECT
 public:
-  PerlDebugger(LanguageSettings*);
-  virtual ~PerlDebugger();
+  PerlLocalCom();
+  ~PerlLocalCom();
 
-  virtual QString name()   const;
-  virtual QString label()   const;
-
-  virtual bool isRunning() const;
-
-  virtual void init();
-
-  virtual void start(const QString&, const QString& args, bool local);
-  virtual void continueExecution();
-  virtual void stop();
-  virtual void stepInto();
-  virtual void stepOver();
-  virtual void stepOut();
-
-  virtual void runToCursor(const QString&, int);
-
-  virtual void addBreakpoints(const QValueList<DebuggerBreakpoint*>&);
-
-  virtual void addBreakpoint(DebuggerBreakpoint*);
-
-  virtual void changeBreakpoint(DebuggerBreakpoint*);
-  virtual void removeBreakpoint(DebuggerBreakpoint*);
-
-  virtual void changeCurrentExecutionPoint(DebuggerExecutionPoint*);
-
-  virtual void modifyVariable(Variable*, DebuggerExecutionPoint*);
-
-  virtual void addWatches(const QStringList&);
-  virtual void addWatch(const QString&);
-  virtual void removeWatch(const QString&);
-
+  virtual void startDebugging(const QString& filePath, const QString& args);
+  virtual void requestContinue();
+  virtual void requestStop();
+  virtual void requestRunToCursor(const QString& filePath, int line);
+  virtual void requestStepInto();
+  virtual void requestBreakpoint(DebuggerBreakpoint*);
+  virtual void requestBreakpointRemoval(int);
+  virtual void requestWatch(const QString&);
   virtual void executeCmd(const QString&);
 
 private slots:
-  void slotSettingsChanged();
-  void slotParseOutput(const QString&);
-private:
+  void slotProcessExited(KProcess*);
+  void slotReceivedOutput(KProcess*, char*, int);
 
-  bool startJIT();
-  void stopJIT();
-
-  QString m_name;
-
-  bool m_isRunning;
-  bool m_isJITActive;
-  int m_listenPort;
-    
-  PerlCom* m_perlCom;
-
-  PerlDebuggerSettings *m_perlDebuggerSettings;  
-
-  QStringList  m_wathcesList;
+  KProcess *m_process;
+  bool      m_processRunning;  
 };
 
 #endif

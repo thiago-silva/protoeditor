@@ -18,50 +18,35 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef PERLDEBUGGERSETTINS_H
-#define PERLDEBUGGERSETTINS_H
+#ifndef PERLCOM_H
+#define PERLCOM_H
 
-#include "debuggersettingsinterface.h"
+#include <qobject.h>
 
-class PerlDebuggerSettingsWidget;
-class LanguageSettings;
+class DebuggerBreakpoint;
 
-class PerlDebuggerSettings : public DebuggerSettingsInterface
+class PerlCom : public QObject
 {
+  Q_OBJECT
 public:
-  PerlDebuggerSettings(const QString& name, const QString& label, LanguageSettings*);
-  ~PerlDebuggerSettings();
+  PerlCom() : QObject() {};
+  virtual ~PerlCom() {};
 
-    int listenPort() const
-    {
-      return mListenPort;
-    }
+  virtual void startDebugging(const QString& filePath, const QString& args) = 0;
+  virtual void requestContinue() = 0;
+  virtual void requestStop() = 0;
+  virtual void requestRunToCursor(const QString& filePath, int line) = 0;
+  virtual void requestStepInto() = 0;
+  virtual void requestBreakpoint(DebuggerBreakpoint*) = 0;
+  virtual void requestBreakpointRemoval(int) = 0;
+//   virtual void requestVariables(int, int) = 0;
+  virtual void requestWatch(const QString&) = 0;
 
-    bool enableJIT() const
-    {
-      return mEnableJIT;
-    }
+  virtual void executeCmd(const QString&) = 0;
 
-    bool sendSuperGlobals() const   
-    {
-      return mSendSuperGlobals;
-    }
-
-    bool breakOnLoad() const 
-    {
-      return mBreakOnLoad;
-    }
-
-    virtual void loadValuesFromWidget();
-    virtual DebuggerTab* widget();
-  protected:
-
-    int  mListenPort;
-    bool mEnableJIT;
-    bool mSendSuperGlobals;
-    bool mBreakOnLoad;
-  private:
-    PerlDebuggerSettingsWidget* m_widget;
+signals:
+  void sigOutput(const QString&);
+  void sigError(const QString&);
 };
 
 #endif
