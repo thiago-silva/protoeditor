@@ -27,8 +27,8 @@
 #include <klocale.h>
 
 
-WatchListView::WatchListView(QWidget *parent, const char *name)
- : VariableListView(parent, name)
+WatchListView::WatchListView(int id, QWidget *parent, const char *name)
+ : VariableListView(id, parent, name)
 {
 
 }

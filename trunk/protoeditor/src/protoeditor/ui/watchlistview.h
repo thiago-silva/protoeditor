@@ -30,7 +30,7 @@ class WatchListView : public VariableListView
 {
 Q_OBJECT
 public:
-  WatchListView(QWidget *parent = 0, const char *name = 0);
+  WatchListView(int id, QWidget *parent = 0, const char *name = 0);
   virtual ~WatchListView();
 
   void addWatch(Variable*);
@@ -40,7 +40,7 @@ public:
 
   void reset();
 signals:  
-  void sigWatchRemoved(Variable*);
+  void sigWatchRemoved(Variable*);  
 
 protected slots:
   void slotContextMenuRequested(QListViewItem* item, const QPoint& p, int);
