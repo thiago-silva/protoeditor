@@ -65,8 +65,9 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
   for(QValueList<DebuggerSettingsInterface*>::iterator it = m_debuggerSettingsList.begin();
        it != m_debuggerSettingsList.end();
        it++) 
-  {
-    m_cbDefaultDebugger->insertItem((*it)->name());
+  {    
+    m_debuggerMap[(*it)->debuggerLabel()] = (*it)->debuggerName();
+    m_cbDefaultDebugger->insertItem((*it)->debuggerLabel());
   }
 
   grid->addWidget(m_cbDefaultDebugger,2, 1);
@@ -78,7 +79,7 @@ PHPSettingsWidget::PHPSettingsWidget(QWidget *parent, const char *name)
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    debuggersTabWidget->addTab((*it)->widget(), (*it)->name());
+    debuggersTabWidget->addTab((*it)->widget(), (*it)->debuggerLabel());
   }
 
   mainLayout->addWidget(debuggersTabWidget);
@@ -102,7 +103,8 @@ void PHPSettingsWidget::populate()
 
   if(!settings->defaultDebugger().isEmpty())
   {
-    m_cbDefaultDebugger->setCurrentText(settings->defaultDebugger());
+    m_cbDefaultDebugger->setCurrentText(
+      settings->debuggerSettings(settings->defaultDebugger())->debuggerLabel());
   }
   
   m_edPHPCommand->setText(settings->interpreterCommand());
@@ -121,7 +123,8 @@ void PHPSettingsWidget::updateSettings()
 
   settings->setEnabled(m_ckEnabled->isChecked());
 
-  settings->setDefaultDebugger(m_cbDefaultDebugger->currentText());
+  settings->setDefaultDebugger(m_debuggerMap[m_cbDefaultDebugger->currentText()]);
+
   settings->setInterpreterCommand(m_edPHPCommand->text());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;

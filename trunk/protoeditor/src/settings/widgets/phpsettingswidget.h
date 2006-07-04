@@ -48,6 +48,7 @@ private:
   QComboBox         *m_cbDefaultDebugger;
 
   QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;
+  QMap<QString, QString> m_debuggerMap;
 };
 
 #endif
