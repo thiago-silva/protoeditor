@@ -99,8 +99,9 @@ private:
   
   QWidget* m_tab;
   KTextEditor::View* m_view;
+
   //we need this if the user edit the file when debugging
-  //Since debuggermanager would try to unmark the execmark that
+  //Since protoeditor would try to unmark the execmark that
   //is no longer there (kate takes care of changing the line
   //of the mark when edited) causing to have more than 2 execMarks and, after the debug ends
   //leaving a exec mark showing
