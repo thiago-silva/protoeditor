@@ -23,27 +23,40 @@
 #include "debuggerxd.h"
 #include "debuggergb.h"
 #include "perldebugger.h"
+#include "debuggerperldbgp.h"
 
+#include "protoeditor.h"
+#include "protoeditorsettings.h"
+#include "phpsettings.h"
+#include "perlsettings.h"
 
 DebuggerFactory::DebuggerFactory()
 {
   AbstractDebugger* debugger;
 
+  LanguageSettings* lang;
+
   //PHP/DBG
-  debugger = new DebuggerDBG();
+  lang = Protoeditor::self()->settings()->languageSettings(PHPSettings::lang);
+  debugger = new DebuggerDBG(lang);
   registerDebugger(debugger);
 
   //PHP/Xdebug
-  debugger = new DebuggerXD();
+  debugger = new DebuggerXD(lang);
   registerDebugger(debugger);
 
   //PHP/Gubed
-  debugger = new DebuggerGB();
+  debugger = new DebuggerGB(lang);
   registerDebugger(debugger);
 
   //Perl Local
-  debugger = new PerlDebugger();
-  registerDebugger(debugger);
+//   lang = Protoeditor::self()->settings()->languageSettings(PerlSettings::lang);
+//   debugger = new PerlDebugger(lang);
+//   registerDebugger(debugger);
+
+  lang = Protoeditor::self()->settings()->languageSettings(PerlSettings::lang);
+  debugger = new DebuggerPerlDBGP(lang);
+  registerDebugger(debugger);  
 }
 
 
