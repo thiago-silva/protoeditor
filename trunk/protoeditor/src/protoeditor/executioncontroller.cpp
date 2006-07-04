@@ -48,6 +48,7 @@ ExecutionController::ExecutionController()
 
 ExecutionController::~ExecutionController()
 {
+  delete m_debuggerFactory;
 }
 
 void ExecutionController::init()
@@ -59,7 +60,7 @@ QString ExecutionController::currentDebuggerName()
 {
   if(m_activeDebugger) 
   {
-    return m_activeDebugger->name();
+    return m_activeDebugger->langSettings()->languageName() + " " + m_activeDebugger->label();
   }
   else
   {
@@ -113,12 +114,12 @@ void ExecutionController::executeScript(const QString& langName, const QString& 
 
   QString cmd = Protoeditor::self()->settings()->languageSettings(langName)->interpreterCommand();
 
-  Protoeditor::self()->session()->startLocal(langName, url, args);  
+  Protoeditor::self()->session()->startLocal(cmd, url, args);  
 }
 
 
 
-bool ExecutionController::debugPrologue(const QString& debuggerName, bool willProfile) 
+bool ExecutionController::debugPrologue(const QString& langName, bool willProfile) 
 {
   //1: check if there is a debug session running
   //  -if yes, send a continueExecution()
@@ -177,7 +178,15 @@ bool ExecutionController::debugPrologue(const QString& debuggerName, bool willPr
   }
   else
   {
-    m_activeDebugger = m_debuggerFactory->getDebugger(debuggerName);
+    if(!checkForOpenedFile())
+    {
+      //could not in any way have a opened file to debug
+      return false;
+    }
+
+    m_activeDebugger = 
+      m_debuggerFactory->getDebugger(
+        Protoeditor::self()->settings()->languageSettings(langName)->defaultDebugger());    
   }  
   
   if(!m_activeDebugger)
@@ -355,6 +364,22 @@ void ExecutionController::slotJITStarted(AbstractDebugger* debugger)
   if(m_activeDebugger && (debugger != m_activeDebugger) && m_activeDebugger->isRunning())
   {
     m_activeDebugger->stop();
+  }
+}
+
+void ExecutionController::slotExecuteCmd(const QString& cmd)
+{
+  if(m_activeDebugger)
+  {
+    m_activeDebugger->executeCmd(cmd);
+  }  
+}
+
+void ExecutionController::slotNeedChildren(int varlistID, Variable* var)
+{
+  if(m_activeDebugger)
+  {
+    m_activeDebugger->getChildren(varlistID, var);
   }
 }
 
