@@ -110,7 +110,7 @@ void SiteSettingsWidget::slotAdd()
     } else {
       addSite(dialog->name(), dialog->url(),
               dialog->remoteBaseDir(), dialog->localBaseDir(), 
-              dialog->defaultFile(),dialog->debuggerNme(),
+              dialog->defaultFile(),dialog->debuggerName(),
               dialog->mappings());
       break;
     }
@@ -134,7 +134,7 @@ void SiteSettingsWidget::slotModify()
   if(dialog->exec() == QDialog::Accepted) {
     modifySite(dialog->name(), dialog->url(),
                dialog->remoteBaseDir(), dialog->localBaseDir(), 
-               dialog->defaultFile(), dialog->debuggerNme(),
+               dialog->defaultFile(), dialog->debuggerName(),
                dialog->mappings());
   }
   delete dialog;
