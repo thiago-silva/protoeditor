@@ -19,11 +19,10 @@
  ***************************************************************************/
  
 #include "protoeditorsettings.h"
-#include "phpsettings.h"
-#include "perlsettings.h"
 #include "sitesettings.h"
 #include "extappsettings.h"
 #include "debuggersettingsinterface.h"
+#include "languagesettings.h"
 
 #include <kglobal.h>
 #include <kconfig.h>
@@ -77,8 +76,6 @@ ProtoeditorSettings::~ProtoeditorSettings()
      l = it.data();
      delete l;
   }
-
-  clearSites();
 
   delete m_extApptSettings;
 }
