@@ -87,8 +87,6 @@ DBGSettingsWidget::DBGSettingsWidget(DBGSettings* settings, QWidget *parent, con
   mainLayout->addWidget(groupbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-
-  setLangEnabled(false);
 }
 
 DBGSettingsWidget::~DBGSettingsWidget() {}

@@ -34,8 +34,8 @@
 
 #include "protoeditor.h"
 #include "sitesettings.h"
-#include "phpsettings.h"
 #include "session.h"
+#include "languagesettings.h"
 
 #include <klocale.h>
 #include <kdebug.h>
