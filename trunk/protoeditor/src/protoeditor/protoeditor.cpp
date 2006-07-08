@@ -35,6 +35,7 @@
 #include "executioncontroller.h"
 
 #include "debuggerfactory.h"
+#include "configdlg.h"
 
 #include <kaction.h>
 #include <kcombobox.h>
@@ -79,11 +80,13 @@ Protoeditor::~Protoeditor()
 
   //start getting rid of things
   
+  delete m_executionController;
+
   delete m_window;
+  delete m_configDlg;
   delete m_settings;
   delete m_session;
-
-  delete m_executionController;
+  
   delete m_dataController;
 }
 
@@ -103,25 +106,42 @@ void Protoeditor::dispose()
 void Protoeditor::init()
 {
   m_settings = new ProtoeditorSettings();
-  m_session = new Session();
-
-  registerLanguages();
+  m_session = new Session();  
+  
 
   m_dataController = new DataController();  
 
   m_executionController = new ExecutionController();
+  
+  registerLanguages();
 
-  m_executionController->init();  
+  m_executionController->init();
+
+  m_configDlg = new ConfigDlg();
 
   m_window = new MainWindow();
 
   connect(Protoeditor::self()->session(), SIGNAL(sigError(const QString&)),
       this, SLOT(slotError(const QString&)));
 
+  //mainwindow
+  connect(m_window, SIGNAL(sigExecuteScript(const QString&)), this,
+      SLOT(slotAcExecuteScript(const QString&)));
 
+  connect(m_window, SIGNAL(sigDebugScript(const QString&)), this,
+      SLOT(slotAcDebugStart(const QString&)));
+
+  connect(m_window, SIGNAL(sigDebugScript()), this,
+      SLOT(slotAcDebugStart()));
+
+  connect(m_window, SIGNAL(sigProfileScript(const QString&)), this,
+      SLOT(slotAcProfileScript(const QString&)));
+
+  //settings
   connect(m_settings, SIGNAL(sigSettingsChanged()),
           this, SLOT(slotSettingsChanged()));
 
+  //editor ui
   connect(m_window->editorUI(), SIGNAL(sigFirstPage()),
           this, SLOT(slotFirstDocumentOpened()));
 
@@ -197,7 +217,7 @@ void Protoeditor::init()
 
   //setup the argument toolbar
   m_window->argumentCombo()->insertStringList(m_settings->argumentsHistory());
-  m_window->argumentCombo()->clearEdit();  
+  m_window->argumentCombo()->clearEdit();    
 }
 
 MainWindow* Protoeditor::mainWindow()
@@ -233,6 +253,11 @@ ExecutionController* Protoeditor::executionController()
 DataController*  Protoeditor::dataController()
 {
   return m_dataController;
+}
+
+ConfigDlg* Protoeditor::configDlg()
+{
+  return m_configDlg;
 }
 
 void Protoeditor::openFile()
@@ -388,9 +413,8 @@ void Protoeditor::slotAcQuit()
 /*********** Script Menu Slots *********************/
 
 void Protoeditor::slotAcExecuteScript(const QString& langName)
-{  
-  m_executionController->executeScript(langName, m_window->argumentCombo()->currentText());
-  m_window->statusBar()->setDebugMsg(langName + i18n(" execution"));
+{
+  m_executionController->executeScript(langName, m_window->argumentCombo()->currentText());  
 }
 
 void Protoeditor::slotAcDebugStart(const QString& langName)
@@ -400,10 +424,22 @@ void Protoeditor::slotAcDebugStart(const QString& langName)
                                   , m_settings->currentSiteSettings()?false:true);
 }
 
+void Protoeditor::slotAcDebugStart()
+{
+  m_executionController->debugStart(m_window->argumentCombo()->currentText()
+                                  , m_settings->currentSiteSettings()?false:true);
+}
+
 void Protoeditor::slotAcProfileScript(const QString& langName)
 {
   m_executionController->profileScript(langName
                                   , m_window->argumentCombo()->currentText()
+                                  , m_settings->currentSiteSettings()?false:true);
+}
+
+void Protoeditor::slotAcProfileScript()
+{
+  m_executionController->profileScript(m_window->argumentCombo()->currentText()
                                   , m_settings->currentSiteSettings()?false:true);
 }
 
@@ -483,7 +519,7 @@ void Protoeditor::slotError(const QString& message)
 void Protoeditor::registerLanguages()
 {
   m_settings->registerLanguage(new PHPSettings());
-  m_settings->registerLanguage(new PerlSettings());
+  m_settings->registerLanguage(new PerlSettings());  
 }
 
 void Protoeditor::loadLanguages()

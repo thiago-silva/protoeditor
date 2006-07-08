@@ -33,8 +33,9 @@ class EditorUI;
 class DebuggerUI;
 class ProtoeditorSettings;
 class Session;
-class KURL;
+class ConfigDlg;
 
+class KURL;
 
 class Protoeditor : public QObject
 {
@@ -60,6 +61,8 @@ public:
   ExecutionController* executionController();
   DataController*      dataController();
 
+
+  ConfigDlg* configDlg();
 
   void openFile();
   void openFile(const KURL& url);
@@ -87,9 +90,11 @@ public slots:
   void slotAcQuit();
   
   //menu "script"
-  void slotAcExecuteScript(const QString&);
+  void slotAcExecuteScript(const QString&);  
   void slotAcDebugStart(const QString&);  
+  void slotAcDebugStart();  
   void slotAcProfileScript(const QString&);
+  void slotAcProfileScript();
 
   void slotAcDebugStop();
   void slotAcDebugRunToCursor();
@@ -126,11 +131,13 @@ private:
   static Protoeditor *m_self;
 
   MainWindow          *m_window;
-  ProtoeditorSettings *m_settings;
+  ProtoeditorSettings *m_settings;  
   Session             *m_session;
-
+  
   ExecutionController *m_executionController;
   DataController      *m_dataController;
+
+  ConfigDlg           *m_configDlg;
 };
 
 #endif
