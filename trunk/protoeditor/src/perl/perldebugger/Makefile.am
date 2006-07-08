@@ -1,6 +1,6 @@
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/common/perl -I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings \
-	-I$(top_srcdir)/src/perl/perldb $(all_includes) -I../settings
+	-I$(top_srcdir)/src/common/perl -I$(top_srcdir)/src/perl -I$(top_srcdir)/src/perl/perldb \
+	-I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings $(all_includes) -I../settings
 
 METASOURCES = AUTO
 libperldb_la_LDFLAGS = $(all_libraries)

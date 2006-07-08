@@ -249,6 +249,7 @@ void PerlDebugger::executeCmd(const QString& cmd)
 
 void PerlDebugger::slotSettingsChanged()
 {
+  //if(m_pdbgSettings->languageSettings()->isEnabled() && m_pdbgSettings->enableJIT())
 //   if(m_perlDebuggerSettings->enableJIT())
 //   {
 //     //do not try to restart if we are already listening on the given port
