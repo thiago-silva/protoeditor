@@ -27,7 +27,7 @@
 #include "debuggerbreakpoint.h"
 #include "debuggerstack.h"
 #include "protoeditorsettings.h"
-#include "phpsettings.h"
+#include "languagesettings.h"
 
 #include "phpvariable.h"
 
@@ -88,10 +88,10 @@ bool DebuggerXD::isRunning() const
   return m_isRunning;
 }
 
-void DebuggerXD::init()
-{
-  slotSettingsChanged();
-}
+// void DebuggerXD::init()
+// {
+//   slotSettingsChanged();
+// }
 
 void DebuggerXD::start(const QString& filepath, const QString& args, bool local)
 {
@@ -249,7 +249,7 @@ void DebuggerXD::removeWatch(const QString& expression)
 
 void DebuggerXD::slotSettingsChanged()
 {
-  if(m_xdSettings->enableJIT())
+  if(m_xdSettings->languageSettings()->isEnabled() && m_xdSettings->enableJIT())
   {
     //do not try to restart if we are already listening on the given port
     if(!m_isJITActive || (m_listenPort != m_xdSettings->listenPort()))
