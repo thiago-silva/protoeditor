@@ -22,10 +22,10 @@
 
 #include <kdialogbase.h>
 
-class PHPSettingsWidget;
-class PerlSettingsWidget;
 class SiteSettingsWidget;
 class ExtAppSettingsWidget;
+class LanguageSettings;
+class LanguageSettingsWidget;
 
 class ConfigDlg : public KDialogBase
 {
@@ -34,18 +34,17 @@ public:
   ConfigDlg(QWidget *parent = 0, const char *name = 0);
   ~ConfigDlg();
 
-  static void showDialog();
-
+  void showDialog();  
+  
 protected slots:
   void slotOk();
 private:
   void populateWidgets();
   static ConfigDlg* m_self;
 
-  PHPSettingsWidget     *m_phpSettingsWidget;
-  PerlSettingsWidget    *m_perlSettingsWidget;
-  SiteSettingsWidget    *m_siteSettingsWidget;
-  ExtAppSettingsWidget  *m_extAppSettingsWidget;
+  SiteSettingsWidget           *m_siteSettingsWidget;
+  ExtAppSettingsWidget         *m_extAppSettingsWidget;
+  QValueList<LanguageSettingsWidget*> m_langSettingsWidgets;
 };
 
 #endif

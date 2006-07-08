@@ -28,12 +28,11 @@
 #include <kwin.h>
 #include <kapplication.h>
 
-#include "phpsettingswidget.h"
-#include "perlsettingswidget.h"
 #include "sitesettingswidget.h"
 #include "extappsettingswidget.h"
 #include "protoeditor.h"
 #include "protoeditorsettings.h"
+#include "languagesettings.h"
 
 ConfigDlg* ConfigDlg::m_self = 0;
 
@@ -43,26 +42,27 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
   setShowIconsInTreeList(true);
   setMinimumSize(600,400);
 
+  enableButtonSeparator(true);
+  unfoldTreeList();
+  
+  QVBox *frame;
 
   QStringList path;
+
   path << i18n("Languages");
   setFolderIcon(path, BarIcon("protoeditor", KIcon::SizeSmall));
 
-  QVBox *frame;
-
-  path.clear();
-  path << i18n("Languages") << i18n("PHP");
-  frame = addVBoxPage(path, "PHP", BarIcon("php", KIcon::SizeSmall));
-  frame->setSpacing(0);
-  frame->setMargin(0);
-  m_phpSettingsWidget = new PHPSettingsWidget(frame, "PHP");
-
-  path.clear();
-  path << i18n("Languages") << i18n("Perl");
-  frame = addVBoxPage(path, "Perl", BarIcon("perl", KIcon::SizeSmall));
-  frame->setSpacing(0);
-  frame->setMargin(0);
-  m_perlSettingsWidget = new PerlSettingsWidget(frame, "Perl");
+  QValueList<LanguageSettings*> llist = Protoeditor::self()->settings()->languageSettingsList();
+  QValueList<LanguageSettings*>::iterator it;
+  for(it = llist.begin(); it != llist.end(); ++it)
+  {
+    path.clear();
+    path << i18n("Languages") << (*it)->languageName();
+    frame = addVBoxPage(path, (*it)->languageName(), BarIcon((*it)->iconName(), KIcon::SizeSmall));
+    frame->setSpacing(0);
+    frame->setMargin(0);
+    m_langSettingsWidgets.append((*it)->createSettingsWidget(frame));
+  }
 
   path.clear();
   path << i18n("Sites");
@@ -78,19 +78,8 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name)
   frame->setMargin(0);
   m_extAppSettingsWidget = new ExtAppSettingsWidget(frame, i18n("External Applications"));//->reparent(((QWidget*)frame), 0, QPoint());
 
-  //(void)new DebuggerSettingsWidget(f, "Debugger");
-  //(void) new BrowserSettingsWidget(f, "Browser");
-  //addPage(i18n("Browser"), i18n("Browser"), "network");
-
-  //QFrame *page = addPage(QString("Layout"));
- //QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
- //QLabel *label = new QLabel( QString("Layout type"), page );
- //topLayout->addWidget( label );
-
-  enableButtonSeparator(true);
-  unfoldTreeList();
+  resize(QSize(590, 300).expandedTo(minimumSizeHint()));
 }
-
 
 ConfigDlg::~ConfigDlg()
 {
@@ -98,20 +87,20 @@ ConfigDlg::~ConfigDlg()
 
 void ConfigDlg::showDialog()
 {
-  if(!m_self) {
-    m_self = new ConfigDlg();
-  }
-
-  m_self->populateWidgets();
-  m_self->exec();
+  populateWidgets();
+  exec();
 }
 
 void ConfigDlg::populateWidgets()
 {
   m_extAppSettingsWidget->populate();
-  m_phpSettingsWidget->populate();
-  m_perlSettingsWidget->populate();
   m_siteSettingsWidget->populate();
+
+  for(QValueList<LanguageSettingsWidget*>::iterator it = m_langSettingsWidgets.begin(); it != m_langSettingsWidgets.end(); ++it)
+  {
+    LanguageSettingsWidget* l = (*it);
+    (*it)->populate();
+  }  
 }
 
 void ConfigDlg::slotOk()
@@ -120,8 +109,11 @@ void ConfigDlg::slotOk()
 
   m_siteSettingsWidget->updateSettings();
   m_extAppSettingsWidget->updateSettings();
-  m_phpSettingsWidget->updateSettings();
-  m_perlSettingsWidget->updateSettings();
+
+  for(QValueList<LanguageSettingsWidget*>::iterator it = m_langSettingsWidgets.begin(); it != m_langSettingsWidgets.end(); ++it)
+  {
+    (*it)->updateSettings();
+  }  
 
   Protoeditor::self()->settings()->writeConfig();
 }
