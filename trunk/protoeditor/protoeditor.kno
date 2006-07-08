@@ -82,13 +82,8 @@
 
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>PerlDBGp</li>
-<ul type="disc"><li>Sites are not persisting between runs</li>
-<li>Konqueror window is not being reused (Session.cpp)</li>
-<li>Implement Messages<br /></li></ul>
-<li>Comment the console widget (remove it)<br /><br /></li>
-<li>Move languages/settings to each folder (php, perl, etc)<br /></li>
-<li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
+<ul type="disc"><li>When disabling a language, the sites configured to use debuggers with the language should be disabled as well (not shown in the mainmenu options)<br /></li>
+<li>Comment the console widget (remove it)<br /><br />Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
 <li>Maybe, ask only if the debugger is a different from the current one<br /></li></ul>
 <li>--------------------------------------------<br /></li>
@@ -96,6 +91,13 @@
 <ul type="disc"><li>Implement conditional bps and all the new stuff (http://www.xdebug.org/updates.php)<br /><br /></li></ul>
 <li>---------------<br /></li>
 <li>i18n Protoeditor::fileFilter!<br /></li>
+<li>PerlDBGp</li>
+<li>Test configuration ConfigDlg</li>
+<ul type="disc"><li>Add &quot;enable/disable()&quot; to AbstractDebugger (all debuggers should exist in the memory, because of their settings and settingswidget)<br /></li></ul>
+<li>Move common/php to php/common (same to perl)</li>
+<li>Move common/php/phpvariableparser to dbg/<br /></li>
+<li>Move settings interfaces to common/base</li>
+<li>Move AbstractDebugger to common/base<br /></li>
 <li>When a site is selected, the &quot;run/debug&quot; drop down menu should be removed (the debugger used will be from the current site config anyway). The menu is only for local debugging<br /></li>
 <li>DebuggerUI should have a &quot;show/hidden&quot; button or something.</li>
 <ul type="disc"><li>Tabs should have the same &quot;show/hidden&quot; -- the user controls what he wants to use.</li>
@@ -142,8 +144,14 @@
 <li>Settings:</li>
 <ul type="disc"><li>Debugger settings:</li>
 <ul type="disc"><li>All debuggers must have a new entry: &quot;enabled&quot;<br />this way, the only debuggers the user uses will be loaded</li></ul>
-<li>Site settings should have the complete list of debugger available</li></ul></ul>
+<li>Site settings should have the complete list of debugger available<br /><br /></li></ul>
+<li>---------------------------<br /><br /></li>
+<li>Rename &quot;dataController&quot; to &quot;dataMediator&quot;?</li>
+<li>change &quot;ExecutionController&quot; to &quot;Executor&quot;?<br /></li>
+<li>Try different patterns (ie. State) in DBG implementation (DBGNet) to make clear the debug/profile code<br /></li>
+<li>Research/try better aproaches to handle async comunication between debugger - application (debugger codes are to messy)<br /></li></ul>
 </body></html>
+
 
 \NewEntry 2 perl implementation
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">

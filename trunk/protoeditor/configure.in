@@ -60,17 +60,23 @@ AC_PATH_KDE
 dnl PACKAGE set before
 AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
-KDE_CREATE_SUBDIRSLIST
+
+perllibdir=${kde_datadir}/protoeditor/libs/perl/
+AC_SUBST(perllibdir)KDE_CREATE_SUBDIRSLIST
 AC_CONFIG_FILES([ Makefile ])
 AC_CONFIG_FILES([ data/Makefile ])
 AC_CONFIG_FILES([ data/icons/Makefile ])
+AC_CONFIG_FILES([ data/libs/Makefile ])
 AC_CONFIG_FILES([ data/pics/Makefile ])
 AC_CONFIG_FILES([ doc/Makefile ])
 AC_CONFIG_FILES([ doc/en/Makefile ])
 AC_CONFIG_FILES([ src/Makefile ])
 AC_CONFIG_FILES([ src/common/Makefile ])
+AC_CONFIG_FILES([ src/common/perl/Makefile ])
 AC_CONFIG_FILES([ src/common/php/Makefile ])
 AC_CONFIG_FILES([ src/perl/Makefile ])
+AC_CONFIG_FILES([ src/perl/perldb/Makefile ])
+AC_CONFIG_FILES([ src/perl/perldbgp/Makefile ])
 AC_CONFIG_FILES([ src/perl/perldebugger/Makefile ])
 AC_CONFIG_FILES([ src/php/Makefile ])
 AC_CONFIG_FILES([ src/php/dbg/Makefile ])
