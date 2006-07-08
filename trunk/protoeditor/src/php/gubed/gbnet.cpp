@@ -26,7 +26,6 @@
 #include "phpdefs.h"
 #include "connection.h"
 #include "sitesettings.h"
-#include "phpsettings.h"
 #include "gbsettings.h"
 #include "session.h"
 
@@ -42,6 +41,7 @@
 #include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "sitesettings.h"
+#include "languagesettings.h"
 
 #define GBD_PROTOCOL_VERSION "0.0.12"
 
