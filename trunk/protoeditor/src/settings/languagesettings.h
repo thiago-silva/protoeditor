@@ -26,6 +26,16 @@
 
 class QString;
 class DebuggerSettingsInterface;
+class AbstractDebugger;
+
+class LanguageSettingsWidget
+{
+  public:
+    virtual ~LanguageSettingsWidget() {};
+
+    virtual void populate() = 0;
+    virtual void updateSettings() = 0;
+};
 
 class LanguageSettings : public KConfigSkeleton
 {
@@ -36,6 +46,7 @@ public:
   
   virtual bool    isEnabled()          const = 0;
   virtual QString languageName()       const = 0;
+  virtual QString iconName()           const = 0;
   virtual QString interpreterCommand() const = 0;
   virtual QString defaultDebugger()    const = 0;
 
@@ -47,6 +58,10 @@ public:
 
   QValueList<DebuggerSettingsInterface*> debuggerSettingsList();
   
+  virtual QValueList<AbstractDebugger*> debuggers() = 0;
+
+  virtual LanguageSettingsWidget* createSettingsWidget(QWidget*) = 0;
+
 protected:
   QMap<QString, DebuggerSettingsInterface*>  m_debuggerSettingsMap;
 };
