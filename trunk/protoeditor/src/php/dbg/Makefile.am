@@ -1,6 +1,7 @@
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/common/php -I$(top_srcdir)/src/php/dbg -I$(top_srcdir)/src/php/dbg/profiler \
-	-I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings -I../settings $(all_includes)
+	-I$(top_srcdir)/src/php/gubed -I$(top_srcdir)/src/php/xdebug -I$(top_srcdir)/src/protoeditor \
+	-I$(top_srcdir)/src/settings $(all_includes)
 METASOURCES = AUTO
 
 
