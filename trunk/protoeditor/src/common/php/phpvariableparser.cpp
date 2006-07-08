@@ -291,7 +291,7 @@ VariableValue* PHPVariableParser::parseValue(PHPVariable* var)
       scalarValue->set(parseResource());
       return scalarValue;
     default:
-      kdDebug() << "+++++ Bug on PHPPHPVariableParser!" << endl;
+      kdDebug() << "+++++ Bug on PHPVariableParser!" << endl;
       return 0;
   }
 }
