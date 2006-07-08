@@ -14,3 +14,4 @@ noinst_HEADERS = breakpointlistview.h breakpointlistviewitem.h \
 		variablelistview.h variablelistviewitem.h	watchlistview.h watchtab.h statusbarwidget.h \
 	consolewidget.h
 
+
