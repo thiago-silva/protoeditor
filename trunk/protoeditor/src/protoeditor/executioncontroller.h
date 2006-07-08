@@ -47,8 +47,10 @@ public:
   void executeScript(const QString&, const QString&);
 
   void debugStart(const QString&, const QString&, bool);
+  void debugStart(const QString&, bool);
 
   void profileScript(const QString&, const QString&, bool);
+  void profileScript(const QString&, bool);
 
   void debugStop();
 

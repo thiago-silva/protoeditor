@@ -118,7 +118,6 @@ void ExecutionController::executeScript(const QString& langName, const QString& 
 }
 
 
-
 bool ExecutionController::debugPrologue(const QString& langName, bool willProfile) 
 {
   //1: check if there is a debug session running
@@ -198,6 +197,20 @@ bool ExecutionController::debugPrologue(const QString& langName, bool willProfil
   return true;
 }
 
+void ExecutionController::debugStart(const QString& args, bool isLocalDebug)
+{
+  SiteSettings* site = Protoeditor::self()->settings()->currentSiteSettings();
+  if(!site)  return; //shouldn't happen
+  
+  //this stinks
+  QString langName = m_debuggerFactory->getDebugger(site->debuggerName())->langSettings()->languageName();
+
+  if(!debugPrologue(langName, false)) return;
+  sessionPrologue();
+  
+  m_activeDebugger->start(Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
+}
+
 void ExecutionController::debugStart(const QString& langName, const QString& args, bool isLocalDebug)
 {
   if(!debugPrologue(langName, false)) return;
@@ -205,6 +218,21 @@ void ExecutionController::debugStart(const QString& langName, const QString& arg
   sessionPrologue();
 
   m_activeDebugger->start(Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
+}
+
+void ExecutionController::profileScript(const QString& args, bool isLocalDebug)
+{
+  SiteSettings* site = Protoeditor::self()->settings()->currentSiteSettings();
+  if(!site)  return; //shouldn't happen
+  
+  //this stinks
+  QString langName = m_debuggerFactory->getDebugger(site->debuggerName())->langSettings()->languageName();
+
+  if(!debugPrologue(langName, true)) return;
+
+  sessionPrologue();
+
+  m_activeDebugger->profile(Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL().path(), args, isLocalDebug);
 }
 
 void ExecutionController::profileScript(const QString& langName, const QString& args, bool isLocalDebug)
