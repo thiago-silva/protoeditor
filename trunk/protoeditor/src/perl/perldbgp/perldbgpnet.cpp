@@ -29,8 +29,8 @@
 #include "variable.h"
 #include "debuggerbreakpoint.h"
 #include "protoeditorsettings.h"
-#include "perlsettings.h"
 #include "session.h"
+#include "languagesettings.h"
 
 #include <kapplication.h>
 #include <qhttp.h>
@@ -86,8 +86,10 @@ void PerlDBGPNet::startDebugging(const QString& filePath, const QString& uiargs,
         << "PERL5LIB" << m_debugger->settings()->perlDBGPLibPath()
         << "DBGP_KEY" << QString::number(id);
     
+    // /usr/bin/perl -d -w -I/home/jester/apps/komodo/lib/support/dbgp/perllib /home/jester/teste.pl
     QString cmd = m_debugger->langSettings()->interpreterCommand();
-    cmd += " -d ";
+    cmd += " -d -w -I";
+    cmd += m_debugger->settings()->perlDBGPLibPath();    
     Protoeditor::self()->session()->startLocal(cmd, KURL::fromPathOrURL(filePath),uiargs, env);
   } 
   else
@@ -122,7 +124,7 @@ void PerlDBGPNet::requestRunToCursor(const QString& filePath, int line)
   }
   else
   {
-    breakpoint_set += filePath;
+    breakpoint_set += "file:///" + filePath;
   }
 
   breakpoint_set += " -i ";
@@ -602,7 +604,7 @@ void PerlDBGPNet::processResponse(QDomElement& root)
         break;
 
       case GlobalChildId:        
-      case LocalChildId:        
+      case LocalChildId:
         VariableList_t* list = p.parseList(nd.childNodes(), m_updateVar);
         dynamic_cast<PerlListValue*>(m_updateVar->value())->setList(list);
         if(trans == LocalChildId) {
