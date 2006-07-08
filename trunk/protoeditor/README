@@ -7,12 +7,17 @@ Project site: http://protoeditor.sourceforge.net
 
   Protoeditor is a small KDE text editor developed for debugging
   scripts interactively. The goal is to provide a simple editor supporting a
-  variety of debuggers for different languages. Currently (v1.0), it
-  only supports PHP and the following debuggers:
-
+  variety of debuggers for different languages. Currently, it supports the
+  following languages and debuggers:
+  
+  PHP:
    - DBG debugger (free version 2.13.1) at http://dd.cron.ru/dbg/
    - Xdebug (tested with CVS version 2.0.0beta3-dev).
    - Gubed 0.2.2
+
+  Perl:
+   - DBGp debugger, shipped in this package. It can also be 
+     found at ftp://ftp.activestate.com
 
   Protoeditor uses katepart as the text editor, so all the functionalities of
   a _good_ editor are present (highlights, folding marks, etc, etc, etc) wich 
@@ -26,9 +31,9 @@ Project site: http://protoeditor.sourceforge.net
 1.1 Requirements:
 
   * KDE 3.2 + should be fine (if not, let me know :)
-  * You might need PHP and, at least, one debugger installed if you
-    want to debug scripts locally.
-
+  * You might need the interpreters of your favorite language (PHP, Perl, etc)
+    and, at least, one debugger installed if you want to debug scripts locally.
+  
 2.0 Configuration and use
 
   See Protoeditor manual for a description of the settings and
@@ -40,37 +45,47 @@ Project site: http://protoeditor.sourceforge.net
 
 2.1 Debugger Configuration
 
-  For Xdebug and DBG, check you phpinfo() if they were successfuly installed.
+  2.1.1 PHP
 
-  For details about DBG installation, check the DBG site: 
-    http://dd.cron.ru
-
-  For details about Xdebug installation, check the Xdebug site:
-    http://www.xdebug.org
-
-  For details about Gubed installation, check the Gubed site:
-    http://gubed.sourceforge.net
-
+    For Xdebug and DBG, check you phpinfo() if they were successfuly installed.
   
+    For details about DBG installation, check the DBG site: 
+      http://dd.cron.ru
+  
+    For details about Xdebug installation, check the Xdebug site:
+      http://www.xdebug.org
+  
+    For details about Gubed installation, check the Gubed site:
+      http://gubed.sourceforge.net
+
+  2.1.2 Perl
+
+    There is no extra configuration needed to start debugging Perl scripts.
+    Protoeditor installs automatically the DBGp in it's data directory (so 
+    it doesn't conflict with your system perl library). 
+
 2.1.1 Protoeditor configuration
 
   Check your debugger options on Protoeditor settings. Most of them are self
   explanatory, but I'll give some hints ;)
 
-  The "PHP command" specifies the path for the PHP binary. Togueter with 
-  the "External console" settings in "External Application", it is used to 
-  execute/debug scripts locally using a console application, if desired.
+  In the language tabs:
 
-  The "Default debugger" chosen is the one to be used on local debugging 
-  sessions.
-
-  Every debugger has a JIT option. If enabled, Protoeditor will listen on the 
-  given port while the application is running. Otherwise, it will only listen 
-  to the port when a debug session is active.
-
-  In "External Applications" you can select a browser to use while debugging
-  remote scripts and a console to execute/debug the scripts locally, using
-  the PHP binary.
+    The "<Language> command" specifies the path for the interpreter binary. 
+    Togueter with the "External console" settings in "External Application", 
+    it is used to execute/debug scripts locally using a console application, 
+    if desired.
+  
+    The "Default debugger" chosen is the one to be used on local debugging 
+    sessions, when no site is currently selected.
+  
+    Every debugger has a JIT option. If enabled, Protoeditor will listen on the 
+    given port while the application is running. Otherwise, it will only listen 
+    to the port when a debug session is active.
+  
+    In "External Applications" you can select a browser to use while debugging
+    remote scripts and a console to execute/debug the scripts locally, using
+    the PHP binary.
 
 2.1.2 Sites
 
@@ -109,7 +124,7 @@ Project site: http://protoeditor.sourceforge.net
     Remote base dir : /var/www/htdocs
     Local base dir  : /usr/apache/htdocs/phpsite
     Default file    : /usr/apache/htdocs/phpsite/index.php
-    Debugger        : DBG
+    Debugger        : PHP DBG
 
 
 ------------------------------------------
