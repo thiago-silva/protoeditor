@@ -58,7 +58,7 @@ public:
   void setLocalVariables(VariableList_t* vars);
 
   //all variables
-  void updateVariable(Variable*, int);
+  void updateVariable(Variable*);
 
   //ComboStack
   void setStack(DebuggerStack*);
@@ -126,13 +126,14 @@ public slots:
 
   void slotNeedChildren(int, Variable*);
 private:
+  int                  m_varlistID;
   VariableListView    *m_globalVariableListView;
   LocalTab            *m_localTab;
   WatchTab            *m_watchTab;
   BreakpointListView  *m_breakpointListView;
   MessageListView     *m_messageListView;  
   KTextEdit           *m_edOutput;
-  ConsoleWidget       *m_console;
+//   ConsoleWidget       *m_console;
 };
 
 #endif

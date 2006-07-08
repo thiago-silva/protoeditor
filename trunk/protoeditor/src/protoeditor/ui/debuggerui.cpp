@@ -76,8 +76,8 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
   m_edOutput->setPaper(QBrush(QColor("white")));
   insertTab(outputTab, i18n("Output"));
 
-  m_console = new ConsoleWidget(this);
-  insertTab(m_console, i18n("Console"));
+//   m_console = new ConsoleWidget(this);
+//   insertTab(m_console, i18n("Console"));
 
 
   connect(m_globalVariableListView, SIGNAL(sigVarModified(Variable*)),
@@ -123,8 +123,8 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
   connect(m_messageListView, SIGNAL(sigDoubleClick(const KURL&, int)),
     this, SIGNAL(sigGotoFileAndLine(const KURL&, int)));
 
-  connect(m_console, SIGNAL(sigExecuteCmd(const QString&)),
-    this, SIGNAL(sigExecuteCmd(const QString&)));
+// //   connect(m_console, SIGNAL(sigExecuteCmd(const QString&)),
+// //     this, SIGNAL(sigExecuteCmd(const QString&)));
 }
 
 DebuggerUI::~DebuggerUI()
@@ -143,11 +143,22 @@ void DebuggerUI::setLocalVariables(VariableList_t* vars)
   m_localTab->localVarList()->setVariables(vars);
 }
 
-void DebuggerUI::updateVariable(Variable* var, int scopeId)
+void DebuggerUI::updateVariable(Variable* var)
 {
-  //TODO!
-  m_localTab->localVarList()->updateVariable(var);
-  
+  switch(m_varlistID)
+  {
+    case GlobalVarListID:
+      m_globalVariableListView->updateVariable(var);
+      break;
+    case LocalVarListID:
+      m_localTab->localVarList()->updateVariable(var);
+      break;
+    case WatchListID:
+      m_watchTab->watchListView()->updateVariable(var);
+      break;
+    default:
+      break;
+  } 
 }
 
 //ComboStack
@@ -231,14 +242,14 @@ void DebuggerUI::appendOutput(const QString& str)
 }
 
 //Console
-void DebuggerUI::appendConsoleDebuggerText(const QString& str)
+void DebuggerUI::appendConsoleDebuggerText(const QString&)
 {
-  m_console->appendDebuggerText(str);
+//   m_console->appendDebuggerText(str);
 }
 
-void DebuggerUI::appendConsoleUserText(const QString& str)
+void DebuggerUI::appendConsoleUserText(const QString&)
 {
-  m_console->appendUserText(str);
+//   m_console->appendUserText(str);
 }
 
 void DebuggerUI::prepareForSession()
@@ -267,6 +278,8 @@ void DebuggerUI::cleanSession()
 
 void DebuggerUI::slotNeedChildren(int varlistID, Variable* var)
 {
+  m_varlistID = varlistID;
+
   switch(varlistID)
   {
     case DebuggerUI::GlobalVarListID:
