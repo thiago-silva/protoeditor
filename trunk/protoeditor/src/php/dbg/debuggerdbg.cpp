@@ -33,8 +33,8 @@
 #include "dbgprofiledata.h"
 
 #include "protoeditorsettings.h"
-#include "phpsettings.h"
 #include "dbgsettings.h"
+#include "languagesettings.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -97,7 +97,7 @@ bool DebuggerDBG::isRunning() const
 
 void DebuggerDBG::slotSettingsChanged()
 {
-  if(m_dbgSettings->enableJIT())
+  if(m_dbgSettings->languageSettings()->isEnabled() && m_dbgSettings->enableJIT())
   {
     //do not try to restart if we are already listening on the given port
     if(!m_isJITActive || (m_listenPort != m_dbgSettings->listenPort()))
