@@ -69,6 +69,7 @@ QString PerlVariable::perlName(bool eval)
         return name();
     }
   }
+  return QString::null;
 }
 
 //------------------------------------------------------
