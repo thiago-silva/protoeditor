@@ -57,7 +57,7 @@ public:
   virtual bool isRunning()       const = 0;
 
   /* inits the client (listen to port, inits members, order a pizza....) */
-  virtual void init() = 0;
+//   virtual void init() = 0;
 
   /* commands commonly supported by a debugger. */
   virtual void start(const QString&, const QString& args, bool local)  = 0;
