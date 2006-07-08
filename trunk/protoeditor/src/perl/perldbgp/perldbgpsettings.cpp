@@ -46,7 +46,7 @@ PerlDBGPSettings::PerlDBGPSettings(const QString& name, const QString& label, La
   addItem( itemBreakOnLoad, QString::fromLatin1( "BreakOnLoad" ) );
 
   KConfigSkeleton::ItemString  *itemPerlDBGPLibPath;
-  itemPerlDBGPLibPath = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerDBGPLibPath" ), mPerlDBGPLibPath, "/usr/lib/perl5/5.8.8/");
+  itemPerlDBGPLibPath = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerDBGPLibPath" ), mPerlDBGPLibPath, PERLDBGPDIR);
   addItem( itemPerlDBGPLibPath, QString::fromLatin1( "PerlDBGPLibPath" ) );
 
   readConfig();
