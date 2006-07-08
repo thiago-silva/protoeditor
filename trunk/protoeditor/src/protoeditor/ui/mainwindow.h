@@ -30,7 +30,8 @@ class DebuggerUI;
 class StatusBarWidget;
 class KHistoryCombo;
 
-class KToolBarPopupAction;
+// class KToolBarPopupAction;
+class KPopupMenu;
 
 class KSelectAction;
 class KToggleAction;
@@ -73,8 +74,12 @@ public:
 
 signals:
   void sigExecuteScript(const QString&);
+
   void sigDebugScript(const QString&);
+  void sigDebugScript();
+
   void sigProfileScript(const QString&);
+  void sigProfileScript();
 
 private slots:
   void slotAcEditKeys();
@@ -83,12 +88,17 @@ private slots:
 
   void slotAcFocusArgumentBar();
 
-  void slotAcExecuteScript(int);
+//   void slotAcExecuteScript(int);
   void slotAcExecuteScript();
-  void slotAcDebugStart(int);  
+//   void slotAcDebugStart(int);  
   void slotAcDebugStart();
   void slotAcProfileScript();
 
+  void slotAcCurrentSiteChanged();
+
+  void slotAcChangeCurrentLanguage(int);
+
+  void slotAcUseCurrentScript(bool);
 protected:
   virtual void closeEvent(QCloseEvent * e);
 
@@ -107,9 +117,9 @@ private:
   KSelectAction       *m_siteAction;
   KToggleAction       *m_activeScriptAction;
   KRecentFilesAction  *m_actionRecent;
-  KToolBarPopupAction *m_executeAction;
-  KToolBarPopupAction *m_debugAction;
+  KAction             *m_debugAction;
 
+  KPopupMenu          *m_langPopup;
   QString             m_lastLang;
   QMap<int, QString>  m_langMap;                
 };

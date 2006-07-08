@@ -42,6 +42,7 @@
 
 #include <klocale.h>
 #include <kaction.h>
+#include <ktoolbarbutton.h>
 
 #include "protoeditorsettings.h"
 #include <qaction.h>
@@ -64,6 +65,18 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
 
   resize(QSize(633, 533).expandedTo(minimumSizeHint()));
   clearWState(WState_Polished);  
+
+  m_langPopup = new KPopupMenu();  
+  connect(m_langPopup, SIGNAL(activated(int)), this, SLOT(slotAcChangeCurrentLanguage(int)));
+
+  KToolBar* bar = toolBar("debug_toolbar");
+  KToolBarButton* button;
+  for(int i = 0; i < bar->count(); i++) {
+    button = bar->getButton(bar->idAt(i));
+    if(button && QString(button->name()).contains("script_execute")) {
+      button->setDelayedPopup(m_langPopup);
+    }
+  }
 }
 
 MainWindow::~MainWindow()
@@ -124,26 +137,23 @@ void MainWindow::setupActions()
   m_siteAction     = new KSelectAction(i18n("Site"), 0, actionCollection(), "site_selection");
   m_siteAction->setComboWidth(150);
 
+  connect(m_siteAction, SIGNAL(activated()),
+      this, SLOT(slotAcCurrentSiteChanged()));
+
   connect(m_siteAction, SIGNAL(activated(const QString&)),
       Protoeditor::self()->settings(), SLOT(slotCurrentSiteChanged(const QString&)));
 
   m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
-  m_executeAction = new KToolBarPopupAction(i18n("Execute in Console"), "gear", "Shift+F9", 
+  connect(m_activeScriptAction, SIGNAL(toggled (bool)),
+      this, SLOT(slotAcUseCurrentScript(bool)));
+
+  (void) new KAction(i18n("Execute in Console"), "gear", "Shift+F9", 
                       this, SLOT(slotAcExecuteScript()), actionCollection(), "script_execute");
 
-  connect(m_executeAction->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotAcExecuteScript(int)));
-
-  connect(this, SIGNAL(sigExecuteScript(const QString&)), Protoeditor::self(),
-      SLOT(slotAcExecuteScript(const QString&)));
-
-  m_debugAction = new KToolBarPopupAction(i18n("Start Debug"), "dbgstart", "F9", this,
+  m_debugAction = new KAction(i18n("Start Debug"), "dbgstart", "F9", this,
                     SLOT(slotAcDebugStart()), actionCollection(), "debug_start");
 
-  connect(m_debugAction->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotAcDebugStart(int)));
-
-  connect(this, SIGNAL(sigDebugScript(const QString&)), Protoeditor::self(),
-      SLOT(slotAcDebugStart(const QString&)));
 
   (void)new KAction(i18n("Stop Debug"), "stop", "Escape", Protoeditor::self(),
                     SLOT(slotAcDebugStop()), actionCollection(), "debug_stop");
@@ -165,9 +175,6 @@ void MainWindow::setupActions()
  (void)new KAction(i18n("Profile (PHP+DBG)"), "math_sum", "Alt+P", 
       this, SLOT(slotAcProfileScript()), actionCollection(), "script_profile");
 
-  connect(this, SIGNAL(sigProfileScript(const QString&)), Protoeditor::self(),
-      SLOT(slotAcProfileScript(const QString&)));
-  
   (void)new KAction(i18n("Toggle Breakpoint"), "activebreakpoint", "Alt+B", Protoeditor::self(),
                     SLOT(slotAcDebugToggleBp()), actionCollection(), "debug_toggle_bp");
 
@@ -240,7 +247,8 @@ void MainWindow::setSiteNames(const QStringList& sites)
 
 void MainWindow::setCurrentSite(int idx)
 {
-  m_siteAction->setCurrentItem(idx);
+  m_siteAction->setCurrentItem(idx);  
+  slotAcCurrentSiteChanged();
 }
 
 void MainWindow::addRecentURL(const KURL& url)
@@ -265,26 +273,22 @@ void MainWindow::saveRecentEntries()
 
 void MainWindow::clearLanguages()
 {
-  m_executeAction->popupMenu()->clear();
-  m_debugAction->popupMenu()->clear();
+  m_langPopup->clear();
   m_lastLang = QString::null;
 }
 
 void MainWindow::addLanguage(const QString& langName)
 {
-  static int id = 0;
-  KPopupMenu *execpopup  = m_executeAction->popupMenu();
-  KPopupMenu *debugpopup = m_debugAction->popupMenu();
+  int id = m_langPopup->count() + 1;
+  m_langPopup->insertItem(langName, id);
 
-  execpopup->insertItem(langName, id);
-  debugpopup->insertItem(langName, id);
-
-  m_langMap[id++] = langName;
+  m_langMap[id] = langName;
 
   //get the first language registered as our default language
   if(m_lastLang.isEmpty()) 
   {
     m_lastLang = langName;
+    slotAcChangeCurrentLanguage(id);
   }
 }
 
@@ -334,7 +338,7 @@ void MainWindow::slotAcEditToolbars()
 
 void MainWindow::slotAcShowSettings()
 {
-  ConfigDlg::showDialog();
+  Protoeditor::self()->configDlg()->showDialog();
 }
 
 void MainWindow::slotAcFocusArgumentBar()
@@ -344,21 +348,9 @@ void MainWindow::slotAcFocusArgumentBar()
 }
 
 
-void MainWindow::slotAcDebugStart(int id)
-{
-  m_lastLang = m_langMap[id];
-  emit sigDebugScript(m_lastLang);
-}
-
 void MainWindow::slotAcDebugStart()
 {
   emit sigDebugScript(m_lastLang);
-}
-
-void MainWindow::slotAcExecuteScript(int id)
-{
-  m_lastLang = m_langMap[id];
-  emit sigExecuteScript(m_lastLang);
 }
 
 void MainWindow::slotAcExecuteScript()
@@ -369,6 +361,73 @@ void MainWindow::slotAcExecuteScript()
 void MainWindow::slotAcProfileScript()
 {
   emit sigProfileScript(m_lastLang);
+}
+
+void MainWindow::slotAcChangeCurrentLanguage(int id)
+{
+  m_lastLang = m_langMap[id];
+
+  for(unsigned int i = 0; i < m_langPopup->count(); i++)
+  {
+    m_langPopup->setItemChecked(m_langPopup->idAt(i), false);
+  }
+
+  m_langPopup->setItemChecked(id, !m_langPopup->isItemChecked(id));
+
+  statusBar()->setDebuggerName(m_lastLang);
+  //set the item menu checked
+}
+
+void MainWindow::slotAcCurrentSiteChanged()
+{
+  if(isCurrentScriptActionChecked()) return;
+
+  KToolBar* bar = toolBar("debug_toolbar");
+  KToolBarButton* button;  
+
+  if((currentSiteName() == ProtoeditorSettings::LocalSiteName)) 
+  {
+    for(int i = 0; i < bar->count(); i++) {
+      button = bar->getButton(bar->idAt(i));
+      if(button && QString(button->name()).contains("debug_start")) {
+        button->setDelayedPopup(m_langPopup);
+      }
+    }
+  }
+  else
+  {
+    for(int i = 0; i < bar->count(); i++) {
+      button = bar->getButton(bar->idAt(i));
+      if(button && QString(button->name()).contains("debug_start")) {
+        button->setDelayedPopup(0);
+      }
+    }
+  }
+}
+
+void MainWindow::slotAcUseCurrentScript(bool)
+{
+  KToolBar* bar = toolBar("debug_toolbar");
+  KToolBarButton* button;
+
+  if(!isCurrentScriptActionChecked() && (currentSiteName() != ProtoeditorSettings::LocalSiteName)) 
+  {
+    for(int i = 0; i < bar->count(); i++) {
+      button = bar->getButton(bar->idAt(i));
+      if(button && QString(button->name()).contains("debug_start")) {
+        button->setDelayedPopup(0);
+      }
+    }
+  }
+  else
+  {
+    for(int i = 0; i < bar->count(); i++) {
+      button = bar->getButton(bar->idAt(i));
+      if(button && QString(button->name()).contains("debug_start")) {
+        button->setDelayedPopup(m_langPopup);
+      }
+    }
+  }
 }
 
 #include "mainwindow.moc"
