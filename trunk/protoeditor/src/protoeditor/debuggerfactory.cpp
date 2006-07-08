@@ -19,48 +19,35 @@
  ***************************************************************************/
 
 #include "debuggerfactory.h"
-#include "debuggerdbg.h"
-#include "debuggerxd.h"
-#include "debuggergb.h"
-#include "perldebugger.h"
-#include "debuggerperldbgp.h"
 
 #include "protoeditor.h"
 #include "protoeditorsettings.h"
-#include "phpsettings.h"
-#include "perlsettings.h"
+#include "languagesettings.h"
+#include "abstractdebugger.h"
 
 DebuggerFactory::DebuggerFactory()
 {
-  AbstractDebugger* debugger;
+  QValueList<LanguageSettings*> list = 
+      Protoeditor::self()->settings()->languageSettingsList();
 
-  LanguageSettings* lang;
+  QValueList<AbstractDebugger*> dlist;
 
-  //PHP/DBG
-  lang = Protoeditor::self()->settings()->languageSettings(PHPSettings::lang);
-  debugger = new DebuggerDBG(lang);
-  registerDebugger(debugger);
-
-  //PHP/Xdebug
-  debugger = new DebuggerXD(lang);
-  registerDebugger(debugger);
-
-  //PHP/Gubed
-  debugger = new DebuggerGB(lang);
-  registerDebugger(debugger);
-
-  //Perl Local
-//   lang = Protoeditor::self()->settings()->languageSettings(PerlSettings::lang);
-//   debugger = new PerlDebugger(lang);
-//   registerDebugger(debugger);
-
-  lang = Protoeditor::self()->settings()->languageSettings(PerlSettings::lang);
-  debugger = new DebuggerPerlDBGP(lang);
-  registerDebugger(debugger);  
+  for(QValueList<LanguageSettings*>::iterator it = list.begin(); it != list.end(); ++it) 
+  {
+    dlist = (*it)->debuggers();
+    for(QValueList<AbstractDebugger*>::iterator dit = dlist.begin(); dit != dlist.end(); ++dit) 
+    {
+      registerDebugger(*dit);
+    }
+  }
 }
 
-
 DebuggerFactory::~DebuggerFactory()
+{
+  clear();
+}
+
+void DebuggerFactory::clear()
 {
   QMap<QString, AbstractDebugger*>::iterator it;
   for(it = m_debuggerMap.begin(); it != m_debuggerMap.end(); ++it) {

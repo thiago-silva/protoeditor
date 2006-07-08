@@ -33,7 +33,8 @@ public:
   ~DebuggerFactory();
 
   AbstractDebugger* getDebugger(const QString&);
-private:
+private:  
+  void clear();
   void registerDebugger(AbstractDebugger*);
 
   QMap<QString, AbstractDebugger*> m_debuggerMap;
