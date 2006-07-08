@@ -76,8 +76,6 @@ XDSettingsWidget::XDSettingsWidget(XDSettings* settings, QWidget *parent, const 
   mainLayout->addWidget(groupbox);
 
   mainLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-
-  setLangEnabled(false);
 }
 
 XDSettingsWidget::~XDSettingsWidget() {}
