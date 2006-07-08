@@ -45,7 +45,7 @@ public:
   void updateGlobalVars(VariableList_t*);
   void updateLocalVars(VariableList_t*);
   void updateWatch(Variable*);
-  void updateVariable(Variable*, int);
+  void updateVariable(Variable*);
   void updateBreakpoint(DebuggerBreakpoint*);
   void debugMessage(int, const QString&, const KURL&, int);
   void addOutput(const QString&);

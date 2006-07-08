@@ -98,9 +98,9 @@ void DataController::updateWatch(Variable* var)
   Protoeditor::self()->mainWindow()->debuggerUI()->addWatch(var);
 }
 
-void DataController::updateVariable(Variable* var, int scopeId)
+void DataController::updateVariable(Variable* var)
 {
-  Protoeditor::self()->mainWindow()->debuggerUI()->updateVariable(var, scopeId);
+  Protoeditor::self()->mainWindow()->debuggerUI()->updateVariable(var);
 }
 
 void DataController::updateBreakpoint(DebuggerBreakpoint* bp)
