@@ -1,9 +1,9 @@
 # set the include path for X, qt and KDE
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/perl/perldb -I$(top_srcdir)/src/perl/perldbgp -I$(top_srcdir)/src/php/dbg \
-	-I$(top_srcdir)/src/php/gubed -I$(top_srcdir)/src/php/xdebug -I$(top_srcdir)/src/protoeditor \
-	-I$(top_srcdir)/src/protoeditor/ui -I$(top_srcdir)/src/settings -I$(top_srcdir)/src/settings/widgets \
-	-I../settings $(all_includes)
+	-I$(top_srcdir)/src/perl -I$(top_srcdir)/src/perl/perldb -I$(top_srcdir)/src/perl/perldbgp \
+	-I$(top_srcdir)/src/php -I$(top_srcdir)/src/php/dbg -I$(top_srcdir)/src/php/gubed \
+	-I$(top_srcdir)/src/php/xdebug -I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/protoeditor/ui \
+	-I$(top_srcdir)/src/settings -I$(top_srcdir)/src/settings/widgets -I../settings $(all_includes)
 
 # these are the headers for your project
 noinst_HEADERS = debuggerfactory.h protoeditor.h 		executioncontroller.h datacontroller.h
@@ -40,5 +40,6 @@ protoeditor_LDADD = $(top_builddir)/src/protoeditor/ui/libui.la \
 	$(top_builddir)/src/php/dbg/profiler/libdbgprofiler.la $(top_builddir)/src/common/php/libcommonphp.la \
 	$(top_builddir)/src/common/libcommon.la $(top_builddir)/src/php/dbg/libdbg.la \
 	$(top_builddir)/src/perl/perldbgp/libperldbgp.la $(top_builddir)/src/common/perl/libcommonperl.la \
-	-lkatepartinterfaces $(LIB_KDEUI)
+	$(top_builddir)/src/php/libphplang.la $(top_builddir)/src/perl/libperllang.la -lkatepartinterfaces \
+	$(LIB_KDEUI)
 SUBDIRS = ui
