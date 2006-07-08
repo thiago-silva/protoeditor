@@ -22,7 +22,6 @@
 #include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "extappsettings.h"
-#include "phpsettings.h"
 
 #include <qhttp.h>
 #include <kurl.h>
