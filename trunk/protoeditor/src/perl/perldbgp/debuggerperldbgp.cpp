@@ -27,7 +27,7 @@
 #include "debuggerbreakpoint.h"
 #include "debuggerstack.h"
 #include "protoeditorsettings.h"
-#include "phpsettings.h"
+#include "languagesettings.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -65,7 +65,6 @@ DebuggerPerlDBGP::~DebuggerPerlDBGP()
   delete m_net;
 }
 
-
 QString DebuggerPerlDBGP::name() const
 {
   return m_name;
@@ -85,10 +84,10 @@ bool DebuggerPerlDBGP::isRunning() const
   return m_isRunning;
 }
 
-void DebuggerPerlDBGP::init()
-{
-  slotSettingsChanged();
-}
+// void DebuggerPerlDBGP::init()
+// {
+//   slotSettingsChanged();
+// }
 
 void DebuggerPerlDBGP::start(const QString& filepath, const QString& args, bool local)
 {
@@ -251,7 +250,7 @@ void DebuggerPerlDBGP::getChildren(int scope, Variable* var)
 
 void DebuggerPerlDBGP::slotSettingsChanged()
 {
-  if(m_pdbgSettings->enableJIT())
+  if(m_pdbgSettings->languageSettings()->isEnabled() && m_pdbgSettings->enableJIT())
   {
     //do not try to restart if we are already listening on the given port
     if(!m_isJITActive || (m_listenPort != m_pdbgSettings->listenPort()))
@@ -430,9 +429,9 @@ void DebuggerPerlDBGP::debugError(int code, const QString& filePath, int line, c
   }
 }
 
-void DebuggerPerlDBGP::updateVariable(Variable* var, int scopeId)
+void DebuggerPerlDBGP::updateVariable(Variable* var, int)
 {
-  Protoeditor::self()->dataController()->updateVariable(var, scopeId);
+  Protoeditor::self()->dataController()->updateVariable(var);
 }
 
 void DebuggerPerlDBGP::slotNewConnection()
