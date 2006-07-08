@@ -22,7 +22,7 @@
 #include "protoeditor.h"
 #include "datacontroller.h"
 #include "protoeditorsettings.h"
-#include "phpsettings.h"
+#include "languagesettings.h"
 
 #include "gbsettings.h"
 #include "gbnet.h"
@@ -85,10 +85,10 @@ bool DebuggerGB::isRunning() const
   return m_isRunning;
 }
 
-void DebuggerGB::init()
-{
-  slotSettingsChanged();
-}
+// void DebuggerGB::init()
+// {
+//   slotSettingsChanged();
+// }
 
 
 void DebuggerGB::start(const QString& filePath, const QString& args, bool local)
@@ -252,7 +252,7 @@ void DebuggerGB::removeWatch(const QString& expression)
 
 void DebuggerGB::slotSettingsChanged()
 {
-  if(m_gbSettings->enableJIT())
+  if(m_gbSettings->languageSettings()->isEnabled() && m_gbSettings->enableJIT())
   {
     //do not try to restart if we are already listening on the given port
     if(!m_isJITActive || (m_listenPort != m_gbSettings->listenPort()))
