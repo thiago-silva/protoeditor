@@ -25,12 +25,12 @@
 #include "protoeditor.h"
 #include "connection.h"
 #include "sitesettings.h"
-#include "phpsettings.h"
 #include "debuggerstack.h"
 #include "variable.h"
 #include "debuggerbreakpoint.h"
 #include "protoeditorsettings.h"
 #include "session.h"
+#include "languagesettings.h"
 
 #include <kapplication.h>
 #include <qhttp.h>
