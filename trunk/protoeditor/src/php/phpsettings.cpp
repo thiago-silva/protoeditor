@@ -17,39 +17,38 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLSETTINGSWIDGET_H
-#define PERLSETTINGSWIDGET_H
 
-#include <qwidget.h>
-#include <qvaluelist.h>
-#include <qmap.h>
+#include "phpsettings.h"
 
-class QCheckBox;
-class QComboBox;
-class KLineEdit;
-class DebuggerSettingsInterface;
+QString PHPSettings::lang = "PHP";
 
-class PerlSettingsWidget : public QWidget
+PHPSettings::PHPSettings(  )
+  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
 {
-  Q_OBJECT
-public:
-  PerlSettingsWidget(QWidget *parent = 0, const char *name = 0);
-  ~PerlSettingsWidget();
+  AbstractDebugger* def = new DebuggerDBG(this);
+  m_debuggerList.append(def);
+  m_debuggerList.append(new DebuggerXD(this));
+  m_debuggerList.append(new DebuggerGB(this));
 
-  void populate();
+  setCurrentGroup( QString::fromLatin1( "PHP" ) );
 
-  void updateSettings();
+  KConfigSkeleton::ItemString  *itemDefaultDebugger;
+  itemDefaultDebugger = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DefaultDebugger" ), mDefaultDebugger, def->name() );
+  addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
 
-private slots:
-  void slotLangEnabled(int);
+  KConfigSkeleton::ItemString  *itemPHPCommand;
+  itemPHPCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PHPCommand" ), mPHPCommand, "php");
+  addItem( itemPHPCommand, QString::fromLatin1( "PHPCommand" ) );
 
-private:
-  QCheckBox         *m_ckEnabled;
-  KLineEdit         *m_edPerlCommand;
-  QComboBox         *m_cbDefaultDebugger;
+  KConfigSkeleton::ItemBool  *itemEnabled;
+  itemEnabled = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "Enabled" ), mEnabled, true );
+  addItem(itemEnabled, QString::fromLatin1( "Enabled" ) );
 
-  QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;  
-  QMap<QString, QString> m_debuggerMap;
-};
+  readConfig();
 
-#endif
+}
+
+PHPSettings::~PHPSettings()
+{
+}
+

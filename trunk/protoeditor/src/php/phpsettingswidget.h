@@ -23,32 +23,38 @@
 #include <qwidget.h>
 #include <qvaluelist.h>
 
+#include "languagesettings.h"
+
 class QCheckBox;
 class QComboBox;
 class KLineEdit;
 class DebuggerSettingsInterface;
+class PHPSettings;
 
-class PHPSettingsWidget : public QWidget
+class PHPSettingsWidget : public QWidget,
+                          public LanguageSettingsWidget
 {
   Q_OBJECT
 public:
-  PHPSettingsWidget(QWidget *parent = 0, const char *name = 0);
+  PHPSettingsWidget(PHPSettings*, QWidget *parent = 0, const char *name = 0);
   ~PHPSettingsWidget();
 
-  void populate();
+  virtual void populate();
 
-  void updateSettings();
+  virtual void updateSettings();
 
 private slots:
   void slotLangEnabled(int);
 
 private:
+  PHPSettings*      m_phpSettings;
+
   QCheckBox         *m_ckEnabled;
   KLineEdit         *m_edPHPCommand;
   QComboBox         *m_cbDefaultDebugger;
 
   QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;
-  QMap<QString, QString> m_debuggerMap;
+  QMap<QString, QString> m_debuggerMap;  
 };
 
 #endif

@@ -17,32 +17,65 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef PERLSETTINGS_H
+#define PERLSETTINGS_H
 
-#include "phpsettings.h"
+#include "languagesettings.h"
 
-QString PHPSettings::lang = "PHP";
-
-PHPSettings::PHPSettings(  )
-  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
+class PerlSettings : public LanguageSettings
 {
-  setCurrentGroup( QString::fromLatin1( "PHP" ) );
+  public:
+    static QString lang;
 
-  KConfigSkeleton::ItemString  *itemDefaultDebugger;
-  itemDefaultDebugger = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DefaultDebugger" ), mDefaultDebugger );
-  addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
+    PerlSettings();
+    ~PerlSettings();
 
-  KConfigSkeleton::ItemString  *itemPHPCommand;
-  itemPHPCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PHPCommand" ), mPHPCommand, "php");
-  addItem( itemPHPCommand, QString::fromLatin1( "PHPCommand" ) );
+    virtual QString languageName() const
+    {
+      return PerlSettings::lang;
+    }
 
-  KConfigSkeleton::ItemBool  *itemEnabled;
-  itemEnabled = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "Enabled" ), mEnabled, false );
-  addItem(itemEnabled, QString::fromLatin1( "Enabled" ) );
+    virtual QString iconName()  const
+    {
+      return QString("perl");
+    }
 
-  readConfig();
-}
+    void setEnabled(bool value)
+    {
+      mEnabled = value;
+    }
 
-PHPSettings::~PHPSettings()
-{
-}
+    virtual bool isEnabled() const
+    {
+      return mEnabled;
+    }
 
+    void setDefaultDebugger(QString name)
+    {
+      mDefaultDebugger = name;
+    }
+
+    virtual QString defaultDebugger() const
+    {
+      return mDefaultDebugger;
+    }
+
+    void setInterpreterCommand(const QString& cmd) {
+      mPerlCommand = cmd;
+    }
+
+    virtual QString interpreterCommand() const {
+      return mPerlCommand ;
+    }
+
+    virtual QValueList<AbstractDebugger*> debuggers();
+    virtual LanguageSettingsWidget* createSettingsWidget(QWidget* parent);
+  protected:
+    bool    mEnabled;    
+    QString mPerlCommand;
+    QString mDefaultDebugger;
+
+    QValueList<AbstractDebugger*> m_debuggerList;
+};
+
+#endif

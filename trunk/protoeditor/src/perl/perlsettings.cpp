@@ -17,58 +17,49 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PHPSETTINGS_H
-#define PHPSETTINGS_H
 
-#include "languagesettings.h"
+#include "perlsettings.h"
+#include "perlsettingswidget.h"
+#include "debuggerperldbgp.h"
 
-class PHPSettings : public LanguageSettings
+
+QString PerlSettings::lang = "Perl";
+
+PerlSettings::PerlSettings(  )
+  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
 {
-  public:
-    static QString lang;
+  AbstractDebugger* def = new DebuggerPerlDBGP(this);
+//   list.append(new PerlDebugger(this));
+  m_debuggerList.append(def);
 
-    PHPSettings();
-    ~PHPSettings();
+  setCurrentGroup( QString::fromLatin1( "Perl" ) );
 
-    virtual QString languageName() const
-    {
-      return PHPSettings::lang;
-    }
+  KConfigSkeleton::ItemString  *itemPerlCommand;
+  itemPerlCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerlCommand" ), mPerlCommand, "perl");
+  addItem( itemPerlCommand, QString::fromLatin1( "PerlCommand" ) );
 
-    void setEnabled(bool value)
-    {
-      mEnabled = value;
-    }
+  KConfigSkeleton::ItemString  *itemDefaultDebugger;
+  itemDefaultDebugger = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "DefaultDebugger" ), mDefaultDebugger, def->name() );
+  addItem( itemDefaultDebugger, QString::fromLatin1( "DefaultDebugger" ) );
 
-    virtual bool isEnabled() const
-    {
-      return mEnabled;
-    }
+  KConfigSkeleton::ItemBool  *itemEnabled;
+  itemEnabled = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "Enabled" ), mEnabled, true );
+  addItem(itemEnabled, QString::fromLatin1( "Enabled" ) );
 
-    void setDefaultDebugger(QString name)
-    {
-      mDefaultDebugger = name;
-    }
+  readConfig();
+}
 
-    virtual QString defaultDebugger() const
-    {
-      return mDefaultDebugger;
-    }
+PerlSettings::~PerlSettings()
+{
+}
 
-    void setInterpreterCommand(const QString& cmd) {
-      mPHPCommand = cmd;
-    }
 
-    virtual QString interpreterCommand() const {
-      return mPHPCommand ;
-    }
+QValueList<AbstractDebugger*> PerlSettings::debuggers()
+{
+  return m_debuggerList;     
+}
 
-  protected:
-
-    bool    mEnabled;
-
-    QString mDefaultDebugger;
-    QString mPHPCommand;
-};
-
-#endif
+LanguageSettingsWidget* PerlSettings::createSettingsWidget(QWidget* parent)
+{
+  return new PerlSettingsWidget(this, parent);
+}

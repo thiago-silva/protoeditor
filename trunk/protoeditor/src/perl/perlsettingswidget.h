@@ -17,56 +17,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PERLSETTINGS_H
-#define PERLSETTINGS_H
+#ifndef PERLSETTINGSWIDGET_H
+#define PERLSETTINGSWIDGET_H
 
 #include "languagesettings.h"
 
-class PerlSettings : public LanguageSettings
+#include <qwidget.h>
+#include <qvaluelist.h>
+#include <qmap.h>
+
+class QCheckBox;
+class QComboBox;
+class KLineEdit;
+class DebuggerSettingsInterface;
+class PerlSettings;
+
+class PerlSettingsWidget : public QWidget,
+                           public LanguageSettingsWidget
 {
-  public:
-    static QString lang;
+  Q_OBJECT
+public:
+  PerlSettingsWidget(PerlSettings*, QWidget *parent = 0, const char *name = 0);
+  ~PerlSettingsWidget();
 
-    PerlSettings();
-    ~PerlSettings();
+  virtual void populate();
 
-    virtual QString languageName() const
-    {
-      return PerlSettings::lang;
-    }
+  virtual void updateSettings();
 
-    void setEnabled(bool value)
-    {
-      mEnabled = value;
-    }
+private slots:
+  void slotLangEnabled(int);
 
-    virtual bool isEnabled() const
-    {
-      return mEnabled;
-    }
+private:
+  PerlSettings      *m_perlSettings;
+  QCheckBox         *m_ckEnabled;
+  KLineEdit         *m_edPerlCommand;
+  QComboBox         *m_cbDefaultDebugger;
 
-    void setDefaultDebugger(QString name)
-    {
-      mDefaultDebugger = name;
-    }
-
-    virtual QString defaultDebugger() const
-    {
-      return mDefaultDebugger;
-    }
-
-    void setInterpreterCommand(const QString& cmd) {
-      mPerlCommand = cmd;
-    }
-
-    virtual QString interpreterCommand() const {
-      return mPerlCommand ;
-    }
-
-  protected:
-    bool    mEnabled;    
-    QString mPerlCommand;
-    QString mDefaultDebugger;
+  QValueList<DebuggerSettingsInterface*> m_debuggerSettingsList;  
+  QMap<QString, QString> m_debuggerMap;
 };
 
 #endif

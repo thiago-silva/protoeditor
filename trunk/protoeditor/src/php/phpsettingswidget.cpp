@@ -17,12 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "perlsettingswidget.h"
+#include "phpsettingswidget.h"
 
-#include "protoeditor.h"
 #include "protoeditorsettings.h"
 #include "debuggersettingsinterface.h"
-#include "perlsettings.h"
+#include "phpsettings.h"
 
 #include <qlayout.h>
 #include <qlabel.h>
@@ -34,26 +33,23 @@
 #include <klocale.h>
 
 
-PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
- : QWidget(parent, name)
+PHPSettingsWidget::PHPSettingsWidget(PHPSettings* phpSettings, QWidget *parent, const char *name)
+ : QWidget(parent, name), m_phpSettings(phpSettings)
 {
   QVBoxLayout* mainLayout = new QVBoxLayout(this, 3, 10);
 
-  QGridLayout* grid = new QGridLayout(0, 3,2, 3, 10);
+  QGridLayout* grid = new QGridLayout(0, 3, 2, 3, 10);
 
-  m_ckEnabled = new QCheckBox(this);
-  m_ckEnabled->setText(i18n("Enabled"));
-  grid->addWidget(m_ckEnabled, 0, 0);
+//   m_ckEnabled = new QCheckBox(this);
+//   m_ckEnabled->setText(i18n("Enabled"));
+//   grid->addWidget(m_ckEnabled, 0, 0);  
 
   QLabel* lbPhp= new QLabel(this);
-  lbPhp->setText(i18n("Perl command:"));
+  lbPhp->setText(i18n("PHP command:"));
   grid->addWidget(lbPhp, 1, 0);
 
-
-  m_edPerlCommand = new KLineEdit(this);
-  grid->addWidget(m_edPerlCommand, 1, 1);
-  
-  mainLayout->addLayout(grid);
+  m_edPHPCommand = new KLineEdit(this);
+  grid->addWidget(m_edPHPCommand, 1, 1);
 
   QLabel* lbDefaultDebugger = new QLabel(this);
   lbDefaultDebugger->setText(i18n("Default debugger:"));
@@ -61,8 +57,7 @@ PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
 
   m_cbDefaultDebugger = new QComboBox(this);
 
-  m_debuggerSettingsList =
-    Protoeditor::self()->settings()->languageSettings(PerlSettings::lang)->debuggerSettingsList();
+  m_debuggerSettingsList = m_phpSettings->debuggerSettingsList();
       
   
   for(QValueList<DebuggerSettingsInterface*>::iterator it = m_debuggerSettingsList.begin();
@@ -75,6 +70,8 @@ PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
 
   grid->addWidget(m_cbDefaultDebugger,2, 1);
 
+  mainLayout->addLayout(grid);
+
   QTabWidget* debuggersTabWidget = new QTabWidget(this);
 
 
@@ -85,47 +82,41 @@ PerlSettingsWidget::PerlSettingsWidget(QWidget *parent, const char *name)
 
   mainLayout->addWidget(debuggersTabWidget);
 
-  connect(m_ckEnabled, SIGNAL(stateChanged(int)), this, SLOT(slotLangEnabled(int)));
-  slotLangEnabled(false);
+//   connect(m_ckEnabled, SIGNAL(stateChanged(int)), this, SLOT(slotLangEnabled(int)));
+
+//   slotLangEnabled(false);
 }
 
 
-PerlSettingsWidget::~PerlSettingsWidget()
+PHPSettingsWidget::~PHPSettingsWidget()
 {
 }
 
-void PerlSettingsWidget::populate()
+void PHPSettingsWidget::populate()
 {
-  PerlSettings* settings = 
-    dynamic_cast<PerlSettings*>(Protoeditor::self()->settings()->languageSettings(PerlSettings::lang));
+//   m_ckEnabled->setChecked(m_phpSettings->isEnabled());
 
-
-  m_ckEnabled->setChecked(settings->isEnabled());
-
-  if(!settings->defaultDebugger().isEmpty())
+  if(!m_phpSettings->defaultDebugger().isEmpty())
   {
     m_cbDefaultDebugger->setCurrentText(
-      settings->debuggerSettings(settings->defaultDebugger())->debuggerLabel());
+      m_phpSettings->debuggerSettings(m_phpSettings->defaultDebugger())->debuggerLabel());
   }
-
-  m_edPerlCommand->setText(settings->interpreterCommand());
-
+  
+  m_edPHPCommand->setText(m_phpSettings->interpreterCommand());
+  
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
     (*it)->widget()->populate();
   }
 }
 
-void PerlSettingsWidget::updateSettings()
+void PHPSettingsWidget::updateSettings()
 {
-  PerlSettings* settings = 
-    dynamic_cast<PerlSettings*>(Protoeditor::self()->settings()->languageSettings(PerlSettings::lang));
+//   m_phpSettings->setEnabled(m_ckEnabled->isChecked());
 
-  settings->setEnabled(m_ckEnabled->isChecked());
+  m_phpSettings->setDefaultDebugger(m_debuggerMap[m_cbDefaultDebugger->currentText()]);
 
-  settings->setDefaultDebugger(m_debuggerMap[m_cbDefaultDebugger->currentText()]);
-
-  settings->setInterpreterCommand(m_edPerlCommand->text());
+  m_phpSettings->setInterpreterCommand(m_edPHPCommand->text());
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
@@ -133,14 +124,15 @@ void PerlSettingsWidget::updateSettings()
   }
 }
 
-void PerlSettingsWidget::slotLangEnabled(int)
+void PHPSettingsWidget::slotLangEnabled(int)
 {
-  m_edPerlCommand->setEnabled(m_ckEnabled->isChecked());
+//   m_edPHPCommand->setEnabled(m_ckEnabled->isChecked());
+//   m_cbDefaultDebugger->setEnabled(m_ckEnabled->isChecked());
 
-  QValueList<DebuggerSettingsInterface*>::iterator it;
-  for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    (*it)->widget()->setLangEnabled(m_ckEnabled->isChecked());
-  }
+//   QValueList<DebuggerSettingsInterface*>::iterator it;
+//   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
+//     (*it)->widget()->setLangEnabled(m_ckEnabled->isChecked());
+//   }
 }
 
-#include "perlsettingswidget.moc"
+#include "phpsettingswidget.moc"
