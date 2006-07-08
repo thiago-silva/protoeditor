@@ -3,3 +3,6 @@
 AM_INIT_AUTOMAKE(protoeditor, 1.0)
 AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
+
+perllibdir=${kde_datadir}/protoeditor/libs/perl/
+AC_SUBST(perllibdir)
