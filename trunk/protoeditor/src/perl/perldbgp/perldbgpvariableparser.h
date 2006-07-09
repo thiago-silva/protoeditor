@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
-#ifndef XDVARIABLEPARSER_H
-#define XDVARIABLEPARSER_H
+#ifndef PERLVARIABLEPARSER_H
+#define PERLVARIABLEPARSER_H
 
 #include "perlvariable.h"
 

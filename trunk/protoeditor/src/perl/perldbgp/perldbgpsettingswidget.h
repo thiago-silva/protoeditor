@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef XDSETTINGSWIDGET_H
-#define XDSETTINGSWIDGET_H
+#ifndef PERLSETTINGSWIDGET_H
+#define PERLSETTINGSWIDGET_H
 
 #include "debuggersettingsinterface.h"
 
