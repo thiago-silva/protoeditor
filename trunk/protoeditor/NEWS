@@ -1,3 +1,35 @@
+Version 1.1.beta
+
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpnet.h:
+	* /trunk/protoeditor/src/perl/perldbgp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettings.cpp:
+	* /trunk/protoeditor/src/common/perl/Makefile.am:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpvariableparser.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettingswidget.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettings.h:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpvariableparser.h:
+	* /trunk/protoeditor/src/perl/perldbgp/Makefile.am:
+	* /trunk/protoeditor/src/perl/Makefile.am:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettingswidget.h:
+	* /trunk/protoeditor/src/common/perl/perlvariable.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.cpp:
+	* /trunk/protoeditor/src/common/perl/perlvariable.h:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpnet.cpp:
+	* /trunk/protoeditor/src/common/perl:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.h:
+
+	-Added Perl support using DBGp
+
+	* /trunk/protoeditor/src/php/xdebug/xdnet.h:
+	* /trunk/protoeditor/src/php/xdebug/xdnet.cpp:
+
+	Bug fixes:
+	-Changing variable value
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+
+	-Remembering the current Site after closing Protoeditor
+
 Version 1.0
 
 	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
