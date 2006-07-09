@@ -45,6 +45,8 @@ public:
   /* Most (if not all) of those functions are meant to be called from the DebuggerManager
   */
 
+  virtual void init() = 0;
+
   /* A unique name of the debugger */
   virtual QString name()   const = 0;
 

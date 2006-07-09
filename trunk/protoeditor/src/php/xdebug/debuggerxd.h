@@ -43,7 +43,7 @@ public:
   virtual QString label() const;
 
   virtual bool isRunning() const;
-//   virtual void init();
+  virtual void init();
 
   virtual void start(const QString&, const QString&, bool local);
   virtual void continueExecution();

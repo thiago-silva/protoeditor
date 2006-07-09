@@ -64,8 +64,6 @@ DebuggerDBG::DebuggerDBG(LanguageSettings* langs)
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
-
-  slotSettingsChanged();
 }
 
 DebuggerDBG::~DebuggerDBG()

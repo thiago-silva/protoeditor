@@ -59,8 +59,6 @@ DebuggerGB::DebuggerGB(LanguageSettings* langs)
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
-
-  slotSettingsChanged();
 }
 
 
@@ -85,10 +83,10 @@ bool DebuggerGB::isRunning() const
   return m_isRunning;
 }
 
-// void DebuggerGB::init()
-// {
-//   slotSettingsChanged();
-// }
+void DebuggerGB::init()
+{
+  slotSettingsChanged();
+}
 
 
 void DebuggerGB::start(const QString& filePath, const QString& args, bool local)

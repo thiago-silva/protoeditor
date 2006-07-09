@@ -54,15 +54,18 @@ DebuggerPerlDBGP::DebuggerPerlDBGP(LanguageSettings* langs)
   connect(m_net, SIGNAL(sigError(const QString&)), this, SIGNAL(sigInternalError(const QString&)));
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
-  //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
-
-  slotSettingsChanged();
+  //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));  
 }
 
 DebuggerPerlDBGP::~DebuggerPerlDBGP()
 {
   delete m_pdbgSettings;
   delete m_net;
+}
+
+void DebuggerPerlDBGP::init()
+{
+  slotSettingsChanged();
 }
 
 QString DebuggerPerlDBGP::name() const

@@ -318,7 +318,7 @@ void PerlDBGPNet::slotIncomingConnection(QSocket* socket)
   emit sigNewConnection();
 }
 
-#include <iostream>
+// #include <iostream>
 
 void PerlDBGPNet::slotReadBuffer()
 {
@@ -366,7 +366,7 @@ void PerlDBGPNet::slotReadBuffer()
     
 
     str.setAscii(data,xmlSize);
-    std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+//     std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
     processXML(str);
   }
   while(m_socket && m_socket->bytesAvailable());

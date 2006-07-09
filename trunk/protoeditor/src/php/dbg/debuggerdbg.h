@@ -39,6 +39,7 @@ public:
   virtual ~DebuggerDBG();
 
   /* Interface of AbstractDebugger */
+  virtual void init();
 
   virtual QString name()   const;
   virtual QString label()   const;
@@ -46,7 +47,7 @@ public:
 
   virtual bool isRunning() const;
 
-  virtual void init();
+  
   virtual void start(const QString&, const QString&, bool local);
   virtual void continueExecution();
   virtual void stop();

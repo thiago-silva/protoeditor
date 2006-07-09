@@ -58,8 +58,6 @@ DebuggerXD::DebuggerXD(LanguageSettings* langs)
   connect(m_net, SIGNAL(sigStepDone()), this, SLOT(slotStepDone()));
   connect(m_net, SIGNAL(sigNewConnection()), this, SLOT(slotNewConnection()));
   //connect(m_net, SIGNAL(sigBreakpoint()), this, SLOT(slotBreakpoint()));
-
-  slotSettingsChanged();
 }
 
 DebuggerXD::~DebuggerXD()
@@ -88,10 +86,10 @@ bool DebuggerXD::isRunning() const
   return m_isRunning;
 }
 
-// void DebuggerXD::init()
-// {
-//   slotSettingsChanged();
-// }
+void DebuggerXD::init()
+{
+  slotSettingsChanged();
+}
 
 void DebuggerXD::start(const QString& filepath, const QString& args, bool local)
 {

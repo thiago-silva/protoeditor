@@ -42,6 +42,8 @@ public:
   DebuggerPerlDBGP(LanguageSettings*);
   virtual ~DebuggerPerlDBGP();
 
+  virtual void init();
+
   virtual QString name() const;
   virtual QString label() const;
 
