@@ -80,6 +80,9 @@ Project site: http://protoeditor.sourceforge.net
     cgi-script (ie. "#!/usr/bin/perl -d") should be enough.
 
 
+    Detailed information can be found at:
+    http://aspn.activestate.com/ASPN/docs/Komodo/3.5/komodo-doc-debugperl.html#debugperl_top
+
 2.1.1 Protoeditor configuration
 
   Check your debugger options on Protoeditor settings. Most of them are self
