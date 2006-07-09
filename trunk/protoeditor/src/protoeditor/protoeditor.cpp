@@ -62,7 +62,6 @@ Protoeditor::Protoeditor()
   
 }
 
-
 Protoeditor::~Protoeditor()
 {
   //saves the recent opened files
@@ -537,6 +536,7 @@ void Protoeditor::loadLanguages()
       m_window->addLanguage((*it)->languageName());
     }
   }
+  m_window->setCurrentLanguage(m_settings->currentLanguage());
 }
 
 void Protoeditor::loadSites()
@@ -564,7 +564,7 @@ void Protoeditor::loadSites()
   m_window->setSiteNames(strsites);
   m_window->setCurrentSite(curr);
     
-  m_settings->slotCurrentSiteChanged(m_window->currentSiteName());  
+  m_settings->setCurrentSiteName(m_window->currentSiteName());  
 }
 
 bool Protoeditor::checkOverwrite(const KURL& u)

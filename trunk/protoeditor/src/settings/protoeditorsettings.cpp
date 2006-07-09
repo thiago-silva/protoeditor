@@ -39,6 +39,10 @@ ProtoeditorSettings::ProtoeditorSettings()
   itemCurrentSite = new KConfigSkeleton::ItemString(currentGroup(), QString::fromLatin1( "CurrentSite" ), m_currentSiteName);
   addItem( itemCurrentSite, QString::fromLatin1( "CurrentSite" ) );
 
+  KConfigSkeleton::ItemString  *itemCurrentLanguage;
+  itemCurrentLanguage = new KConfigSkeleton::ItemString(currentGroup(), QString::fromLatin1( "CurrentLanguage" ), m_currentLanguage, "PHP");
+  addItem( itemCurrentLanguage, QString::fromLatin1( "CurrentLanguage" ) );
+
   KConfigSkeleton::ItemStringList *itemArgHistory;
   itemArgHistory = new ItemStringList(currentGroup(), QString::fromLatin1("ArgumentHistory"), m_argumentsHistory);
   addItem( itemArgHistory, QString::fromLatin1( "ArgumentHistory" ) );
@@ -70,14 +74,9 @@ void ProtoeditorSettings::loadSites()
 
 ProtoeditorSettings::~ProtoeditorSettings()
 {
-  QMap<QString, LanguageSettings*>::iterator it;
-  LanguageSettings* l;
-  for(it = m_langSettingsMap.begin(); it != m_langSettingsMap.end(); ++it) {
-     l = it.data();
-     delete l;
-  }
-
   delete m_extApptSettings;
+
+  clearSites(); 
 }
 
 void ProtoeditorSettings::setArgumentsHistory(const QStringList& args)
@@ -120,10 +119,15 @@ QValueList<LanguageSettings*> ProtoeditorSettings::languageSettingsList()
   return m_langSettingsMap.values();
 }
 
-QString ProtoeditorSettings::currentSiteName() {
+QString ProtoeditorSettings::currentSiteName() 
+{
   return m_currentSiteName;
 }
 
+QString ProtoeditorSettings::currentLanguage()
+{
+  return m_currentLanguage;
+}
 
 QStringList ProtoeditorSettings::supportedLanguages()
 {
@@ -214,7 +218,12 @@ void ProtoeditorSettings::writeSiteConf()
   }
 }
 
-void ProtoeditorSettings::slotCurrentSiteChanged(const QString& sitename)
+void ProtoeditorSettings::setCurrentLanguage(const QString& langName)
+{
+  m_currentLanguage = langName;
+}
+
+void ProtoeditorSettings::setCurrentSiteName(const QString& sitename)
 {
   if(sitename == ProtoeditorSettings::LocalSiteName) 
   {

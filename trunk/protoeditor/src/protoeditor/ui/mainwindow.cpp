@@ -140,9 +140,6 @@ void MainWindow::setupActions()
   connect(m_siteAction, SIGNAL(activated()),
       this, SLOT(slotAcCurrentSiteChanged()));
 
-  connect(m_siteAction, SIGNAL(activated(const QString&)),
-      Protoeditor::self()->settings(), SLOT(slotCurrentSiteChanged(const QString&)));
-
   m_activeScriptAction = new KToggleAction(i18n("Use Current Script"), "attach", 0, actionCollection(), "use_current_script");
 
   connect(m_activeScriptAction, SIGNAL(toggled (bool)),
@@ -251,6 +248,18 @@ void MainWindow::setCurrentSite(int idx)
   slotAcCurrentSiteChanged();
 }
 
+void MainWindow::setCurrentLanguage(const QString& lang)
+{
+  QMap<int, QString>::iterator it;
+  for(it = m_langMap.begin(); it != m_langMap.end(); ++it) 
+  {
+    if(it.data() == lang)
+    {
+      slotAcChangeCurrentLanguage(it.key());
+    }
+  }
+}
+
 void MainWindow::addRecentURL(const KURL& url)
 {
   m_actionRecent->addURL(url);
@@ -283,13 +292,6 @@ void MainWindow::addLanguage(const QString& langName)
   m_langPopup->insertItem(langName, id);
 
   m_langMap[id] = langName;
-
-  //get the first language registered as our default language
-  if(m_lastLang.isEmpty()) 
-  {
-    m_lastLang = langName;
-    slotAcChangeCurrentLanguage(id);
-  }
 }
 
 void MainWindow::showError(const QString& msg) const
@@ -367,6 +369,8 @@ void MainWindow::slotAcChangeCurrentLanguage(int id)
 {
   m_lastLang = m_langMap[id];
 
+  Protoeditor::self()->settings()->setCurrentLanguage(m_lastLang);
+
   for(unsigned int i = 0; i < m_langPopup->count(); i++)
   {
     m_langPopup->setItemChecked(m_langPopup->idAt(i), false);
@@ -380,6 +384,8 @@ void MainWindow::slotAcChangeCurrentLanguage(int id)
 
 void MainWindow::slotAcCurrentSiteChanged()
 {
+  Protoeditor::self()->settings()->setCurrentSiteName(currentSiteName());
+
   if(isCurrentScriptActionChecked()) return;
 
   KToolBar* bar = toolBar("debug_toolbar");

@@ -60,6 +60,8 @@ public:
   void setSiteNames(const QStringList&);
   void setCurrentSite(int);
 
+  void setCurrentLanguage(const QString&);
+
   void addRecentURL(const KURL&);
   void removeRecentURL(const KURL&);
   bool isCurrentScriptActionChecked();

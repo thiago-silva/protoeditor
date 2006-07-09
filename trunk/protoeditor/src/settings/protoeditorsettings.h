@@ -36,7 +36,9 @@ class LanguageSettings;
 class ExtAppSettings;
 class KURL;
 
-class ProtoeditorSettings  : public QObject, KConfigSkeleton  {
+class ProtoeditorSettings  : public QObject, 
+                             public KConfigSkeleton  
+{
   Q_OBJECT
 public:
   static QString LocalSiteName;
@@ -54,7 +56,11 @@ public:
 
   QStringList                            supportedLanguages();
 
+  void                                   setCurrentSiteName(const QString&);
   QString                                currentSiteName();
+  void                                   setCurrentLanguage(const QString&);
+  QString                                currentLanguage();
+
   SiteSettings*                          siteSettings(const QString& name);
   SiteSettings*                          currentSiteSettings();
   QValueList<SiteSettings*>              siteSettingsList();
@@ -72,8 +78,6 @@ public:
 signals:
   void sigSettingsChanged();
 
-public slots:
-  void slotCurrentSiteChanged(const QString&);
 private:
   void loadSites();
 
@@ -82,6 +86,7 @@ private:
   ExtAppSettings           *m_extApptSettings;
 
   QString                   m_currentSiteName;
+  QString                   m_currentLanguage;
 
   QStringList               m_argumentsHistory;
 
