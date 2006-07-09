@@ -47,6 +47,22 @@ DebuggerFactory::~DebuggerFactory()
   clear();
 }
 
+void DebuggerFactory::init()
+{
+  QValueList<LanguageSettings*> list = 
+      Protoeditor::self()->settings()->languageSettingsList();
+
+  QValueList<AbstractDebugger*> dlist;
+  for(QValueList<LanguageSettings*>::iterator it = list.begin(); it != list.end(); ++it) 
+  {
+    dlist = (*it)->debuggers();
+    for(QValueList<AbstractDebugger*>::iterator dit = dlist.begin(); dit != dlist.end(); ++dit) 
+    {
+      (*dit)->init();
+    }
+  }
+}
+
 void DebuggerFactory::clear()
 {
   QMap<QString, AbstractDebugger*>::iterator it;

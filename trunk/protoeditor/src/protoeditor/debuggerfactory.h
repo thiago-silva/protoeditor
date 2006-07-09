@@ -32,6 +32,8 @@ public:
   DebuggerFactory();
   ~DebuggerFactory();
 
+  void init();
+
   AbstractDebugger* getDebugger(const QString&);
 private:  
   void clear();

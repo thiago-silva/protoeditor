@@ -48,12 +48,13 @@ ExecutionController::ExecutionController()
 
 ExecutionController::~ExecutionController()
 {
-  delete m_debuggerFactory;
+  delete m_debuggerFactory;  
 }
 
 void ExecutionController::init()
 {
   m_debuggerFactory = new DebuggerFactory();
+  m_debuggerFactory->init();
 }
 
 QString ExecutionController::currentDebuggerName()
