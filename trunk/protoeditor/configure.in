@@ -36,7 +36,7 @@ dnl Perform program name transformation
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(protoeditor, 1.1beta) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(protoeditor, 1.1beta2) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -62,7 +62,11 @@ AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
 
 perllibdir=${kde_datadir}/protoeditor/libs/perl/
-AC_SUBST(perllibdir)KDE_CREATE_SUBDIRSLIST
+pythonlibdir=${kde_datadir}/protoeditor/libs/python/
+
+AC_SUBST(perllibdir)
+AC_SUBST(pythonlibdir)
+KDE_CREATE_SUBDIRSLIST
 AC_CONFIG_FILES([ Makefile ])
 AC_CONFIG_FILES([ data/Makefile ])
 AC_CONFIG_FILES([ data/icons/Makefile ])
@@ -74,6 +78,7 @@ AC_CONFIG_FILES([ src/Makefile ])
 AC_CONFIG_FILES([ src/common/Makefile ])
 AC_CONFIG_FILES([ src/common/perl/Makefile ])
 AC_CONFIG_FILES([ src/common/php/Makefile ])
+AC_CONFIG_FILES([ src/common/python/Makefile ])
 AC_CONFIG_FILES([ src/perl/Makefile ])
 AC_CONFIG_FILES([ src/perl/perldb/Makefile ])
 AC_CONFIG_FILES([ src/perl/perldbgp/Makefile ])
@@ -84,6 +89,8 @@ AC_CONFIG_FILES([ src/php/gubed/Makefile ])
 AC_CONFIG_FILES([ src/php/xdebug/Makefile ])
 AC_CONFIG_FILES([ src/protoeditor/Makefile ])
 AC_CONFIG_FILES([ src/protoeditor/ui/Makefile ])
+AC_CONFIG_FILES([ src/python/Makefile ])
+AC_CONFIG_FILES([ src/python/pythondbgp/Makefile ])
 AC_CONFIG_FILES([ src/settings/Makefile ])
 AC_CONFIG_FILES([ src/settings/widgets/Makefile ])
 AC_OUTPUT

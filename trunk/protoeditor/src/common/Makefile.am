@@ -1,4 +1,4 @@
-SUBDIRS = . php perl
+SUBDIRS = . php perl python
 
 INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/protoeditor -I$(top_srcdir)/src/settings $(all_includes)

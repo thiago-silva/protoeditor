@@ -30,6 +30,7 @@
 
 #include "phpsettings.h"
 #include "perlsettings.h"
+#include "pythonsettings.h"
 
 #include "datacontroller.h"
 #include "executioncontroller.h"
@@ -50,9 +51,10 @@
 Protoeditor* Protoeditor::m_self = 0;
 
 //TODO: i18n this
-QString Protoeditor::fileFilter = "*.php *.pl| Scripts\n"
+QString Protoeditor::fileFilter = "*.php *.pl *py| Scripts\n"
                                   "*.php| PHP Scripts\n"
                                   "*.pl| Perl Scripts\n"
+                                  "*.py| Python Scripts\n"
                                   "*| All Files";
 
 
@@ -519,6 +521,7 @@ void Protoeditor::registerLanguages()
 {
   m_settings->registerLanguage(new PHPSettings());
   m_settings->registerLanguage(new PerlSettings());  
+  m_settings->registerLanguage(new PythonSettings());  
 }
 
 void Protoeditor::loadLanguages()

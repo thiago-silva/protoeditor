@@ -1,8 +1,11 @@
 #MIN_CONFIG(3.2)
 
-AM_INIT_AUTOMAKE(protoeditor, 1.1beta)
+AM_INIT_AUTOMAKE(protoeditor, 1.1beta2)
 AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
 
 perllibdir=${kde_datadir}/protoeditor/libs/perl/
+pythonlibdir=${kde_datadir}/protoeditor/libs/python/
+
 AC_SUBST(perllibdir)
+AC_SUBST(pythonlibdir)

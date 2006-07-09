@@ -1,1 +1,1 @@
-SUBDIRS = common settings php perl protoeditor
+SUBDIRS = common settings php perl python protoeditor
