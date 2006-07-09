@@ -82,7 +82,11 @@
 
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>When disabling a language, the sites configured to use debuggers with the language should be disabled as well (not shown in the mainmenu options)<br /></li>
+<ul type="disc"><li>Release 1.1beta<br /><br />-----------------------------------<br /></li>
+<li>Add Site::language</li>
+<ul type="disc"><li>two combos: one for language, other for debugger</li>
+<li>When changing currentsite, status bar show &quot;PHP DBG&quot;, when changing to local, show defaults: ie &quot;Perl DBGp&quot;<br /></li></ul>
+<li>When disabling a language, the sites configured to use debuggers with the language should be disabled as well (not shown in the mainmenu options)<br /></li>
 <li>Comment the console widget (remove it)<br /><br />Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
 <li>Maybe, ask only if the debugger is a different from the current one<br /></li></ul>
@@ -151,7 +155,6 @@
 <li>Try different patterns (ie. State) in DBG implementation (DBGNet) to make clear the debug/profile code<br /></li>
 <li>Research/try better aproaches to handle async comunication between debugger - application (debugger codes are to messy)<br /></li></ul>
 </body></html>
-
 
 \NewEntry 2 perl implementation
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">

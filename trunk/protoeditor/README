@@ -31,10 +31,12 @@ Project site: http://protoeditor.sourceforge.net
 1.1 Requirements:
 
   * KDE 3.2 + should be fine (if not, let me know :)
-  * You might need the interpreters of your favorite language (PHP, Perl, etc)
-    and, at least, one debugger installed if you want to debug scripts locally.
+  * For local debug, you need a interpreter (ie. PHP, Perl) and, at least, 
+    one debugger installed in your system.
+    For remote debug, you need the remote system to be properly installed
+    (webserver + debugger module + additional configuration).  
   
-2.0 Configuration and use
+2.0 Configuration and Use
 
   See Protoeditor manual for a description of the settings and
   features Protoeditor provides (execute Protoeditor and
@@ -60,9 +62,23 @@ Project site: http://protoeditor.sourceforge.net
 
   2.1.2 Perl
 
-    There is no extra configuration needed to start debugging Perl scripts.
-    Protoeditor installs automatically the DBGp in it's data directory (so 
-    it doesn't conflict with your system perl library). 
+    There is no extra configuration needed to start debugging Perl scripts 
+    locally. Protoeditor installs automatically the DBGp in it's data
+    directory (usually /opt/kde/share/apps/protoeditor/libs/perl) so it doesn't 
+    conflict with your system perl library.
+
+    To debug remotelly, you will need to copy the DBGp library to the server
+    host and configure the webserver. For instance, if the remote server
+    is the localhost, and you are using Apache, you could add the following
+    to httpd.conf (assuming mod_env is installed and DBGp is in the default 
+    directory):
+
+        SetEnv PERL5LIB "/opt/kde/share/apps/protoeditor/libs/perl/"
+        SetEnv PERLDB_OPTS "RemotePort=localhost:9001"
+
+    Then, restarting the server and settings "perl -d" to the shebang in the
+    cgi-script (ie. "#!/usr/bin/perl -d") should be enough.
+
 
 2.1.1 Protoeditor configuration
 
