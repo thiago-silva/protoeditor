@@ -1,4 +1,685 @@
+2006-07-09
+
+	* /trunk/protoeditor/src/php/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpnet.cpp:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.h:
+
+	-Fixed object construction dependecy
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+
+	-Added currentLanguage to the settings, to it is remembered.
+
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.h:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+
+	-Fixed object construction dependecy
+
+	* /trunk/protoeditor/src/perl/perlsettings.cpp:
+
+	-Added "-w" to default perl command
+
+2006-07-08
+
+	* /trunk/protoeditor/configure.in:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/protoeditor.kdevelop:
+
+	-perl-aware docs
+
+	* /trunk/protoeditor/README:
+
+	-perl-aware docs
+
+	* /trunk/protoeditor/configure.in.in:
+
+	-Added DBGp perl package
+
+	* /trunk/protoeditor/data/libs/perl_dbgp.tar.gz:
+	* /trunk/protoeditor/data/libs/Makefile.am:
+	* /trunk/protoeditor/data/libs:
+	* /trunk/protoeditor/data/Makefile.am:
+
+	-Added DBGp perl package
+
+	* /trunk/protoeditor/src/settings/phpsettings.h:
+	* /trunk/protoeditor/src/php/Makefile.am:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/perlsettings.cpp:
+	* /trunk/protoeditor/src/perl/perlsettings.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.h:
+	* /trunk/protoeditor/src/settings/perlsettings.h:
+	* /trunk/protoeditor/src/perl/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/perl/Makefile.am:
+	* /trunk/protoeditor/src/perl/perlsettings.h:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/perl/perlsettingswidget.h:
+	* /trunk/protoeditor/src/php/phpsettings.cpp:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.h:
+	* /trunk/protoeditor/src/php/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/php/phpsettings.h:
+	* /trunk/protoeditor/src/settings/phpsettings.cpp:
+	* /trunk/protoeditor/src/php/phpsettingswidget.h:
+
+	-Moving settings(widget) to the right language directories
+	-Refactored language registration
+
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.h:
+
+	-Checking if the language is enable before starting JIT
+
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpnet.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/Makefile.am:
+
+	-Using the right DBGp library path
+
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettings.cpp:
+
+	-Using the right DBGp library path
+
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.h:
+
+	-Checking if the language is enable before starting JIT
+
+	* /trunk/protoeditor/src/php/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.cpp:
+
+	-Checking if the language is enable before starting JIT
+
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.cpp:
+
+	-Checking if the language is enable before starting JIT
+
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.h:
+
+	-Fixed signals
+	-Organized the initialization orther
+
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+
+	-Simplifying the language registration. This class might
+	desapear soon.
+
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+
+	-Improved toolbar: debug popupmenu is not shown if no need
+	it. Also it doesn't trigger execution, onyl selects a
+	language.
+
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.h:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.cpp:
+
+	-Commented the ConsoleWidget
+	-Fixed updateVariable()
+
+	* /trunk/protoeditor/src/settings/languagesettings.h:
+
+	-Added LanguageSettingsWidget
+	-Added LanguageSettings::iconName()
+	-Added LanguageSettings::debuggers()
+	-Added LanguageSettings::createSettingsWidget()
+
+	* /trunk/protoeditor/src/settings/widgets/configdlg.cpp:
+	* /trunk/protoeditor/src/settings/widgets/configdlg.h:
+
+	-Improved the construction and use of the language settings
+	widgets
+	-Changed the resize value
+	-Removed the singleton
+
+2006-07-04
+
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpnet.h:
+	* /trunk/protoeditor/src/perl/perldbgp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettings.cpp:
+	* /trunk/protoeditor/src/common/perl/Makefile.am:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpvariableparser.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettingswidget.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettings.h:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpvariableparser.h:
+	* /trunk/protoeditor/src/perl/perldbgp/Makefile.am:
+	* /trunk/protoeditor/src/perl/Makefile.am:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpsettingswidget.h:
+	* /trunk/protoeditor/src/common/perl/perlvariable.cpp:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.cpp:
+	* /trunk/protoeditor/src/common/perl/perlvariable.h:
+	* /trunk/protoeditor/src/perl/perldbgp/perldbgpnet.cpp:
+	* /trunk/protoeditor/src/common/perl:
+	* /trunk/protoeditor/src/perl/perldbgp/debuggerperldbgp.h:
+
+	-Added Perl support using DBGp
+
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h:
+
+	-Using "label" instead of debugger name
+
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.h:
+
+	-Using "label" instead of debugger name
+
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.h:
+
+	-Added support for multiple debuggers
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+
+	-Fixed leaks
+
+	* /trunk/protoeditor/src/settings/perlsettings.cpp:
+	* /trunk/protoeditor/src/settings/perlsettings.h:
+
+	-Added default debugger
+
+	* /trunk/protoeditor/src/settings/debuggersettingsinterface.h:
+
+	-Added fields for proper identification and information
+
+	* /trunk/protoeditor/src/protoeditor/ui/watchlistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/watchlistview.h:
+
+	-Added ID field for list identification
+
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistview.h:
+
+	-Added support for lazy variable initialization
+	-Added ID field for list identification
+
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistviewitem.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistviewitem.h:
+
+	-Removed StringPath()
+
+	* /trunk/protoeditor/src/protoeditor/ui/consolewidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/consolewidget.h:
+
+	-Added ConsoleWidget
+
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.h:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.cpp:
+
+	-Added ConsoleWidget
+	-Added support for lazy variable initialization
+
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+
+	-Synchronizing with AbstractDebugger refactoring
+	-Added Perl DBGp debugger
+
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.h:
+
+	-Synchronizing with Settings and AbstractDebugger refactoring
+	-Refactored prologues
+	-Added support for executeCmd()
+	-Added support for lazy variable initialization
+	-Fixed leak
+
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+
+	-Added DataController
+	-Fixed signal connections
+
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+
+	-Synchronizing with Settings and AbstractDebugger refactoring
+	-Refactored prologues
+	-Added support for executeCmd()
+	-Added support for lazy variable initialization
+	-Fixed leak
+
+	* /trunk/protoeditor/src/protoeditor/datacontroller.h:
+	* /trunk/protoeditor/src/protoeditor/datacontroller.cpp:
+
+	-Added console output slots
+	-Added support for lazy variable initialization
+
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.h:
+
+	-Synchronizing with AbstractDebugger refactoring
+
+	* /trunk/protoeditor/src/php/xdebug/xdnet.h:
+	* /trunk/protoeditor/src/php/xdebug/xdnet.cpp:
+
+	-Synchronizing with Settings and Sessionrefactoring
+	-Changing variable value
+
+	* /trunk/protoeditor/src/php/xdebug/xdsettings.cpp:
+	* /trunk/protoeditor/src/php/xdebug/xdsettings.h:
+
+	-Synchronizing with Settings
+
+	* /trunk/protoeditor/src/php/xdebug/xdvariableparser.cpp:
+
+	-Using fullname for variables
+
+	* /trunk/protoeditor/src/php/gubed/gbsettings.h:
+	* /trunk/protoeditor/src/php/gubed/gbsettings.cpp:
+
+	-Synchronizing with Settings refactoring
+
+	* /trunk/protoeditor/src/php/gubed/gbnet.cpp:
+
+	-Synchronizing with Session refactoring
+
+	* /trunk/protoeditor/src/php/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.cpp:
+
+	-Synchronizing with AbstractDebugger refactoring
+
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.h:
+
+	-Synchronizing with AbstractDebugger, Session and Settings
+	refactoring
+
+	* /trunk/protoeditor/src/php/dbg/dbgsettings.cpp:
+	* /trunk/protoeditor/src/php/dbg/dbgsettings.h:
+
+	-Synchronizing with Settings refactoring
+
+	* /trunk/protoeditor/src/php/dbg/dbgnet.cpp:
+
+	-Synchronizing with Session and Settings refactoring
+
+	* /trunk/protoeditor/src/perl/perldebugger/perlcom.h:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/Makefile.am:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebuggersettings.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.h:
+	* /trunk/protoeditor/src/perl/perldebugger/perllocalcom.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebuggersettings.h:
+	* /trunk/protoeditor/src/perl/perldebugger/perllocalcom.h:
+
+	-Just synchronizing. This implementation is not working....
+
+	* /trunk/protoeditor/src/common/variable.cpp:
+	* /trunk/protoeditor/src/common/variable.h:
+
+	-Moved stringPath() from VariableListViewItem to Variable
+	-Added "int type()"
+	-Added support for lazy initialization
+
+	* /trunk/protoeditor/src/common/session.cpp:
+	* /trunk/protoeditor/src/common/session.h:
+
+	-Major refactoring, differentiating console from browser
+	classes.
+	-Improved arguments and environment processing.
+	-Still buggy!
+
+	* /trunk/protoeditor/src/common/debuggerstack.h:
+
+	-Added class-level scope id
+
+	* /trunk/protoeditor/src/common/abstractdebugger.cpp:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+
+	-Connecting signals directly to DataController
+	-Removed registerSettings and added langSettings()
+	-Added label()
+	-profile() is optional
+	-Added executeCmd() (optional)
+	-Added getChildren() (for lazy initialization debuggers)
+	-Added signals for console based debuggers
+
+	* /trunk/protoeditor/src/common/php/phpvariable.cpp:
+	* /trunk/protoeditor/src/common/php/phpvariable.h:
+
+	-Added "int type()"
+
+2006-06-30
+
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.h:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.cpp:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/watchtab.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.h:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+	* /trunk/protoeditor/src/protoeditor/datacontroller.cpp:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.h:
+	* /trunk/protoeditor/src/protoeditor/datacontroller.h:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebuggersettings.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebuggersettingswidget.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebuggersettings.h:
+	* /trunk/protoeditor/protoeditor.kdevelop:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebuggersettingswidget.h:
+
+	-Refactored complete (with possible bugs...).
+	-Added basic perl settings
+
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+
+	-Remembering the current Site after closing Protoeditor
+
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.h:
+
+	-fixed signals and slots connections
+
+	* /trunk/protoeditor/src/common/session.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.h:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.cpp:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/settings/sitesettings.cpp:
+	* /trunk/protoeditor/src/php/dbg/dbgnet.cpp:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.h:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/protoeditor/ui/messagelistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/protoeditor/ui/statusbarwidget.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/php/gubed/gbnet.cpp:
+	* /trunk/protoeditor/src/common/session.h:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.h:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.h:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+	* /trunk/protoeditor/src/php/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.h:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.h:
+	* /trunk/protoeditor/src/settings/sitesettings.h:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/settings/widgets/extappsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/common/abstractdebugger.cpp:
+	* /trunk/protoeditor/src/protoeditor/Makefile.am:
+	* /trunk/protoeditor/src/settings/widgets/configdlg.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/statusbarwidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingswidget.h:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+	* /trunk/protoeditor/protoeditor.kdevelop:
+
+	-Refactored all singletons (now acced by Protoeditor::self())
+	-Reorganized the signals flow (is not good, but is better
+	than before)
+	-Moved execution processes to ExecutionController and
+	debugger processes to DataController.
+	-etc
+
+2006-06-29
+
+	* /trunk/protoeditor/src/common/session.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/php/gubed/gbnet.cpp:
+	* /trunk/protoeditor/src/common/session.h:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+	* /trunk/protoeditor/src/settings/extappsettings.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+	* /trunk/protoeditor/src/php/dbg/dbgnet.cpp:
+	* /trunk/protoeditor/src/settings/extappsettings.h:
+	* /trunk/protoeditor/src/php/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.h:
+	* /trunk/protoeditor/src/settings/widgets/extappsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/widgets/Makefile.am:
+	* /trunk/protoeditor/src/settings/widgets/extappsettingswidget.h:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+
+	-Refactored/retought Session
+	-Implemented "Execute in Console" for multiple languages
+	-Refactored/retought DebuggerFactory
+	-Refactored settings (mostly variable/method names)
+	-Centralized filedialog filter and added perl file extension.
+	-.etc
+
+2006-06-28
+
+	* /trunk/protoeditor/src/common/session.cpp:
+	* /trunk/protoeditor/src/settings/phpsettings.h:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.h:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+	* /trunk/protoeditor/src/settings/perlsettings.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.h:
+	* /trunk/protoeditor/src/settings/languagesettings.h:
+
+	-Implementing script execution. Menu "Execute in Console" is
+	done, so it is the action flows to execute a script. An
+	initial executionPrologue was written, but the Session class
+	must be redesigned.
+	-Added ome other minor fixes, and conveniences
+
+	* /trunk/protoeditor/src/common/session.cpp:
+	* /trunk/protoeditor/src/settings/widgets/sitesettingsdialog.cpp:
+	* /trunk/protoeditor/src/settings/phpsettings.h:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.h:
+	* /trunk/protoeditor/src/settings/perlsettings.h:
+	* /trunk/protoeditor/src/settings/Makefile.am:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	* /trunk/protoeditor/src/php/gubed/gbsettingswidget.h:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.h:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/php/dbg/dbgsettingswidget.cpp:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/php/xdebug/xdsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/phpsettings.cpp:
+	* /trunk/protoeditor/src/settings/languagesettings.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/settings/extappsettings.cpp:
+	* /trunk/protoeditor/src/settings/widgets/phpsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/perlsettings.cpp:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/protoeditor/executioncontroller.h:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.h:
+	* /trunk/protoeditor/src/php/gubed/gbsettingswidget.cpp:
+	* /trunk/protoeditor/src/settings/debuggersettingsinterface.h:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/common/abstractdebugger.cpp:
+	* /trunk/protoeditor/src/protoeditor/Makefile.am:
+	* /trunk/protoeditor/src/settings/languagesettings.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+	* /trunk/protoeditor/src/php/dbg/dbgsettingswidget.h:
+	* /trunk/protoeditor/protoeditor.kdevelop:
+	* /trunk/protoeditor/src/php/xdebug/xdsettingswidget.h:
+
+	-Refactor, stage 3.
+	-Improving the settings module to handle multiple languages
+	and debuggers
+	-Reconstructing the KAction workflow and core classes.
+
+2006-06-27
+
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditorui.rc:
+
+	-Renamed "run" to "execute"
+	-Using a single toolbuton to open and open recent
+
+	* /trunk/protoeditor/src/protoeditor/ui/editorui.cpp:
+	* /trunk/protoeditor/src/protoeditor/main.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/ui/editorui.h:
+	* /trunk/protoeditor/src/protoeditor/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/protoeditor.cpp:
+	* /trunk/protoeditor/protoeditor.kno:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/Makefile.in:
+
+	-Refactor, stage 2. Moving all process methods from
+	MainWindow to Protoeditor
+
+	* /trunk/protoeditor/src/protoeditor/ui/combostack.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/localtab.h:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.cpp:
+	* /trunk/protoeditor/src/common/variable.h:
+	* /trunk/protoeditor/src/protoeditor/watchwidget.cpp:
+	* /trunk/protoeditor/src/settings/Makefile.am:
+	* /trunk/protoeditor/src/common/php/phpvariableparser.cpp:
+	* /trunk/protoeditor/src/protoeditor/messagelistview.h:
+	* /trunk/protoeditor/src/protoeditor/ui/breakpointlistviewitem.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/variableslistview.h:
+	* /trunk/protoeditor/src/protoeditor/document.h:
+	* /trunk/protoeditor/src/settings/widgets/Makefile.am:
+	* /trunk/protoeditor/src/perl/perldebugger/Makefile.am:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.h:
+	* /trunk/protoeditor/src/protoeditor/ui/messagelistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/combostack.h:
+	* /trunk/protoeditor/src/common/abstractdebugger.h:
+	* /trunk/protoeditor/src/protoeditor/ui/localtab.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/document.h:
+	* /trunk/protoeditor/src/perl/perldebugger/Makefile.in:
+	* /trunk/protoeditor/src/protoeditor/watchlistview.h:
+	* /trunk/protoeditor/src/settings/perlsettings.cpp:
+	* /trunk/protoeditor/src/php/dbg/debuggerdbg.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/variableslistview.cpp:
+	* /trunk/protoeditor/src/php/xdebug/xdnet.cpp:
+	* /trunk/protoeditor/src/protoeditor/document.cpp:
+	* /trunk/protoeditor/src/perl/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.h:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.cpp:
+	* /trunk/protoeditor/src/common/php/phpvariableparser.h:
+	* /trunk/protoeditor/src/protoeditor/ui/breakpointlistviewitem.h:
+	* /trunk/protoeditor/src/protoeditor/ui/watchwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/ui/statusbarwidget.cpp:
+	* /trunk/protoeditor/src/perl/Makefile.in:
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/editorui.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/debuggerui.h:
+	* /trunk/protoeditor/src/protoeditor/ui/breakpointlistview.h:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.cpp:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistviewitem.h:
+	* /trunk/protoeditor/src/perl/perldebugger:
+	* /trunk/protoeditor/src/settings/perlsettings.h:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/watchlistview.h:
+	* /trunk/protoeditor/src/protoeditor/ui/watchtab.h:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+	* /trunk/protoeditor/src/php/xdebug/xdnet.h:
+	* /trunk/protoeditor/src/protoeditor/variableslistviewitem.h:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistview.cpp:
+	* /trunk/protoeditor/src/settings/protoeditorsettings.h:
+	* /trunk/protoeditor/src/php/xdebug/xdvariableparser.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/variableslistviewitem.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/watchwidget.h:
+	* /trunk/protoeditor/src/settings/widgets/configdlg.h:
+	* /trunk/protoeditor/src/common/debuggerstack.h:
+	* /trunk/protoeditor/src/protoeditor/ui/statusbarwidget.h:
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistview.h:
+	* /trunk/protoeditor/src/protoeditor/debuggercombostack.h:
+	* /trunk/protoeditor/src/php/gubed/debuggergb.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/breakpointlistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/editortabwidget.h:
+	* /trunk/protoeditor/src/common/variable.cpp:
+	* /trunk/protoeditor/src/protoeditor/variableslistview.h:
+	* /trunk/protoeditor/configure.in:
+	* /trunk/protoeditor/src/protoeditor/ui/Makefile.am:
+	* /trunk/protoeditor/src/protoeditor/ui/editorui.h:
+	* /trunk/protoeditor/src/perl:
+	* /trunk/protoeditor/src/protoeditor/ui/combostack.h:
+	* /trunk/protoeditor/src/protoeditor/ui/variablelistviewitem.cpp:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistviewitem.h:
+	* /trunk/protoeditor/src/protoeditor/ui/watchtab.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/watchlistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/messagelistview.cpp:
+	* /trunk/protoeditor/src/perl/perldebugger/perldebugger.h:
+	* /trunk/protoeditor/src/protoeditor/debuggerfactory.cpp:
+	* /trunk/protoeditor/src/protoeditor/variableslistviewitem.cpp:
+	* /trunk/protoeditor/src/protoeditor/watchwidget.h:
+	* /trunk/protoeditor/src/php/xdebug/debuggerxd.h:
+	* /trunk/protoeditor/src/settings/widgets/perlsettingswidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
+	* /trunk/protoeditor/src/protoeditor/combostack.cpp:
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.h:
+	* /trunk/protoeditor/src/common/debuggerstack.cpp:
+	* /trunk/protoeditor/src/settings/widgets/configdlg.cpp:
+	* /trunk/protoeditor/src/protoeditor/debuggercombostack.cpp:
+	* /trunk/protoeditor/src/protoeditor/breakpointlistview.h:
+	* /trunk/protoeditor/src/protoeditor/ui/document.cpp:
+	* /trunk/protoeditor/src/protoeditor/watchlistview.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/messagelistview.h:
+	* /trunk/protoeditor/src/php/xdebug/xdvariableparser.h:
+	* /trunk/protoeditor/src/protoeditor/ui/editortabwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/ui/mainwindow.h:
+	* /trunk/protoeditor/src/protoeditor/ui/variableslistviewitem.h:
+
+	-Major refactoring of the user interface (all moved to /ui)
+	and some class/file renaming (such as variableslistview to
+	variablelistview and editortabwidget to editorui).
+	-First draft of the perl implementation
+
+	* /trunk/protoeditor/src/protoeditor/editortabwidget.cpp:
+
+	-Better check if the file was modified before save it
+
+2006-06-26
+
+	* /trunk/protoeditor/src/protoeditor/watchwidget.cpp:
+	* /trunk/protoeditor/src/protoeditor/mainwindow.cpp:
+	* /trunk/protoeditor/src/protoeditor/watchwidget.h:
+
+	-watches tab refactored
+
 2006-06-25
+
+	* /tags/1_0:
+
+	-Tagging v1.0
 
 	* /trunk/protoeditor/src/dbg/debuggerdbg.cpp:
 	* /trunk/protoeditor/src/protoeditor/debuggermanager.h:
