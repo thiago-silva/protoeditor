@@ -1,0 +1,117 @@
+/***************************************************************************
+ *   Copyright (C) 2004-2006 by Thiago Silva                               *
+ *   thiago.silva@kdemail.net                                              *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+#ifndef GBNET_H
+#define GBNET_H
+
+#include <qobject.h>
+#include <qmap.h>
+
+class DebuggerGB;
+class SiteSettings;
+class Connection;
+class QSocket;
+class DebuggerBreakpoint;
+
+typedef QMap<QString,QString> StringMap;
+
+class GBNet : public QObject
+{
+  Q_OBJECT
+public:
+  GBNet(DebuggerGB* debugger, QObject *parent = 0, const char *name = 0);
+  ~GBNet();
+
+  void setSite(SiteSettings* site);
+
+  //DebuggerGB communicates trough the following:
+  bool startListener(int port);
+  void stopListener();
+
+  void startDebugging(const QString& filePath, const QString& uiargs, 
+    SiteSettings* site, bool local);
+
+  void requestContinue();
+  void requestStop();
+
+  void requestRunToCursor(const QString&, int);
+
+  void requestStepInto();
+  void requestStepOver();
+  void requestStepOut();
+  
+  void requestGlobals();  
+  void requestWatches(const QStringList&);
+  void requestWatch(const QString& expression);
+  void requestChangeVar(const QString& name, const QString& value);
+
+  void requestBreakpoint(DebuggerBreakpoint* bp);
+  void requestBreakpointUpdate(DebuggerBreakpoint* bp);
+  void requestBreakpointRemoval(DebuggerBreakpoint* bp);
+
+signals:
+  void sigError(const QString&);
+  void sigGBStarted();
+  void sigGBClosed();
+  void sigStepDone();
+  void sigNewConnection();
+private slots:
+  void slotIncomingConnection(QSocket*);
+  void slotGBClosed();
+  void slotError(const QString&);
+
+  void slotReadBuffer();
+private:
+//   QString getField(int* idx, QString text);
+            
+  void error(const QString&);
+
+  void processCommand(const QString& datas);
+  StringMap parseArgs(const QString &args);
+  bool sendCommand(const QString& command, QMap<QString, QString> args);
+  bool sendCommand(const QString& command, char * firstarg, ...);
+  QString phpSerialize(QMap<QString, QString> args);
+
+
+  void processBacktrace(const QString& bt);
+  void processVariable(const QString& var);
+  void processVariables(const QString& vars);  
+
+  void processFatalError(const QString&);
+
+  DebuggerGB       *m_debugger;
+  Connection       *m_con;  
+  QSocket          *m_socket;
+  SiteSettings     *m_site;
+  bool             m_watchingGlobal;
+  bool             m_continuing;
+
+  bool m_runningToCursor;
+  QString m_rcLine;
+  QString m_rcFileName;
+
+  QString m_command;
+
+  
+  
+
+};
+
+#endif

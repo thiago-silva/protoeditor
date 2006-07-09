@@ -1,0 +1,171 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="protoeditor" version="1">
+
+  <MenuBar>
+    <Merge/>
+    <Menu name="file" noMerge="1">
+      <text>&amp;File</text>    
+      <Action name="file_new"/>
+      <Separator/>        
+      <Action name="file_open"/>      
+      <Action name="file_open_recent"/>
+      <Separator/>      
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+      <Separator/>
+      <DefineGroup name="revert_merge"/>
+      <Separator/>
+      <DefineGroup name="print_merge"/>     
+      
+      <Action name="file_close"/>
+      <Action name="file_close_all"/>
+      <Separator/>      
+      <Action name="file_quit"/>            
+    </Menu>
+
+    <Menu name="menu_script" noMerge="1">
+      <text>S&amp;cript</text>      
+      <Action name="site_selection"/>
+      <Action name="use_current_script"/>
+      <Separator />      
+      <Action name="script_execute"/>
+      <Separator />            
+      <Action name="debug_start"/>
+      <Action name="debug_stop"/>
+      <Separator />
+      <Action name="debug_run_to_cursor"/>
+      <Separator />
+      <Action name="debug_step_over"/>      
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+      <Separator />
+      <Action name="script_profile"/>
+      <Separator />
+      <Action name="debug_toggle_bp"/>
+    </Menu>
+
+    <Menu name="settings" noMerge="1">
+      <text>&amp;Settings</text>
+      <Merge name="StandardToolBarMenuHandler" />
+      <Action name="options_configure_keybinding" />
+      <Action name="options_configure_toolbars" />
+      <Separator/>
+      <Action name="settings_editor" />
+      <Action name="settings_protoeditor" />
+   </Menu>
+   
+  </MenuBar>
+
+  <Menu name="ktexteditor_popup" noMerge="1">
+    <DefineGroup name="popup_operations" />
+    <Action name="editor_add_watch"/>
+    <Action name="debug_run_to_cursor"/>    
+    <Action name="debug_toggle_bp"/>
+  </Menu>
+
+  <ToolBar name="mainToolBar" noMerge="1">
+    <text>Main Toolbar</text>
+    <Action name="file_new"/>
+    <Action name="file_open_recent"/>
+    <Action name="file_save"/>
+    <Action name="file_save_as"/>
+    <Merge/>
+  </ToolBar>
+
+  <ToolBar name="debug_toolbar" noMerge="1" newline="true">
+    <text>Debug Toolbar</text>
+    <Action name="site_selection"/>
+    <Action name="use_current_script"/>
+    <Separator />
+    <Action name="script_execute"/>
+    <Separator />
+    <Action name="debug_start"/>
+    <Action name="debug_stop"/>
+    <Action name="debug_step_over"/>
+    <Action name="debug_step_into"/>
+    <Action name="debug_step_out"/>
+    <Separator />    
+  </ToolBar>
+
+  <ToolBar name="argument_toolbar" noMerge="1" newline="true" fullWidth="true">
+    <text>Argument Toolbar</text>
+    <Action name="argument_clear"/>
+    <Action name="argument_label"/>
+    <Action name="argument_combobox"/>
+  </ToolBar>
+  
+  <!--         States        -->
+
+  <State name="init">
+    <enable>
+      <Action name="debug_start"/>
+      <Action name="script_execute"/>      
+      <Action name="script_profile"/>
+    </enable>
+    <disable>
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+      <Action name="file_close"/>
+      <Action name="file_close_all"/>
+      <Action name="debug_stop"/>
+      <Action name="debug_run_to_cursor"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+      <Action name="debug_toggle_bp"/>
+      <Action name="settings_editor" />      
+    </disable>
+  </State>
+  
+
+  <State name="debug_stopped">
+    <enable>
+      <Action name="debug_start"/>
+      <Action name="script_profile"/>
+    </enable>
+    <disable>
+      <Action name="debug_stop"/>
+      <Action name="debug_run_to_cursor"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </disable>
+  </State>
+
+  <State name="debug_started">
+    <enable>
+      <Action name="debug_stop"/>
+      <Action name="debug_toggle_bp"/>
+      <Action name="debug_run_to_cursor"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </enable>
+    <disable>
+      <Action name="script_profile"/>
+    </disable>
+  </State>
+  
+  <State name="has_nofileopened">
+    <disable>
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+      <Action name="file_close"/>
+      <Action name="file_close_all"/>
+      <Action name="debug_toggle_bp"/>
+      <Action name="settings_editor" />
+    </disable>
+  </State>
+
+  <State name="has_fileopened">
+    <enable>
+      <Action name="file_save"/>
+      <Action name="file_save_as"/>
+      <Action name="file_close"/>
+      <Action name="file_close_all"/>
+      <Action name="debug_toggle_bp"/>
+      <Action name="settings_editor" />
+    </enable>
+  </State>
+  
+</kpartgui>

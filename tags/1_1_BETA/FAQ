@@ -1,0 +1,59 @@
+  Q: Why another editor? Why not work directly on Quanta+, for instance?
+
+  A: Ok, a little of history:
+     I started working on this in 2004 because, at the time, I needed for my job
+     (working with php applications on GNU/Linux). We didn't want to spend 
+     money on commercial products (as a matter of fact, we didn't like the 
+     available ones). Since the free version of DBG satisfied me, I planned to 
+     implement a client into the KDE Quanta+ (http://www.kdewebdev.org) wich, 
+     at the time, Gubed (http://gubed.sourceforge.net) was beginning to be 
+     incorporated. On the mailing list, there was a discussion about 
+     incorporating many debuggers for many script languages into it.
+
+     Due to lack of time, and because I didn't have knowledge of Gubed 
+     implementation, I develop this small editor (the one you are reading about)
+     so I could better understand about debug session flows and how could DBG 
+     and Gubed work togueter sharing common code (wich would be a starting 
+     point to easily implement other debuggers without all the suffering) and 
+     I could have the freedom to try new things and blow things out like a 
+     doctor in his own laboratory :)
+
+     It was fun to do it, but I had too much work with DBG, and took me a lot 
+     to complete it's implementation by myself. So, many "todo" things are 
+     still hanging.
+
+     Now, since I had a small app here fullfiling some of my needs, I decided 
+     to release it.
+
+
+  Q: Nothing happens when I start the debugger. What is wrong?
+
+  A: Here are a few steps that can help find out what is going on:
+ 
+     - Check the installation of the debugger you are using.
+     - If remote debugging, check you Site configurations and directories
+       settings.
+     
+     - If remote debugging, you can see the URL being requested using an
+       external browser to acess the server (check Protoeditor settings).
+       This might help to find errors in the Site configuration.
+
+     - If local debugging, you can look in the messages Protoeditor prints in 
+       the terminal for the command line it's using to execute the script.
+
+  Q: DBG doesn't work when debugging locally using the console. What is wrong?
+
+  A: Using DBG with the PHP binary is only supported if your binary is 
+     PHP (CGI), instead of the default PHP (CLI), due to a lack of support on 
+     the current free version of DBG (wich might be fixed in the next version).
+
+  Q: I'm having lots of problems to make this work. What should I do?
+  
+  A: Go to the forum (http://sourceforge.net/forum/forum.php?forum_id=439825) 
+     and search for related problems. If there isn't any solution there, you're 
+     welcome to write a new thread :)
+
+     
+  Q: What should I do if I find a bug?
+  
+  A: post a message on the protoeditor's sourceforge forum or send me an email.
