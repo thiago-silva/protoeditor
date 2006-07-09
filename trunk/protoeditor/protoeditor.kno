@@ -22,32 +22,18 @@
 
 \NewEntry 0 Implementation
 
-\NewEntry 1 TODO
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
-<ul type="disc"><li>Diff head to 0.9 tag</li>
-<ul type="disc"><li>commit differences to 0.9 and continue working for 1.0 there (complete 1.0 TODO list)</li>
-<li>start working on 2.0 concurrently<br /></li></ul></ul>
-</body></html>
-
 \NewEntry 1 v1.0
 
 \NewEntry 2 TODO
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Webpage: in &quot;tutorial&quot; remove the &quot;%1&quot; argments (old 0.8 version)<br /></li>
-<li>Test again (implemented sigNewConnection() in all debuggers, but didn't tested yet):</li>
-<ul type="disc"><li>Run debugger. Breakpoint on last line. Continue. (before all the Continue process is over, click on &quot;Script&quot; menu. it crahes.<br /></li></ul>
-<li>add settings for halt (halt on [x]error [x]warning [x]notice)</li>
-<ul type="disc"><li>check if all php debuggers support this<br /><br /><br /></li></ul>
+<ul type="disc"><li>add settings for halt (halt on [x]error [x]warning [x]notice)</li>
+<ul type="disc"><li>check if all php debuggers support this<br /><br /></li></ul>
 <li>----------issues --------------------<br /></li>
-<li>DOC note:</li>
-<ul type="disc"><li>XDebug2.0beta5 doesn't support conditional breakpoint (see xdebug sourcecode)<br /></li></ul>
 <li>Gubed:</li>
 <ul type="disc"><li>Breakpoints</li>
 <ul type="disc"><li>update/change (can't figure condition so far)</li>
 <li>set disabled doesn't really work</li></ul>
 <li>Halt on error stuff (is halting, different from the other debuggers)<br /></li></ul>
-<li>bug: </li>
-<ul type="disc"><li>run, change the stack (so the green arrow appears on text border), run another file (or JIT session). The icon remains<br /></li></ul>
 <li>Gubed:</li>
 <ul type="disc"><li>run script that includes another</li>
 <li>set breakpoint in the main script</li>
@@ -60,17 +46,16 @@
 </body></html>
 
 \NewEntry 1 v2.0
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:11pt;font-family:Bitstream Vera Sans">
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Support for 1+ of the following languages:</li>
 <ul type="disc"><li>perl</li>
 <li>Ruby</li>
 <li>python</li>
-<li>Java</li>
+<li>tcl?</li>
+<li>Java?</li>
 <li>Lua?<br /><br /></li></ul>
-<li>Add tab: &quot;Console&quot; for language debuggers that use it</li>
-<ul type="disc"><li>Create a (KMDI|similar), so its easy to hide/show the (numerous) tabs?</li>
-<li>Debuggers might need to inform its capabilities to configure the UI accordingly.</li>
-<ul type="disc"><li>Xdebug for instance, doesn't support conditional bp's<br /></li></ul></ul>
+<li>Create a (KMDI|similar), so its easy to hide/show the (numerous) tabs?</li>
+<li><br /></li>
 <li>UI objects must be very configurable</li>
 <ul type="disc"><li>Debuggers that doesn't support Breakpoint's condition, should inform the UI about this.</li>
 <li>And so on... (profile, change var value, bp hitcount/skiphits, messages/log, output)</li>
@@ -80,14 +65,29 @@
 <li>Ressurrection of LedWait?</li></ul></ul>
 </body></html>
 
+
 \CurrentEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Release 1.1beta<br /><br />-----------------------------------<br /></li>
-<li>Add Site::language</li>
-<ul type="disc"><li>two combos: one for language, other for debugger</li>
-<li>When changing currentsite, status bar show &quot;PHP DBG&quot;, when changing to local, show defaults: ie &quot;Perl DBGp&quot;<br /></li></ul>
-<li>When disabling a language, the sites configured to use debuggers with the language should be disabled as well (not shown in the mainmenu options)<br /></li>
-<li>Comment the console widget (remove it)<br /><br />Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
+<ul type="disc"><li>Stage 1 (version 1.1)</li>
+<ul type="disc"><li>Python DBGp support              (1.1beta2)</li>
+<li>Tcl DBGp support                    (1.1beta3)</li>
+<li>Check if there is a ruby DBGp (1.1beta4)<br /></li>
+<li>release 1.1<br /></li></ul>
+<li>Stage 2 (version 1.2)</li>
+<ul type="disc"><li>Rethink all infrastructure (UI and everything)</li>
+<ul type="disc"><li>Console/Thread for languages that support it</li>
+<li>Enable/Disable languages</li>
+<li>Configurable UI (editable listviews, conditional breakpoints, etc)</li>
+<li>Configurable positioning show/hide of widgets (ie. tabs)</li>
+<li>Aways existing editor (like quanta/kate)<br /></li></ul></ul>
+<li>Beyond (KDE4)</li>
+<ul type="disc"><li>version 2.0</li></ul></ul>
+</body></html>
+
+
+\NewEntry 2 old
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
+<ul type="disc"><li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
 <li>Maybe, ask only if the debugger is a different from the current one<br /></li></ul>
 <li>--------------------------------------------<br /></li>
@@ -95,13 +95,6 @@
 <ul type="disc"><li>Implement conditional bps and all the new stuff (http://www.xdebug.org/updates.php)<br /><br /></li></ul>
 <li>---------------<br /></li>
 <li>i18n Protoeditor::fileFilter!<br /></li>
-<li>PerlDBGp</li>
-<li>Test configuration ConfigDlg</li>
-<ul type="disc"><li>Add &quot;enable/disable()&quot; to AbstractDebugger (all debuggers should exist in the memory, because of their settings and settingswidget)<br /></li></ul>
-<li>Move common/php to php/common (same to perl)</li>
-<li>Move common/php/phpvariableparser to dbg/<br /></li>
-<li>Move settings interfaces to common/base</li>
-<li>Move AbstractDebugger to common/base<br /></li>
 <li>DebuggerUI should have a &quot;show/hidden&quot; button or something.</li>
 <ul type="disc"><li>Tabs should have the same &quot;show/hidden&quot; -- the user controls what he wants to use.</li>
 <li>ConsoleWidget </li>
@@ -113,7 +106,6 @@
 <ul type="disc"><li>Add AbstractDebugger::config() &lt;&lt; XML (QDom)? to configure the UI?<br /></li></ul>
 <li>Don't let the editor without an opened file (like quanta)</li>
 <ul type="disc"><li>So editor settings is aways enabled<br /></li></ul>
-<li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)<br /></li>
 <li>Rethink the UI components to be configurable</li>
 <ul type="disc"><li>variableslistview</li>
 <ul type="disc"><li>supporting variable changing or not</li></ul>
@@ -125,32 +117,13 @@
 <ul type="disc"><li>does the debugger uses it? (Xdebug doesn't so far)</li></ul></ul></ul>
 </body></html>
 
-
 \NewEntry 2 Core changes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Create a class ExecutionController</li>
-<ul type="disc"><li>it you substitute or use DebuggerManager<br /><br /></li></ul>
-<li>All Execution/debugging invokations go to the controller</li>
-<div>it then, resolves what to do :</div>
-<ul type="disc"><li>session prologue, normalizing opened files, checking for opened files, etc</li>
-<li>Resolving execution or debugging</li>
-<li>Calling asistence classes (Session), using a debugger from factory, etc<br /><br /></li></ul>
-<li>Changing UI:</li>
-<ul type="disc"><li>Explode menu item &quot;run&quot; and &quot;debug&quot; to select all debuggers available</li>
-<ul type="disc"><li>ie: do not trust evaluation of mime types &lt; bad idea</li></ul>
-<li>Add WatchWidget</li>
-<ul type="disc"><li>formed by the button, textedit and watcheslistview<br /></li></ul>
-<li>Add the &quot;Console&quot; tab<br /></li></ul>
-<li>Settings:</li>
-<ul type="disc"><li>Debugger settings:</li>
-<ul type="disc"><li>All debuggers must have a new entry: &quot;enabled&quot;<br />this way, the only debuggers the user uses will be loaded</li></ul>
-<li>Site settings should have the complete list of debugger available<br /><br /></li></ul>
-<li>---------------------------<br /><br /></li>
-<li>Rename &quot;dataController&quot; to &quot;dataMediator&quot;?</li>
-<li>change &quot;ExecutionController&quot; to &quot;Executor&quot;?<br /></li>
-<li>Try different patterns (ie. State) in DBG implementation (DBGNet) to make clear the debug/profile code<br /></li>
-<li>Research/try better aproaches to handle async comunication between debugger - application (debugger codes are to messy)<br /></li></ul>
+<ul type="disc"><li>Try different patterns (ie. State) in DBG implementation (DBGNet) to make clear the debug/profile code</li>
+<li>Research/try better aproaches to handle async comunication between debugger - application (debugger codes are to messy)</li>
+<li>Rethink all data structure (classes) from skratch (Language, LanguageSettings, Debugger, etc)<br /></li></ul>
 </body></html>
+
 
 \NewEntry 2 perl implementation
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
@@ -158,7 +131,8 @@
 <ul type="disc"><li>needs DBGp implementation from komodo</li>
 <ul type="disc"><li>So far, Protoeditor limits the array children size to 300</li>
 <li>Komodo's DBGp doesn't handle stack context very well (changing the stack doesn't show variables in that context)</li>
-<li>Variables are also an issue. Everytime an index in the array/hash is used, Komodo's DBGp send it as a new variable (ie. &quot;$arr[0][1]&quot;)</li></ul></ul></ul>
+<li>Variables are also an issue. Everytime an index in the array/hash is used, Komodo's DBGp send it as a new variable (ie. &quot;$arr[0][1]&quot;)</li>
+<li>Threads?? See how komodo handles this</li></ul></ul></ul>
 </body></html>
 
 \NewEntry 0 KDE faqs, howtos, standards
