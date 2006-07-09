@@ -29,14 +29,12 @@
 #include "protoeditor.h"
 
 static const char description[] =
-  I18N_NOOP("A small PHP Debugger client");
+  I18N_NOOP("A small editor and debugger client");
 
 static const char version[] = VERSION;
-//static const char version[] = "0.5.3-2";
 
 static KCmdLineOptions options[] =
   {
-    { "+[URL]", I18N_NOOP( "Document to open" ), 0 },
     KCmdLineLastOption
   };
 
@@ -65,8 +63,6 @@ int main(int argc, char **argv)
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    //protoeditor = new ProtoEditor();
-    //QWidget* mainWin = protoeditor.mainWindow();
     app.setMainWidget(window);
     window->show();
 
