@@ -98,7 +98,6 @@ void ConfigDlg::populateWidgets()
 
   for(QValueList<LanguageSettingsWidget*>::iterator it = m_langSettingsWidgets.begin(); it != m_langSettingsWidgets.end(); ++it)
   {
-    LanguageSettingsWidget* l = (*it);
     (*it)->populate();
   }  
 }
