@@ -35,7 +35,7 @@ PerlSettings::PerlSettings(  )
   setCurrentGroup( QString::fromLatin1( "Perl" ) );
 
   KConfigSkeleton::ItemString  *itemPerlCommand;
-  itemPerlCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerlCommand" ), mPerlCommand, "perl");
+  itemPerlCommand = new KConfigSkeleton::ItemString( currentGroup(), QString::fromLatin1( "PerlCommand" ), mPerlCommand, "perl -w");
   addItem( itemPerlCommand, QString::fromLatin1( "PerlCommand" ) );
 
   KConfigSkeleton::ItemString  *itemDefaultDebugger;
