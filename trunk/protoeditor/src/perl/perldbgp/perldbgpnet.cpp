@@ -522,7 +522,7 @@ void PerlDBGPNet::processResponse(QDomElement& root)
       QString file = st.attributeNode("filename").value();
       QString where = st.attributeNode("where").value();
 
-      if((where == "{main}") || (where == "include"))
+      if(where == "main")
       {
         where = file + i18n("::main()");
       }
