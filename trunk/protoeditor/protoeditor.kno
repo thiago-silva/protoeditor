@@ -102,7 +102,6 @@
 <li>Move common/php/phpvariableparser to dbg/<br /></li>
 <li>Move settings interfaces to common/base</li>
 <li>Move AbstractDebugger to common/base<br /></li>
-<li>When a site is selected, the &quot;run/debug&quot; drop down menu should be removed (the debugger used will be from the current site config anyway). The menu is only for local debugging<br /></li>
 <li>DebuggerUI should have a &quot;show/hidden&quot; button or something.</li>
 <ul type="disc"><li>Tabs should have the same &quot;show/hidden&quot; -- the user controls what he wants to use.</li>
 <li>ConsoleWidget </li>
@@ -114,10 +113,7 @@
 <ul type="disc"><li>Add AbstractDebugger::config() &lt;&lt; XML (QDom)? to configure the UI?<br /></li></ul>
 <li>Don't let the editor without an opened file (like quanta)</li>
 <ul type="disc"><li>So editor settings is aways enabled<br /></li></ul>
-<li>Remember the current Site selected in the combobox</li>
-<li>Remember the last language executed/debugged<br /></li>
-<li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)</li>
-<ul type="disc"><li>drop down toolbar button (like kdevelop &quot;new&quot; or kpdf open recent)<br /></li></ul>
+<li>Reformulate the UI menu and toolbar (so they show the debuggers and languages supported)<br /></li>
 <li>Rethink the UI components to be configurable</li>
 <ul type="disc"><li>variableslistview</li>
 <ul type="disc"><li>supporting variable changing or not</li></ul>
