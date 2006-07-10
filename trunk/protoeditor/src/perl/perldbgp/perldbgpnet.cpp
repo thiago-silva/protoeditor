@@ -588,6 +588,7 @@ void PerlDBGPNet::processResponse(QDomElement& root)
     QDomNode nd = root.firstChild();
     PerlDBGPVariableParser p;    
     Variable* var;
+    VariableList_t* list;
 
     int trans = root.attributeNode("transaction_id").value().toInt();
     switch(trans)
@@ -605,7 +606,7 @@ void PerlDBGPNet::processResponse(QDomElement& root)
 
       case GlobalChildId:        
       case LocalChildId:
-        VariableList_t* list = p.parseList(nd.childNodes(), m_updateVar);
+        list = p.parseList(nd.childNodes(), m_updateVar);
         dynamic_cast<PerlListValue*>(m_updateVar->value())->setList(list);
         if(trans == LocalChildId) {
           m_debugger->updateVariable(m_updateVar, DebuggerStack::LocalScopeID);
