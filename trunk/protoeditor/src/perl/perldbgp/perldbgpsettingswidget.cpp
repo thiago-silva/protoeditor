@@ -72,7 +72,7 @@ PerlDBGPSettingsWidget::PerlDBGPSettingsWidget(PerlDBGPSettings* settings, QWidg
   vbox->addWidget(m_ckSendSuperGlobals);
 
   QLabel *lbPerlLibPath= new QLabel(groupbox);
-  lbPerlLibPath->setText(i18n("Perl DBGp lib:"));
+  lbPerlLibPath->setText(i18n("Local DBGp library:"));
   vbox->addWidget(lbPerlLibPath);
 
   m_edPerlLibPath = new KLineEdit(groupbox);

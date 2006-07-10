@@ -72,7 +72,7 @@ PythonDBGPSettingsWidget::PythonDBGPSettingsWidget(PythonDBGPSettings* settings,
   vbox->addWidget(m_ckSendSuperGlobals);
 
   QLabel *lbPythonLibPath= new QLabel(groupbox);
-  lbPythonLibPath->setText(i18n("Python DBGp lib:"));
+  lbPythonLibPath->setText(i18n("Local DBGp library:"));
   vbox->addWidget(lbPythonLibPath);
 
   m_edPythonLibPath = new KLineEdit(groupbox);
