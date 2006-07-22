@@ -29,8 +29,8 @@ class DCOPClient;
 class QHttp;
 class KURL;
 
-class ExternalApp;
-class Browser;
+class Console;
+class IHTTPRequestor;
 
 class Session : public QObject
 {
@@ -40,27 +40,21 @@ class Session : public QObject
     ~Session();
 
     void startRemote(const KURL& url);
-    void startLocal(const QString& lang, const KURL& url, const QString& args, const QStringList& env = QStringList());
+    void startLocal(const QString& interpreterCmd, const KURL& url, const QString& args, const QStringList& env = QStringList());
 
   signals:
     void sigError(const QString& error);
 
-  private slots:
-    void slotHttpDone(bool);
   private:    
-    void doHTTPRequest(const KURL& url);
-    void doExternalRequest(const KURL&);    
-    void initHTTPCommunication();
-
-    QHttp                *m_http;
-    ExternalApp          *m_externalApp;
+    IHTTPRequestor *m_httpRequestor;
+    Console        *m_console;
 };
 
 class ExternalApp : public QObject
 {
   Q_OBJECT
   public:
-    ExternalApp();
+    ExternalApp(Session*);
     virtual ~ExternalApp();
 
   signals:
@@ -80,22 +74,45 @@ class Console : public ExternalApp
 {
   Q_OBJECT
   public:
-    Console();
+    Console(Session*);
     ~Console();
 
     void execute(const QString& interpreterCmd, const KURL& url, const QString& args, const QStringList& env);
 };
 
-class Browser : public ExternalApp
+class IHTTPRequestor : public ExternalApp
+{
+  public:
+    IHTTPRequestor(Session* s) : ExternalApp(s) {};
+    virtual ~IHTTPRequestor() {};
+
+    virtual void doRequest(const KURL&) = 0;
+};
+
+class DirectHTTP : public IHTTPRequestor
 {
   Q_OBJECT
   public:
-    Browser();
+    DirectHTTP(Session*);
+    ~DirectHTTP();
+    void doRequest(const KURL&);
+
+  private slots:
+    void slotHttpDone(bool);
+  private:
+    void init();
+
+    QHttp                *m_http;
+};
+
+class Browser : public IHTTPRequestor
+{
+  Q_OBJECT
+  public:
+    Browser(Session*);
     virtual ~Browser();
 
-    static Browser* retrieveBrowser(int, Session*);
-
-    virtual void doRequest(const KURL&) = 0;
+    static Browser* retrieveBrowser(int, Session*);    
     virtual int  id() = 0;
 
   protected:

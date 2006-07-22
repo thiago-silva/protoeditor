@@ -33,92 +33,48 @@
 
 
 Session::Session()
-    : m_http(0), m_externalApp(0)
+    : m_httpRequestor(0), m_console(0)
 {}
 
 Session::~Session()
 {
-  delete m_externalApp;
-  delete m_http;
+  delete m_httpRequestor;
+  delete m_console;
 }
 
 void Session::startRemote(const KURL& url)
 {
   if(Protoeditor::self()->settings()->extAppSettings()->useExternalBrowser())
   {
-    doExternalRequest(url);
+    m_httpRequestor = Browser::retrieveBrowser(
+                          Protoeditor::self()->settings()->extAppSettings()->externalBrowser(), this);
   }
   else
   {
-    doHTTPRequest(url);
+    delete m_httpRequestor;
+    m_httpRequestor = new DirectHTTP(this);
   }
+   m_httpRequestor->doRequest(url);
 }
 
 void Session::startLocal(const QString& interpreterCmd, const KURL& url, const QString& args, const QStringList& env)
 {
-  if(m_externalApp) delete m_externalApp;
+  delete m_console;
 
-  Console* c = new Console();
+  m_console = new Console(this);
 
-  m_externalApp = c;
-
-  c->execute(interpreterCmd, url, args, env);
+  m_console->execute(interpreterCmd, url, args, env);
 }
-
-void Session::initHTTPCommunication()
-{
-  if(!m_http)
-  {
-    m_http = new QHttp;
-    connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
-  }
-}
-
-void Session::doHTTPRequest(const KURL& url)
-{
-  initHTTPCommunication();
-
-  kdDebug() << "HTTP request \""
-  << url.protocol()
-  << "://"
-  << url.host()
-  << ":"
-  << url.port()
-  << url.path() + url.query()
-  << "\""
-  << endl;
-
-  m_http->setHost(url.host(), url.port());
-  m_http->get(url.path() + url.query());
-}
-
-void Session::slotHttpDone(bool error)
-{
-  if(error && (m_http->error() != QHttp::Aborted))
-  {
-    emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
-  }
-  m_http->abort();
-  kdDebug() << "HTTP closed connection!" << endl;
-}
-
-void Session::doExternalRequest(const KURL& url)
-{
-  Browser *b = Browser::retrieveBrowser(
-                        Protoeditor::self()->settings()->extAppSettings()->externalBrowser(), this);
-
-  m_externalApp = b;
-
-  b->doRequest(url);  
-}
-
 
 /************************* ExternalApp **************************************************/
 
-ExternalApp::ExternalApp()
+ExternalApp::ExternalApp(Session* session)
   : m_process(0), m_processRunning(false)
 {
+  connect(this, SIGNAL(sigError(const QString&)), session,
+          SIGNAL(sigError(const QString&)));
 }
+
 ExternalApp::~ExternalApp()
 {
   if(m_process)
@@ -149,9 +105,10 @@ void ExternalApp::init()
 
 /***************************** Console *****************************************/
 
-Console::Console()
- :  ExternalApp()
+Console::Console(Session* session)
+ :  ExternalApp(session)
 {
+
 }
 
 Console::~Console()
@@ -222,12 +179,62 @@ void Console::execute(const QString& interpreterCmd, const KURL& url, const QStr
 }
 
 
+/************************* DirectHTTP ********************************/
+
+DirectHTTP::DirectHTTP(Session* session)
+  : IHTTPRequestor(session), m_http(0)
+{
+}
+
+DirectHTTP::~DirectHTTP()
+{
+}
+
+void DirectHTTP::doRequest(const KURL& url)
+{
+  init();
+
+  kdDebug() << "HTTP request \""
+  << url.protocol()
+  << "://"
+  << url.host()
+  << ":"
+  << url.port()
+  << url.path() + url.query()
+  << "\""
+  << endl;
+
+  m_http->setHost(url.host(), url.port());
+  m_http->get(url.path() + url.query());
+}
+
+void DirectHTTP::init()
+{
+  ExternalApp::init();
+
+  if(!m_http)
+  {
+    m_http = new QHttp;
+    connect(m_http, SIGNAL(done(bool)), this, SLOT(slotHttpDone(bool)));
+  }
+}
+
+void DirectHTTP::slotHttpDone(bool error)
+{
+  if(error && (m_http->error() != QHttp::Aborted))
+  {
+    emit sigError(i18n("HTTP Conection error: " + m_http->errorString()));
+  }
+  m_http->abort();
+  kdDebug() << "HTTP closed connection!" << endl;
+}
+
 /***************************** Browser *****************************************/
 
 Browser* Browser::m_browser = 0;
 
-Browser::Browser()
-    : ExternalApp()
+Browser::Browser(Session* session)
+    : IHTTPRequestor(session)
 {}
 
 Browser::~Browser()
@@ -273,18 +280,16 @@ Browser* Browser::retrieveBrowser(int browserno, Session* session)
       break;
   }
 
-  connect(m_browser, SIGNAL(sigError(const QString&)), session,
-          SIGNAL(sigError(const QString&)));
-
   return m_browser;
 }
 
 
 /***************************** KONQUEROR *****************************************/
 
-KonquerorRequestor::KonquerorRequestor(Session*)
-    : Browser(), m_dcopClient(0)
+KonquerorRequestor::KonquerorRequestor(Session* session)
+    : Browser(session), m_dcopClient(0)
 {}
+
 KonquerorRequestor::~KonquerorRequestor()
 {}
 
@@ -360,8 +365,8 @@ void KonquerorRequestor::init()
 
 
 /******************* MOZILLA *********************************/
-MozillaRequestor::MozillaRequestor(Session*)
-    : Browser()
+MozillaRequestor::MozillaRequestor(Session* session)
+    : Browser(session)
 {}
 MozillaRequestor::~MozillaRequestor()
 {}
@@ -416,8 +421,8 @@ int MozillaRequestor::id()
 
 
 /************************ FIREFOX ***********************************************/
-FirefoxRequestor::FirefoxRequestor(Session*)
-    : Browser()
+FirefoxRequestor::FirefoxRequestor(Session* session) 
+    : Browser(session)
 {}
 FirefoxRequestor::~FirefoxRequestor()
 {}
@@ -473,8 +478,8 @@ int FirefoxRequestor::id()
 
 /**************************** Opera **********************************************/
 
-OperaRequestor::OperaRequestor(Session*)
-    : Browser()
+OperaRequestor::OperaRequestor(Session* session)
+    : Browser(session)
 {}
 OperaRequestor::~OperaRequestor()
 {}
