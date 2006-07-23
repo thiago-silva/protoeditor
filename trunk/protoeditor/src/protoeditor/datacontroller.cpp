@@ -125,7 +125,7 @@ void DataController::debugMessage(int type, const QString& msg, const KURL& url,
 {
   if(type == DataController::ErrorMsg) 
   {
-    Protoeditor::self()->mainWindow()->editorUI()->gotoLineAtFile(url, line);
+    Protoeditor::self()->mainWindow()->editorUI()->gotoLineAtFile(url, line-1);
     Protoeditor::self()->mainWindow()->showError(msg);
   }
   Protoeditor::self()->mainWindow()->debuggerUI()->addMessage(type, msg, line, url);
