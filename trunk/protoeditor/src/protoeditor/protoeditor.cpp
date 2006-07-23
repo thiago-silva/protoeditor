@@ -478,10 +478,12 @@ void Protoeditor::slotAcDebugToggleBp()
   if(!m_window->editorUI()->hasBreakpointAt(url, line))
   {
     m_window->editorUI()->markActiveBreakpoint(url, line);
+    m_window->debuggerUI()->toggleBreakpoint(url, line);
   }
   else
   {
     m_window->editorUI()->unmarkActiveBreakpoint(url, line);
+    m_window->debuggerUI()->toggleBreakpoint(url, line);
   }
 }
 
