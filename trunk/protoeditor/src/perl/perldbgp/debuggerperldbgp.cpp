@@ -432,7 +432,7 @@ void DebuggerPerlDBGP::debugError(int code, const QString& filePath, int line, c
   }
 }
 
-void DebuggerPerlDBGP::updateVariable(Variable* var, int)
+void DebuggerPerlDBGP::updateVariable(Variable* var)
 {
   Protoeditor::self()->dataController()->updateVariable(var);
 }

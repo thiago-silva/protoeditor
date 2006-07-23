@@ -51,8 +51,7 @@ public:
     GlobalScopeId, //ID for requesting global variables
     SuperGlobalId, //ID for requesting super globals
 
-    LocalChildId,       //ID for requesting local variable children
-    GlobalChildId,       //ID for requesting global variable children
+    ChildId,       //ID for requesting variable children
 
     ErrorStackId //ID for requesting Stack to build error data, only
   };  
@@ -132,7 +131,8 @@ private:
   
   void error(const QString&);
 
-  QPtrList<Variable>     m_updateVars;
+  void sendCommand(const QString& cmd, int len);
+  
   long                   m_tempBreakpointId;
   SiteSettings          *m_site;
   DebuggerPerlDBGP      *m_debugger;
@@ -152,7 +152,8 @@ private:
       QString exception;
   };
 
-  Error            m_error; //php error  
+  Error                  m_error; //perl error
+  QPtrList<Variable>     m_updateVars;
 };
 
 #endif
