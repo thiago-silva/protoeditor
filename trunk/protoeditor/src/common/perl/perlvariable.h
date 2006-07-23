@@ -41,7 +41,7 @@ protected:
 
 class PerlScalarValue : public VariableScalarValue {
 public:
-  enum { Scalar, Object, Undefined };
+  enum { Scalar = 1, Object };
 
   PerlScalarValue(Variable* owner);
   virtual ~PerlScalarValue();
@@ -62,7 +62,7 @@ private:
 class PerlListValue : public VariableListValue
 {
 public:
-  enum { Array, Hash, Object };
+  enum { Array = 1, Hash, Object };
 
   PerlListValue(Variable* owner, int size, int type);
   virtual ~PerlListValue();  
