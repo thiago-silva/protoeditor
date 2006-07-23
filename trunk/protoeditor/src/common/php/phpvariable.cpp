@@ -37,7 +37,7 @@ QString PHPVariable::compositeName()
   QString cname;
   if(parent()) {
     cname = parent()->compositeName();
-    if(parent()->value()->typeName() == "Array") {
+    if(parent()->value()->type() == PHPListValue::Array) {
       cname += "['" + name() + "']";
     } else {
       cname += "->" + name();

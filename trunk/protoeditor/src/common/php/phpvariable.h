@@ -38,7 +38,7 @@ public:
 
 class PHPScalarValue : public VariableScalarValue {
 public:
-  enum { Integer, Double, Boolean, String, Resource, /*Reference, Object, */ Undefined };
+  enum { Integer = 1, Double, Boolean, String, Resource, /*Reference, Object, */ };
 
   PHPScalarValue(Variable* owner);
   virtual ~PHPScalarValue();
