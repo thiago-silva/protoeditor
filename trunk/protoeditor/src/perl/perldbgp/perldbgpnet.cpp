@@ -45,7 +45,7 @@
 #include <kmdcodec.h>
 
 PerlDBGPNet::PerlDBGPNet(DebuggerPerlDBGP* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_updateVar(0), m_tempBreakpointId(0),
+    : QObject(parent, name), m_tempBreakpointId(0),
        m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
 {
   m_con = new Connection();
@@ -221,7 +221,7 @@ void PerlDBGPNet::requestWatch(const QString& expression, int ctx_id)
 
 void PerlDBGPNet::requestChildren(int scopeId, Variable* var)
 {
-  m_updateVar = var;
+  m_updateVars.append(var);
   switch(scopeId)
   {
     case DebuggerStack::GlobalScopeID:
@@ -580,7 +580,7 @@ void PerlDBGPNet::processResponse(QDomElement& root)
     } 
     else 
     {
-      error(i18n("ebug client: Internal error"));
+      error(i18n("Debug client: Internal error"));
     }
   }
   else if(cmd == "property_get")
@@ -589,6 +589,7 @@ void PerlDBGPNet::processResponse(QDomElement& root)
     PerlDBGPVariableParser p;    
     Variable* var;
     VariableList_t* list;
+    Variable* updateVar;
 
     int trans = root.attributeNode("transaction_id").value().toInt();
     switch(trans)
@@ -606,12 +607,14 @@ void PerlDBGPNet::processResponse(QDomElement& root)
 
       case GlobalChildId:        
       case LocalChildId:
-        list = p.parseList(nd.childNodes(), m_updateVar);
-        dynamic_cast<PerlListValue*>(m_updateVar->value())->setList(list);
+        updateVar = m_updateVars.first();
+        m_updateVars.remove();
+        list = p.parseList(nd.childNodes(), updateVar);
+        dynamic_cast<PerlListValue*>(updateVar->value())->setList(list);
         if(trans == LocalChildId) {
-          m_debugger->updateVariable(m_updateVar, DebuggerStack::LocalScopeID);
+          m_debugger->updateVariable(updateVar, DebuggerStack::LocalScopeID);
         } else {
-          m_debugger->updateVariable(m_updateVar, DebuggerStack::GlobalScopeID);
+          m_debugger->updateVariable(updateVar, DebuggerStack::GlobalScopeID);
         }
         break;
       default:
@@ -727,6 +730,7 @@ void PerlDBGPNet::slotClosed()
 {
   m_socket = 0;
   emit sigClosed();  
+  m_updateVars.clear();
 }
 
 void PerlDBGPNet::slotError(const QString& msg)

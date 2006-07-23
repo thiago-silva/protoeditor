@@ -59,8 +59,6 @@ public:
 
   Variable* parent();
 
-  virtual QString stringPath();
-
 protected:
   Variable(Variable* parent);
 private:
@@ -73,7 +71,7 @@ private:
 
 class VariableValue {
 public:
-  enum { Undefined };
+  enum { Undefined = 0};
 
   static QString UndefinedType;
 

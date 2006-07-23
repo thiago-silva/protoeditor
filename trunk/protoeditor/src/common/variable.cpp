@@ -101,16 +101,6 @@ Variable* Variable::parent()
   return m_parent;
 }
 
-QString Variable::stringPath() 
-{
-  Variable* v = this;
-  QString str = v->name();
-  while((v = v->parent()) != NULL) {
-    str = v->name() + "/" + str;
-  }
-  return str;
-}
-
 //--------------------------------------------------------------
 
 QString VariableValue::UndefinedType = i18n("Undefined");

@@ -144,3 +144,17 @@ void VariableListViewItem::showVariable() {
     setText(VariableListView::TypeCol, m_variable->value()->typeName());
   }
 }
+
+QString VariableListViewItem::stringPath() 
+{
+  //this shouldn't be in Variable. The stringPath will be incorrect when
+  //a deep node is actually a reference (it's parent might not be what we 
+  //expect)
+
+  QListViewItem* item = this;
+  QString str = item->text(VariableListView::NameCol);
+  while((item = item->parent()) != NULL) {
+    str = item->text(VariableListView::NameCol) + "/" + str;
+  }
+  return str;
+}

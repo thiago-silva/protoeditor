@@ -48,6 +48,8 @@ public:
 
   void showVariable();
 
+  QString stringPath();
+
 private:  
   void deleteVar();
 

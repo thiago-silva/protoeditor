@@ -175,12 +175,12 @@ void VariableListView::slotContextMenuRequested(QListViewItem* item, const QPoin
 
 void VariableListView::markColapsed(VariableListViewItem* item)
 {
-  m_expanded.remove(item->variable()->stringPath());  
+  m_expanded.remove(item->stringPath());  
 }
 
 void VariableListView::markExpanded(VariableListViewItem* item)
 {
-  m_expanded.push_back(item->variable()->stringPath());
+  m_expanded.push_back(item->stringPath());
 }
 
 void VariableListView::populateChildren(VariableListViewItem* item)
@@ -198,7 +198,8 @@ void VariableListView::populateChildren(VariableListViewItem* item)
   VariableListValue* v = dynamic_cast<VariableListValue*>((item)->variable()->value());
   if(!v->initialized())
   {
-    emit sigNeedChildren(id(), item->variable());    
+    m_needChildList.append(item);
+    emit sigNeedChildren(id(), item->variable());
   }
   else
   {
@@ -223,7 +224,7 @@ void VariableListView::setVariables(VariableList_t* vars)
   item = dynamic_cast<VariableListViewItem*>(selectedItem());
   if(item)
   {
-    currentSelected = item->variable()->stringPath();
+    currentSelected = item->stringPath();
   }
 
   clear();
@@ -245,12 +246,11 @@ void VariableListView::setVariables(VariableList_t* vars)
 
 void VariableListView::updateVariable(Variable* var)
 {
-  VariableListViewItem* item = getItemFromPath(var->stringPath());
-  if(item) 
-  {
-    item->setOpen(false);
-    item->setOpen(true);
-  }
+  VariableListViewItem* item = m_needChildList.first();
+  m_needChildList.remove();
+  item->setOpen(false);
+  item->setOpen(true);
+  reexpandItems();
 }
 
 void VariableListView::addVariables(VariableList_t* vars, VariableListViewItem* parent)
@@ -263,28 +263,45 @@ void VariableListView::addVariables(VariableList_t* vars, VariableListViewItem* 
 
 void VariableListView::reexpandItems()
 {
-  //if we don't do this, m_expanded will have duplicates
-  QValueList<QString> paths = m_expanded;
-  m_expanded.clear();
-
   VariableListViewItem* item;
   QValueList<QString>::iterator it;
+
+  QValueList<QString> paths = m_expanded;
+
+  loop:
+
   for(it = paths.begin(); it != paths.end(); it++)
   {
-    item = getItemFromPath(*it);
-
-    //variable might have changed from list to scalar
-    if(item && !item->variable()->value()->isScalar())
+    if(itemStatus(*it) != 1) // != needchild (exists or is invalid)
     {
-      item->setOpen(true);
+      item = getItemFromPath(*it);
+      //check for existence: variable might not exist in the scope anymore
+      //check for scalar: variable (name) might have changed from list to scalar
+      if(item && !item->variable()->value()->isScalar())
+      {
+        item->setOpen(true);
+      }
+      paths.remove(*it);
+      break;
     }
+    else
+    {
+      return;
+    }
+  }
+
+  if(paths.count() == 0)
+  {
+    return;
+  } 
+  else
+  {
+    goto loop;
   }
 }
 
 VariableListViewItem* VariableListView::getItemFromPath(QString path)
 {
-  if(path.isEmpty()) return NULL;
-
   int sections = path.contains('/') + 1;
   int index = 0;
   QString s, comp;
@@ -294,7 +311,6 @@ VariableListViewItem* VariableListView::getItemFromPath(QString path)
   {
     if((!item) || (index >= sections)) break;
     s = item->text(VariableListView::NameCol);
-    comp = path.section('/', index, index);
     if(item->text(VariableListView::NameCol) == path.section('/', index, index))
     {
       index++;
@@ -317,6 +333,54 @@ VariableListViewItem* VariableListView::getItemFromPath(QString path)
   while(true);
 
   return NULL;
+}
+
+int VariableListView::itemStatus(QString path)
+{
+  int sections = path.contains('/') + 1;
+  int index = 0;
+  QString s, comp;
+  VariableListViewItem* item = dynamic_cast<VariableListViewItem*>(firstChild());
+
+  //exists: 0, needc = 1, invalid = 2
+  do
+  {
+    if((!item) || (index >= sections)) break;
+    s = item->text(VariableListView::NameCol);
+    if(item->text(VariableListView::NameCol) == path.section('/', index, index))
+    {
+      index++;
+      if(index == sections)
+      {
+        return 0;
+      }
+      else
+      {
+        if((item->childCount() > 0) || (item->variable()->value()->isScalar()))
+        {
+          return 0;
+        }
+
+        VariableListValue* v = dynamic_cast<VariableListValue*>((item)->variable()->value());
+        if(!v->initialized())
+        {
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+    }
+    else
+    {
+      item = dynamic_cast<VariableListViewItem*>(item->nextSibling());
+      continue;
+    }
+  }
+  while(true);
+
+  return 2;  
 }
 
 void VariableListView::addVariable(Variable* variable, VariableListViewItem* parent)
@@ -345,6 +409,5 @@ VariableListViewItem* VariableListView::lastRootItem() {
   }
   return dynamic_cast<VariableListViewItem*>(item);
 }
-
 
 #include "variablelistview.moc"

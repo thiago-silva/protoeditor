@@ -70,11 +70,14 @@ private:
 
   void populateChildren(VariableListViewItem* item);
   void reexpandItems();
+  int itemStatus(QString);
 
   int m_id;
-  QValueList<QString> m_expanded;
-  VariableList_t*    m_variables;
-  bool m_isReadOnly;
+  VariableList_t        *m_variables;
+  bool                   m_isReadOnly;
+  QPtrList<VariableListViewItem> m_needChildList;
+  QValueList<QString>    m_expanded;  
+  
 };
 
 #endif

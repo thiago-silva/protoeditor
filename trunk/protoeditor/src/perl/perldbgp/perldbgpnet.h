@@ -25,6 +25,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
+#include <qptrlist.h> 
 
 class DebuggerPerlDBGP;
 class SiteSettings;
@@ -131,13 +132,13 @@ private:
   
   void error(const QString&);
 
-  Variable         *m_updateVar;
-  long             m_tempBreakpointId;
-  SiteSettings     *m_site;
-  DebuggerPerlDBGP *m_debugger;
-  Connection       *m_con;
+  QPtrList<Variable>     m_updateVars;
+  long                   m_tempBreakpointId;
+  SiteSettings          *m_site;
+  DebuggerPerlDBGP      *m_debugger;
+  Connection            *m_con;
 
-  QSocket          *m_socket;
+  QSocket               *m_socket;
 
   VariableList_t* m_globalVars;
   int m_superglobalsCount;
