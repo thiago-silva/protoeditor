@@ -121,6 +121,53 @@ PerlListValue::~PerlListValue()
 {
 }
 
+QString PerlListValue::toString(int indent)
+{
+  QString ind;
+  ind.fill(' ', indent);
+
+  QString s;
+
+  Variable* v;
+  for(v =  m_list->first(); v; v = m_list->next()) {
+    s += "\n";
+    s += ind;
+
+    if(v->isReference()) {
+      s += v->name() + " => \\" + v->value()->owner()->name();
+    } else {
+      if(v->value()->isScalar()) {
+        s += v->name() + " => " + v->value()->toString();
+      } else {
+        s += v->name() + " = (" + v->value()->typeName() + ")";
+        s += v->value()->toString(indent+3);
+      }
+    }
+  }
+
+  return s;  
+}
+
+QString PerlListValue::typeName()
+{
+  QString name;
+
+  switch(type())
+  {
+    case Array:
+      name = i18n("Array");
+      name += "[" + QString::number(size()) + "]";
+      break;
+    case Hash:
+      name = i18n("Hash");
+      break;
+    case Object: 
+      name = i18n("Object");
+      break;
+  }
+  return name;
+}
+
 int PerlListValue::type()
 {
   return m_type;
@@ -130,94 +177,3 @@ int PerlListValue::size()
 {
   return m_size;
 }
-
-//----------------------------------------------------------------
-
-PerlArrayValue::PerlArrayValue(Variable* owner, int size)
-  : PerlListValue(owner, size, PerlListValue::Array)
-{
-}
-
-PerlArrayValue::~PerlArrayValue()
-{
-}
-
-QString PerlArrayValue::toString(int indent)
-{
-  QString ind;
-  ind.fill(' ', indent);
-
-  QString s;
-
-  Variable* v;
-  for(v =  m_list->first(); v; v = m_list->next()) {
-    s += "\n";
-    s += ind;
-
-    if(v->isReference()) {
-      s += v->name() + " => \\" + v->value()->owner()->name();
-    } else {
-      if(v->value()->isScalar()) {
-        s += v->name() + " => " + v->value()->toString();
-      } else {
-        s += v->name() + " = (" + v->value()->typeName() + ")";
-        s += v->value()->toString(indent+3);
-      }
-    }
-  }
-
-  return s;
-}
-
-QString PerlArrayValue::typeName()
-{  
-  QString s = i18n("Array");
-  s += "[" + QString::number(size()) + "]";
-
-  return s;
-}
-
-//----------------------------------------------------------------
-
-PerlHashValue::PerlHashValue(Variable* owner, int size)
-  : PerlListValue(owner, size, PerlListValue::Hash)
-{
-}
-
-
-PerlHashValue::~PerlHashValue()
-{
-}
-
-QString PerlHashValue::toString(int indent)
-{
-  QString ind;
-  ind.fill(' ', indent);
-
-  QString s;
-
-  Variable* v;
-  for(v =  m_list->first(); v; v = m_list->next()) {
-    s += "\n";
-    s += ind;
-
-    if(v->isReference()) {
-      s += v->name() + " => \\" + v->value()->owner()->name();
-    } else {
-      if(v->value()->isScalar()) {
-        s += v->name() + " => " + v->value()->toString();
-      } else {
-        s += v->name() + " = (" + v->value()->typeName() + ")";
-        s += v->value()->toString(indent+3);
-      }
-    }
-  }
-
-  return s;
-}
-
-QString PerlHashValue::typeName()
-{  
-  return i18n("Hash");;
-}
-

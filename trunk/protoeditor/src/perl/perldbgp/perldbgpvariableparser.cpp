@@ -87,7 +87,7 @@ PerlVariable* PerlDBGPVariableParser::parseVar(QDomNode& node, Variable* parent)
 
   if(type == "hash")
   {
-    PerlHashValue* hashValue = new PerlHashValue(var, effectiveChildren);
+    PerlListValue* hashValue = new PerlListValue(var, effectiveChildren, PerlListValue::Hash);
     var->setValue(hashValue);
     hashValue->setScalar(false);
 
@@ -98,13 +98,24 @@ PerlVariable* PerlDBGPVariableParser::parseVar(QDomNode& node, Variable* parent)
   }
   else if(type == "array")
   {
-    PerlArrayValue* arrayValue = new PerlArrayValue(var, effectiveChildren);
+    PerlListValue* arrayValue = new PerlListValue(var, effectiveChildren, PerlListValue::Array);
     var->setValue(arrayValue);
     arrayValue->setScalar(false);
     
     if((effectiveChildren == 0) || (broughtChildren != 0))
     {
       arrayValue->setList(parseList(e.childNodes(), var));
+    }
+  }
+  else if(type == "object")
+  {
+    PerlListValue* lvalue = new PerlListValue(var, effectiveChildren, PerlListValue::Object);
+    var->setValue(lvalue);
+    lvalue->setScalar(false);
+    
+    if((effectiveChildren == 0) || (broughtChildren != 0))
+    {
+      lvalue->setList(parseList(e.childNodes(), var));
     }
   }
   else if(type == "scalar")

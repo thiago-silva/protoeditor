@@ -67,6 +67,9 @@ public:
   PerlListValue(Variable* owner, int size, int type);
   virtual ~PerlListValue();  
 
+  virtual QString toString(int indent = 0);
+  virtual QString typeName();
+
   virtual int     type();
 protected:
   int size();
@@ -75,23 +78,23 @@ private:
   int m_type;
 };
 
-class PerlArrayValue : public PerlListValue {
-public:
-  PerlArrayValue(Variable* owner, int size);
-  virtual ~PerlArrayValue();
-
-  virtual QString toString(int indent = 0);
-  virtual QString typeName();
-};
-
-class PerlHashValue : public PerlListValue {
-public:
-  PerlHashValue(Variable* owner, int size);
-  virtual ~PerlHashValue();
-
-  virtual QString toString(int indent = 0);
-  virtual QString typeName();
-};
+// class PerlArrayValue : public PerlListValue {
+// public:
+//   PerlArrayValue(Variable* owner, int size);
+//   virtual ~PerlArrayValue();
+// 
+//   virtual QString toString(int indent = 0);
+//   virtual QString typeName();
+// };
+// 
+// class PerlHashValue : public PerlListValue {
+// public:
+//   PerlHashValue(Variable* owner, int size);
+//   virtual ~PerlHashValue();
+// 
+//   virtual QString toString(int indent = 0);
+//   virtual QString typeName();
+// };
 
 
 #endif
