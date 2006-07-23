@@ -139,7 +139,7 @@ DBGProfileData* DBGProfileListViewItem::data()
 DBGProfileListView::DBGProfileListView(QWidget *parent, const char *name)
     : KListView(parent, name), m_view(ModuleView)
 {
-  setSorting(-1);
+  setSorting(TotalCol, false);
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
 
