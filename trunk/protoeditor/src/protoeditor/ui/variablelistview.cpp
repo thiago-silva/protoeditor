@@ -281,10 +281,6 @@ void VariableListView::reexpandItems()
       {
         item->setOpen(true);
       }
-      else
-      {
-        m_expanded.remove(*it);
-      }
       paths.remove(*it);
       break;
     }
