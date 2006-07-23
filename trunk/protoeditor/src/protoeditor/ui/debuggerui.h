@@ -126,7 +126,6 @@ public slots:
 
   void slotNeedChildren(int, Variable*);
 private:
-  int                  m_varlistID;
   VariableListView    *m_globalVariableListView;
   LocalTab            *m_localTab;
   WatchTab            *m_watchTab;
@@ -134,6 +133,8 @@ private:
   MessageListView     *m_messageListView;  
   KTextEdit           *m_edOutput;
 //   ConsoleWidget       *m_console;
+
+  QValueList<int> m_varlistIDs;
 };
 
 #endif

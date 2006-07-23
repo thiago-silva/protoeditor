@@ -145,7 +145,10 @@ void DebuggerUI::setLocalVariables(VariableList_t* vars)
 
 void DebuggerUI::updateVariable(Variable* var)
 {
-  switch(m_varlistID)
+  int varlistID = m_varlistIDs.first();
+  m_varlistIDs.remove(varlistID);
+
+  switch(varlistID)
   {
     case GlobalVarListID:
       m_globalVariableListView->updateVariable(var);
@@ -278,16 +281,18 @@ void DebuggerUI::cleanSession()
 
 void DebuggerUI::slotNeedChildren(int varlistID, Variable* var)
 {
-  m_varlistID = varlistID;
-
+  m_varlistIDs.append(varlistID);
+  
   switch(varlistID)
   {
     case DebuggerUI::GlobalVarListID:
-      emit sigNeedChildren(DebuggerStack::GlobalScopeID, var);
+      emit sigNeedChildren(
+        m_localTab->comboStack()->stack()->topExecutionPoint()->id(), var);
       break;
     case DebuggerUI::LocalVarListID:
     case DebuggerUI::WatchListID:
-      emit sigNeedChildren(DebuggerStack::LocalScopeID, var);
+      emit sigNeedChildren(
+        m_localTab->comboStack()->selectedDebuggerExecutionPoint()->id(), var);
       break;
     default:
       //error

@@ -180,7 +180,11 @@ void VariableListView::markColapsed(VariableListViewItem* item)
 
 void VariableListView::markExpanded(VariableListViewItem* item)
 {
-  m_expanded.push_back(item->stringPath());
+  QString path = item->stringPath();
+  if(m_expanded.findIndex(path) == -1)
+  {
+    m_expanded.push_back(path);
+  }
 }
 
 void VariableListView::populateChildren(VariableListViewItem* item)
@@ -245,11 +249,14 @@ void VariableListView::setVariables(VariableList_t* vars)
 }
 
 void VariableListView::updateVariable(Variable*)
-{
+{  
   VariableListViewItem* item = m_needChildList.first();
   m_needChildList.remove();
-  item->setOpen(false);
-  item->setOpen(true);
+  if (item)
+  {
+    item->setOpen(false);
+    item->setOpen(true);
+  }
   reexpandItems();
 }
 
