@@ -244,7 +244,7 @@ void VariableListView::setVariables(VariableList_t* vars)
   delete vars;
 }
 
-void VariableListView::updateVariable(Variable* var)
+void VariableListView::updateVariable(Variable*)
 {
   VariableListViewItem* item = m_needChildList.first();
   m_needChildList.remove();
@@ -280,6 +280,10 @@ void VariableListView::reexpandItems()
       if(item && !item->variable()->value()->isScalar())
       {
         item->setOpen(true);
+      }
+      else
+      {
+        m_expanded.remove(*it);
       }
       paths.remove(*it);
       break;
