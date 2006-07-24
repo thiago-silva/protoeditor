@@ -65,8 +65,30 @@
 <li>Ressurrection of LedWait?</li></ul></ul>
 </body></html>
 
-
 \CurrentEntry 2 NOW
+<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
+<ul type="disc"><li>Fix VariableListView (items expanded in Local and Global == crash) for perl/python<br /><br /></li>
+<li>PerlDBGPNet::requestChildren(int scopeId, Variable* var)</li>
+<ul type="disc"><li>Same for python<br /></li>
+<li>It is requesting variable with a wrong context ID.<br /></li>
+<li>New implementation:</li>
+<ul type="disc"><li>VariableListView emit the signal with its ID</li>
+<li>DebuggerUI saves the listview ID and send the signal, now passing the current stackcombo ID</li>
+<li>Now, debugger should receive (Variable* var, int ctx_id)</li>
+<li>When answer comes to debuggerUI, it uses the saved ID to update the given listview<br /><br /></li></ul></ul>
+<li>Finish the variables/watches</li>
+<li>Test breakpoints<br /></li>
+<li>Test Perl/Python</li>
+<ul type="disc"><li>Change combostack changes local variables? (compare with komodo)<br /></li></ul>
+<li>Done! (Release 1.1beta2)<br /><br /></li>
+<li>------------------Bugs<br /></li>
+<li>Deep variables in the listview are not expanded trough steps (only the first level)</li>
+<li>Some times (rarely) breakpoints get out of sync (editor/bplistview) and are added incorrectly in the editor (but might be katepart issue).<br /></li>
+<li>Check BT from Minc (crash)</li></ul>
+</body></html>
+
+
+\NewEntry 2 agenda
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Stage 1 (version 1.1)</li>
 <ul type="disc"><li>Python DBGp support              (1.1beta2)</li>
@@ -84,13 +106,13 @@
 <ul type="disc"><li>version 2.0</li></ul></ul>
 </body></html>
 
-
 \NewEntry 2 old
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Add AbstractDebugger::sigNewRequest(AbstractDebugger*)</li>
 <ul type="disc"><li>signal is a trigger informing that the debugger was requested to start by a JIT session, or something...<br />then, the controller must ignore it if it is already on a debug session, or send a message to the user asking if he wants to cancel the current and start the new one, or bla....</li>
 <li>Maybe, ask only if the debugger is a different from the current one<br /></li></ul>
 <li>--------------------------------------------<br /></li>
+<li>Test copying variables (variableslistview) from all types of all languages<br /></li>
 <li>PHP Xdebug</li>
 <ul type="disc"><li>Implement conditional bps and all the new stuff (http://www.xdebug.org/updates.php)<br /><br /></li></ul>
 <li>---------------<br /></li>
@@ -123,7 +145,6 @@
 <li>Research/try better aproaches to handle async comunication between debugger - application (debugger codes are to messy)</li>
 <li>Rethink all data structure (classes) from skratch (Language, LanguageSettings, Debugger, etc)<br /></li></ul>
 </body></html>
-
 
 \NewEntry 2 perl implementation
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
