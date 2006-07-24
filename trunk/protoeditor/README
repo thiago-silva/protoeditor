@@ -19,6 +19,10 @@ Project site: http://protoeditor.sourceforge.net
    - DBGp debugger, shipped in this package. It can also be 
      found at ftp://ftp.activestate.com
 
+  Python
+   - DBGp debugger, shipped in this package. It can also be
+     found at ftp://ftp.activestate.com
+
   Protoeditor uses katepart as the text editor, so all the functionalities of
   a _good_ editor are present (highlights, folding marks, etc, etc, etc) wich 
   makes the debug experience more pratical.
@@ -31,7 +35,7 @@ Project site: http://protoeditor.sourceforge.net
 1.1 Requirements:
 
   * KDE 3.2 + should be fine (if not, let me know :)
-  * For local debug, you need a interpreter (ie. PHP, Perl) and, at least, 
+  * For local debug, you need a interpreter (ie. PHP, Perl, etc) and, at least, 
     one debugger installed in your system.
     For remote debug, you need the remote system to be properly installed
     (webserver + debugger module + additional configuration).  
@@ -60,28 +64,39 @@ Project site: http://protoeditor.sourceforge.net
     For details about Gubed installation, check the Gubed site:
       http://gubed.sourceforge.net
 
-  2.1.2 Perl
+  2.1.2 Perl and Python
 
-    There is no extra configuration needed to start debugging Perl scripts 
-    locally. Protoeditor installs automatically the DBGp in it's data
-    directory (usually /opt/kde/share/apps/protoeditor/libs/perl) so it doesn't 
-    conflict with your system perl library.
+    There is no extra configuration needed to start debugging Perl/Python
+    scripts locally. Protoeditor installs automatically the debuggers
+    in it's data directory (usually /opt/kde/share/apps/protoeditor/libs/perl) 
+    so it doesn't conflict with your system library.
 
-    To debug remotelly, you will need to copy the DBGp library to the server
-    host and configure the webserver. For instance, if the remote server
-    is the localhost, and you are using Apache, you could add the following
-    to httpd.conf (assuming mod_env is installed and DBGp is in the default 
-    directory):
+    To debug remotelly, you will need to copy the DBGp debugger library to 
+    the server host and configure the webserver. You might want to check
+    "Enable JIT" on Protoeditor language settings as well.
 
-        SetEnv PERL5LIB "/opt/kde/share/apps/protoeditor/libs/perl/"
-        SetEnv PERLDB_OPTS "RemotePort=localhost:9001"
+    2.1.2.1 Remote debugging Perl 
 
-    Then, restarting the server and settings "perl -d" to the shebang in the
-    cgi-script (ie. "#!/usr/bin/perl -d") should be enough.
+      If the remote server is the localhost, and you are using Apache, you could 
+      add the following to httpd.conf (assuming mod_env is installed and DBGp is 
+      in the default  directory):
+  
+          SetEnv PERL5LIB "/opt/kde/share/apps/protoeditor/libs/perl/"
+          SetEnv PERLDB_OPTS "RemotePort=localhost:9001"
+  
+      Then, restarting the server and settings "perl -d" to the shebang in the
+      cgi-script (ie. "#!/usr/bin/perl -d") should be enough.
+  
+  
+      Detailed information can be found at:
+      http://aspn.activestate.com/ASPN/docs/Komodo/3.5/komodo-doc-debugperl.html
 
-
-    Detailed information can be found at:
-    http://aspn.activestate.com/ASPN/docs/Komodo/3.5/komodo-doc-debugperl.html
+    2.1.3 Remote debugging Python
+    
+      So far, I haven't tested remote debugging with Python DBGp. 
+      Instructions for such can be found at:
+  
+      http://aspn.activestate.com/ASPN/docs/Komodo/3.5/komodo-doc-debugpython.html
 
 2.1.1 Protoeditor configuration
 

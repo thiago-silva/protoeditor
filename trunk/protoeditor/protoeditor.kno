@@ -1,24 +1,26 @@
 \NewEntry 0 Site and non-implementation notes
 
-\NewEntry 1 Releasing notes
+\CurrentEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Compile all and check for warning messages (remove them!)</li>
-<li>1: Test current SVN version on other distro/KDE versions</li>
-<li>2: Change version on kdevelop file, configure.in/configure.in.in</li>
-<li>3: Create NEWS</li>
-<li>4: Create ChangeLog</li>
-<li>5: Update README/FAQ</li>
-<li>6: TAG current SVN version</li>
-<li>7: create package</li>
+<li>1: Update README/FAQ/docs</li>
+<li>2: Check if every file is in the repository</li>
+<li>3: Test current SVN version on other distro/KDE versions</li>
+<li>4: Change version on kdevelop file, configure.in/configure.in.in</li>
+<li>5: Create NEWS</li>
+<li>6: Create ChangeLog</li>
+<li>7: TAG current SVN version</li>
+<li>8: create package</li>
 <ul type="disc"><li>remove unescessary data on workspace (Makefile.am dist-hook add everything when &quot;make dist&quot;)</li>
 <ul type="disc"><li>protoeditor.kno</li>
 <li>protoeditor.kdevelop</li></ul>
 <li>make dist, and check</li>
 <li>publish</li></ul>
-<li>7: Update site</li></ul>
+<li>9: Update site</li></ul>
 <p></p>
 <p></p>
 </body></html>
+
 
 \NewEntry 0 Implementation
 
@@ -65,7 +67,7 @@
 <li>Ressurrection of LedWait?</li></ul></ul>
 </body></html>
 
-\CurrentEntry 2 NOW
+\NewEntry 2 NOW
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
 <ul type="disc"><li>Fix VariableListView (items expanded in Local and Global == crash) for perl/python<br /><br /></li>
 <li>PerlDBGPNet::requestChildren(int scopeId, Variable* var)</li>
@@ -86,7 +88,6 @@
 <li>Some times (rarely) breakpoints get out of sync (editor/bplistview) and are added incorrectly in the editor (but might be katepart issue).<br /></li>
 <li>Check BT from Minc (crash)</li></ul>
 </body></html>
-
 
 \NewEntry 2 agenda
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
