@@ -34,63 +34,36 @@ public:
                                          type is this->name()
                                          house is this->parent->name()
                                      */
-protected:
-  QString perlCompositeName(bool);
-  QString perlName(bool);
 };
 
 class PythonScalarValue : public VariableScalarValue {
 public:
-  enum { Scalar, Object, Undefined };
-
   PythonScalarValue(Variable* owner);
   virtual ~PythonScalarValue();
 
-  virtual void setType(int);
+  void setTypeName(const QString&);
+
   virtual int type();
-
-  void setClassName(const QString&);
-
   virtual QString typeName();
 private:
-  int m_type;
-  QString m_class;
+  QString m_typeName;
 };
 
 //---------------------------------------------------------------
 
-class PythonListValue : public VariableListValue
-{
+class PythonListValue : public VariableListValue {
 public:
-  enum { Array, Hash, Object };
+  PythonListValue(Variable* owner, const QString&);
+  virtual ~PythonListValue();
 
-  PythonListValue(Variable* owner, int size, int type);
-  virtual ~PythonListValue();  
+  enum { List, Tuple, Dictionary };
 
   virtual int     type();
-protected:
-  int size();
-private:
-  int m_size;
+  virtual QString typeName();
+  virtual QString toString(int indent = 0);
+private:  
+  QString m_typeName;
   int m_type;
-};
-
-class PythonArrayValue : public PythonListValue {
-public:
-  PythonArrayValue(Variable* owner, int size);
-  virtual ~PythonArrayValue();
-
-  virtual QString toString(int indent = 0);
-  virtual QString typeName();
-};
-
-class PythonHashValue : public PythonListValue {
-public:
-  PythonHashValue(Variable* owner, int size);
-  virtual ~PythonHashValue();
-
-  virtual QString toString(int indent = 0);
-  virtual QString typeName();
 };
 
 

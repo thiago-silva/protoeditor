@@ -34,48 +34,30 @@ PythonVariable::~PythonVariable() {
 
 QString PythonVariable::compositeName()
 {
-  return perlCompositeName(false);
+  QString cname;
+//   if(parent()) {
+//     cname = parent()->compositeName();
+//     switch(parent()->value()->type())
+//     {
+//       case PythonListValue::Dictionary:
+//         cname += "{'" + name() + "'}";  
+//     if(parent()->value()->type() == ) {
+//       
+//     } else {
+//       cname += "->" + name();
+//     }
+//   } else {
+//     cname = name();
+//   }
+
+  return name();
 }
 
-QString PythonVariable::perlCompositeName(bool eval)
-{
-  if(!parent()) 
-  {
-    return perlName(eval);
-  }
-  else
-  {
-    QString cname = dynamic_cast<PythonVariable*>(parent())->perlCompositeName(true);
-    return cname + name();
-  }
-}
-  
-
-QString PythonVariable::perlName(bool eval)
-{
-  if(!eval)
-  {
-    return name();
-  }
-  else
-  {
-    switch(value()->type())
-    {
-      case PythonListValue::Array:
-        return name().replace('@', '$');
-      case PythonListValue::Hash:
-        return name().replace('%', '$');
-      case PythonListValue::Object:
-        return name();
-    }
-  }
-  return QString::null;
-}
 
 //------------------------------------------------------
 
 PythonScalarValue::PythonScalarValue(Variable* owner)
-  : VariableScalarValue(owner), m_type(Undefined)
+  : VariableScalarValue(owner), m_typeName(VariableValue::UndefinedType)
 {
 }
 
@@ -83,42 +65,48 @@ PythonScalarValue::~PythonScalarValue()
 {
 }
 
+void PythonScalarValue::setTypeName(const QString& typeName)
+{
+  m_typeName = typeName;
+}
+
 QString PythonScalarValue::typeName()
 {
-  switch(m_type)
-  {
-    case Scalar:
-      return i18n("Scalar");
-    case Object:
-      return m_class;
-    default:
-      return VariableValue::UndefinedType;
-  }
-}
-
-void PythonScalarValue::setClassName(const QString& className)
-{
-  m_class = className;
-}
-
-void PythonScalarValue::setType(int type)
-{
-  m_type = type;
+  return m_typeName;
 }
 
 int PythonScalarValue::type()
 {
-  return m_type;
+  return VariableValue::Undefined;
 }
+
 //----------------------------------------------------------------
 
-PythonListValue::PythonListValue(Variable* owner, int size, int type)
-  : VariableListValue(owner), m_size(size), m_type(type)
+PythonListValue::PythonListValue(Variable* owner, const QString& typeName)
+  : VariableListValue(owner), m_typeName(typeName), m_type(Undefined)
 {
+  if(m_typeName == "tuple")
+  {
+    m_type = Tuple;
+  } 
+  else if(m_typeName == "list")
+  {
+    m_type = List;
+  } 
+  else if(m_typeName == "dict")
+  {
+    m_type = Dictionary;
+  }
 }
 
 PythonListValue::~PythonListValue()
 {
+}
+
+
+QString PythonListValue::typeName()
+{  
+  return m_typeName;
 }
 
 int PythonListValue::type()
@@ -126,98 +114,30 @@ int PythonListValue::type()
   return m_type;
 }
 
-int PythonListValue::size()
-{
-  return m_size;
-}
 
-//----------------------------------------------------------------
-
-PythonArrayValue::PythonArrayValue(Variable* owner, int size)
-  : PythonListValue(owner, size, PythonListValue::Array)
-{
-}
-
-PythonArrayValue::~PythonArrayValue()
-{
-}
-
-QString PythonArrayValue::toString(int indent)
+QString PythonListValue::toString(int indent)
 {
   QString ind;
   ind.fill(' ', indent);
 
   QString s;
 
-  Variable* v;
-  for(v =  m_list->first(); v; v = m_list->next()) {
-    s += "\n";
-    s += ind;
-
-    if(v->isReference()) {
-      s += v->name() + " => \\" + v->value()->owner()->name();
-    } else {
-      if(v->value()->isScalar()) {
-        s += v->name() + " => " + v->value()->toString();
-      } else {
-        s += v->name() + " = (" + v->value()->typeName() + ")";
-        s += v->value()->toString(indent+3);
-      }
-    }
-  }
-
-  return s;
-}
-
-QString PythonArrayValue::typeName()
-{  
-  QString s = i18n("Array");
-  s += "[" + QString::number(size()) + "]";
+//   Variable* v;
+//   for(v =  m_list->first(); v; v = m_list->next()) {
+//     s += "\n";
+//     s += ind;
+// 
+//     if(v->isReference()) {
+//       s += v->name() + " => &" + v->value()->owner()->name();
+//     } else {
+//       if(v->value()->isScalar()) {
+//         s += v->name() + " => " + v->value()->toString();
+//       } else {
+//         s += v->name() + " = (" + v->value()->typeName() + ")";
+//         s += v->value()->toString(indent+3);
+//       }
+//     }
+//   }
 
   return s;
 }
-
-//----------------------------------------------------------------
-
-PythonHashValue::PythonHashValue(Variable* owner, int size)
-  : PythonListValue(owner, size, PythonListValue::Hash)
-{
-}
-
-
-PythonHashValue::~PythonHashValue()
-{
-}
-
-QString PythonHashValue::toString(int indent)
-{
-  QString ind;
-  ind.fill(' ', indent);
-
-  QString s;
-
-  Variable* v;
-  for(v =  m_list->first(); v; v = m_list->next()) {
-    s += "\n";
-    s += ind;
-
-    if(v->isReference()) {
-      s += v->name() + " => \\" + v->value()->owner()->name();
-    } else {
-      if(v->value()->isScalar()) {
-        s += v->name() + " => " + v->value()->toString();
-      } else {
-        s += v->name() + " = (" + v->value()->typeName() + ")";
-        s += v->value()->toString(indent+3);
-      }
-    }
-  }
-
-  return s;
-}
-
-QString PythonHashValue::typeName()
-{  
-  return i18n("Hash");;
-}
-
