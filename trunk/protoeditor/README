@@ -68,7 +68,7 @@ Project site: http://protoeditor.sourceforge.net
 
     There is no extra configuration needed to start debugging Perl/Python
     scripts locally. Protoeditor installs automatically the debuggers
-    in it's data directory (usually /opt/kde/share/apps/protoeditor/libs/perl) 
+    in it's data directory (usually /opt/kde/share/apps/protoeditor/libs) 
     so it doesn't conflict with your system library.
 
     To debug remotelly, you will need to copy the DBGp debugger library to 
