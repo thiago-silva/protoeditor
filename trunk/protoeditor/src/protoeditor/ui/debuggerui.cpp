@@ -50,7 +50,7 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
   insertTab(m_localTab, i18n("Local"));
 
   m_watchTab = new WatchTab(this);
-  insertTab(m_watchTab, i18n("Watch"));
+  insertTab(m_watchTab, i18n("Watches"));
 
   QWidget* breakpointTab = new QWidget(this);
   QVBoxLayout* breakpointTabLayout = new QVBoxLayout(breakpointTab, 1, 1);
