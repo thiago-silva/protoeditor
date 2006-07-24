@@ -2,22 +2,19 @@
 
 \CurrentEntry 1 Releasing notes
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Sans Serif">
-<ul type="disc"><li>Compile all and check for warning messages (remove them!)</li>
-<li>1: Update README/FAQ/docs</li>
-<li>2: Check if every file is in the repository</li>
-<li>3: Test current SVN version on other distro/KDE versions</li>
-<li>4: Change version on kdevelop file, configure.in/configure.in.in</li>
-<li>5: Create NEWS</li>
-<li>6: Create ChangeLog</li>
-<li>7: TAG current SVN version</li>
-<li>8: create package</li>
-<ul type="disc"><li>remove unescessary data on workspace (Makefile.am dist-hook add everything when &quot;make dist&quot;)</li>
-<ul type="disc"><li>protoeditor.kno</li>
-<li>protoeditor.kdevelop</li></ul>
-<li>make dist, and check</li>
-<li>publish</li></ul>
-<li>9: Update site</li></ul>
-<p></p>
+<ul type="disc"><li>1: Compile all and check for warning messages (remove them!)</li>
+<li>2: Update README/FAQ/docs</li>
+<li>3: Check if every file is in the repository</li>
+<li>4: Test current SVN version on other distro/KDE versions</li>
+<li>5: Change version on kdevelop file, configure.in/configure.in.in</li>
+<li>6: TAG trunk</li>
+<li>7: Create NEWS</li>
+<li>8: Create ChangeLog</li>
+<li>9: Create package</li>
+<ul type="disc"><li>9a: rm protoeditor/* (clean yp unescessary data on workspace)</li>
+<li>9b: make dist, and check</li>
+<li>9c: publish</li></ul>
+<li>10: Update site</li></ul>
 <p></p>
 </body></html>
 
