@@ -63,7 +63,7 @@ VariableList_t* PythonDBGPVariableParser::parseList(const QDomNodeList& list, Va
   {
     e = list.item(i).toElement();
     
-    if(e.attributeNode("type").value() == "uninitialized")
+    if(e.tagName() != "property")
       continue;
 
     var = parseVar(e, parent);
@@ -75,29 +75,50 @@ VariableList_t* PythonDBGPVariableParser::parseList(const QDomNodeList& list, Va
 PythonVariable* PythonDBGPVariableParser::parseVar(QDomNode& node, Variable* parent)
 {
 /*
-<property  type="int" children="0" size="0">
-  <value><![CDATA[0]]></value>
-  <name encoding="base64"><![CDATA[REJHUEhpZGVDaGlsZHJlbg==]]></name>
-  <fullname encoding="base64"><![CDATA[REJHUEhpZGVDaGlsZHJlbg==]]></fullname>
-</property>
-
+<?xml version="1.0" encoding="utf-8"?>
+	<response xmlns="urn:debugger_protocol_v1" command="context_get" context="0" transaction_id="4">
+		<property  type="int" children="0" size="0">
+			<value><![CDATA[0]]></value>
+			<name encoding="base64"><![CDATA[REJHUEhpZGVDaGlsZHJlbg==]]></name>
+			<fullname encoding="base64"><![CDATA[REJHUEhpZGVDaGlsZHJlbg==]]></fullname>
+		</property>
+		<property  type="module" children="0" size="0">
+			<value><![CDATA[<module 'sys' (built-in)>]]></value>
+			<name encoding="base64"><![CDATA[c3lz]]></name>
+			<fullname encoding="base64"><![CDATA[c3lz]]></fullname>
+		</property>
+		<property  pagesize="300" numchildren="3" children="1" type="tuple" page="0" size="3">
+			<name encoding="base64"><![CDATA[dA==]]></name>
+			<fullname encoding="base64"><![CDATA[dA==]]></fullname>
+		</property>
+		<property  type="str" children="0" size="3">
+			<value encoding="base64"><![CDATA[b2xh]]></value>	
+			<name encoding="base64"><![CDATA[dGVzdGU=]]></name>
+			<fullname encoding="base64"><![CDATA[dGVzdGU=]]>
+		</fullname>
+	</property>
+</response>
 */
   QDomElement e = node.toElement();
   
   PythonVariable* var = new PythonVariable(parent);
+  
+  int effectiveChildren = e.attributeNode("numchildren").value().toInt();
 
   QString type = e.attributeNode("type").value();
-  int size = e.attributeNode("size").value().toInt();
+//   int size = e.attributeNode("size").value().toInt();
+ 
 
-  QDomNodeList list = e.childNodes();
+  QDomNodeList list = e.childNodes();  
+//   int broughtChildren = list.count();
 
-  int broughtChildren = list.count();
 
   QString name;
   QString tmp, tvalue;
   for(uint i = 0; i < list.count(); i++)
   {
     e = list.item(i).toElement();
+
     tmp = e.text();
     if(e.hasAttributes() && (e.attributeNode("encoding").value() == QString("base64")))
     {
@@ -116,12 +137,33 @@ PythonVariable* PythonDBGPVariableParser::parseVar(QDomNode& node, Variable* par
   
   var->setName(name);
 
+  if(effectiveChildren == 0) //scalar
+  {
     PythonScalarValue* value = new PythonScalarValue(var);
-    value->setType(PythonScalarValue::Scalar);
+    value->setTypeName(type);
     var->setValue(value);
-    value->set(QString("\"") + tvalue + QString("\""));
+    value->set(tvalue);
+  }
+  else
+  {
+    PythonListValue* value = new PythonListValue(var, type);
+    value->setScalar(false);
+    var->setValue(value);
+//     value->setList(parseList(e.childNodes(), var));
+  }
 
- 
+/*
+  if(type == "array")
+  {
+    PerlArrayValue* arrayValue = new PerlArrayValue(var, effectiveChildren);
+    var->setValue(arrayValue);
+    arrayValue->setScalar(false);
+    
+    if((effectiveChildren == 0) || (broughtChildren != 0))
+    {
+      arrayValue->setList(parseList(e.childNodes(), var));
+    }*/
+
 //   if(type == "hash")
 //   {
 //     PythonHashValue* hashValue = new PythonHashValue(var, effectiveChildren);

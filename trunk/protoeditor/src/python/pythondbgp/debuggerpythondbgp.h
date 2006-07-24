@@ -86,7 +86,7 @@ public:
   void addOutput(const QString&);
   void debugError(int, const QString&, int, const QString&);
   
-  void updateVariable(Variable*, int);
+  void updateVariable(Variable*);
 
   PythonDBGPSettings* settings();
 public slots:

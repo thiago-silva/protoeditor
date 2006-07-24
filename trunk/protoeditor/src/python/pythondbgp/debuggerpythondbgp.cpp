@@ -432,7 +432,7 @@ void DebuggerPythonDBGP::debugError(int code, const QString& filePath, int line,
   }
 }
 
-void DebuggerPythonDBGP::updateVariable(Variable* var, int)
+void DebuggerPythonDBGP::updateVariable(Variable* var)
 {
   Protoeditor::self()->dataController()->updateVariable(var);
 }

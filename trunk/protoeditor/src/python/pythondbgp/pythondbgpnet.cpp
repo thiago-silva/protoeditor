@@ -45,7 +45,7 @@
 #include <kmdcodec.h>
 
 PythonDBGPNet::PythonDBGPNet(DebuggerPythonDBGP* debugger, QObject *parent, const char *name)
-    : QObject(parent, name), m_updateVar(0), m_tempBreakpointId(0),
+    : QObject(parent, name), m_tempBreakpointId(0),
        m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
 {
   m_con = new Connection();
@@ -97,14 +97,14 @@ void PythonDBGPNet::requestContinue()
 {
   QString run = "run -i ";
   run += QString::number(GeneralId);
-  m_socket->writeBlock(run, run.length()+1);
+  sendCommand(run, run.length()+1);
 }
 
 void PythonDBGPNet::requestStop()
 {
   QString stop = "stop -i ";
   stop += QString::number(GeneralId);
-  m_socket->writeBlock(stop, stop.length()+1);
+  sendCommand(stop, stop.length()+1);
 //   m_con->closeClient();
 }
 
@@ -129,40 +129,40 @@ void PythonDBGPNet::requestRunToCursor(const QString& filePath, int line)
   breakpoint_set += "enabled";
   breakpoint_set += " -r 1";
 
-  m_socket->writeBlock(breakpoint_set, breakpoint_set.length()+1);
+  sendCommand(breakpoint_set, breakpoint_set.length()+1);
 
   //request continue
   QString run = "run -i ";
   run += QString::number(RunToCursorId);
-  m_socket->writeBlock(run, run.length()+1);  
+  sendCommand(run, run.length()+1);  
 }
 
 void PythonDBGPNet::requestStepInto()
 {
   QString step_into = "step_into -i ";
   step_into += QString::number(GeneralId);
-  m_socket->writeBlock(step_into, step_into.length()+1);
+  sendCommand(step_into, step_into.length()+1);
 }
 
 void PythonDBGPNet::requestStepOver()
 {
   QString step_over = "step_over -i ";
   step_over += QString::number(GeneralId);
-  m_socket->writeBlock(step_over, step_over.length()+1);
+  sendCommand(step_over, step_over.length()+1);
 }
 
 void PythonDBGPNet::requestStepOut()
 {
   QString step_out = "step_out -i ";
   step_out += QString::number(GeneralId);
-  m_socket->writeBlock(step_out, step_out.length()+1);
+  sendCommand(step_out, step_out.length()+1);
 }
 
 void PythonDBGPNet::requestStack(int id)
 {
   QString stack_get = "stack_get -i ";
   stack_get += QString::number(id);
-  m_socket->writeBlock(stack_get, stack_get.length()+1);
+  sendCommand(stack_get, stack_get.length()+1);
 }
 
 void PythonDBGPNet::requestVariables(int scope, int id)
@@ -172,7 +172,7 @@ void PythonDBGPNet::requestVariables(int scope, int id)
   context_get += " -i ";
   context_get += QString::number(id);
 
-  m_socket->writeBlock(context_get, context_get.length()+1);
+  sendCommand(context_get, context_get.length()+1);
 
 
   if(id == GlobalScopeId && m_debugger->settings()->sendSuperGlobals())
@@ -181,16 +181,16 @@ void PythonDBGPNet::requestVariables(int scope, int id)
   }
 }
 
-void PythonDBGPNet::requestSuperGlobals(int scope)
+void PythonDBGPNet::requestSuperGlobals(int /*scope*/)
 {
   //total global vars: 6
   m_superglobalsCount = 6;
-  requestProperty("$0", scope, SuperGlobalId);
-  requestProperty("%ENV", scope, SuperGlobalId);
-  requestProperty("%INC", scope, SuperGlobalId);
-  requestProperty("@INC", scope, SuperGlobalId);
-  requestProperty("%SIG", scope, SuperGlobalId);
-  requestProperty("@_", scope, SuperGlobalId);
+//   requestProperty("$0", scope, SuperGlobalId);
+//   requestProperty("%ENV", scope, SuperGlobalId);
+//   requestProperty("%INC", scope, SuperGlobalId);
+//   requestProperty("@INC", scope, SuperGlobalId);
+//   requestProperty("%SIG", scope, SuperGlobalId);
+//   requestProperty("@_", scope, SuperGlobalId);
 }
 
 void PythonDBGPNet::requestModifyVar(Variable* var, int scope)
@@ -205,7 +205,7 @@ void PythonDBGPNet::requestModifyVar(Variable* var, int scope)
   property_set += QString::number(GeneralId);
   property_set += " -- ";
   property_set += KCodecs::base64Encode(value.utf8());
-  m_socket->writeBlock(property_set, property_set.length()+1);
+  sendCommand(property_set, property_set.length()+1);
 }
 
 void PythonDBGPNet::requestWatch(const QString& expression, int ctx_id)
@@ -215,30 +215,32 @@ void PythonDBGPNet::requestWatch(const QString& expression, int ctx_id)
 
 void PythonDBGPNet::requestChildren(int scopeId, Variable* var)
 {
-  m_updateVar = var;
-  switch(scopeId)
-  {
-    case DebuggerStack::GlobalScopeID:
-      requestProperty(var->compositeName(), PythonDBGPNet::GlobalScopeId, GlobalChildId);
-      break;
-    case DebuggerStack::LocalScopeID:
-      requestProperty(var->compositeName(), PythonDBGPNet::LocalScopeId, LocalChildId);
-      break;
-    default:
-      //error! no such scope
-      break;
-  }
+  m_updateVars.append(var);
+  requestProperty(var->compositeName(), scopeId, ChildId);
+
+//   switch(scopeId)
+//   {
+//     case DebuggerStack::GlobalScopeID:
+//       requestProperty(var->compositeName(), scopeId, GlobalChildId);
+//       break;
+//     case DebuggerStack::LocalScopeID:
+//       requestProperty(var->compositeName(), scopeId, LocalChildId);
+//       break;
+//     default:
+//       //error! no such scope
+//       break;
+//   }
 }
 
 void PythonDBGPNet::requestProperty(const QString& expression, int ctx_id, int id)
 {
-  QString property_get = "property_get -n ";
+  QString property_get = "property_get -i ";
+  property_get += QString::number(id);
+  property_get += " -n ";
   property_get += expression;
   property_get += " -d ";
   property_get += QString::number(ctx_id);
-  property_get += " -i ";
-  property_get += QString::number(id);
-  m_socket->writeBlock(property_get, property_get.length()+1);
+  sendCommand(property_get, property_get.length()+1);
 }
 
 void PythonDBGPNet::requestBreakpoint(DebuggerBreakpoint* bp)
@@ -267,7 +269,7 @@ void PythonDBGPNet::requestBreakpoint(DebuggerBreakpoint* bp)
 //   breakpoint_set += " -- ";
 //   breakpoint_set += KCodecs::base64Encode(QString(">=").utf8());
 
-  m_socket->writeBlock(breakpoint_set, breakpoint_set.length()+1);
+  sendCommand(breakpoint_set, breakpoint_set.length()+1);
 }
 
 void PythonDBGPNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
@@ -283,7 +285,7 @@ void PythonDBGPNet::requestBreakpointUpdate(DebuggerBreakpoint* bp)
 //   breakpoint_update += " -- ";
 //   breakpoint_update += KCodecs::base64Encode(bp->condition().utf8());
 
-  m_socket->writeBlock(breakpoint_update, breakpoint_update.length()+1);
+  sendCommand(breakpoint_update, breakpoint_update.length()+1);
 }
 
 void PythonDBGPNet::requestBreakpointRemoval(int bpid)
@@ -293,14 +295,14 @@ void PythonDBGPNet::requestBreakpointRemoval(int bpid)
   breakpoint_remove += " -i ";
   breakpoint_remove += QString::number(GeneralId);
 
-  m_socket->writeBlock(breakpoint_remove, breakpoint_remove.length()+1);
+  sendCommand(breakpoint_remove, breakpoint_remove.length()+1);
 }
 
 void PythonDBGPNet::requestBreakpointList()
 {
   QString breakpoint_list = "breakpoint_list -i ";
   breakpoint_list += QString::number(GeneralId);
-  m_socket->writeBlock(breakpoint_list, breakpoint_list.length()+1);
+  sendCommand(breakpoint_list, breakpoint_list.length()+1);
 }
 
 void PythonDBGPNet::slotIncomingConnection(QSocket* socket)
@@ -312,7 +314,7 @@ void PythonDBGPNet::slotIncomingConnection(QSocket* socket)
   emit sigNewConnection();
 }
 
-#include <iostream>
+// #include <iostream>
 
 void PythonDBGPNet::slotReadBuffer()
 {
@@ -360,7 +362,7 @@ void PythonDBGPNet::slotReadBuffer()
     
 
     str.setAscii(data,xmlSize);
-    std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+//     std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
     processXML(str);
   }
   while(m_socket && m_socket->bytesAvailable());
@@ -427,13 +429,13 @@ void PythonDBGPNet::processInit(QDomElement& init)
   << endl;
 
   QString cmd = "stdout -i 1 -c 1";//copy stdout to IDE
-  m_socket->writeBlock(cmd, cmd.length()+1);
+  sendCommand(cmd, cmd.length()+1);
 
   cmd = "stderr -i 1 -c 1";//copy stderr to IDE
-  m_socket->writeBlock(cmd, cmd.length()+1);  
+  sendCommand(cmd, cmd.length()+1);  
 
   cmd = "feature_set -n max_children -v 300 -i 1";//copy stderr to IDE
-  m_socket->writeBlock(cmd, cmd.length()+1);    
+  sendCommand(cmd, cmd.length()+1);    
 
   emit sigStarted();
  
@@ -516,7 +518,7 @@ void PythonDBGPNet::processResponse(QDomElement& root)
       QString file = st.attributeNode("filename").value();
       QString where = st.attributeNode("where").value();
 
-      if(where == "__main__")
+      if(where == "main")
       {
         where = file + i18n("::main()");
       }
@@ -574,15 +576,16 @@ void PythonDBGPNet::processResponse(QDomElement& root)
     } 
     else 
     {
-      error(i18n("ebug client: Internal error"));
+      error(i18n("Debug client: Internal error"));
     }
   }
   else if(cmd == "property_get")
   {
     QDomNode nd = root.firstChild();
     PythonDBGPVariableParser p;    
-    Variable* var;    
+    Variable* var;
     VariableList_t* list;
+    Variable* updateVar;
 
     int trans = root.attributeNode("transaction_id").value().toInt();
     switch(trans)
@@ -598,15 +601,12 @@ void PythonDBGPNet::processResponse(QDomElement& root)
         }
         break;
 
-      case GlobalChildId:        
-      case LocalChildId:
-        list = p.parseList(nd.childNodes(), m_updateVar);
-        dynamic_cast<PythonListValue*>(m_updateVar->value())->setList(list);
-        if(trans == LocalChildId) {
-          m_debugger->updateVariable(m_updateVar, DebuggerStack::LocalScopeID);
-        } else {
-          m_debugger->updateVariable(m_updateVar, DebuggerStack::GlobalScopeID);
-        }
+      case ChildId:        
+        updateVar = m_updateVars.first();
+        m_updateVars.remove();
+        list = p.parseList(nd.childNodes(), updateVar);
+        dynamic_cast<PythonListValue*>(updateVar->value())->setList(list);
+        m_debugger->updateVariable(updateVar);
         break;
       default:
         var = p.parse(nd);
@@ -721,6 +721,7 @@ void PythonDBGPNet::slotClosed()
 {
   m_socket = 0;
   emit sigClosed();  
+  m_updateVars.clear();
 }
 
 void PythonDBGPNet::slotError(const QString& msg)
@@ -732,6 +733,12 @@ void PythonDBGPNet::error(const QString& msg)
 {
   emit sigError(msg);
   m_con->closeClient();
+}
+
+void PythonDBGPNet::sendCommand(const QString& cmd, int len)
+{
+//   std::cerr << "######## " << cmd.ascii() << std::endl;
+  m_socket->writeBlock(cmd, len);
 }
 
 #include "pythondbgpnet.moc"

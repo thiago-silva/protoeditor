@@ -25,6 +25,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
+#include <qptrlist.h> 
 
 class DebuggerPythonDBGP;
 class SiteSettings;
@@ -50,8 +51,7 @@ public:
     GlobalScopeId, //ID for requesting global variables
     SuperGlobalId, //ID for requesting super globals
 
-    LocalChildId,       //ID for requesting local variable children
-    GlobalChildId,       //ID for requesting global variable children
+    ChildId,       //ID for requesting variable children
 
     ErrorStackId //ID for requesting Stack to build error data, only
   };  
@@ -131,13 +131,15 @@ private:
   
   void error(const QString&);
 
-  Variable         *m_updateVar;
-  long             m_tempBreakpointId;
-  SiteSettings     *m_site;
-  DebuggerPythonDBGP *m_debugger;
-  Connection       *m_con;
+  void sendCommand(const QString& cmd, int len);
 
-  QSocket          *m_socket;
+  Variable           *m_updateVar;
+  long                m_tempBreakpointId;  
+  SiteSettings       *m_site;
+  DebuggerPythonDBGP *m_debugger;
+  Connection         *m_con;
+
+  QSocket            *m_socket;
 
   VariableList_t* m_globalVars;
   int m_superglobalsCount;
@@ -151,7 +153,8 @@ private:
       QString exception;
   };
 
-  Error            m_error; //php error  
+  Error                  m_error; //python error  
+  QPtrList<Variable>     m_updateVars;
 };
 
 #endif
