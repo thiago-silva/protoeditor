@@ -197,7 +197,7 @@ void PerlDebugger::changeCurrentExecutionPoint(DebuggerExecutionPoint* bp)
 
 void PerlDebugger::modifyVariable(Variable* v, DebuggerExecutionPoint*)
 {
-  emit sigInternalError("not impl");
+//   emit sigInternalError("not impl");
 }
 
 void PerlDebugger::addWatches(const QStringList&)

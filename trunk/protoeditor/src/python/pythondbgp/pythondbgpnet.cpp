@@ -82,7 +82,7 @@ void PythonDBGPNet::startDebugging(const QString& filePath, const QString& uiarg
     QStringList env;
     env << "PYTHONPATH" << m_debugger->settings()->pythonDBGPLibPath();
     QString cmd = m_debugger->langSettings()->interpreterCommand();
-    cmd += " -S " + m_debugger->settings()->pythonDBGPLibPath() + "dbgp/bin/pydbgp";
+    cmd += " -S " + m_debugger->settings()->pythonDBGPLibPath() + "bin/pydbgp";
     cmd += " -d localhost:" + QString::number(m_debugger->settings()->listenPort());
     Protoeditor::self()->session()->startLocal(cmd, KURL::fromPathOrURL(filePath),uiargs, env);
   }
@@ -565,14 +565,14 @@ void PythonDBGPNet::processResponse(QDomElement& root)
     }
     else if(trans == GlobalScopeId)
     {
-      if((trans == GlobalScopeId) && (m_debugger->settings()->sendSuperGlobals()))
+/*      if((trans == GlobalScopeId) && (m_debugger->settings()->sendSuperGlobals()))
       {
         m_globalVars = array;
       }
-      else
-      {
+      else*/
+//       {
         m_debugger->updateVariables(array, true);
-      }
+//       }
     } 
     else 
     {
