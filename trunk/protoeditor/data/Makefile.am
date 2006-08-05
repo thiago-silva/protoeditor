@@ -1,4 +1,5 @@
-SUBDIRS = icons pics libs
+SUBDIRS = icons libs
 
-#protoeditoricondir = $(kde_datadir)/protoeditor/icons
-#protoeditoicon_ICON = AUTO
+if !KATE_PLUGIN
+SUBDIRS += pics 
+endif

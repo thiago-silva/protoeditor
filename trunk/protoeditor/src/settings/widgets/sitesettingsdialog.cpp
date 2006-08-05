@@ -492,7 +492,7 @@ QMap<QString,QString> SiteSettingsDialog::mappings()
 void SiteSettingsDialog::slotOpenFileDialog(KURLRequester* /*default file*/)
 {
   //note: this filter must be the same as in void MainWindow::slotOpenFile()
-  m_edDefaultFile->setFilter(Protoeditor::fileFilter);
+  m_edDefaultFile->setFilter(Protoeditor::self()->fileFilter());
   if(!m_edLocalBaseDir->url().isEmpty())
   {
     m_edDefaultFile->fileDialog()->setURL(m_edLocalBaseDir->url());

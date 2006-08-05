@@ -23,11 +23,12 @@
 
 #include <qwidget.h>
 
-DBGSettings::DBGSettings(const QString& name, const QString& label, LanguageSettings* langs)
-  : DebuggerSettingsInterface(name, label, langs)
+DBGSettings::DBGSettings(const QString& config, const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(config, name, label, langs)
 {
   m_widget = 0;
-  setCurrentGroup( QString::fromLatin1( m_name ) );
+
+  setCurrentGroup( QString::fromLatin1( debuggerName() ) );
 
   KConfigSkeleton::ItemBool  *itemBreakOnLoad;
   itemBreakOnLoad = new KConfigSkeleton::ItemBool( currentGroup(), QString::fromLatin1( "BreakOnLoad" ), mBreakOnLoad, true );
@@ -70,10 +71,13 @@ void DBGSettings::loadValuesFromWidget()
   mSendOutput = m_widget->sendOutput();
 }
 
-DebuggerTab* DBGSettings::widget()
+DebuggerTab* DBGSettings::createTab()
 {
-  if(!m_widget) {
-    m_widget = new DBGSettingsWidget(this);
-  }
+  m_widget = new DBGSettingsWidget(this);
+  return m_widget;
+}
+
+DebuggerTab* DBGSettings::tab()
+{
   return m_widget;
 }

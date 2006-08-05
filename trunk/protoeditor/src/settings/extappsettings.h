@@ -32,7 +32,7 @@ class ExtAppSettings : public KConfigSkeleton
       enum { Konqueror, Mozilla, Firefox, Opera, COUNT };
     };
 
-    ExtAppSettings( );
+    ExtAppSettings(const QString&);
     ~ExtAppSettings();
 
     void setUseExternalBrowser(bool value)

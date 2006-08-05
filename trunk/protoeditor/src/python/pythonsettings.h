@@ -27,7 +27,7 @@ class PythonSettings : public LanguageSettings
   public:
     static QString lang;
 
-    PythonSettings();
+    PythonSettings(const QString&);
     ~PythonSettings();
 
     virtual QString languageName() const
@@ -69,7 +69,7 @@ class PythonSettings : public LanguageSettings
     }
 
     virtual QValueList<AbstractDebugger*> debuggers();
-    virtual LanguageSettingsWidget* createSettingsWidget(QWidget* parent);
+    virtual LanguageSettingsWidget* createSettingsWidget(QWidget*);
   protected:
     bool    mEnabled;    
     QString mPythonCommand;

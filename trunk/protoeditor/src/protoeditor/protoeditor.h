@@ -28,12 +28,11 @@ class DataController;
 
 class DebuggerStack;
 
-class MainWindow;
-class EditorUI;
-class DebuggerUI;
+class UInterface;
+class EditorInterface;
+class DebuggerInterface;
 class ProtoeditorSettings;
 class Session;
-class ConfigDlg;
 
 class KURL;
 
@@ -41,19 +40,20 @@ class Protoeditor : public QObject
 {
   Q_OBJECT
 
-public:
-  static QString fileFilter;
+public: 
 
   ~Protoeditor();
 
   static Protoeditor* self();
+  static void dispose();
+  
+  void init(UInterface*, const QString& config);
+  
 
-  void init();
-  void dispose();
+  UInterface* uinterface();
 
-  MainWindow* mainWindow();
-  EditorUI*   editorUI();
-  DebuggerUI* debuggerUI();
+  EditorInterface*   editorUI();
+  DebuggerInterface* debuggerUI();
 
   ProtoeditorSettings* settings();
   Session*             session();
@@ -61,34 +61,14 @@ public:
   ExecutionController* executionController();
   DataController*      dataController();
 
-
-  ConfigDlg* configDlg();
-
-  void openFile();
-  void openFile(const KURL& url);
-  
-  bool saveCurrentFile();
-  bool saveCurrentFileAs();  
-  
+ 
   bool useCurrentScript();
 
   void showError(const QString&) const;
   void showSorry(const QString&) const;
 
+  QString fileFilter();
 public slots:
-  //menu "file"
-  void slotAcNewFile();
-  void slotAcOpenFile();
-  void slotAcFileRecent(const KURL& url);
-
-  void slotAcSaveCurrentFile();
-  void slotAcSaveCurrentFileAs();
-
-  
-  void slotAcCloseFile();
-  void slotAcCloseAllFiles();
-  void slotAcQuit();
-  
   //menu "script"
   void slotAcExecuteScript(const QString&);  
   void slotAcDebugStart(const QString&);  
@@ -123,21 +103,18 @@ private:
 
   void registerLanguages();
   void loadLanguages();
-  void loadSites();  
+  void loadSites();
   
-
-  bool checkOverwrite(const KURL&);
 
   static Protoeditor *m_self;
 
-  MainWindow          *m_window;
+  UInterface          *m_uinterface;
   ProtoeditorSettings *m_settings;  
   Session             *m_session;
   
   ExecutionController *m_executionController;
-  DataController      *m_dataController;
-
-  ConfigDlg           *m_configDlg;
+  DataController      *m_dataController;  
+  QString              m_fileFilter;
 };
 
 #endif

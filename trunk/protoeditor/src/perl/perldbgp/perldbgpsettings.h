@@ -29,7 +29,7 @@ class LanguageSettings;
 class PerlDBGPSettings : public DebuggerSettingsInterface
 {
   public:
-    PerlDBGPSettings(const QString&, const QString&, LanguageSettings*);
+    PerlDBGPSettings(const QString&, const QString&, const QString&, LanguageSettings*);
     ~PerlDBGPSettings();
 
     int listenPort() const
@@ -61,7 +61,9 @@ class PerlDBGPSettings : public DebuggerSettingsInterface
     }
 
     virtual void loadValuesFromWidget();
-    virtual DebuggerTab* widget();
+    virtual DebuggerTab* createTab();
+    virtual DebuggerTab* tab();
+
   protected:
 
     // Xdebug

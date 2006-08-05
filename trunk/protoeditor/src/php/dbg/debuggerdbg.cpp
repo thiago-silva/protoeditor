@@ -49,7 +49,9 @@ DebuggerDBG::DebuggerDBG(LanguageSettings* langs)
     m_currentExecutionPointID(CURLOC_SCOPE_ID), m_globalExecutionPointID(GLOBAL_SCOPE_ID)
 {
   
-  m_dbgSettings = new DBGSettings(name(), label(), langSettings());
+  m_dbgSettings = new DBGSettings(Protoeditor::self()->settings()->configFile(), 
+      name(), label(), langSettings());
+
   langSettings()->registerDebuggerSettings(name(), m_dbgSettings);
 
   connect(Protoeditor::self()->settings(), SIGNAL(sigSettingsChanged()),

@@ -31,7 +31,7 @@
 static const char description[] =
   I18N_NOOP("A small editor and debugger client");
 
-static const char version[] = VERSION;
+static const char version[] = "1";
 
 static KCmdLineOptions options[] =
   {
@@ -52,9 +52,10 @@ int main(int argc, char **argv)
 
   KApplication app;
 
-  Protoeditor::self()->init();
 
-  MainWindow *window = Protoeditor::self()->mainWindow();
+  MainWindow *window = new MainWindow();
+  Protoeditor::self()->init(window, "protoeditorrc");
+  
 
   if (app.isRestored())
   {
@@ -74,8 +75,9 @@ int main(int argc, char **argv)
 
   int ret = app.exec();  
 
-  Protoeditor::self()->dispose();
-  
+  Protoeditor::dispose();
+  delete window;
+
   return ret;
 }
 

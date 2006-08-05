@@ -46,6 +46,7 @@ public:
 private slots:
   void slotProcessExited(KProcess*);
   void slotReceivedOutput(KProcess*, char*, int);
+private:
 
   KProcess *m_process;
   bool      m_processRunning;  

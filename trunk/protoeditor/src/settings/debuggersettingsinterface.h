@@ -44,8 +44,8 @@ public:
 class DebuggerSettingsInterface : public KConfigSkeleton {
 public:
 
-  DebuggerSettingsInterface(const QString& name, const QString& label, LanguageSettings* langs)
-      :  KConfigSkeleton(QString::fromLatin1("protoeditorrc")),
+  DebuggerSettingsInterface(const QString& configFile, const QString& name, const QString& label, LanguageSettings* langs)
+      :  KConfigSkeleton(configFile),
          m_name(name), m_label(label), m_langsettings(langs) {}
   
   virtual ~DebuggerSettingsInterface() {}
@@ -66,7 +66,8 @@ public:
   }
 
   virtual void         loadValuesFromWidget() = 0;
-  virtual DebuggerTab* widget()               = 0;
+  virtual DebuggerTab* createTab()            = 0;
+  virtual DebuggerTab* tab()                  = 0;
 
 private:
   QString m_name;

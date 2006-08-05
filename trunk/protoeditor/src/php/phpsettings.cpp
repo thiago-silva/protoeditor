@@ -22,8 +22,8 @@
 
 QString PHPSettings::lang = "PHP";
 
-PHPSettings::PHPSettings(  )
-  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
+PHPSettings::PHPSettings(const QString& configFile)
+  : LanguageSettings( QString::fromLatin1( configFile ) )
 {
   AbstractDebugger* def = new DebuggerDBG(this);
   m_debuggerList.append(def);

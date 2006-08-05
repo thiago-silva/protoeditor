@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=Kate/Plugin
+X-KDE-Library=katescriptdebuggerplugin
+X-Kate-Version=2.5
+Name=Kate Script Debugger
+Comment=Plugin to debug scripts

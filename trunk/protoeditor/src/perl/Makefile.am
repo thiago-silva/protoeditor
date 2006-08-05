@@ -3,10 +3,10 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/perl/perldbgp -I$(top_srcdir)/src/settings $(all_includes)
 
 METASOURCES = AUTO
-SUBDIRS = perldb perldbgp
+SUBDIRS = perldbgp
 libperllang_la_LDFLAGS = $(all_libraries)
 noinst_LTLIBRARIES = libperllang.la
 libperllang_la_SOURCES = perlsettings.cpp perlsettingswidget.cpp
 
 noinst_HEADERS = perlsettings.h perlsettingswidget.h
-libperllang_la_LIBADD = $(top_builddir)/src/perl/perldbgp/libperldbgp.la
+

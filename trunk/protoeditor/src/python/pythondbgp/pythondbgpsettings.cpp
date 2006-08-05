@@ -21,8 +21,8 @@
 #include "pythondbgpsettings.h"
 #include "pythondbgpsettingswidget.h"
 
-PythonDBGPSettings::PythonDBGPSettings(const QString& name, const QString& label, LanguageSettings* langs)
-  : DebuggerSettingsInterface(name, label, langs)
+PythonDBGPSettings::PythonDBGPSettings(const QString& config, const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(config, name, label, langs)
 {
   m_widget = 0;
   
@@ -65,10 +65,13 @@ void PythonDBGPSettings::loadValuesFromWidget()
   mPythonDBGPLibPath  = m_widget->pythonLibPath();
 }
 
-DebuggerTab* PythonDBGPSettings::widget()
+DebuggerTab* PythonDBGPSettings::createTab()
 {
-  if(!m_widget) {
-    m_widget = new PythonDBGPSettingsWidget(this);
-  }
-  return m_widget;
+  m_widget = new PythonDBGPSettingsWidget(this);
+  return  m_widget;
 }
+
+DebuggerTab* PythonDBGPSettings::tab()
+{
+  return m_widget;
+}  

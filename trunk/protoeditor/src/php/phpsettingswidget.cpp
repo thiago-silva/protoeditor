@@ -77,7 +77,7 @@ PHPSettingsWidget::PHPSettingsWidget(PHPSettings* phpSettings, QWidget *parent, 
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    debuggersTabWidget->addTab((*it)->widget(), (*it)->debuggerLabel());
+    debuggersTabWidget->addTab((*it)->createTab(), (*it)->debuggerLabel());
   }
 
   mainLayout->addWidget(debuggersTabWidget);
@@ -87,9 +87,9 @@ PHPSettingsWidget::PHPSettingsWidget(PHPSettings* phpSettings, QWidget *parent, 
 //   slotLangEnabled(false);
 }
 
-
 PHPSettingsWidget::~PHPSettingsWidget()
 {
+
 }
 
 void PHPSettingsWidget::populate()
@@ -106,7 +106,7 @@ void PHPSettingsWidget::populate()
   
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    (*it)->widget()->populate();
+    (*it)->tab()->populate();
   }
 }
 

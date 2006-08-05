@@ -51,7 +51,7 @@ void PerlLocalCom::slotProcessExited(KProcess*)
   m_processRunning = false;
 }
 
-void PerlLocalCom::slotReceivedOutput(KProcess *proc, char *buffer, int buflen)
+void PerlLocalCom::slotReceivedOutput(KProcess *, char *buffer, int buflen)
 {
   QCString msg(buffer, buflen+1);
 
@@ -68,7 +68,7 @@ void PerlLocalCom::slotReceivedOutput(KProcess *proc, char *buffer, int buflen)
   emit sigOutput(msg);
 }
 
-void PerlLocalCom::startDebugging(const QString& filePath, const QString& args)
+void PerlLocalCom::startDebugging(const QString& filePath, const QString& )
 {
   if(!m_processRunning)
   {
@@ -120,7 +120,7 @@ void PerlLocalCom::requestStop()
 {
 }
 
-void PerlLocalCom::requestRunToCursor(const QString& filePath, int line)
+void PerlLocalCom::requestRunToCursor(const QString& , int )
 {
 }
 

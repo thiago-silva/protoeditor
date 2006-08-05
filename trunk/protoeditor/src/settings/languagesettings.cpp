@@ -23,8 +23,8 @@
 
 #include <qstring.h>
 
-LanguageSettings::LanguageSettings(const QString& conf)
-    : KConfigSkeleton(conf) 
+LanguageSettings::LanguageSettings(const QString& configFile)
+    : KConfigSkeleton(QString::fromLatin1(configFile)) 
 {
 }
 

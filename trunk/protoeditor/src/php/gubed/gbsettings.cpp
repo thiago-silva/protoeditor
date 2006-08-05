@@ -23,8 +23,8 @@
 
 #include <qwidget.h>
 
-GBSettings::GBSettings(const QString& name, const QString& label, LanguageSettings* langs)
-  : DebuggerSettingsInterface(name, label, langs)
+GBSettings::GBSettings(const QString& config, const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(config, name, label, langs)
 {
   m_widget = 0;
   
@@ -61,11 +61,13 @@ void GBSettings::loadValuesFromWidget()
   mBreakOnLoad        = m_widget->breakOnLoad();
 }
 
-DebuggerTab* GBSettings::widget()
+DebuggerTab* GBSettings::createTab()
 {
-  if(!m_widget) {
-    m_widget = new GBSettingsWidget(this);
-  }
+  m_widget = new GBSettingsWidget(this);
   return m_widget;
 }
 
+DebuggerTab* GBSettings::tab()
+{
+  return m_widget;
+}

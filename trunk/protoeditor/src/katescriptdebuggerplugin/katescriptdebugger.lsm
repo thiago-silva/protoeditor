@@ -1,0 +1,16 @@
+Begin3
+Title:          Kate Script Debugger Plugin
+Version:        1.1beta2
+Entered-date:   
+Description:    
+Keywords:       KDE Qt
+Author:         Thiago Silva <thiago.silva@kdemail.net>
+Maintained-by:  Thiago Silva <thiago.silva@kdemail.net>
+Home-page:      http://protoeditor.sourceforge.net
+Alternate-site: 
+Primary-site:   http://protoeditor.sourceforge.net
+                xxxxxx  katedebuggerplugin-1.1beta.tar.gz
+                xxx     katedebuggerplugin-1.1beta.lsm
+Platform:       Linux. Needs KDE
+Copying-policy: GPL
+End

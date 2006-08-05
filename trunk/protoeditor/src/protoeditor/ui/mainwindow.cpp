@@ -24,16 +24,17 @@
 #include "statusbarwidget.h"
 
 #include "protoeditor.h"
+#include "sitesettings.h"
 #include "configdlg.h"
 
 #include <kapplication.h>
 
-#include <kmessagebox.h>
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
 
+#include <kmessagebox.h>
 #include <qlayout.h>
 #include <qsplitter.h>
 
@@ -47,14 +48,25 @@
 #include "protoeditorsettings.h"
 #include <qaction.h>
 
+#include <kfiledialog.h>
+#include <kencodingfiledialog.h>
+#include <kfileitem.h>
+
 MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
-    : KParts::MainWindow(parent, name, fl)
+    : KParts::MainWindow(parent, name, fl), m_configDlg(0)
 {
   if(!name) 
   {
     setName("MainWindow"); 
   }
+}
 
+MainWindow::~MainWindow()
+{
+}
+
+void MainWindow::setup()
+{
   createWidgets();  
 
   setupActions();
@@ -77,10 +89,6 @@ MainWindow::MainWindow(QWidget* parent, const char* name, WFlags fl)
       button->setDelayedPopup(m_langPopup);
     }
   }
-}
-
-MainWindow::~MainWindow()
-{
 }
 
 void MainWindow::createWidgets()
@@ -115,23 +123,23 @@ void MainWindow::createWidgets()
 void MainWindow::setupActions()
 {
   //menu "file"
-  KStdAction::openNew(Protoeditor::self(), SLOT(slotAcNewFile()), actionCollection());
-  KAction* open = KStdAction::open(Protoeditor::self(), SLOT(slotAcOpenFile()), actionCollection());
+  KStdAction::openNew(this, SLOT(slotAcNewFile()), actionCollection());
+  KAction* open = KStdAction::open(this, SLOT(slotAcOpenFile()), actionCollection());
 
-  m_actionRecent = KStdAction::openRecent(Protoeditor::self(), SLOT(slotAcFileRecent(const KURL&)), actionCollection());
+  m_actionRecent = KStdAction::openRecent(this, SLOT(slotAcFileRecent(const KURL&)), actionCollection());
   m_actionRecent->loadEntries(kapp->config());
   m_actionRecent->setEnabled(true);
   connect(m_actionRecent, SIGNAL(activated()), open, SLOT(activate()));  
 
-  KStdAction::save(Protoeditor::self(), SLOT(slotAcSaveCurrentFile()), actionCollection());
-  KStdAction::saveAs(Protoeditor::self(), SLOT(slotAcSaveCurrentFileAs()), actionCollection());
+  KStdAction::save(this, SLOT(slotAcSaveCurrentFile()), actionCollection());
+  KStdAction::saveAs(this, SLOT(slotAcSaveCurrentFileAs()), actionCollection());
 
 
-  KStdAction::close(Protoeditor::self(), SLOT(slotAcCloseFile()), actionCollection());
+  KStdAction::close(this, SLOT(slotAcCloseFile()), actionCollection());
 
-  (void)new KAction(i18n("Close All"), 0, Protoeditor::self(), SLOT(slotAcCloseAllFiles()), actionCollection(), "file_close_all");
+  (void)new KAction(i18n("Close All"), 0, this, SLOT(slotAcCloseAllFiles()), actionCollection(), "file_close_all");
 
-  KStdAction::quit(Protoeditor::self(), SLOT(slotAcQuit()), actionCollection());  
+  KStdAction::quit(this, SLOT(slotAcQuit()), actionCollection());  
 
   //menu "script"
   m_siteAction     = new KSelectAction(i18n("Site"), 0, actionCollection(), "site_selection");
@@ -196,14 +204,26 @@ void MainWindow::setupActions()
 
 
   setStandardToolBarMenuEnabled(true);
+
+  connect(this, SIGNAL(sigExecuteScript(const QString&)), 
+      Protoeditor::self(), SLOT(slotAcExecuteScript(const QString&)));
+
+  connect(this, SIGNAL(sigDebugScript(const QString&)), 
+      Protoeditor::self(), SLOT(slotAcDebugStart(const QString&)));
+
+  connect(this, SIGNAL(sigDebugScript()), 
+      Protoeditor::self(), SLOT(slotAcDebugStart()));
+
+  connect(this, SIGNAL(sigProfileScript(const QString&)), 
+      Protoeditor::self(), SLOT(slotAcProfileScript(const QString&)));
 }
 
-EditorUI* MainWindow::editorUI()
+EditorInterface* MainWindow::editorUI()
 {
   return m_editorUI;
 }
 
-DebuggerUI* MainWindow::debuggerUI()
+DebuggerInterface* MainWindow::debuggerUI()
 {
   return m_debuggerUI;
 }
@@ -220,7 +240,37 @@ KHistoryCombo* MainWindow::argumentCombo()
 
 void MainWindow::actionStateChanged(const QString& state)
 {
+  if(state == "debug_started")
+  {
+    actionCollection()->action("debug_start")->setText(i18n("Continue"));
+    actionCollection()->action("site_selection")->setEnabled(false);
+  } 
+  else if(state == "debug_stopped")
+  {
+    actionCollection()->action("site_selection")->setEnabled(true);
+    actionCollection()->action("debug_start")->setText(i18n("Start Debug"));
+  }
+  else if(state == "has_nofileopened")
+  {
+    statusBar()->setEditorStatus(QString::null);
+  }
+    
   stateChanged(state);
+}
+
+void MainWindow::setDebugMsg(const QString& msg)
+{
+  statusBar()->setDebugMsg(msg); 
+}
+
+void MainWindow::setDebuggerName(const QString& name)
+{
+  statusBar()->setDebuggerName(name);
+}
+
+void MainWindow::setLedState(int state)
+{
+  statusBar()->setLedState(state);
 }
 
 void MainWindow::saveArgumentList()
@@ -294,16 +344,6 @@ void MainWindow::addLanguage(const QString& langName)
   m_langMap[id] = langName;
 }
 
-void MainWindow::showError(const QString& msg) const
-{
-  KMessageBox::error(0, msg);
-}
-
-void MainWindow::showSorry(const QString& msg) const
-{
-  KMessageBox::sorry(0, msg);
-}
-
 void MainWindow::closeEvent(QCloseEvent * e)
 {
   if(m_editorUI->closeAllDocuments())
@@ -340,7 +380,11 @@ void MainWindow::slotAcEditToolbars()
 
 void MainWindow::slotAcShowSettings()
 {
-  Protoeditor::self()->configDlg()->showDialog();
+  if(!m_configDlg) 
+  {
+     m_configDlg = new ConfigDlg(this);
+  }
+  m_configDlg->showDialog();
 }
 
 void MainWindow::slotAcFocusArgumentBar()
@@ -434,6 +478,162 @@ void MainWindow::slotAcUseCurrentScript(bool)
       }
     }
   }
+}
+
+void MainWindow::slotAcNewFile()
+{
+  m_editorUI->createNew();
+}
+
+void MainWindow::slotAcOpenFile()
+{
+  openFile();
+}
+
+void MainWindow::slotAcFileRecent(const KURL& url)
+{
+  openFile(url);
+}
+
+void MainWindow::slotAcSaveCurrentFile() 
+{
+  saveCurrentFile();
+}
+
+void MainWindow::slotAcSaveCurrentFileAs()
+{
+  saveCurrentFileAs();
+}
+
+void MainWindow::slotAcCloseFile()
+{
+  m_editorUI->closeCurrentDocument();
+}
+
+void MainWindow::slotAcCloseAllFiles()
+{  
+  m_editorUI->closeAllDocuments();
+}
+
+void MainWindow::openFile()
+{
+  //Show KFileDialog on the current Site's "local base dir" or
+  //use ::protoeditor to retrieve the last folder used
+
+  SiteSettings* currentSite = Protoeditor::self()->settings()->currentSiteSettings();
+  QString location;
+  if(currentSite)
+  {
+    location = currentSite->localBaseDir().path();
+  }
+  else
+  {
+    location = ":protoeditor";
+  }
+
+  //note: the filter must be the same as SiteSettingsDialog::SiteSettingsDialog default file
+  QStringList strList =
+    KFileDialog::getOpenFileNames(
+      location, Protoeditor::self()->fileFilter(), this);
+
+  if(strList.count())
+  {
+    for(QStringList::Iterator it = strList.begin(); it != strList.end(); ++it )
+    {
+      openFile(KURL::fromPathOrURL(*it));
+    }
+  }
+}
+
+void MainWindow::openFile(const KURL& url)
+{
+  KFileItem file(KFileItem::Unknown, KFileItem::Unknown, url);
+  if(file.isReadable())
+  {
+    if(m_editorUI->openDocument(url))
+    {
+      addRecentURL(url);
+      return;
+    }
+  }
+
+  removeRecentURL(url);
+  Protoeditor::self()->showSorry(QString("\"") + url.prettyURL() + i18n("\" is unreadable."));
+}
+
+
+bool MainWindow::saveCurrentFile()
+{
+  if(!m_editorUI->currentDocumentExistsOnDisk())
+  {
+    saveCurrentFileAs();
+  }
+  else if(!m_editorUI->saveCurrentFile())
+  {
+    //katepart already show an error message
+    //don't show any message here
+    return false;
+  }
+  return true;
+}
+
+bool MainWindow::saveCurrentFileAs()
+{
+  SiteSettings* currentSite = Protoeditor::self()->settings()->currentSiteSettings();
+  QString location;
+  if(currentSite)
+  {
+    location = currentSite->localBaseDir().path();
+  }
+  else
+  {
+    location = ":protoeditor";
+  }
+
+    KEncodingFileDialog::Result res = 
+      KEncodingFileDialog::getSaveURLAndEncoding(
+        QString(), location, QString::null, this, i18n("Save File"));
+
+
+  if(!res.URLs.isEmpty() && checkOverwrite(res.URLs.first()))
+  {
+    if(m_editorUI->saveCurrentFileAs(res.URLs.first(), res.encoding))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool MainWindow::checkOverwrite(const KURL& u)
+{
+  if(!u.isLocalFile())
+    return true;
+
+  QFileInfo info( u.path() );
+  if( !info.exists() )
+    return true;
+
+  return KMessageBox::Continue
+         == KMessageBox::warningContinueCancel
+              ( this,
+                i18n("A file named \"%1\" already exists. Are you sure you want to overwrite it?").arg(info.fileName()),
+                i18n("Overwrite File?"),
+                KGuiItem(i18n("&Overwrite"), "filesave", i18n("Overwrite the file"))
+              );
+}
+
+void MainWindow::slotAcQuit()
+{
+  if(m_editorUI->closeAllDocuments())
+  {
+    close();
+  }
+}
+
+void MainWindow::changeCaption(const QString& str)
+{
+  setCaption(str);
 }
 
 #include "mainwindow.moc"

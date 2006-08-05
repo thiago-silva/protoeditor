@@ -37,7 +37,7 @@ class PHPSettingsWidget : public QWidget,
   Q_OBJECT
 public:
   PHPSettingsWidget(PHPSettings*, QWidget *parent = 0, const char *name = 0);
-  ~PHPSettingsWidget();
+  virtual ~PHPSettingsWidget();
 
   virtual void populate();
 

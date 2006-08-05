@@ -170,7 +170,7 @@ void PerlDebugger::addBreakpoint(DebuggerBreakpoint* bp)
 }
 
 
-void PerlDebugger::changeBreakpoint(DebuggerBreakpoint* bp)
+void PerlDebugger::changeBreakpoint(DebuggerBreakpoint*)
 {
   if(isRunning())
   {
@@ -178,7 +178,7 @@ void PerlDebugger::changeBreakpoint(DebuggerBreakpoint* bp)
   }
 }
 
-void PerlDebugger::removeBreakpoint(DebuggerBreakpoint* bp)
+void PerlDebugger::removeBreakpoint(DebuggerBreakpoint*)
 {
   if(isRunning())
   {
@@ -186,7 +186,7 @@ void PerlDebugger::removeBreakpoint(DebuggerBreakpoint* bp)
   }
 }
 
-void PerlDebugger::changeCurrentExecutionPoint(DebuggerExecutionPoint* bp)
+void PerlDebugger::changeCurrentExecutionPoint(DebuggerExecutionPoint*)
 {
 //   m_currentExecutionPoint = execPoint;
 //   if(isRunning())
@@ -195,7 +195,7 @@ void PerlDebugger::changeCurrentExecutionPoint(DebuggerExecutionPoint* bp)
 //   }
 }
 
-void PerlDebugger::modifyVariable(Variable* v, DebuggerExecutionPoint*)
+void PerlDebugger::modifyVariable(Variable* /*v*/, DebuggerExecutionPoint*)
 {
 //   emit sigInternalError("not impl");
 }
@@ -214,7 +214,7 @@ void PerlDebugger::addWatches(const QStringList&)
 //   }
 }
 
-void PerlDebugger::addWatch(const QString& expression)
+void PerlDebugger::addWatch(const QString&)
 {
 //   if(m_wathcesList.find(expression) == m_wathcesList.end())
 //   {
@@ -227,7 +227,7 @@ void PerlDebugger::addWatch(const QString& expression)
 //   }
 }
 
-void PerlDebugger::removeWatch(const QString& expression)
+void PerlDebugger::removeWatch(const QString&)
 {
 //   QStringList::iterator it = m_wathcesList.find(expression);
 // 
@@ -283,6 +283,7 @@ bool PerlDebugger::startJIT()
 //     return false;
 //   }
 //   return true;
+  return false;
 }
 
 void PerlDebugger::stopJIT()

@@ -27,7 +27,7 @@ class PerlSettings : public LanguageSettings
   public:
     static QString lang;
 
-    PerlSettings();
+    PerlSettings(const QString&);
     ~PerlSettings();
 
     virtual QString languageName() const

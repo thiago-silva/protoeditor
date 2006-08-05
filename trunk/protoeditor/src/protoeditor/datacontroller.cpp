@@ -25,7 +25,7 @@
 
 #include "protoeditor.h"
 #include "executioncontroller.h"
-#include "mainwindow.h"
+#include "uinterface.h"
 #include "editorui.h"
 #include "debuggerui.h"
 
@@ -50,20 +50,20 @@ void DataController::updateStack(DebuggerStack* stack)
 
   //Conveniece vars:
   DebuggerExecutionPoint* execPoint;
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
+  EditorInterface* ed = Protoeditor::self()->uinterface()->editorUI();
 
-  if(Protoeditor::self()->mainWindow()->debuggerUI()->stack()->count() > 0)
+  if(Protoeditor::self()->uinterface()->debuggerUI()->stack()->count() > 0)
   {
     execPoint =
-      Protoeditor::self()->mainWindow()->debuggerUI()->stack()->topExecutionPoint();
+      Protoeditor::self()->uinterface()->debuggerUI()->stack()->topExecutionPoint();
 
     ed->unmarkExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
 
-  if(Protoeditor::self()->mainWindow()->debuggerUI()->currentStackItem() != 0)
+  if(Protoeditor::self()->uinterface()->debuggerUI()->currentStackItem() != 0)
   {
     execPoint =
-      Protoeditor::self()->mainWindow()->debuggerUI()->selectedDebuggerExecutionPoint();
+      Protoeditor::self()->uinterface()->debuggerUI()->selectedDebuggerExecutionPoint();
 
     ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
@@ -74,10 +74,10 @@ void DataController::updateStack(DebuggerStack* stack)
   //-sets the stack to the comboStack
 
   //lets update first and force the user to be on the top of the stack
-  Protoeditor::self()->mainWindow()->debuggerUI()->setStack(stack);
+  Protoeditor::self()->uinterface()->debuggerUI()->setStack(stack);
 
   execPoint = stack->topExecutionPoint();
-  ed->setCurrentDocumentTab(execPoint->url(), true);
+  ed->activateDocument(execPoint->url(), true);
   ed->gotoLineAtFile(execPoint->url(), execPoint->line()-1);
 
   ed->markExecutionPoint(execPoint->url(), execPoint->line());
@@ -85,37 +85,37 @@ void DataController::updateStack(DebuggerStack* stack)
 
 void DataController::updateGlobalVars(VariableList_t* vars)
 {
-  Protoeditor::self()->mainWindow()->debuggerUI()->setGlobalVariables(vars);
+  Protoeditor::self()->uinterface()->debuggerUI()->setGlobalVariables(vars);
 }
 
 void DataController::updateLocalVars(VariableList_t* vars)
 {
-  Protoeditor::self()->mainWindow()->debuggerUI()->setLocalVariables(vars);
+  Protoeditor::self()->uinterface()->debuggerUI()->setLocalVariables(vars);
 }
 
 void DataController::updateWatch(Variable* var)
 {
-  Protoeditor::self()->mainWindow()->debuggerUI()->addWatch(var);
+  Protoeditor::self()->uinterface()->debuggerUI()->addWatch(var);
 }
 
 void DataController::updateVariable(Variable* var)
 {
-  Protoeditor::self()->mainWindow()->debuggerUI()->updateVariable(var);
+  Protoeditor::self()->uinterface()->debuggerUI()->updateVariable(var);
 }
 
 void DataController::updateBreakpoint(DebuggerBreakpoint* bp)
 {
-  Protoeditor::self()->mainWindow()->debuggerUI()->updateBreakpoint(bp);
+  Protoeditor::self()->uinterface()->debuggerUI()->updateBreakpoint(bp);
 
   switch(bp->status())
   {
     case DebuggerBreakpoint::ENABLED:
-      Protoeditor::self()->mainWindow()->editorUI()->unmarkDisabledBreakpoint(bp->url(), bp->line());
-      Protoeditor::self()->mainWindow()->editorUI()->markActiveBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->unmarkDisabledBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->markActiveBreakpoint(bp->url(), bp->line());
       break;
     case DebuggerBreakpoint::DISABLED:
-      Protoeditor::self()->mainWindow()->editorUI()->unmarkActiveBreakpoint(bp->url(), bp->line());
-      Protoeditor::self()->mainWindow()->editorUI()->markDisabledBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->unmarkActiveBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->markDisabledBreakpoint(bp->url(), bp->line());
     case DebuggerBreakpoint::UNRESOLVED:
       break;
   }
@@ -125,15 +125,15 @@ void DataController::debugMessage(int type, const QString& msg, const KURL& url,
 {
   if(type == DataController::ErrorMsg) 
   {
-    Protoeditor::self()->mainWindow()->editorUI()->gotoLineAtFile(url, line-1);
-    Protoeditor::self()->mainWindow()->showError(msg);
+    Protoeditor::self()->uinterface()->editorUI()->gotoLineAtFile(url, line-1);
+    Protoeditor::self()->showError(msg);
   }
-  Protoeditor::self()->mainWindow()->debuggerUI()->addMessage(type, msg, line, url);
+  Protoeditor::self()->uinterface()->debuggerUI()->addMessage(type, msg, line, url);
 }
 
 void DataController::addOutput(const QString& output)
 {
-   Protoeditor::self()->mainWindow()->debuggerUI()->appendOutput(output);
+   Protoeditor::self()->uinterface()->debuggerUI()->appendOutput(output);
 }
 
 /***************** SLOTS **********************/
@@ -142,14 +142,14 @@ void DataController::addOutput(const QString& output)
 void DataController::slotDebugStarted()
 {
   //removes any existing pre execution point
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
-  DebuggerStack* stack = Protoeditor::self()->mainWindow()->debuggerUI()->stack();
+  EditorInterface* ed = Protoeditor::self()->uinterface()->editorUI();
+  DebuggerStack* stack = Protoeditor::self()->uinterface()->debuggerUI()->stack();
 
   if(!stack->isEmpty())
   {
     DebuggerExecutionPoint* execPoint;
     execPoint =
-      Protoeditor::self()->mainWindow()->debuggerUI()->selectedDebuggerExecutionPoint();
+      Protoeditor::self()->uinterface()->debuggerUI()->selectedDebuggerExecutionPoint();
 
     ed->unmarkPreExecutionPoint(execPoint->url()/*, execPoint->line()*/);
   }
@@ -158,8 +158,8 @@ void DataController::slotDebugStarted()
 void DataController::slotDebugEnded()
 {
   //removes the current execution point
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
-  DebuggerStack* stack = Protoeditor::self()->mainWindow()->debuggerUI()->stack();
+  EditorInterface* ed = Protoeditor::self()->uinterface()->editorUI();
+  DebuggerStack* stack = Protoeditor::self()->uinterface()->debuggerUI()->stack();
 
   if(!stack->isEmpty())
   {
@@ -171,18 +171,19 @@ void DataController::slotDebugEnded()
   }  
 }
 
-
 void DataController::slotNewDocument()
 {
   //if the new document has breakpoints, mark them.
+  EditorInterface* editor = Protoeditor::self()->uinterface()->editorUI();
+
   QValueList<DebuggerBreakpoint*> bplist =
-    Protoeditor::self()->mainWindow()->debuggerUI()->breakpointsFrom(
-      Protoeditor::self()->mainWindow()->editorUI()->currentDocumentURL());
+    Protoeditor::self()->uinterface()->debuggerUI()->breakpointsFrom(
+      editor->currentDocumentURL());
 
   QValueList<DebuggerBreakpoint*>::iterator it;
   for(it = bplist.begin(); it != bplist.end(); ++it)
   {
-    Protoeditor::self()->mainWindow()->editorUI()->markActiveBreakpoint((*it)->url(), (*it)->line());
+    Protoeditor::self()->uinterface()->editorUI()->markActiveBreakpoint((*it)->url(), (*it)->line());
   }
 }
 
@@ -209,13 +210,13 @@ void DataController::slotStackChanged(DebuggerExecutionPoint* old, DebuggerExecu
   //-mark the PreExecutionPoint of the new stack context
   //-request the variables for this context
 
-  EditorUI* ed = Protoeditor::self()->mainWindow()->editorUI();
+  EditorInterface* ed = Protoeditor::self()->uinterface()->editorUI();
 
   ed->gotoLineAtFile(nw->url(), nw->line()-1);
 
   ed->unmarkPreExecutionPoint(old->url()/*, old->line()*/);
 
-  if(nw != Protoeditor::self()->mainWindow()->debuggerUI()->stack()->topExecutionPoint())
+  if(nw != Protoeditor::self()->uinterface()->debuggerUI()->stack()->topExecutionPoint())
   {
     ed->markPreExecutionPoint(nw->url(), nw->line());
   }
@@ -225,6 +226,10 @@ void DataController::slotStackChanged(DebuggerExecutionPoint* old, DebuggerExecu
 
 void DataController::slotWatchAdded(const QString& expression)
 {
+  Variable* var = new Variable(expression);
+  VariableValue* value = new VariableScalarValue(var);
+  var->setValue(value); 
+  Protoeditor::self()->debuggerUI()->addWatch(var);
   Protoeditor::self()->executionController()->addWatch(expression);
 }
 
@@ -245,12 +250,12 @@ void DataController::slotBreakpointChanged(DebuggerBreakpoint* bp)
   switch(bp->status())
   {
     case DebuggerBreakpoint::ENABLED:
-      Protoeditor::self()->mainWindow()->editorUI()->unmarkDisabledBreakpoint(bp->url(), bp->line());
-      Protoeditor::self()->mainWindow()->editorUI()->markActiveBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->unmarkDisabledBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->markActiveBreakpoint(bp->url(), bp->line());
       break;
     case DebuggerBreakpoint::DISABLED:
-      Protoeditor::self()->mainWindow()->editorUI()->unmarkActiveBreakpoint(bp->url(), bp->line());
-      Protoeditor::self()->mainWindow()->editorUI()->markDisabledBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->unmarkActiveBreakpoint(bp->url(), bp->line());
+      Protoeditor::self()->uinterface()->editorUI()->markDisabledBreakpoint(bp->url(), bp->line());
     case DebuggerBreakpoint::UNRESOLVED:
       break;
   }
@@ -259,10 +264,10 @@ void DataController::slotBreakpointChanged(DebuggerBreakpoint* bp)
 void DataController::slotBreakpointRemoved(DebuggerBreakpoint* bp)
 {
   if(bp->status() == DebuggerBreakpoint::ENABLED) {
-    Protoeditor::self()->mainWindow()->editorUI()->unmarkActiveBreakpoint(
+    Protoeditor::self()->uinterface()->editorUI()->unmarkActiveBreakpoint(
       bp->url(), bp->line());
   } else {
-    Protoeditor::self()->mainWindow()->editorUI()->unmarkDisabledBreakpoint(
+    Protoeditor::self()->uinterface()->editorUI()->unmarkDisabledBreakpoint(
       bp->url(), bp->line());
   }
 

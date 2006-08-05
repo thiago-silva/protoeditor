@@ -38,7 +38,9 @@ DebuggerPerlDBGP::DebuggerPerlDBGP(LanguageSettings* langs)
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_pdbgSettings(0), m_net(0)
 {
-  m_pdbgSettings = new PerlDBGPSettings(name(), label(), langSettings());
+  m_pdbgSettings = new PerlDBGPSettings(Protoeditor::self()->settings()->configFile(),
+      name(), label(), langSettings());
+
   langSettings()->registerDebuggerSettings(name(), m_pdbgSettings);
 
   m_currentExecutionPoint = new DebuggerExecutionPoint();

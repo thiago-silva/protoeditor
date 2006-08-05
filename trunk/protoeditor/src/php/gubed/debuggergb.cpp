@@ -42,7 +42,9 @@ DebuggerGB::DebuggerGB(LanguageSettings* langs)
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_gbSettings(0), m_net(0)
 {
-  m_gbSettings = new GBSettings(name(), label(), langSettings());
+  m_gbSettings = new GBSettings(Protoeditor::self()->settings()->configFile(),
+      name(), label(), langSettings());
+
   langSettings()->registerDebuggerSettings(name(), m_gbSettings);
 
 

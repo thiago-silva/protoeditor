@@ -25,30 +25,37 @@
 #include <qstring.h>
 #include <qmap.h>
 
+#include "uinterface.h"
+
+class ConfigDlg;
+
+class KPopupMenu;
 class EditorUI;
 class DebuggerUI;
-class StatusBarWidget;
-class KHistoryCombo;
-
-// class KToolBarPopupAction;
-class KPopupMenu;
-
 class KSelectAction;
 class KToggleAction;
 class KRecentFilesAction;
 
-class MainWindow : public KParts::MainWindow
+
+class MainWindow : public KParts::MainWindow,
+                   public UInterface
 {
   Q_OBJECT
 
 public:
+  static QString fileFilter;
 
   MainWindow(QWidget* parent = 0, const char* name = 0, WFlags fl = WType_TopLevel);
   ~MainWindow();
 
-  EditorUI*           editorUI();
-  DebuggerUI*         debuggerUI();
-  StatusBarWidget*    statusBar();
+  void setup();
+
+  EditorInterface*    editorUI();
+  DebuggerInterface*  debuggerUI();
+
+  void setDebugMsg(const QString&);
+  void setDebuggerName(const QString&);
+  void setLedState(int state);
 
   KHistoryCombo*      argumentCombo();
 
@@ -71,9 +78,15 @@ public:
   void clearLanguages();
   void addLanguage(const QString&);
 
-  void showError(const QString&) const;
-  void showSorry(const QString&) const;
+  void openFile();
+  void openFile(const KURL& url);
 
+  bool saveCurrentFile();
+  bool saveCurrentFileAs();
+
+  void changeCaption(const QString&);
+
+  StatusBarWidget*    statusBar();
 signals:
   void sigExecuteScript(const QString&);
 
@@ -83,7 +96,21 @@ signals:
   void sigProfileScript(const QString&);
   void sigProfileScript();
 
-private slots:
+public slots:
+  //menu "file"
+  void slotAcNewFile();
+  void slotAcOpenFile();
+  void slotAcFileRecent(const KURL& url);
+
+  void slotAcSaveCurrentFile();
+  void slotAcSaveCurrentFileAs();
+
+  
+  void slotAcCloseFile();
+  void slotAcCloseAllFiles();
+  void slotAcQuit();
+  //
+
   void slotAcEditKeys();
   void slotAcEditToolbars();
   void slotAcShowSettings();
@@ -107,6 +134,10 @@ protected:
 private:
   void createWidgets();  
   void setupActions();
+
+  bool checkOverwrite(const KURL& u);
+ 
+  ConfigDlg       *m_configDlg;
 
   //main widgets
   EditorUI        *m_editorUI;

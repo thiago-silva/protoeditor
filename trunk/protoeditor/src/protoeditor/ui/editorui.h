@@ -21,6 +21,8 @@
 #ifndef EDITORTABWIDGET_H
 #define EDITORTABWIDGET_H
 
+#include "editorinterface.h"
+
 #include <ktabwidget.h>
 #include <qvaluelist.h>
 #include <ktexteditor/markinterface.h>
@@ -40,20 +42,19 @@ namespace KParts
   class Part;
 }
 
-class EditorUI : public KTabWidget
+class EditorUI : public KTabWidget,
+                 public EditorInterface
 {
   Q_OBJECT
 public:
   EditorUI(QWidget* parent, MainWindow*, const char *name = 0);
   ~EditorUI();
 
-  //void setMainWindow(MainWindow*);
-
   void createNew();
   bool openDocument(const KURL& url);
   bool closeCurrentDocument();
   bool closeAllDocuments();
-  void setCurrentDocumentTab(const KURL&, bool forceOpen = false);
+  void activateDocument(const KURL&, bool forceOpen = false);
 
   bool saveCurrentFile();
   bool saveCurrentFileAs(const KURL & url, const QString& encoding = QString::null);
@@ -82,6 +83,8 @@ public:
   void terminate();
 
   void saveExistingFiles();
+
+  int totalDocuments();
 signals:
   void sigBreakpointMarked(const KURL&, int, bool);
   void sigBreakpointUnmarked(const KURL&, int);
@@ -132,10 +135,11 @@ private:
 
   int                         documentIndex(const KURL&);
 
-  bool m_terminating;
+  MainWindow           *m_window;
+  KTextEditor::View    *m_currentView;  
+  bool                  m_terminating;
   QValueList<Document*> m_docList;
-
-  KTextEditor::View* m_currentView;
+  
 };
 
 #endif

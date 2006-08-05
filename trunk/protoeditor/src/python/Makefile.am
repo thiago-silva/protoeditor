@@ -9,4 +9,4 @@ noinst_LTLIBRARIES = libpythonlang.la
 libpythonlang_la_SOURCES = pythonsettings.cpp pythonsettingswidget.cpp
 
 noinst_HEADERS = pythonsettings.h pythonsettingswidget.h
-libpythonlang_la_LIBADD = $(top_builddir)/src/python/pythondbgp/libpythondbgp.la
+

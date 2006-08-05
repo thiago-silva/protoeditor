@@ -16,8 +16,7 @@ libdbg_la_SOURCES = dbgnet.cpp dbgnetdata.cpp dbgreceiver.cpp dbgrequestor.cpp \
 
 
 SUBDIRS = profiler
-libdbg_la_LIBADD = $(top_builddir)/src/common/libcommon.la \
-	$(top_builddir)/src/common/php/libcommonphp.la $(top_builddir)/src/php/dbg/profiler/libdbgprofiler.la
+
 noinst_HEADERS = dbg_defs.h dbgfileinfo.h dbgnet.h dbgnetdata.h dbgreceiver.h \
 	dbgrequestor.h dbgrequestpack.h dbgrequestpackbuilder.h dbgresponsepack.h \
 	dbgsettings.h dbgsettingswidget.h dbgstack.h debuggerdbg.h

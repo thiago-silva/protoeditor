@@ -24,6 +24,7 @@
 #include <ktexteditor/editorchooser.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/markinterfaceextension.h>
+#include <ktexteditor/markinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 
 #include <kiconloader.h>

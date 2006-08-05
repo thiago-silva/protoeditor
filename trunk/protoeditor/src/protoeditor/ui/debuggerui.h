@@ -22,74 +22,16 @@
 #define DEBUGGERTABWIDGET_H
 
 #include <ktabwidget.h>
+#include "debuggerinterface.h"
 
-#include "variable.h"
-
-class KURL;
-
-class DebuggerBreakpoint;
-class DebuggerStack;
-class DebuggerExecutionPoint;
-
-
-class VariableListView;
-class LocalTab;
-class WatchTab;
-class BreakpointListView;
-class MessageListView;
-class KTextEdit;
-class ConsoleWidget;
-
-/* Facade class */
-
-class DebuggerUI : public KTabWidget
+class DebuggerUI : public KTabWidget,
+                   public DebuggerInterface
 {
   Q_OBJECT
-public:
-  enum { GlobalVarListID, LocalVarListID, WatchListID };
+public: 
 
   DebuggerUI(QWidget* parent, const char *name = 0);
   ~DebuggerUI();
-
-  //Global VariablesListView
-  void setGlobalVariables(VariableList_t* vars);
-
-  //Local VariablesListView
-  void setLocalVariables(VariableList_t* vars);
-
-  //all variables
-  void updateVariable(Variable*);
-
-  //ComboStack
-  void setStack(DebuggerStack*);
-  DebuggerStack* stack();
-  DebuggerExecutionPoint* selectedDebuggerExecutionPoint();
-  int currentStackItem();
- 
-
-  //WatchTab
-  void addWatch(Variable*);
-  QStringList watches();
-
-  //BreakpointListView
-  void updateBreakpoint(DebuggerBreakpoint*);
-  void toggleBreakpoint(const KURL&, int, bool enabled = true);
-  void resetBreakpointItems();
-  QValueList<DebuggerBreakpoint*> breakpoints();
-  QValueList<DebuggerBreakpoint*> breakpointsFrom(const KURL&);
-
-  //MessageListview
-  void addMessage(int, const QString&, int, const KURL&);
-
-  //Output
-  void appendOutput(const QString&);
-
-  //Console
-  void appendConsoleDebuggerText(const QString&);
-  void appendConsoleUserText(const QString&);
-
-  void prepareForSession();
-  void cleanSession();
 
 signals:
   //All variableslistview
@@ -125,16 +67,6 @@ public slots:
   void slotBreakpointUnmarked(const KURL&, int);
 
   void slotNeedChildren(int, Variable*);
-private:
-  VariableListView    *m_globalVariableListView;
-  LocalTab            *m_localTab;
-  WatchTab            *m_watchTab;
-  BreakpointListView  *m_breakpointListView;
-  MessageListView     *m_messageListView;  
-  KTextEdit           *m_edOutput;
-//   ConsoleWidget       *m_console;
-
-  QValueList<int> m_varlistIDs;
 };
 
 #endif

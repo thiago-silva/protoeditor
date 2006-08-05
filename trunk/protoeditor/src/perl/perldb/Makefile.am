@@ -11,5 +11,4 @@ noinst_HEADERS = perldebugger.h perldebuggersettings.h \
 libperldb_la_SOURCES = perldebugger.cpp perldebuggersettings.cpp \
 		perldebuggersettingswidget.cpp perllocalcom.cpp
 
-libperldb_la_LIBADD = $(top_builddir)/src/settings/libsettings.la \
-	$(top_builddir)/src/common/libcommon.la
+

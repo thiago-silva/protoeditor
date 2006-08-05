@@ -22,8 +22,8 @@
 #include "xdsettingswidget.h"
 
 
-XDSettings::XDSettings(const QString& name, const QString& label, LanguageSettings* langs)
-  : DebuggerSettingsInterface(name, label, langs)
+XDSettings::XDSettings(const QString& config, const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(config, name, label, langs)
 {
   m_widget = 0;
   
@@ -61,10 +61,13 @@ void XDSettings::loadValuesFromWidget()
   mBreakOnLoad      = m_widget->breakOnLoad();
 }
 
-DebuggerTab* XDSettings::widget()
+DebuggerTab* XDSettings::createTab()
 {
-  if(!m_widget) {
-    m_widget = new XDSettingsWidget(this);
-  }
+  m_widget = new XDSettingsWidget(this);
+  return m_widget;
+}
+
+DebuggerTab* XDSettings::tab()
+{
   return m_widget;
 }

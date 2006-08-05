@@ -8,5 +8,4 @@ noinst_HEADERS = xdsettings.h xdsettingswidget.h debuggerxd.h xdnet.h \
 	xdvariableparser.h
 libxdebug_la_SOURCES = xdsettings.cpp xdsettingswidget.cpp debuggerxd.cpp \
 		xdnet.cpp xdvariableparser.cpp
-libxdebug_la_LIBADD = $(top_builddir)/src/settings/libsettings.la \
-	$(top_builddir)/src/common/libcommon.la
+

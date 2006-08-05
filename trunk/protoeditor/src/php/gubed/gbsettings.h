@@ -27,7 +27,7 @@ class GBSettingsWidget;
 class GBSettings : public DebuggerSettingsInterface
 {
 public:
-  GBSettings(const QString& name, const QString& label, LanguageSettings*);
+  GBSettings(const QString&, const QString& name, const QString& label, LanguageSettings*);
   ~GBSettings();
 
   int listenPort() const
@@ -50,7 +50,9 @@ public:
   }
 
   virtual void loadValuesFromWidget();
-  virtual DebuggerTab* widget();
+  virtual DebuggerTab* createTab();
+  virtual DebuggerTab* tab();
+
 protected:
 
   // Gubed
@@ -60,7 +62,6 @@ protected:
   QString mStartSessionScript;
 private:
   GBSettingsWidget* m_widget;
-
 };
 
 #endif

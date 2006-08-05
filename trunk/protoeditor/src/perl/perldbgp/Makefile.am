@@ -12,6 +12,5 @@ libperldbgp_la_SOURCES = debuggerperldbgp.cpp perldbgpnet.cpp perldbgpsettings.c
 	perldbgpsettingswidget.cpp perldbgpvariableparser.cpp
 noinst_HEADERS = debuggerperldbgp.h perldbgpnet.h perldbgpsettings.h\
 	perldbgpsettingswidget.h perldbgpvariableparser.h
-libperldbgp_la_LIBADD = $(top_builddir)/src/settings/libsettings.la \
-	$(top_builddir)/src/common/libcommon.la $(top_builddir)/src/common/perl/libcommonperl.la
+
 

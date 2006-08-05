@@ -20,8 +20,8 @@
  
 #include "sitesettings.h"
 
-SiteSettings::SiteSettings(const QString &number)
-  : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
+SiteSettings::SiteSettings(const QString& configFile, const QString &number)
+  : KConfigSkeleton( QString::fromLatin1( configFile ) )
   , mParamnumber(number)
 {
 

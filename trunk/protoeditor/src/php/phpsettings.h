@@ -32,7 +32,7 @@ class PHPSettings : public LanguageSettings
   public:
     static QString lang;
 
-    PHPSettings();
+    PHPSettings(const QString&);
     ~PHPSettings();
 
     virtual QString languageName() const

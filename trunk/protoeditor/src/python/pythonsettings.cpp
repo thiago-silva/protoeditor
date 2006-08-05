@@ -25,8 +25,8 @@
 
 QString PythonSettings::lang = "Python";
 
-PythonSettings::PythonSettings(  )
-  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
+PythonSettings::PythonSettings(const QString& configFile )
+  : LanguageSettings( QString::fromLatin1( configFile ) )
 {
   AbstractDebugger* def = new DebuggerPythonDBGP(this);
   m_debuggerList.append(def);

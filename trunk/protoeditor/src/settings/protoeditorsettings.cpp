@@ -30,8 +30,8 @@
 
 QString ProtoeditorSettings::LocalSiteName = "-- Local --";
 
-ProtoeditorSettings::ProtoeditorSettings()
-  :  QObject(), KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
+ProtoeditorSettings::ProtoeditorSettings(const QString& configFile)
+  :  QObject(), KConfigSkeleton(configFile), m_configFile(configFile)
 {
   setCurrentGroup(QString::fromLatin1( "Protoeditor" ));
 
@@ -53,19 +53,21 @@ ProtoeditorSettings::ProtoeditorSettings()
 
   readConfig();
 
-  m_extApptSettings = new ExtAppSettings();
-
   //load all Sites
   loadSites();
+
+  m_extApptSettings = new ExtAppSettings(m_configFile);
 }
 
 void ProtoeditorSettings::loadSites()
 {
-  KConfig* config = KGlobal::config();
+  KConfig* c = config();
+
   SiteSettings* site;
   int i = 0;
-  while(config->hasGroup(QString("Site_%1").arg(i))) {
-    site = new SiteSettings(QString::number(i));
+  while(c->hasGroup(QString("Site_%1").arg(i))) 
+  {
+    site = new SiteSettings(m_configFile, QString::number(i));
     m_siteSettingsMap[site->name()] = site;
     i++;
   }
@@ -76,7 +78,12 @@ ProtoeditorSettings::~ProtoeditorSettings()
 {
   delete m_extApptSettings;
 
-  clearSites(); 
+  //TOOD: LEAK!
+  //When disabling kate plugin and reenabling, for some reason the entries
+  //are deleted from the config file. If clearSite is commented, everything
+  //is fine.
+
+  //clearSites(); 
 }
 
 void ProtoeditorSettings::setArgumentsHistory(const QStringList& args)
@@ -183,7 +190,7 @@ void ProtoeditorSettings::addSite(int number, const QString& name, const KURL& u
                const QString& debuggerNme, const QMap<QString,QString>& mappings)
 
 {
-  SiteSettings* s = new SiteSettings(QString::number(number));
+  SiteSettings* s = new SiteSettings(m_configFile, QString::number(number));
   s->load(name, url, remoteBaseDir, localBaseDir, defaultFile, debuggerNme, mappings);
 
   m_siteSettingsMap[s->name()] = s;
@@ -233,6 +240,11 @@ void ProtoeditorSettings::setCurrentSiteName(const QString& sitename)
   {
     m_currentSiteName = sitename;  
   }
+}
+
+QString ProtoeditorSettings::configFile()
+{
+  return m_configFile;
 }
 
 #include "protoeditorsettings.moc"

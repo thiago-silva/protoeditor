@@ -25,8 +25,8 @@
 
 QString PerlSettings::lang = "Perl";
 
-PerlSettings::PerlSettings(  )
-  : LanguageSettings( QString::fromLatin1( "protoeditorrc" ) )
+PerlSettings::PerlSettings(const QString& configFile)
+  : LanguageSettings( QString::fromLatin1( configFile ) )
 {
   AbstractDebugger* def = new DebuggerPerlDBGP(this);
 //   list.append(new PerlDebugger(this));

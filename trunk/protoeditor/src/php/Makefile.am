@@ -7,6 +7,4 @@ libphplang_la_LDFLAGS = $(all_libraries)
 noinst_LTLIBRARIES = libphplang.la
 libphplang_la_SOURCES = phpsettings.cpp phpsettingswidget.cpp
 noinst_HEADERS = phpsettings.h phpsettingswidget.h
-libphplang_la_LIBADD = $(top_builddir)/src/php/xdebug/libxdebug.la \
-	$(top_builddir)/src/php/gubed/libgubed.la $(top_builddir)/src/php/dbg/libdbg.la \
-	$(top_builddir)/src/settings/libsettings.la
+

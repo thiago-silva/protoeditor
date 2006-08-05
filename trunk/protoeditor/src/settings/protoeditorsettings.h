@@ -43,7 +43,7 @@ class ProtoeditorSettings  : public QObject,
 public:
   static QString LocalSiteName;
 
-  ProtoeditorSettings();
+  ProtoeditorSettings(const QString&);
   ~ProtoeditorSettings();
 
   void                                   setArgumentsHistory(const QStringList&);
@@ -75,6 +75,7 @@ public:
 
   void writeConfig(bool silent = false);
 
+  QString configFile();
 signals:
   void sigSettingsChanged();
 
@@ -92,6 +93,8 @@ private:
 
   QMap<QString, LanguageSettings*>           m_langSettingsMap;  
   QMap<QString, SiteSettings*>               m_siteSettingsMap;
+
+  QString                                    m_configFile;
 };
 
 #endif

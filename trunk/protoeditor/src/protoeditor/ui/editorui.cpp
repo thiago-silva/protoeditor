@@ -24,6 +24,7 @@
 #include "mainwindow.h"
 #include "statusbarwidget.h"
 #include "protoeditor.h"
+#include "datacontroller.h"
 
 #include <kparts/partmanager.h>
 #include <ktexteditor/popupmenuinterface.h>
@@ -38,26 +39,26 @@
 #include <qdir.h>
 #include <klocale.h>
 
-EditorUI::EditorUI(QWidget* parent, MainWindow* mwindow, const char *name)
-    : KTabWidget(parent, name), m_terminating(false), m_currentView(0)
+EditorUI::EditorUI(QWidget* parent, MainWindow* window, const char *name)
+    : KTabWidget(parent, name), m_window(window), m_currentView(0), m_terminating(false)
 {
   //Tabs control
   (void)new KAction(i18n("Activate Next Tab"), "tab_next", 
     "Alt+Right", this, SLOT(slotActivateNextTab()), 
-      mwindow->actionCollection(), "activatenexttab" );
+      m_window->actionCollection(), "activatenexttab" );
 
   (void)new KAction(i18n("Activate Previous Tab"), "tab_previous", 
-    "Alt+Left", this, SLOT(slotActivatePrevTab()), mwindow->actionCollection(), "activateprevtab" );
+    "Alt+Left", this, SLOT(slotActivatePrevTab()), m_window->actionCollection(), "activateprevtab" );
 
   (void)new KAction(i18n("Raise Editor"), "tab_next", 
-    "Alt+C", this, SLOT(slotFocusCurrentDocument()), mwindow->actionCollection(), "focuscurrentdocument" );
+    "Alt+C", this, SLOT(slotFocusCurrentDocument()), m_window->actionCollection(), "focuscurrentdocument" );
 
 
   (void)new KAction(i18n("Add Watch"), "math_brace", 0, this,
-                    SLOT(slotAddWatch()), mwindow->actionCollection(), "editor_add_watch");
+                    SLOT(slotAddWatch()), m_window->actionCollection(), "editor_add_watch");
 
   (void)new KAction(i18n("Configure &Editor..."), 0, 0, 
-    this, SLOT(slotConfigureEditor()), mwindow->actionCollection(), "settings_editor");
+    this, SLOT(slotConfigureEditor()), m_window->actionCollection(), "settings_editor");
 
   setAcceptDrops(TRUE);
   
@@ -76,6 +77,18 @@ EditorUI::EditorUI(QWidget* parent, MainWindow* mwindow, const char *name)
     config->writeEntry("Icon Bar","true", true);
     config->writeEntry("Line Numbers","true",true);
   }
+
+  connect(this, SIGNAL(sigFirstPage()),
+          Protoeditor::self(), SLOT(slotFirstDocumentOpened()));
+
+  connect(this, SIGNAL(sigEmpty()),
+          Protoeditor::self(), SLOT(slotNoDocumentOpened()));
+
+  connect(this, SIGNAL(sigNewPage()),
+          Protoeditor::self()->dataController(), SLOT(slotNewDocument()));
+
+  connect(this, SIGNAL(sigAddWatch(const QString&)),
+          Protoeditor::self()->dataController(), SLOT(slotWatchAdded(const QString&)));  
 }
 
 EditorUI::~EditorUI()
@@ -128,7 +141,7 @@ bool EditorUI::closeDocument(int index)
 
   if(!m_terminating)
   {
-    Protoeditor::self()->mainWindow()->guiFactory()->removeClient(doc->view());
+    m_window->guiFactory()->removeClient(doc->view());
     if(index == currentPageIndex())
     {
       m_currentView = 0L;
@@ -165,12 +178,12 @@ bool EditorUI::closeAllDocuments()
   return true;
 }
 
-void EditorUI::setCurrentDocumentTab(const KURL& url, bool forceOpen)
+void EditorUI::activateDocument(const KURL& url, bool forceOpen)
 {
   int index = documentIndex(url);
 
   /* currentPageIndex() == index:
-      setCurrentDocumentTab() is activated  when debug starts.
+      activateDocument() is activated  when debug starts.
       setCurrentPage() emits currentChanged() -> slotCurrentChanged().
       In slotCurrentChanged(), action state changes to has_fileopen
       and this ativate buttons like "debug" and "run".
@@ -178,7 +191,7 @@ void EditorUI::setCurrentDocumentTab(const KURL& url, bool forceOpen)
   */
   if((m_docList.count() > 0) && (currentPageIndex() == index)) return;
 
-  if(index != -1 ) 
+  if(index != -1)
   {
     setCurrentPage(index);
   }
@@ -221,7 +234,7 @@ void EditorUI::saveExistingFiles()
 
 void EditorUI::gotoLineAtFile(const KURL& url, int line)
 {
-  setCurrentDocumentTab(url, true);
+  activateDocument(url, true);
 
   if(currentPageIndex() == -1) return;
 
@@ -399,9 +412,7 @@ void EditorUI::initDoc(Document* doc)
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(doc->view());
   if (popupIf)
   {
-    QPopupMenu *popup = (QPopupMenu*) 
-      Protoeditor::self()->mainWindow()->factory()->container(
-        "ktexteditor_popup", Protoeditor::self()->mainWindow());
+    QPopupMenu *popup =  (QPopupMenu*) m_window->factory()->container("ktexteditor_popup", m_window);
 
     popupIf->installPopup(popup);
     connect(popup, SIGNAL(aboutToShow()), this, SLOT(slotMenuAboutToShow()));
@@ -443,17 +454,17 @@ void EditorUI::slotCurrentChanged(QWidget*)
 {
   if(m_terminating) return;
 
-  Protoeditor::self()->mainWindow()->setCaption(currentDocumentURL().prettyURL());
+  m_window->changeCaption(currentDocumentURL().prettyURL());
 
   if(m_currentView)
   {
-    Protoeditor::self()->mainWindow()->guiFactory()->removeClient(m_currentView);
+    m_window->guiFactory()->removeClient(m_currentView);
   }
 
   if(count())
   {    
     m_currentView = document(currentPageIndex())->view();
-    Protoeditor::self()->mainWindow()->guiFactory()->addClient(m_currentView);
+    m_window->guiFactory()->addClient(m_currentView);
   }
 }
 
@@ -491,7 +502,7 @@ void EditorUI::slotTextChanged()
 
 void EditorUI::slotStatusMsg(const QString& msg)
 {
-  Protoeditor::self()->mainWindow()->statusBar()->setEditorStatus(msg);
+  m_window->statusBar()->setEditorStatus(msg);
 }
 
 void EditorUI::slotDocumentSaved(Document* doc)
@@ -584,7 +595,7 @@ Document* EditorUI::currentDocument()
 
 void EditorUI::slotMenuAboutToShow()
 {
-  KAction* ac = Protoeditor::self()->mainWindow()->actionCollection()->action("editor_add_watch");
+  KAction* ac = m_window->actionCollection()->action("editor_add_watch");
   if(ac)
   {
     QString watch = currentDocument()->wordUnderCursor();
@@ -629,7 +640,7 @@ void EditorUI::slotDropEvent(QDropEvent* e) {
     int size  = list.size();
     for(int i = 0; i < size; i++)
     {
-      Protoeditor::self()->openFile(list[i]);
+      m_window->openFile(list[i]);
     }
   }  
 }
@@ -664,6 +675,11 @@ void EditorUI::slotFocusCurrentDocument()
 void EditorUI::slotConfigureEditor()
 {
   Document::configureEditor(currentView());
+}
+
+int EditorUI::totalDocuments()
+{
+  return count();
 }
 
 #include "editorui.moc"

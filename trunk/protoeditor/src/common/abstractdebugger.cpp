@@ -38,9 +38,6 @@ AbstractDebugger::AbstractDebugger(LanguageSettings* langs)
           Protoeditor::self()->executionController(), 
           SLOT(slotDebugEnded()));
 
-//   connect(this, SIGNAL(sigDebugStarting()),
-//           m_controller, SLOT(slotDebugStarting()));
-
   connect(this, SIGNAL(sigDebugPaused()),
           Protoeditor::self()->executionController(), 
           SLOT(slotDebugPaused()));
@@ -59,7 +56,6 @@ AbstractDebugger::AbstractDebugger(LanguageSettings* langs)
 
   connect(this, SIGNAL(sigInternalError(const QString&)),
           Protoeditor::self(), SLOT(slotError(const QString&)));
-
 }
 
 AbstractDebugger::~AbstractDebugger() 

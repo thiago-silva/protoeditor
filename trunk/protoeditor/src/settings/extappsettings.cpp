@@ -20,8 +20,8 @@
 
 #include "extappsettings.h"
 
-ExtAppSettings::ExtAppSettings(  )
-  : KConfigSkeleton( QString::fromLatin1( "protoeditorrc" ) )
+ExtAppSettings::ExtAppSettings(const QString& configFile)
+  : KConfigSkeleton( QString::fromLatin1( configFile ) )
 {
   setCurrentGroup( QString::fromLatin1( "ExternalApp" ) );
 

@@ -12,6 +12,5 @@ libpythondbgp_la_SOURCES = debuggerpythondbgp.cpp pythondbgpnet.cpp pythondbgpse
 	pythondbgpsettingswidget.cpp pythondbgpvariableparser.cpp
 noinst_HEADERS = debuggerpythondbgp.h pythondbgpnet.h pythondbgpsettings.h\
 	pythondbgpsettingswidget.h pythondbgpvariableparser.h
-libpythondbgp_la_LIBADD = $(top_builddir)/src/settings/libsettings.la \
-	$(top_builddir)/src/common/libcommon.la $(top_builddir)/src/common/python/libcommonpython.la
+
 

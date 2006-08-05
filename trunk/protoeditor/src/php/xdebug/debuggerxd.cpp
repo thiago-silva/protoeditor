@@ -40,7 +40,9 @@ DebuggerXD::DebuggerXD(LanguageSettings* langs)
       m_listenPort(-1), m_currentExecutionPoint(0), m_globalExecutionPoint(0), 
       m_xdSettings(0), m_net(0)
 {
-  m_xdSettings = new XDSettings(name(), label(), langSettings());
+  m_xdSettings = new XDSettings(Protoeditor::self()->settings()->configFile(),
+      name(), label(), langSettings());
+
   langSettings()->registerDebuggerSettings(name(), m_xdSettings);
 
 

@@ -78,7 +78,7 @@ PythonSettingsWidget::PythonSettingsWidget(PythonSettings* pythonSettings, QWidg
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    debuggersTabWidget->addTab((*it)->widget(), (*it)->debuggerLabel());
+    debuggersTabWidget->addTab((*it)->createTab(), (*it)->debuggerLabel());
   }
 
   mainLayout->addWidget(debuggersTabWidget);
@@ -106,7 +106,7 @@ void PythonSettingsWidget::populate()
 
   QValueList<DebuggerSettingsInterface*>::iterator it;
   for(it = m_debuggerSettingsList.begin(); it != m_debuggerSettingsList.end(); ++it) {
-    (*it)->widget()->populate();
+    (*it)->tab()->populate();
   }
 }
 

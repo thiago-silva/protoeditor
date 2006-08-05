@@ -29,7 +29,7 @@ class LanguageSettings;
 class PythonDBGPSettings : public DebuggerSettingsInterface
 {
   public:
-    PythonDBGPSettings(const QString&, const QString&, LanguageSettings*);
+    PythonDBGPSettings(const QString&, const QString&, const QString&, LanguageSettings*);
     ~PythonDBGPSettings();
 
     int listenPort() const
@@ -61,7 +61,9 @@ class PythonDBGPSettings : public DebuggerSettingsInterface
     }
 
     virtual void loadValuesFromWidget();
-    virtual DebuggerTab* widget();
+    virtual DebuggerTab* createTab();
+    virtual DebuggerTab* tab();
+
   protected:
 
     // Xdebug

@@ -28,7 +28,7 @@ class XDSettingsWidget;
 class XDSettings : public DebuggerSettingsInterface
 {
   public:
-    XDSettings(const QString& name, const QString& label, LanguageSettings*);
+    XDSettings(const QString&, const QString& name, const QString& label, LanguageSettings*);
     ~XDSettings();
 
     int listenPort() const
@@ -50,7 +50,9 @@ class XDSettings : public DebuggerSettingsInterface
     }
 
     virtual void loadValuesFromWidget();
-    virtual DebuggerTab* widget();
+    virtual DebuggerTab* createTab();
+    virtual DebuggerTab* tab();
+
   protected:
 
     // Xdebug

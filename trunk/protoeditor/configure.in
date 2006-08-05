@@ -36,7 +36,7 @@ dnl Perform program name transformation
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(protoeditor, 1.1beta2) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(protoeditor, 1.1beta2, 1.0) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -61,12 +61,30 @@ dnl PACKAGE set before
 AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
 
-perllibdir=${kde_datadir}/protoeditor/libs/perl/
-pythonlibdir=${kde_datadir}/protoeditor/libs/python/
+dnl
+dnl checks if we want the debugger
+dnl
+
+AC_ARG_ENABLE([kate-plugin],
+    [AC_HELP_STRING([--enable-kate-plugin],
+                    [Install as Kate plugin only])],
+    [KATE_PLUGIN="yes"],
+    [KATE_PLUGIN="no"]
+)
+
+if test x$KATE_PLUGIN = "xyes"; then
+  perllibdir=${kde_datadir}/kate/plugins/katescriptdebugger/libs/perl/
+  pythonlibdir=${kde_datadir}/kate/plugins/katescriptdebugger/libs/python/  
+else
+  perllibdir=${kde_datadir}/protoeditor/libs/perl/
+  pythonlibdir=${kde_datadir}/protoeditor/libs/python/
+fi
+
 
 AC_SUBST(perllibdir)
 AC_SUBST(pythonlibdir)
-KDE_CREATE_SUBDIRSLIST
+
+AM_CONDITIONAL(KATE_PLUGIN, test x$KATE_PLUGIN = xyes)KDE_CREATE_SUBDIRSLIST
 AC_CONFIG_FILES([ Makefile ])
 AC_CONFIG_FILES([ data/Makefile ])
 AC_CONFIG_FILES([ data/icons/Makefile ])
@@ -79,6 +97,7 @@ AC_CONFIG_FILES([ src/common/Makefile ])
 AC_CONFIG_FILES([ src/common/perl/Makefile ])
 AC_CONFIG_FILES([ src/common/php/Makefile ])
 AC_CONFIG_FILES([ src/common/python/Makefile ])
+AC_CONFIG_FILES([ src/katescriptdebuggerplugin/Makefile ])
 AC_CONFIG_FILES([ src/perl/Makefile ])
 AC_CONFIG_FILES([ src/perl/perldb/Makefile ])
 AC_CONFIG_FILES([ src/perl/perldbgp/Makefile ])

@@ -21,8 +21,8 @@
 #include "perldbgpsettings.h"
 #include "perldbgpsettingswidget.h"
 
-PerlDBGPSettings::PerlDBGPSettings(const QString& name, const QString& label, LanguageSettings* langs)
-  : DebuggerSettingsInterface(name, label, langs)
+PerlDBGPSettings::PerlDBGPSettings(const QString& config, const QString& name, const QString& label, LanguageSettings* langs)
+  : DebuggerSettingsInterface(config, name, label, langs)
 {
   m_widget = 0;
   
@@ -65,10 +65,13 @@ void PerlDBGPSettings::loadValuesFromWidget()
   mPerlDBGPLibPath  = m_widget->perlLibPath();
 }
 
-DebuggerTab* PerlDBGPSettings::widget()
+DebuggerTab* PerlDBGPSettings::createTab()
 {
-  if(!m_widget) {
-    m_widget = new PerlDBGPSettingsWidget(this);
-  }
+  m_widget = new PerlDBGPSettingsWidget(this);
+  return m_widget;
+}
+
+DebuggerTab* PerlDBGPSettings::tab()
+{
   return m_widget;
 }

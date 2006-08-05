@@ -12,3 +12,4 @@ noinst_HEADERS = abstractdebugger.h debuggerbreakpoint.h variable.h \
 			debuggerstack.h connection.h session.h
 
 libcommon_la_LDFLAGS = $(all_libraries)
+

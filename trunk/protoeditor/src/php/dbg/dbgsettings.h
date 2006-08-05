@@ -28,7 +28,7 @@ class DBGSettingsWidget;
 class DBGSettings : public DebuggerSettingsInterface
 {
   public:
-    DBGSettings(const QString& name, const QString& label, LanguageSettings*);
+    DBGSettings(const QString&, const QString& name, const QString& label, LanguageSettings*);
     ~DBGSettings();
 
     bool breakOnLoad() const
@@ -71,7 +71,8 @@ class DBGSettings : public DebuggerSettingsInterface
     }
 
     virtual void loadValuesFromWidget();
-    virtual DebuggerTab* widget();
+    virtual DebuggerTab* createTab();
+    virtual DebuggerTab* tab();
   protected:
 
     // DBG
@@ -84,9 +85,8 @@ class DBGSettings : public DebuggerSettingsInterface
     bool mEnableJIT;
 
     QString m_name;
-
-  private:
-    DBGSettingsWidget* m_widget;
+private:
+  DBGSettingsWidget* m_widget;
 };
 
 #endif

@@ -20,8 +20,14 @@
 
 #include "debuggerui.h"
 
+#include "protoeditor.h"
+#include "datacontroller.h"
+#include "executioncontroller.h"
+
 #include <qlayout.h>
 #include <klocale.h>
+
+
 #include <ktextedit.h>
 
 #include "variablelistview.h"
@@ -33,7 +39,6 @@
 #include "combostack.h"
 #include "consolewidget.h"
 #include "debuggerstack.h"
-
 
 DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
   : KTabWidget(parent, name)
@@ -125,101 +130,50 @@ DebuggerUI::DebuggerUI(QWidget* parent, const char *name)
 
 // //   connect(m_console, SIGNAL(sigExecuteCmd(const QString&)),
 // //     this, SIGNAL(sigExecuteCmd(const QString&)));
+
+  connect(this, SIGNAL(sigGotoFileAndLine( const KURL&, int )),
+          Protoeditor::self(), SLOT(slotGotoLineAtFile(const KURL&, int)));
+
+  connect(this, SIGNAL(sigGlobalVarModified(Variable*)),
+          Protoeditor::self()->dataController(), SLOT(slotGlobalVarModified(Variable*)));
+
+  connect(this, SIGNAL(sigLocalVarModified(Variable*)),
+          Protoeditor::self()->dataController(), SLOT(slotLocalVarModified(Variable*)));
+
+  connect(this, SIGNAL(sigWatchAdded(const QString&)),
+          Protoeditor::self()->dataController(), SLOT(slotWatchAdded(const QString&)));
+
+  connect(this, SIGNAL(sigWatchRemoved(Variable*)),
+          Protoeditor::self()->dataController(), SLOT(slotWatchRemoved(Variable*)));
+
+  connect(this, SIGNAL(sigBreakpointCreated(DebuggerBreakpoint*)),
+          Protoeditor::self()->dataController(), SLOT(slotBreakpointCreated(DebuggerBreakpoint*)));
+
+  connect(this, SIGNAL(sigBreakpointChanged(DebuggerBreakpoint*)),
+          Protoeditor::self()->dataController(), SLOT(slotBreakpointChanged(DebuggerBreakpoint*)));
+
+  connect(this, SIGNAL(sigBreakpointRemoved(DebuggerBreakpoint*)),
+          Protoeditor::self()->dataController(), SLOT(slotBreakpointRemoved(DebuggerBreakpoint*)));
+
+  connect(this,SIGNAL(sigStackchanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)), 
+          Protoeditor::self()->dataController(), SLOT(slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));  
+
+  connect(this, SIGNAL(sigStackchanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)),
+          Protoeditor::self()->dataController(), SLOT(slotStackChanged(DebuggerExecutionPoint*, DebuggerExecutionPoint*)));
+
+  connect(this, SIGNAL(sigWatchModified(Variable*)),
+          Protoeditor::self()->dataController(), SLOT(slotLocalVarModified(Variable*)));
+
+  connect(this, SIGNAL(sigExecuteCmd(const QString&)),
+          Protoeditor::self()->executionController(), SLOT(slotExecuteCmd(const QString&)));
+
+  connect(this, SIGNAL(sigNeedChildren(int, Variable*)),
+          Protoeditor::self()->executionController(), SLOT(slotNeedChildren(int, Variable*)));
+
 }
 
 DebuggerUI::~DebuggerUI()
 {
-}
-
-//Global VariablesListView
-void DebuggerUI::setGlobalVariables(VariableList_t* vars)
-{
-  m_globalVariableListView->setVariables(vars);
-}
-
-//Local VariablesListView
-void DebuggerUI::setLocalVariables(VariableList_t* vars)
-{
-  m_localTab->localVarList()->setVariables(vars);
-}
-
-void DebuggerUI::updateVariable(Variable* var)
-{
-  int varlistID = m_varlistIDs.first();
-  m_varlistIDs.remove(varlistID);
-
-  switch(varlistID)
-  {
-    case GlobalVarListID:
-      m_globalVariableListView->updateVariable(var);
-      break;
-    case LocalVarListID:
-      m_localTab->localVarList()->updateVariable(var);
-      break;
-    case WatchListID:
-      m_watchTab->watchListView()->updateVariable(var);
-      break;
-    default:
-      break;
-  } 
-}
-
-//ComboStack
-void DebuggerUI::setStack(DebuggerStack* stack)
-{
-  m_localTab->comboStack()->setStack(stack);
-}
-
-DebuggerStack* DebuggerUI::stack()
-{
-  return m_localTab->comboStack()->stack();
-}
-
-DebuggerExecutionPoint* DebuggerUI::selectedDebuggerExecutionPoint()
-{
-  return m_localTab->comboStack()->selectedDebuggerExecutionPoint();
-}
-
-int DebuggerUI::currentStackItem()
-{
-  return m_localTab->comboStack()->currentItem();
-}
-
-//WatchTab
-void DebuggerUI::addWatch(Variable* var)
-{
-  m_watchTab->watchListView()->addWatch(var);
-}
-
-QStringList DebuggerUI::watches()
-{
-  return m_watchTab->watchListView()->watches();
-}
-
-//BreakpointListView
-void DebuggerUI::updateBreakpoint(DebuggerBreakpoint* bp)
-{
-  m_breakpointListView->updateBreakpoint(bp);
-}
-
-void DebuggerUI::toggleBreakpoint(const KURL& url, int line, bool enabled)
-{
-  m_breakpointListView->toggleBreakpoint(url, line, enabled);
-}
-
-void DebuggerUI::resetBreakpointItems()
-{
-  m_breakpointListView->resetBreakpointItems();
-}
-
-QValueList<DebuggerBreakpoint*> DebuggerUI::breakpoints()
-{
-  return m_breakpointListView->breakpoints();
-}
-
-QValueList<DebuggerBreakpoint*> DebuggerUI::breakpointsFrom(const KURL& url)
-{
-  return m_breakpointListView->breakpointsFrom(url);
 }
 
 void DebuggerUI::slotBreakpointMarked(const KURL& url, int line, bool enabled)
@@ -232,65 +186,18 @@ void DebuggerUI::slotBreakpointUnmarked(const KURL& url, int line)
   m_breakpointListView->toggleBreakpoint(url, line); 
 }
 
-//MessageListview
-void DebuggerUI::addMessage(int type, const QString& message, int line, const KURL& url)
-{
-  m_messageListView->add(type, message, line, url);
-}
-
-//Output
-void DebuggerUI::appendOutput(const QString& str)
-{
-  m_edOutput->append(str);
-}
-
-//Console
-void DebuggerUI::appendConsoleDebuggerText(const QString&)
-{
-//   m_console->appendDebuggerText(str);
-}
-
-void DebuggerUI::appendConsoleUserText(const QString&)
-{
-//   m_console->appendUserText(str);
-}
-
-void DebuggerUI::prepareForSession()
-{
-  m_globalVariableListView->setReadOnly(false);
-  m_localTab->localVarList()->setReadOnly(false);
-  m_watchTab->watchListView()->setReadOnly(false);
-  m_watchTab->watchListView()->reset();
-
-  m_globalVariableListView->clear();
-  m_localTab->localVarList()->clear();
-  m_messageListView->clear();
-  m_localTab->comboStack()->clear();
-  m_edOutput->clear();
-}
-
-void DebuggerUI::cleanSession()
-{
-  m_breakpointListView->resetBreakpointItems();
-
-  //do not let the user change variables anymore
-  m_globalVariableListView->setReadOnly(true);
-  m_localTab->localVarList()->setReadOnly(true);
-  m_watchTab->watchListView()->setReadOnly(true);
-}
-
 void DebuggerUI::slotNeedChildren(int varlistID, Variable* var)
 {
   m_varlistIDs.append(varlistID);
   
   switch(varlistID)
   {
-    case DebuggerUI::GlobalVarListID:
+    case DebuggerInterface::GlobalVarListID:
       emit sigNeedChildren(
         m_localTab->comboStack()->stack()->topExecutionPoint()->id(), var);
       break;
-    case DebuggerUI::LocalVarListID:
-    case DebuggerUI::WatchListID:
+    case DebuggerInterface::LocalVarListID:
+    case DebuggerInterface::WatchListID:
       emit sigNeedChildren(
         m_localTab->comboStack()->selectedDebuggerExecutionPoint()->id(), var);
       break;
@@ -299,5 +206,4 @@ void DebuggerUI::slotNeedChildren(int varlistID, Variable* var)
       break;
   }
 }
-
 #include "debuggerui.moc"

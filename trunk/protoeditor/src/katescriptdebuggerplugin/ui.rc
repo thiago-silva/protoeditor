@@ -1,0 +1,101 @@
+<!DOCTYPE kpartgui>
+<kpartplugin name="katephpdebugger" library="libkatephpdebugger" version="3">
+  <MenuBar>
+    <Menu name="menu_script">
+      <text>S&amp;cript</text>
+      <Action name="site_selection"/>
+      <Action name="use_current_script"/>
+      <Separator />
+      <Action name="script_execute"/>
+      <Separator />
+      <Action name="debug_start"/>
+      <Action name="debug_stop"/>
+      <Separator />
+      <Action name="debug_run_to_cursor"/>
+      <Separator />
+      <Action name="debug_step_over"/>      
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+      <Separator />
+      <Action name="script_profile"/>
+      <Separator />
+      <Action name="debug_toggle_bp"/>
+    </Menu>
+  </MenuBar>
+  
+  <Menu name="ktexteditor_popup" noMerge="1">
+    <DefineGroup name="popup_operations" />
+    <Action name="editor_add_watch"/>
+    <Action name="debug_run_to_cursor"/>    
+    <Action name="debug_toggle_bp"/>
+  </Menu>
+  
+  <ToolBar name="debug_toolbar" noMerge="1" newline="true">
+    <text>Debug Toolbar</text>
+    <Action name="site_selection"/>
+    <Action name="use_current_script"/>
+    <Separator />
+    <Action name="script_execute"/>
+    <Separator />
+    <Action name="debug_start"/>
+    <Action name="debug_stop"/>
+    <Action name="debug_step_over"/>
+    <Action name="debug_step_into"/>
+    <Action name="debug_step_out"/>
+    <Separator />    
+  </ToolBar>
+  
+  <ToolBar name="argument_toolbar" noMerge="1" newline="true" fullWidth="true">
+    <text>Argument Toolbar</text>
+    <Action name="argument_clear"/>
+    <Action name="argument_label"/>
+    <Action name="argument_combobox"/>
+  </ToolBar>
+  
+  
+  <!--         States        -->
+  
+  <State name="init">
+    <enable>
+      <Action name="debug_start"/>
+      <Action name="script_profile"/>
+    </enable>
+    <disable>
+      <Action name="debug_stop"/>
+      <Action name="debug_run_to_cursor"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </disable>
+  </State>  
+  
+  <State name="debug_stopped">
+    <enable>
+      <Action name="debug_start"/>
+      <Action name="script_profile"/>
+    </enable>
+    <disable>
+      <Action name="debug_stop"/>
+      <Action name="debug_run_to_cursor"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </disable>
+  </State>
+  
+  <State name="debug_started">
+    <enable>
+      <Action name="debug_stop"/>
+      <Action name="debug_toggle_bp"/>
+      <Action name="debug_run_to_cursor"/>
+      <Action name="debug_step_over"/>
+      <Action name="debug_step_into"/>
+      <Action name="debug_step_out"/>
+    </enable>
+    <disable>
+      <Action name="script_profile"/>
+    </disable>
+  </State>  
+</kpartplugin>
+<!DOCTYPE kpartgui>
+

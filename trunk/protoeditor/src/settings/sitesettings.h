@@ -28,7 +28,7 @@
 class SiteSettings : public KConfigSkeleton
 {
 public:
-  SiteSettings( const QString &number );
+  SiteSettings(const QString&, const QString &);
   ~SiteSettings();
 
   void load(const QString& name, const KURL& url,
