@@ -41,19 +41,23 @@ options {
 }
 
 start 
-  :  T_START_PHP! (stuff)* T_END_PHP EOF!
+  :  T_START_PHP^ (stuff)* T_END_PHP! EOF!
   ;
 
 stuff
   : (T_FUNCTION)=> function_decl
-  | (T_CLASS|T_INTERFACE)=> class_decl
-  | ~(T_END_PHP)
+  |  (T_CLASS)=> T_CLASS^ class_decl
+  |  (T_INTERFACE)=> T_INTERFACE^ interface_decl
+  |! ~(T_END_PHP)
   ;
 
 
 class_decl
-  : T_CLASS^ T_IDENTIFIER T_OPEN_BRACKET! (member)*  T_CLOSE_BRACKET!
-  | T_INTERFACE^ T_IDENTIFIER T_OPEN_BRACKET! (function_decl)*  T_CLOSE_BRACKET!
+  : T_IDENTIFIER T_OPEN_BRACKET! (member)*        T_CLOSE_BRACKET!
+  ;
+
+interface_decl
+  : T_IDENTIFIER T_OPEN_BRACKET! (interf_funcs)*  T_CLOSE_BRACKET!   
   ;
 
 member
@@ -95,6 +99,10 @@ vars
 
 const_attr
   : T_CONST^ (T_IDENTIFIER)+ 
+  ;
+
+interf_funcs
+  : T_FUNCTION^ T_IDENTIFIER  params
   ;
 
 function_decl

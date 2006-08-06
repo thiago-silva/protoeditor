@@ -50,5 +50,6 @@ int main(int argc, char** argv)
   } else {
     do_parse(*fin);
   }
+  delete fin;
   return 0;
 }
