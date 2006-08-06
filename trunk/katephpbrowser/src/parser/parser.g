@@ -47,25 +47,30 @@ start
 stuff
   : (T_FUNCTION)=> function_decl
   |  (T_CLASS)=> T_CLASS^ class_decl
-  |  (T_INTERFACE)=> T_INTERFACE^ interface_decl
+  |  (T_INTERFACE)=> T_INTERFACE^ interface_decl //deal with interfaces just like classes
   |! ~(T_END_PHP)
   ;
 
 
 class_decl
-  : T_IDENTIFIER T_OPEN_BRACKET! (member)*        T_CLOSE_BRACKET!
+  : T_IDENTIFIER T_OPEN_BRACKET! (class_member)*        T_CLOSE_BRACKET!
   ;
 
 interface_decl
-  : T_IDENTIFIER T_OPEN_BRACKET! (interf_funcs)*  T_CLOSE_BRACKET!   
+  : T_IDENTIFIER T_OPEN_BRACKET! (interf_member)*        T_CLOSE_BRACKET!
   ;
 
-member
+interf_member
+  : access_modifier T_FUNCTION^ T_IDENTIFIER  params
+  | const_attr
+  ;
+
+class_member
   : access_member
   | static_member
   | var_attr
   | const_attr
-  | m:function_decl! {#member = #([T_PUBLIC,"public"], m);}
+  | m:function_decl! {#class_member = #([T_PUBLIC,"public"], m);}
   ;
 
 access_member!
