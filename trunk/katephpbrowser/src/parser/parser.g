@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2006 by Thiago Silva                               *
+ *   Copyright (C) 2006 by Thiago Silva                                    *
  *   thiago.silva@kdemal.net                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -40,8 +40,15 @@ options {
 
 }
 
-start 
-  :  T_START_PHP^ (stuff)* T_END_PHP! EOF!
+start!
+  :  s:scopes EOF! {#start = #([T_PHP_MODULE, "php_module"],s);}
+  ;
+
+scopes
+  : (php_scope)*
+  ;
+php_scope
+  : T_START_PHP^ (stuff)* T_END_PHP!
   ;
 
 stuff

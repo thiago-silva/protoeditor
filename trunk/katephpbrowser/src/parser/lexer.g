@@ -48,6 +48,8 @@ tokens {
   T_STATIC="static";
   T_VAR="var";
   T_CONST="const";
+
+  T_PHP_MODULE;
 /*
   T_STATIC_FUNC;
   T_STATIC_VAR;*/
