@@ -1,0 +1,16 @@
+Begin3
+Title:          katephpbrowser -- Kate PHP Browser Plugin
+Version:        0.1
+Entered-date:   
+Description:    
+Keywords:       KDE Qt
+Author:         Thiago Silva <thiago.silva@kdemail.net>
+Maintained-by:  Thiago Silva <thiago.silva@kdemail.net>
+Home-page:      
+Alternate-site: 
+Primary-site:   http://protoeditor.sourceforge.net
+                xxxxxx  katephpbrowser-0.1.tar.gz
+                xxx     katephpbrowser-0.1.lsm
+Platform:       Linux. Needs KDE
+Copying-policy: GPL
+End

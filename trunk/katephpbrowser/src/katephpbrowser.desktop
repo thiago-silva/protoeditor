@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=Kate/Plugin
+X-KDE-Library=katephpbrowserplugin
+X-Kate-Version=2.5
+Name=Kate PHP Browser
+Comment=A PHP browser plugin for Kate
+author=Thiago Silva, thiago.silva@kdemail.net
