@@ -50,9 +50,12 @@ tokens {
   T_CONST="const";
 
   T_PHP_MODULE;
+
+  T_VARIABLES;
+  T_MODIFIERS;
 /*
   T_STATIC_FUNC;
-  T_STATIC_VAR;*/
+  */
 }
 
 {

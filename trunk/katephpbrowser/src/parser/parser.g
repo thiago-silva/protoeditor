@@ -36,10 +36,6 @@ options {
   genHashLines=false;//no #line
 }
 
-{
-
-}
-
 start!
   :  s:scopes EOF! {#start = #([T_PHP_MODULE, "php_module"],s);}
   ;
@@ -48,7 +44,7 @@ scopes
   : (php_scope)*
   ;
 php_scope
-  : T_START_PHP^ (stuff)* T_END_PHP!
+  : T_START_PHP! (stuff)* T_END_PHP!
   ;
 
 stuff
@@ -68,7 +64,7 @@ interface_decl
   ;
 
 interf_member
-  : access_modifier T_FUNCTION^ T_IDENTIFIER  params
+  :! a:access_modifier f:T_FUNCTION i:T_IDENTIFIER  params {#interf_member = #(f, (i, a));}
   | const_attr
   ;
 
@@ -77,18 +73,21 @@ class_member
   | static_member
   | var_attr
   | const_attr
-  | m:function_decl! {#class_member = #([T_PUBLIC,"public"], m);}
+  |! m:function_decl! {#class_member = #([T_FUNCTION,"function"], (m, [T_PUBLIC,"public"]));}
   ;
 
 access_member!
-  : a:access_modifier m:access_member_ex
-    {#access_member = #(a, m);}
+  : a:access_modifier (s:T_STATIC)? 
+      (
+          v:vars {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a)));}
+        | m:function_decl {#access_member = #([T_FUNCTION,"function"], (m, a));}
+      )   
   ;
 
 static_member!
   : T_STATIC 
-      (   v:vars  {#static_member = #([T_PUBLIC,"public"], [T_STATIC,"static"],v);}
-        | m:function_decl  {#static_member = #([T_PUBLIC,"public"], [T_STATIC,"static"],m);}
+      (   v:vars  {#static_member = #([T_VAR, "var"], ([T_VARIABLES,"vars:"], v, ([T_MODIFIERS,"mods"],[T_PUBLIC,"public"], [T_STATIC,"static"])));}
+        | m:function_decl  {#static_member = #([T_FUNCTION,"function"], (m, [T_PUBLIC,"public"], [T_STATIC,"static"]));}
       )
   ;
 
@@ -96,13 +95,14 @@ access_modifier
   : ( T_PUBLIC | T_PROTECTED | T_PRIVATE )
   ;
 
-access_member_ex
-  : (T_STATIC)? ( (T_VARIABLE)+ | function_decl )
-  ;
+// access_member_ex
+//   :  (T_VARIABLE)+
+//   | m:function_decl
+//   ;
 
 var_attr!
-  : T_VAR v:vars
-  {#var_attr = #([T_PUBLIC,"public"],v);}
+  : t:T_VAR v:vars
+  {#var_attr = #([T_VAR, "var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS, "mods:"], [T_PUBLIC,"public"])));}
   ;
 
 vars
@@ -118,7 +118,7 @@ interf_funcs
   ;
 
 function_decl
-  : T_FUNCTION^ T_IDENTIFIER  params
+  : T_FUNCTION! T_IDENTIFIER  params
     T_OPEN_BRACKET!
 
     (deal_function_body)*
