@@ -1,3 +1,17 @@
+Fast Installation
+=================
+ 
+- Stand alone protoeditor:
+    ./configure
+    make
+    make install
+
+- Kate plugin installation:
+    ./configure --enable-kate-plugin
+    make
+    make install
+
+
 Basic Installation
 ==================
 

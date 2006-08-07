@@ -31,11 +31,13 @@ Project site: http://protoeditor.sourceforge.net
   steps, watches, backtrace, breakpoints, etc. Other features depend on what 
   the debuggers supports.
 
+  Note: The libraries distributed with this package can be found at data/libs 
+        directory.
 
 1.1 Requirements:
 
   * KDE 3.2 + should be fine (if not, let me know :)
-  * For local debug, you need a interpreter (ie. PHP, Perl, etc) and, at least, 
+  * For local debug, you need an interpreter (ie. PHP, Perl, etc) and, at least, 
     one debugger installed in your system.
     For remote debug, you need the remote system to be properly installed
     (webserver + debugger module + additional configuration).  
@@ -161,5 +163,22 @@ Project site: http://protoeditor.sourceforge.net
     Debugger        : PHP DBG
 
 
+3.0 Kate Plugin
+
+    Protoeditor can be build as a stand alone application or as Kate plugin.
+    To build the Kate plugin, execute the configure script with the option
+    "--enable-kate-plugin":
+
+    ./configure --enable-kate-plugin
+    make
+    make install
+
+    This should install the icons and perl/python DBGp libs in the kate data directory
+    (such as /opt/kde/share/apps/kate) and the plugin itself.
+    
+    Now, run Kate and, in the plugin settings, enable the "Kate script debugger".
+    Two more toolbars should appear: the debugger toolbar and the argument toolbar.
+    Also, the menu "Script" and the debugger tabs will be added to the user interface.
+ 
 ------------------------------------------
 Thiago Silva <thiago.silva@kdemail.com>
