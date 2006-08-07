@@ -435,11 +435,11 @@ void XDNet::processInit(QDomElement& init)
 
   //setup stdout/sterr:
 
-  QString stdout = "stdout -i 1 -c 1";//copy stdout to IDE
-  m_socket->writeBlock(stdout, stdout.length()+1);
+  QString _stdout = "stdout -i 1 -c 1";//copy stdout to IDE
+  m_socket->writeBlock(_stdout, _stdout.length()+1);
 
-  QString stderr = "stderr -i 1 -c 1";//copy stderr to IDE
-  m_socket->writeBlock(stderr, stderr.length()+1);  
+  QString _stderr = "stderr -i 1 -c 1";//copy stderr to IDE
+  m_socket->writeBlock(_stderr, _stderr.length()+1);  
 
   if(m_debugger->settings()->breakOnLoad())
   {
