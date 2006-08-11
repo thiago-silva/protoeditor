@@ -17,58 +17,46 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "browserlistview.h"
-#include <klocale.h>
-#include <qheader.h>
+#include "phpbrowserparser.h"
 
-#include "browsernode.h"
+#include <sstream>
 
-BrowserListView::BrowserListView(QWidget* parent, const char* name)
-  : KListView(parent, name)
-{
-  setAllColumnsShowFocus(true);
-  setRootIsDecorated(true);
-  setSorting(-1);
+#include <kurl.h>
 
-  addColumn("");
+#include "PHPLexer.hpp"
+#include "PHPParser.hpp"
 
-  header()->hide();
-}
-
-BrowserListView::~BrowserListView()
+PHPBrowserParser::PHPBrowserParser()
 {
 }
 
-void BrowserListView::loadNodes(QValueList<BrowserNode*> list)
+
+PHPBrowserParser::~PHPBrowserParser()
 {
-  m_list = list;
-  for(QValueList<BrowserNode*>::iterator it = list.begin(); it != list.end(); ++it)
-  {
-    addNode(*it);
-  }
 }
 
-void BrowserListView::addNode(BrowserNode* node, QListViewItem* parent)
+antlr::RefAST PHPBrowserParser::parseText(const QString& text)
 {
-  QListViewItem* item;
-  if (parent)
-  {
-    item = new QListViewItem(parent);
-  }
-  else
-  {
-    item = new QListViewItem(this);
-  }
-  item->setText(0, node->name());
+  stringstream s;
+  std::string str = text.ascii();
+  s << str;
 
-  if(node->childs().count() > 0)
+  antlr::RefAST astree;
+
+  try 
   {
-    QValueList<BrowserNode*> list = node->childs();
-    for(QValueList<BrowserNode*>::iterator it = list.begin(); it != list.end(); ++it)
-    {
-      addNode(*it, item);
-    }
+    PHPLexer lexer(s);
+    PHPParser parser(lexer);
+    
+		antlr::ASTFactory ast_factory;
+		parser.initializeASTFactory(ast_factory);
+		parser.setASTFactory(&ast_factory);
+
+    parser.start();
+
+    astree = parser.getAST();
   }
+  catch (exception& e) { }    
+
+  return astree;
 }
-
-#include "browserlistview.moc"

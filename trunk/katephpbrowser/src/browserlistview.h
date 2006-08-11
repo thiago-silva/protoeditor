@@ -21,6 +21,9 @@
 #define BROWSERLISTVIEW_H
 
 #include <klistview.h>
+#include <qvaluelist.h>
+
+class BrowserNode;
 
 class BrowserListView : public KListView
 {
@@ -28,6 +31,12 @@ class BrowserListView : public KListView
 public:
   BrowserListView(QWidget*, const char* = 0);
   ~BrowserListView();
+
+  void loadNodes(QValueList<BrowserNode*>);
+private:
+  void addNode(BrowserNode* node, QListViewItem* parent = 0);
+
+  QValueList<BrowserNode*> m_list;
 };
 
 #endif
