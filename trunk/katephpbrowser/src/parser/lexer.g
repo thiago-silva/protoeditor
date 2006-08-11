@@ -32,10 +32,11 @@ class PHPLexer extends Lexer;
 options {
   k=2;
 //   charVocabulary='\u0003'..'\u00FF'; // latin-1  
- exportVocab=PHP;
+  exportVocab=PHP;
   filter=T_IGNORE;
   genHashLines=false;//no #line in the generated code
   testLiterals = true;
+  noConstructors=true;
 }
 
 tokens {
@@ -60,7 +61,14 @@ tokens {
 
 {
   public:
-    static bool php_context;
+    PHPLexer(std::istream& in)
+      :  antlr::CharScanner(new antlr::CharBuffer(in),true), php_context(false)
+    {
+      initLiterals();
+    }
+
+  private:
+    bool php_context;
 }
 
 //////////------------------------
