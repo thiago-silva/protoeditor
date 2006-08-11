@@ -48,7 +48,7 @@ php_scope
   ;
 
 stuff
-  : (T_FUNCTION)=> function_decl
+  :! (T_FUNCTION)=> f:function_decl {#stuff = #([T_FUNCTION,"function"], (f, [T_PUBLIC,"public"]));}
   |  (T_CLASS)=> T_CLASS^ class_decl
   |  (T_INTERFACE)=> T_INTERFACE^ interface_decl //deal with interfaces just like classes
   |! ~(T_END_PHP)
@@ -79,7 +79,7 @@ class_member
 access_member!
   : a:access_modifier (s:T_STATIC)? 
       (
-          v:vars {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a)));}
+          v:vars {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
         | m:function_decl {#access_member = #([T_FUNCTION,"function"], (m, a));}
       )   
   ;
