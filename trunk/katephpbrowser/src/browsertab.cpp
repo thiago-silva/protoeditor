@@ -81,11 +81,35 @@ void BrowserTab::slotConfigureSchemas()
     m_settings->setSchemas(dialog->schemas());
     m_settings->setCurrentSchemaName(dialog->currentSchemaName());
     m_settings->writeConfig();
+
+    updateBrowser();
   }
 
   reloadSettings();
 
   delete dialog;  
+}
+
+#include "PHPNodeWalker.hpp"
+#include <qfile.h>
+#include "phpbrowserparser.h"
+// #include "nodebuilder.h"
+#include <iostream>
+void BrowserTab::updateBrowser()
+{
+  QFile file("/home/jester/t.php");
+  file.open( IO_ReadOnly );
+  PHPBrowserParser parser;
+  
+  antlr::RefAST ast = parser.parseText(file.readAll());
+  if(ast)
+  {
+    std::cerr << ast->toStringTree() << std::endl << std::endl;
+
+    PHPNodeWalker walker;
+    QValueList<BrowserNode*> list = walker.start(ast);
+    m_browserList->loadNodes(list);
+  }
 }
 
 #include "browsertab.h"

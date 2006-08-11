@@ -41,6 +41,8 @@ protected slots:
   SchemaSettings* m_settings;
 
 private:
+  void updateBrowser();
+
   QComboBox* m_cbSchema;
   QToolButton* m_btConfig;
   BrowserListView* m_browserList;
