@@ -23,20 +23,23 @@
 #include <klistview.h>
 #include <kurl.h>
 
+class BrowserNode;
+
 class BrowserListViewItem : public KListViewItem
 {
 public:
-  BrowserListViewItem(KListView *parent);
-  BrowserListViewItem(KListView *parent, const QString&, const KURL&, int);
-  BrowserListViewItem(KListViewItem *parent);
-  BrowserListViewItem(KListViewItem *parent, const QString&, const KURL&, int);
+//   BrowserListViewItem(KListView *parent);
+  BrowserListViewItem(KListView *parent, const KURL&);
+  BrowserListViewItem(KListView *parent, BrowserNode*);
+//   BrowserListViewItem(KListViewItem *parent);
+  BrowserListViewItem(KListViewItem *parent, BrowserNode*);
 
   ~BrowserListViewItem();
 
   KURL getFileURL();
   int getLine();
 private:
-
+  void loadPixmap(BrowserNode*);
   int m_line;
   KURL m_url;
 };

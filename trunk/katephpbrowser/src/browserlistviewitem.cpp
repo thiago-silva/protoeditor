@@ -19,29 +19,29 @@
  ***************************************************************************/
 
 #include "browserlistviewitem.h"
+#include <kiconloader.h>
 
-BrowserListViewItem::BrowserListViewItem(KListView *parent)
-    : KListViewItem(parent), m_line(0), m_url()
+#include "browsernode.h"
+
+BrowserListViewItem::BrowserListViewItem(KListView *parent, const KURL& url)
+  : KListViewItem(parent), m_line(0), m_url(url)
 {
-  
+  setPixmap(0, SmallIcon("source_php"));
+  setText(0, url.filename());
 }
 
-BrowserListViewItem::BrowserListViewItem(KListView *parent, const QString& label, const KURL& url, int line)
-    : KListViewItem(parent), m_line(line), m_url(url)
+BrowserListViewItem::BrowserListViewItem(KListView *parent, BrowserNode* node)
+  : KListViewItem(parent), m_line(node->line()), m_url(node->fileURL())
 {
-  setText(0, label);
+  setText(0, node->name());
+  loadPixmap(node);
 }
 
-BrowserListViewItem::BrowserListViewItem(KListViewItem *parent)
-  : KListViewItem(parent), m_line(0), m_url()
+BrowserListViewItem::BrowserListViewItem(KListViewItem *parent, BrowserNode* node)
+  : KListViewItem(parent), m_line(node->line()), m_url(node->fileURL())
 {
-
-}
-
-BrowserListViewItem::BrowserListViewItem(KListViewItem *parent, const QString& label, const KURL& url, int line)
-    : KListViewItem(parent), m_line(line), m_url(url)
-{
-  setText(0, label);
+  setText(0, node->name());
+  loadPixmap(node);
 }
 
 BrowserListViewItem::~BrowserListViewItem()
@@ -56,4 +56,28 @@ KURL BrowserListViewItem::getFileURL()
 int BrowserListViewItem::getLine()
 {
   return m_line;
+}
+
+void BrowserListViewItem::loadPixmap(BrowserNode* node)
+{
+  switch(node->type())
+  {
+    case BrowserNode::ClassType:
+      setPixmap(0, SmallIcon("kcmdf"));
+      break;
+    case BrowserNode::InterfaceType:
+      setPixmap(0, SmallIcon("gear"));
+      break;
+    case BrowserNode::ConstType:
+      setPixmap(0, SmallIcon("music_cross"));
+      break;
+    case BrowserNode::AttributeType:
+      //check for access mode
+      setPixmap(0, SmallIcon("math_brace"));
+      break;
+    case BrowserNode::MethodType:
+      //check for access mode
+      setPixmap(0, SmallIcon("next"));
+      break;
+  }
 }

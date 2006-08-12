@@ -22,6 +22,9 @@
 
 #include <klocale.h>
 #include <qheader.h>
+
+#include <kiconloader.h>
+
 #include "browsernode.h"
 
 BrowserListView::BrowserListView(QWidget* parent, const char* name)
@@ -55,7 +58,7 @@ void BrowserListView::slotDoubleClick(QListViewItem *item, const QPoint&, int)
 
 void BrowserListView::loadFileNodes(const KURL& url, const QValueList<BrowserNode*>& list)
 {
-  BrowserListViewItem* item = new BrowserListViewItem(this, url.filename(), url, 0);
+  BrowserListViewItem* item = new BrowserListViewItem(this, url);
 
   for(QValueList<BrowserNode*>::const_iterator it = list.begin(); it != list.end(); ++it)
   {
@@ -68,11 +71,11 @@ void BrowserListView::addNode(BrowserNode* node, BrowserListViewItem* parent)
   BrowserListViewItem* item;
   if (parent)
   {
-    item = new BrowserListViewItem(parent, node->name(), node->fileURL(), node->line());
+    item = new BrowserListViewItem(parent, node);
   }
   else
   {
-    item = new BrowserListViewItem(this, node->name(), node->fileURL(), node->line());
+    item = new BrowserListViewItem(this, node);
   }
   QString name = node->name();
   item->setText(0, name);
