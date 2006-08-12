@@ -23,14 +23,24 @@
 #include <qcombobox.h>
 #include <kiconloader.h>
 
+#include <kate/application.h>
+#include <kate/mainwindow.h>
+#include <kate/view.h>
+#include <kate/viewmanager.h>
+#include <kate/documentmanager.h>
+
 #include "browserlistview.h"
 #include "schemaconfigurationdlg.h"
 #include "schemasettings.h"
 
-BrowserTab::BrowserTab(QWidget* parent, const char* name)
-  : QWidget(parent, name)
+#include "browserloader.h"
+
+BrowserTab::BrowserTab(Kate::Application *app, QWidget* parent,const char* name)
+  : QWidget(parent, name), m_app(app)
 {
   m_settings = new SchemaSettings();
+
+  m_loader = new BrowserLoader(this);
 
   QVBoxLayout* layout = new QVBoxLayout(this, 1, 1);
   
@@ -48,6 +58,9 @@ BrowserTab::BrowserTab(QWidget* parent, const char* name)
 
   m_browserList = new BrowserListView(this);  
   layout->addWidget(m_browserList);
+
+  connect(m_browserList, SIGNAL(gotoFileLine(const KURL&, int)),
+    this, SLOT(slotGotoFileLine(const KURL&, int)));
 
   connect(m_btConfig, SIGNAL(clicked()), this, SLOT(slotConfigureSchemas()));
 
@@ -82,7 +95,7 @@ void BrowserTab::slotConfigureSchemas()
     m_settings->setCurrentSchemaName(dialog->currentSchemaName());
     m_settings->writeConfig();
 
-    updateBrowser();
+    m_loader->update(m_settings->schema(m_settings->currentSchemaName()));
   }
 
   reloadSettings();
@@ -90,26 +103,28 @@ void BrowserTab::slotConfigureSchemas()
   delete dialog;  
 }
 
-#include "PHPNodeWalker.hpp"
-#include <qfile.h>
-#include "phpbrowserparser.h"
-// #include "nodebuilder.h"
-#include <iostream>
-void BrowserTab::updateBrowser()
+BrowserListView* BrowserTab::listView()
 {
-  QFile file("/home/jester/t.php");
-  file.open( IO_ReadOnly );
-  PHPBrowserParser parser;
-  
-  antlr::RefAST ast = parser.parseText(file.readAll());
-  if(ast)
-  {
-    std::cerr << ast->toStringTree() << std::endl << std::endl;
+  return m_browserList;
+}
 
-    PHPNodeWalker walker;
-    QValueList<BrowserNode*> list = walker.start(ast);
-    m_browserList->loadNodes(list);
+void BrowserTab::slotGotoFileLine(const KURL& url, int line)
+{
+  activateDocument(url);
+  m_app->activeMainWindow()->viewManager()->activeView()->setCursorPosition(line-1, 0);
+}
+
+void BrowserTab::activateDocument(const KURL& url)
+{
+  int c = m_app->documentManager()->findDocument(url);
+  if(c != -1)
+  {
+    m_app->activeMainWindow()->viewManager()->activateView(c);
+  }
+  else
+  {
+    m_app->activeMainWindow()->viewManager()->openURL(url);
   }
 }
 
-#include "browsertab.h"
+#include "browsertab.moc"

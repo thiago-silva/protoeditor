@@ -27,27 +27,39 @@ class QToolButton;
 class BrowserListView;
 
 class SchemaSettings;
+class BrowserLoader;
+class KURL;
+
+namespace Kate { class Application; }
 
 class BrowserTab : public QWidget
 {
   Q_OBJECT
 public:
-  BrowserTab(QWidget*, const char* = 0);
+  BrowserTab(Kate::Application *app, QWidget*,const char* = 0);
   ~BrowserTab();
+
+  BrowserListView* listView();
 
 protected slots:
   void slotConfigureSchemas();
 
-  SchemaSettings* m_settings;
+private slots:
+  void slotGotoFileLine(const KURL&, int);
 
 private:
-  void updateBrowser();
+  void reloadSettings();
+
+  void activateDocument(const KURL&);
+
+  Kate::Application* m_app;
 
   QComboBox* m_cbSchema;
   QToolButton* m_btConfig;
-  BrowserListView* m_browserList;
+  BrowserListView* m_browserList; 
 
-  void reloadSettings();
+  SchemaSettings* m_settings;
+  BrowserLoader* m_loader;
 };
 
 #endif
