@@ -36,26 +36,26 @@ public:
   ~BrowserNode();
 
   void setName(const QString&);
-  QString name();
+  QString name() const;
 
   void setType(int type);
-  int type();
+  int type() const;
 
   void setFileURL(const KURL&);
-  KURL fileURL();
+  KURL fileURL() const;
 
   void setLine(int);
-  int line();
+  int line() const;
 
   void setVisibility(int);
-  int visibility();
+  int visibility() const;
 
   void setStatic(bool);
-  bool isStatic();
+  bool isStatic() const;
 
   void addChild(BrowserNode*);
   void setChilds(QValueList<BrowserNode*>);
-  QValueList<BrowserNode*> childs();
+  QValueList<BrowserNode*> childs() const;
 
 private:
   QString m_name;

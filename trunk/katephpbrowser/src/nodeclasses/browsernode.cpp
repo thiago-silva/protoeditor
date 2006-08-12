@@ -25,17 +25,24 @@ BrowserNode::BrowserNode()
 {
 }
 
+// BrowserNode::BrowserNode(const BrowserNode& other)
+//   : m_name(other.m_name),m_type(other.m_type), m_url(other.m_url), 
+//     m_line(other.m_line), m_visibility(other.m_visibility), m_static(other.m_static),
+//     m_childs(other.m_childs)
+// {
+//   
+// }
+
 BrowserNode::~BrowserNode()
 {
 }
-
 
 void BrowserNode::setName(const QString& name)
 {
   m_name = name;
 }
 
-QString BrowserNode::name()
+QString BrowserNode::name() const
 {
   return m_name;
 }
@@ -46,7 +53,7 @@ void BrowserNode::setType(int type)
   m_type = type;
 }
 
-int BrowserNode::type()
+int BrowserNode::type() const
 {
   return m_type;
 }
@@ -56,7 +63,7 @@ void BrowserNode::setFileURL(const KURL& url)
   m_url = url;
 }
 
-KURL BrowserNode::fileURL()
+KURL BrowserNode::fileURL() const
 {
   return m_url;
 }
@@ -66,7 +73,7 @@ void BrowserNode::setLine(int line)
   m_line = line;
 }
 
-int BrowserNode::line()
+int BrowserNode::line() const
 {
   return m_line;
 }
@@ -76,7 +83,7 @@ void BrowserNode::setVisibility(int v)
   m_visibility = v;
 }
 
-int BrowserNode::visibility()
+int BrowserNode::visibility() const
 {
   return m_visibility;
 }
@@ -86,7 +93,7 @@ void BrowserNode::setStatic(bool value)
   m_static = value;
 }
 
-bool BrowserNode::isStatic()
+bool BrowserNode::isStatic() const
 {
   return m_static;
 }
@@ -102,7 +109,25 @@ void BrowserNode::setChilds(QValueList<BrowserNode*> list)
   m_childs = list;
 }
 
-QValueList<BrowserNode*> BrowserNode::childs()
+QValueList<BrowserNode*> BrowserNode::childs() const
 {
   return m_childs;
 }
+
+// BrowserNode& BrowserNode::operator=(const BrowserNode& right)
+// {
+//   if(this == &right)
+//   {
+//     return *this;
+//   }
+// 
+//   m_name = right.m_name;
+//   m_type = right.m_type;
+//   m_url  = right.m_url;
+//   m_line = right.m_line;
+//   m_visibility = right.m_visibility;
+//   m_static = right.m_static;
+//   m_childs = right.m_childs;
+// 
+//   return *this;
+// }
