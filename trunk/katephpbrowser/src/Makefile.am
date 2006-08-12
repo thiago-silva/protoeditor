@@ -7,7 +7,8 @@ KDE_CXXFLAGS = $(USE_EXCEPTIONS)
 kde_module_LTLIBRARIES = katephpbrowserplugin.la
 
 katephpbrowserplugin_la_SOURCES = plugin_katephpbrowser.cpp browsertab.cpp \
-		browserlistview.cpp schemaconfigurationdlg.cpp schemasettings.cpp schema.cpp
+			browserlistview.cpp schemaconfigurationdlg.cpp schemasettings.cpp schema.cpp \
+	browserloader.cpp browserlistviewitem.cpp
 katephpbrowserplugin_la_LIBADD = $(top_builddir)/src/parser/libphpparser.la \
 	$(top_builddir)/src/nodeclasses/libnodes.la -lkateinterfaces
 katephpbrowserplugin_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
@@ -21,5 +22,5 @@ kde_services_DATA = katephpbrowser.desktop
 # 	$(EXTRACTRC) `find . -name \*.ui -o -name \*.rc` > rc.cpp
 # 	$(XGETTEXT) *.cpp -o $(podir)/katephpbrowser.pot
 noinst_HEADERS = browsertab.h browserlistview.h schemaconfigurationdlg.h \
-	schemasettings.h schema.h
+		schemasettings.h schema.h browserloader.h browserlistviewitem.h
 SUBDIRS = parser nodeclasses
