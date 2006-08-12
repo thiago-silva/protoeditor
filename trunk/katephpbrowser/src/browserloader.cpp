@@ -41,18 +41,18 @@ BrowserLoader::~BrowserLoader()
 void BrowserLoader::update(const Schema& schema)
 {
   m_dirlist = schema.directoryList();
+
+  if(m_dirlist.count() == 0) return;
+
+  m_currentURL = m_dirlist.front();
+  m_dirlist.pop_front();
   processDirectories();
 }
 
 void BrowserLoader::processDirectories()
 {
-  if(m_dirlist.size() == 0) return;
-
-  m_currentURL = m_dirlist.front();
-  m_dirlist.pop_front();
-
   KIO::ListJob *job;
-  job = KIO::listRecursive(m_currentURL, false,false);
+  job = KIO::listDir(m_currentURL, false,false);
 
   connect(job, SIGNAL(entries(KIO::Job*, const KIO::UDSEntryList&)),
       SLOT(slotEntries(KIO::Job*, const KIO::UDSEntryList&)));
@@ -71,7 +71,13 @@ void BrowserLoader::slotResult(KIO::Job *job)
 		//job->showErrorDialog();
     //ops!
   }
-	processDirectories();
+
+  if(m_dirlist.count() != 0) 
+  {    
+    m_currentURL = m_dirlist.front();
+    m_dirlist.pop_front();
+    processDirectories();
+  }
 }
 
 void BrowserLoader::slotRedirection(KIO::Job *, const KURL & url)
@@ -90,6 +96,7 @@ void BrowserLoader::slotEntries(KIO::Job *, const KIO::UDSEntryList &entries)
     KFileItem file(*it, m_currentURL, false /* no mimetype detection */, true);
     if (!file.isDir() && (file.url().filename().right(4) == ".php"))
     {   
+      KURL url = file.url();
       QValueList<BrowserNode*> list = parser.parseURL(file.url());
       if(list.count() > 0)
       { 
