@@ -109,13 +109,7 @@ scopes_ex
 
 //Should be clearer....
 other_scope
-{
-  int typee, line;RefToken  tt;
-  tt = LT(1); 
-  typee = tt->getType(); 
-  line = tt->getLine();
-}
-  :! ~(EOF) { tt = LT(1); typee = tt->getType(); line = tt->getLine();}
+  :! ~(EOF)
   ;        
 
 
@@ -126,6 +120,7 @@ php_scope
 stuff
   :! (T_FUNCTION)=> f:function_decl {#stuff = #([T_FUNCTION,"function"], (f, [T_PUBLIC,"public"]));}
   |  (T_CLASS)=> T_CLASS^ class_decl
+  |  (T_ABSTRACT)=> T_ABSTRACT! T_CLASS^ class_decl
   |  (T_INTERFACE)=> T_INTERFACE^ interface_decl //deal with interfaces just like classes
   |! ~(T_END_PHP)
   ;
@@ -145,7 +140,7 @@ interface_decl
   ;
 
 interf_member
-  :! a:access_modifier f:T_FUNCTION i:T_IDENTIFIER  params {#interf_member = #(f, (i, a));}
+  :! a:access_modifier f:T_FUNCTION i:T_IDENTIFIER  params T_TERMINATOR {#interf_member = #(f, (i, a));}
   | const_attr
   ;
 
@@ -157,17 +152,34 @@ class_member
   |! m:function_decl! {#class_member = #([T_FUNCTION,"function"], (m, [T_PUBLIC,"public"]));}
   ;
 
+/*
+  function f() {}
+  public function f() {}
+  abstract public function f();
+  abstract function f();
+  public abstract function f();
+
+  ---
+  var $x;
+  var $x = 2;
+  var $x, $u = 2;
+  public $x;
+  public $x = 3;
+  public static $x;
+  public static $x = 3;
+*/
 access_member!
   : a:access_modifier (s:T_STATIC)? 
       (
-          v:vars {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
-        | m:function_decl {#access_member = #([T_FUNCTION,"function"], (m, a));}
-      )   
+          v:vars (~(T_TERMINATOR|T_VARIABLE))* T_TERMINATOR! {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
+        | (T_ABSTRACT!)? m:function_decl {#access_member = #([T_FUNCTION,"function"], (m, a));}
+      )
+  | T_ABSTRACT (aa:access_modifier)? mm:function_decl {#access_member = #([T_FUNCTION,"function"], (mm, aa));}
   ;
 
 static_member!
   : T_STATIC 
-      (   v:vars  {#static_member = #([T_VAR, "var"], ([T_VARIABLES,"vars:"], v, ([T_MODIFIERS,"mods"],[T_PUBLIC,"public"], [T_STATIC,"static"])));}
+      (   v:vars  T_TERMINATOR! {#static_member = #([T_VAR, "var"], ([T_VARIABLES,"vars:"], v, ([T_MODIFIERS,"mods"],[T_PUBLIC,"public"], [T_STATIC,"static"])));}
         | m:function_decl  {#static_member = #([T_FUNCTION,"function"], (m, [T_PUBLIC,"public"], [T_STATIC,"static"]));}
       )
   ;
@@ -182,7 +194,7 @@ access_modifier
 //   ;
 
 var_attr!
-  : t:T_VAR v:vars
+  : t:T_VAR v:vars T_TERMINATOR!
   {#var_attr = #([T_VAR, "var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS, "mods:"], [T_PUBLIC,"public"])));}
   ;
 
@@ -195,17 +207,17 @@ const_attr!
   {#const_attr = #(c, i);}
   ;
 
-interf_funcs
-  : T_FUNCTION^ T_IDENTIFIER  params
+function_decl
+  : T_FUNCTION! T_IDENTIFIER  params function_decl_ex
   ;
 
-function_decl
-  : T_FUNCTION! T_IDENTIFIER  params
-    T_OPEN_BRACKET!
+function_decl_ex
+  : T_OPEN_BRACKET!
 
     (deal_function_body)*
 
     T_CLOSE_BRACKET!
+  | T_TERMINATOR!
   ;
 
 params!
