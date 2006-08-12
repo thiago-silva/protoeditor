@@ -154,6 +154,7 @@ function returns [BrowserNode* node]
     {
       node = new BrowserNode();
       node->setName(t->getText().c_str());
+      node->setType(BrowserNode::MethodType);
       node->setVisibility(a);
       node->setStatic(isStatic);
       node->setLine(t->getLine());
