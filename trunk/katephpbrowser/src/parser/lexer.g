@@ -51,6 +51,7 @@ tokens {
   T_CONST="const";
   T_EXTENDS="extends";
   T_IMPLEMENTS="implements";  
+  T_ABSTRACT="abstract";
 
   T_PHP_MODULE;
 
