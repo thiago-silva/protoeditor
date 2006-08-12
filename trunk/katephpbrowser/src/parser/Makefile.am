@@ -8,8 +8,8 @@ libphpparser_la_LIBADD = -lantlr
 BUILT_SOURCES = PHPLexer.cpp  PHPParser.cpp PHPNodeWalker.cpp
 ANTLR_BIN = antlr
 
-libphpparser_la_SOURCES = $(BUILT_SOURCES) phpbrowserparser.cpp
-noinst_HEADERS = phpbrowserparser.h
+libphpparser_la_SOURCES = $(BUILT_SOURCES) phpbrowserparser.cpp PHPAST.cpp
+noinst_HEADERS = phpbrowserparser.h PHPAST.hpp
 
 lexer_g       = lexer.g
 parser_g      = parser.g
