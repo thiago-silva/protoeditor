@@ -24,6 +24,8 @@
 #include <qvaluelist.h>
 
 class BrowserNode;
+class KURL;
+class BrowserListViewItem;
 
 class BrowserListView : public KListView
 {
@@ -32,11 +34,16 @@ public:
   BrowserListView(QWidget*, const char* = 0);
   ~BrowserListView();
 
-  void loadNodes(QValueList<BrowserNode*>);
-private:
-  void addNode(BrowserNode* node, QListViewItem* parent = 0);
+  void loadFileNodes(const KURL&, const QValueList<BrowserNode*>&);
 
-  QValueList<BrowserNode*> m_list;
+signals:
+  void gotoFileLine(const KURL&, int);
+
+private slots:
+  void slotDoubleClick(QListViewItem*, const QPoint&, int);
+
+private:
+  void addNode(BrowserNode* node, BrowserListViewItem* parent = 0);  
 };
 
 #endif

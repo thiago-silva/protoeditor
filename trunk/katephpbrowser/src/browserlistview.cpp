@@ -18,9 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "browserlistview.h"
+#include "browserlistviewitem.h"
+
 #include <klocale.h>
 #include <qheader.h>
-
 #include "browsernode.h"
 
 BrowserListView::BrowserListView(QWidget* parent, const char* name)
@@ -33,37 +34,53 @@ BrowserListView::BrowserListView(QWidget* parent, const char* name)
   addColumn("");
 
   header()->hide();
+
+  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int)),
+          this, SLOT(slotDoubleClick(QListViewItem *, const QPoint &, int)));
+
 }
 
 BrowserListView::~BrowserListView()
 {
 }
 
-void BrowserListView::loadNodes(QValueList<BrowserNode*> list)
+void BrowserListView::slotDoubleClick(QListViewItem *item, const QPoint&, int)
 {
-  m_list = list;
-  for(QValueList<BrowserNode*>::iterator it = list.begin(); it != list.end(); ++it)
+  if(!item) return;
+
+  BrowserListViewItem *vitem = dynamic_cast<BrowserListViewItem*>(item);
+
+  emit gotoFileLine(vitem->getFileURL(), vitem->getLine());
+}
+
+void BrowserListView::loadFileNodes(const KURL& url, const QValueList<BrowserNode*>& list)
+{
+  BrowserListViewItem* item = new BrowserListViewItem(this, url.filename(), url, 0);
+
+  for(QValueList<BrowserNode*>::const_iterator it = list.begin(); it != list.end(); ++it)
   {
-    addNode(*it);
+    addNode(*it, item);
   }
 }
 
-void BrowserListView::addNode(BrowserNode* node, QListViewItem* parent)
+void BrowserListView::addNode(BrowserNode* node, BrowserListViewItem* parent)
 {
-  QListViewItem* item;
+  BrowserListViewItem* item;
   if (parent)
   {
-    item = new QListViewItem(parent);
+    item = new BrowserListViewItem(parent, node->name(), node->fileURL(), node->line());
   }
   else
   {
-    item = new QListViewItem(this);
+    item = new BrowserListViewItem(this, node->name(), node->fileURL(), node->line());
   }
-  item->setText(0, node->name());
+  QString name = node->name();
+  item->setText(0, name);
 
-  if(node->childs().count() > 0)
-  {
-    QValueList<BrowserNode*> list = node->childs();
+  QValueList<BrowserNode*> list = node->childs();
+
+  if(list.count() > 0)
+  {    
     for(QValueList<BrowserNode*>::iterator it = list.begin(); it != list.end(); ++it)
     {
       addNode(*it, item);
