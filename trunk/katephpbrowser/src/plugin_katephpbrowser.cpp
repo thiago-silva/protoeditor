@@ -57,15 +57,7 @@ void PluginKatePHPBrowser::addView(Kate::MainWindow *win)
   QWidget* dock = tool_view_manager->createToolView("kate_plugin_phpbrowser",
       Kate::ToolViewManager::Left, SmallIcon("gear"), i18n("PHP Browser"));
 
-  (void)new BrowserTab(dock);
-
-/*     (void) new KAction ( i18n("Insert Hello World"), 0, this,
-                      SLOT( slotInsertHello() ), view->actionCollection(),
-                      "edit_insert_katephpbrowser" );
-*/
-//     view->setInstance (new KInstance("kate"));
-//     view->setXMLFile("plugins/katephpbrowser/plugin_katephpbrowser.rc");
-//     win->guiFactory()->addClient (view);
+  (void)new BrowserTab(application(), dock);
 
    view->win = win ;
    view->dock = dock;
@@ -78,7 +70,6 @@ void PluginKatePHPBrowser::removeView(Kate::MainWindow *win)
     {
       PluginView *view = m_views.at(z);
       m_views.remove (view);
-//       win->guiFactory()->removeClient (view);
       delete view->dock;
       delete view;
     }
