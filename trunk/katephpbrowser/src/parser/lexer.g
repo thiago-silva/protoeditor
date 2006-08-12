@@ -31,7 +31,7 @@ options {
 class PHPLexer extends Lexer;
 options {
   k=2;
-//   charVocabulary='\u0003'..'\u00FF'; // latin-1  
+  charVocabulary='\u0003'..'\u00FF'; // latin-1  
   exportVocab=PHP;
   filter=T_IGNORE;
   genHashLines=false;//no #line in the generated code
@@ -49,6 +49,8 @@ tokens {
   T_STATIC="static";
   T_VAR="var";
   T_CONST="const";
+  T_EXTENDS="extends";
+  T_IMPLEMENTS="implements";  
 
   T_PHP_MODULE;
 
@@ -73,12 +75,34 @@ tokens {
 
 //////////------------------------
 
+T_TERMINATOR
+  : ';'
+  {
+    if(!php_context) {
+      $setType(antlr::Token::SKIP);
+    }
+  }
+
+  ;
+
 T_OPEN_PAR
   : '('
+  {
+    if(!php_context) {
+      $setType(antlr::Token::SKIP);
+    }
+  }
+
   ;
 
 T_CLOSE_PAR
   : ')'
+  {
+    if(!php_context) {
+      $setType(antlr::Token::SKIP);
+    }
+  }
+
   ;
 
 protected
@@ -94,7 +118,7 @@ T_LETTER
 T_IDENTIFIER
 options {
   paraphrase = "T_IDENTIFIER";
-  testLiterals = true;
+  testLiterals = false;
 }
   : (T_LETTER | '_') (T_LETTER | T_DIGIT | '_')*
   {
@@ -120,7 +144,7 @@ T_START_PHP
   :
     (
       '<' (
-              '?' ( ('=') | ( "php") )
+              '?' ( ('=') | ( "php") )?
             | "script" (T_WS_)+ "language" (T_WS_)* '=' (T_WS_)* ("php"|"\"php\""|"\'php\'") (T_WS_)* '>'
             | '%' ('=')?
           )
@@ -172,20 +196,40 @@ T_CLOSE_BRACKET
   ;
 
 T_STRING_LIT
-  : '"'! ( ~( '"' | '\\' | '\n' | '\r') | ESC)* '"'!
-  {$setType(antlr::Token::SKIP);}
+  : '"' ( ~( '"' | '\\' | '\n' | '\r' ) | LINE_BRK | ESC)* '"'  
+  {
+    if(!php_context) {
+      $setType(antlr::Token::SKIP);
+    }
+  }
+
   ;
 
 T_CARAC_LIT
-  : '\''! ( ~( '\'' | '\\' ) | ESC )? '\''!
-  {$setType(antlr::Token::SKIP);}
+  : '\'' ( ~( '\'' | '\\' | '\n' | '\r' ) | LINE_BRK | ESC)* '\''  
+  {
+    if(!php_context) {
+      $setType(antlr::Token::SKIP);
+    }
+  }
+
   ;
+
+// T_CARAC_LIT
+//   : '\''! ( ~( '\'' | '\\' ) | ESC )? '\''!
+//   {$setType(antlr::Token::SKIP);}
+//   ;
 
 protected
 ESC
-  : '\\' . //permite "\a" (possibilida ser avaliado posteriormente como "a")
+  : '\\' ESCAPED
   ;
 
+protected
+ESCAPED
+  : ('\n') => '\n' {newline();}
+  | .
+  ;
 
 T_WS_ : (' '
   | '\t'
@@ -218,7 +262,16 @@ ML_COMMENT
   ;
 
 protected
+LINE_BRK
+  : '\n'                     {newline();}
+  | ('\r' '\n')=> '\r' '\n'  {newline();}
+  | '\r'                     {newline();}  
+  ;
+
+protected
 T_IGNORE
-  : . 
-    {$setType(antlr::Token::SKIP);}  
+  : ('\n')=> '\n'            {newline();$setType(antlr::Token::SKIP);}
+  | ('\r' '\n')=> '\r' '\n'  {newline();$setType(antlr::Token::SKIP);}
+  | ('\r')=> '\r'            {newline();$setType(antlr::Token::SKIP);}
+  | . {$setType(antlr::Token::SKIP);}
   ;
