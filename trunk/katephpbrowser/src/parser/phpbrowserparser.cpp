@@ -25,6 +25,9 @@
 
 #include "PHPLexer.hpp"
 #include "PHPParser.hpp"
+#include "PHPNodeWalker.hpp"
+
+#include <qfile.h>
 
 PHPBrowserParser::PHPBrowserParser()
 {
@@ -35,28 +38,42 @@ PHPBrowserParser::~PHPBrowserParser()
 {
 }
 
-antlr::RefAST PHPBrowserParser::parseText(const QString& text)
+QValueList<BrowserNode*> PHPBrowserParser::parseURL(const KURL& url)
 {
+  QFile file(url.path());
+  file.open(IO_ReadOnly);
+
   stringstream s;
-  std::string str = text.ascii();
-  s << str;
+  s << QString(file.readAll()).latin1();
 
-  antlr::RefAST astree;
+//   DEBUG_PARSER = true;
+  RefPHPAST astree;
 
+  PHPBrowserParser parser;
+
+  QValueList<BrowserNode*> list;
   try 
   {
     PHPLexer lexer(s);
     PHPParser parser(lexer);
     
-		antlr::ASTFactory ast_factory;
+		antlr::ASTFactory ast_factory(PHPAST::TYPE_NAME,&PHPAST::factory);
 		parser.initializeASTFactory(ast_factory);
 		parser.setASTFactory(&ast_factory);
 
     parser.start();
 
     astree = parser.getAST();
+
+    if(astree)
+    {
+//       std::cerr << astree->toStringTree() << std::endl << std::endl;
+  
+      PHPNodeWalker walker(url);
+      list = walker.start(astree);      
+    }
   }
   catch (exception& e) { }    
 
-  return astree;
+  return list;
 }

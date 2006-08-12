@@ -21,10 +21,10 @@
 #define PHPBROWSERPARSER_H
 
 #include <qstring.h>
-
-#include "antlr/AST.hpp"
+#include <qvaluelist.h>
 
 class KURL;
+class BrowserNode;
 
 class PHPBrowserParser
 {
@@ -32,7 +32,7 @@ public:
   PHPBrowserParser();
   ~PHPBrowserParser();
 
-  antlr::RefAST parseText(const QString&);
+  QValueList<BrowserNode*> parseURL(const KURL&);
 };
 
 #endif
