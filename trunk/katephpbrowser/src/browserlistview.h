@@ -21,7 +21,8 @@
 #define BROWSERLISTVIEW_H
 
 #include <klistview.h>
-#include <qvaluelist.h>
+#include <qptrlist.h>
+#include <qmap.h>
 
 class BrowserNode;
 class KURL;
@@ -34,16 +35,37 @@ public:
   BrowserListView(QWidget*, const char* = 0);
   ~BrowserListView();
 
-  void loadFileNodes(const KURL&, const QValueList<BrowserNode*>&);
+  void addFileNodes(const KURL&, QPtrList<BrowserNode>);
 
+  void clear();
 signals:
   void gotoFileLine(const KURL&, int);
 
 private slots:
   void slotDoubleClick(QListViewItem*, const QPoint&, int);
+  void slotContextMenuRequested(QListViewItem*, const QPoint&, int);
+
+  void slotItemExpanded(QListViewItem*);
+  void slotItemCollapsed(QListViewItem*);
+
+protected:
+  void movableDropEvent(QListViewItem*, QListViewItem*);
 
 private:
   void addNode(BrowserNode* node, BrowserListViewItem* parent = 0);  
+  BrowserListViewItem* lastRootItem();
+
+  void reexpandItems();
+  BrowserListViewItem* getItemFromPath(QString);
+
+  void createFolder(const QString&);
+  void deleteFolder(QListViewItem*);
+  bool folderExists(const QString&);
+
+
+
+  QMap<KURL, QPair<BrowserListViewItem*, QPtrList<BrowserNode> > > m_map;
+  QValueList<QString>    m_expanded;
 };
 
 #endif
