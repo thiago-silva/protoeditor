@@ -52,27 +52,34 @@ public:
 private slots:
   void slotSelectionChanged();
   void slotAdd();
+  void slotAddRecursive();
   void slotRemove();
   void slotClear();
 
+  void slotNewSchema();
   void slotSaveSchema();
   void slotDeleteSchema();
 
   void slotSchemaChanged(int);
 
 protected slots:
-//   void slotOk();
+  void slotOk();
 private:
   void loadCurrentSchema();
   bool directoryExists(const QString&);
 
+  void addDirectory(const QString&);
+  void addRecursive(const QString&);
+
   QValueList<KURL> URLValues();
 
   QComboBox* m_cbSchemas;
+  QToolButton* m_btNewSchema;
   QToolButton* m_btSaveSchema;
   QToolButton* m_btDeleteSchema;  
   KListView* m_schemaListView;
   QPushButton* m_btAdd;
+  QPushButton* m_btAddRecursive;
   QPushButton* m_btRemove;
   QPushButton* m_btClear;
   KURLRequester* m_urlDirectory;

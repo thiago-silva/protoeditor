@@ -34,7 +34,7 @@
 
 
 SchemaConfigurationDialog::SchemaConfigurationDialog(QWidget* parent, const char* name)
-  : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, i18n("Schema configuration"), KDialogBase::Ok|KDialogBase::Cancel)
+  : KDialogBase(KDialogBase::Plain, WStyle_DialogBorder, parent, name, true, i18n("Browser configuration"), KDialogBase::Ok|KDialogBase::Cancel)
 {
   QFrame *frame = plainPage();
 
@@ -43,12 +43,18 @@ SchemaConfigurationDialog::SchemaConfigurationDialog(QWidget* parent, const char
   QHBoxLayout* hbox = new QHBoxLayout(0, 0, 6);
 
   QLabel* lb = new QLabel(frame);
-  lb->setText(i18n("Schemas:"));
+  lb->setText(i18n("Resource:"));
   lb->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, lb->sizePolicy().hasHeightForWidth()));
   hbox->addWidget(lb);
 
   m_cbSchemas = new QComboBox(frame);
   hbox->addWidget(m_cbSchemas);
+
+  
+  m_btNewSchema = new QToolButton(frame);
+  m_btNewSchema->setIconSet(SmallIcon("filenew"));
+  m_btNewSchema->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, lb->sizePolicy().hasHeightForWidth()));
+  hbox->addWidget(m_btNewSchema);
 
   m_btSaveSchema = new QToolButton(frame);
   m_btSaveSchema->setIconSet(SmallIcon("filesave"));
@@ -66,7 +72,7 @@ SchemaConfigurationDialog::SchemaConfigurationDialog(QWidget* parent, const char
   hbox = new QHBoxLayout(0, 1, 1);
 
   lb = new QLabel(frame);
-  lb->setText(i18n("Schema name:"));
+  lb->setText(i18n("Resource name:"));
   lb->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, lb->sizePolicy().hasHeightForWidth()));
   hbox->addWidget(lb);
   m_edName = new KLineEdit(frame);
@@ -75,6 +81,7 @@ SchemaConfigurationDialog::SchemaConfigurationDialog(QWidget* parent, const char
   mainLayout->addLayout(hbox);
 
   m_schemaListView = new KListView(frame);
+  m_schemaListView->setSelectionMode(QListView::Extended);
   m_schemaListView->addColumn("");
   m_schemaListView->header()->hide();
   m_schemaListView ->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -99,6 +106,11 @@ SchemaConfigurationDialog::SchemaConfigurationDialog(QWidget* parent, const char
   m_btAdd->setText(i18n("Add"));
   hbox->addWidget(m_btAdd);
 
+  m_btAddRecursive = new QPushButton(frame);
+  m_btAddRecursive->setText(i18n("Add recursive"));
+  hbox->addWidget(m_btAddRecursive);
+  
+
   m_btRemove = new QPushButton(frame);
   m_btRemove->setText(i18n("Remove"));
   hbox->addWidget(m_btRemove);
@@ -111,23 +123,28 @@ SchemaConfigurationDialog::SchemaConfigurationDialog(QWidget* parent, const char
   mainLayout->addLayout(hbox);
 
   enableButtonSeparator(true);
-  resize( QSize(400, 400).expandedTo(minimumSizeHint()) );
 
   connect(m_btAdd, SIGNAL(clicked()), this, SLOT(slotAdd()));
+  connect(m_btAddRecursive, SIGNAL(clicked()), this, SLOT(slotAddRecursive()));
   connect(m_btRemove, SIGNAL(clicked()), this, SLOT(slotRemove()));
 //   connect(m_btClear, SIGNAL(clicked()), this, SLOT(slotClear()));
 
   connect(m_cbSchemas, SIGNAL(activated(int)), 
     this, SLOT(slotSchemaChanged(int)));  
 
-  connect(m_btDeleteSchema, SIGNAL(clicked()), this, SLOT(slotDeleteSchema()));
+  
+  connect(m_btNewSchema, SIGNAL(clicked()), this, SLOT(slotNewSchema()));
 
   connect(m_btSaveSchema, SIGNAL(clicked()), this, SLOT(slotSaveSchema()));
+
+  connect(m_btDeleteSchema, SIGNAL(clicked()), this, SLOT(slotDeleteSchema()));
   
   connect(m_schemaListView, SIGNAL(selectionChanged()), this, 
       SLOT(slotSelectionChanged()));
 
   m_btRemove->setEnabled(false);
+
+  resize(QSize(590, 300).expandedTo(minimumSizeHint()));
 }
 
 SchemaConfigurationDialog::~SchemaConfigurationDialog()
@@ -170,15 +187,50 @@ void SchemaConfigurationDialog::slotAdd()
   }
   else  
   {
-    QListViewItem* item = new QListViewItem(m_schemaListView);
-    item->setText(0, KURL::fromPathOrURL(m_urlDirectory->url()).prettyURL());
-
-    m_schema.setDirectoryList(URLValues());    
+    addDirectory(m_urlDirectory->url());
     m_urlDirectory->clear();
+  }
+}
 
-    if(m_map.contains(m_schema.name()))
+void SchemaConfigurationDialog::addDirectory(const QString& path)
+{
+  QListViewItem* item = new QListViewItem(m_schemaListView);
+  item->setText(0, KURL::fromPathOrURL(path).prettyURL());
+}
+
+void SchemaConfigurationDialog::slotAddRecursive()
+{
+  if(m_urlDirectory->url().isEmpty())
+  {
+    KMessageBox::sorry(this, i18n("Invalid URL"));
+  }
+  else if(directoryExists(m_urlDirectory->url()))
+  {
+    KMessageBox::sorry(this, i18n("URL already added"));
+  }
+  else
+  {
+    addDirectory(m_urlDirectory->url());
+    addRecursive(m_urlDirectory->url());
+    m_urlDirectory->clear();
+  }
+}
+
+void SchemaConfigurationDialog::addRecursive(const QString& path)
+{
+  QDir dir(path);
+  if(dir.exists() && dir.isReadable())
+  {
+    dir.setFilter(QDir::Dirs);
+    QStringList list = dir.entryList();
+    for(QStringList::Iterator it = list.begin(); it != list.end(); ++it) 
     {
-      m_map[m_schema.name()] = m_schema;
+      QDir other(*it);
+      if(dir.isReadable() && ((*it) != ".") && ((*it) != ".."))
+      {
+        addDirectory(path + other.absPath());
+        addRecursive(path + other.absPath());
+      }
     }
   }
 }
@@ -212,21 +264,22 @@ bool SchemaConfigurationDialog::directoryExists(const QString& dir)
 
 void SchemaConfigurationDialog::slotRemove()
 {
-  QListViewItem* item = m_schemaListView->selectedItem();
+  QPtrList<QListViewItem>  items = m_schemaListView->selectedItems();
+
+  QListViewItem* item;
+  for(item = items.first(); item; item = items.next())
+  {
+    delete item;
+  }
 
   m_schema.setDirectoryList(URLValues());
 
-  delete item;  
-
   m_schemaListView->clearSelection();
-  m_urlDirectory->clear();
 
-  m_schema.setDirectoryList(URLValues()); 
-
-  if(m_map.contains(m_schema.name()))
-  {
-    m_map[m_schema.name()] = m_schema;
-  }
+//   if(m_map.contains(m_schema.name()))
+//   {
+//     m_map[m_schema.name()] = m_schema;
+//   }
 }
 
 void SchemaConfigurationDialog::slotClear()
@@ -240,9 +293,7 @@ void SchemaConfigurationDialog::slotClear()
 
 void SchemaConfigurationDialog::slotSelectionChanged()
 {
-  QListViewItem* item = m_schemaListView->selectedItem();
-
-  if(item)
+  if(m_schemaListView->selectedItems().count() != 0)
   {
     m_btRemove->setEnabled(true);
   } 
@@ -252,19 +303,44 @@ void SchemaConfigurationDialog::slotSelectionChanged()
   }
 }
 
-void SchemaConfigurationDialog::slotSaveSchema()
-{  
-  m_schema = Schema(m_edName->text(), URLValues());
-  m_map[m_schema.name()] = m_schema;
 
-  for(int i = 0; i < m_cbSchemas->count(); ++i)
+void SchemaConfigurationDialog::slotNewSchema()
+{
+  slotClear();
+}
+
+void SchemaConfigurationDialog::slotSaveSchema()
+{
+  QString oldname = m_schema.name();
+  if(oldname.isEmpty() && m_map.contains(m_edName->text()))
   {
-    if(m_cbSchemas->text(i) == m_schema.name())
+    KMessageBox::sorry(this, i18n("Schema \"") + m_edName->text() + i18n("\" already exists"));
+    return;
+  }
+
+  m_schema.setName(m_edName->text());
+  m_schema.setDirectoryList(URLValues());
+
+  if(!oldname.isEmpty())
+  {
+    m_map.remove(m_schema.name());
+    m_map[m_schema.name()] = m_schema;
+    for(int i = 0; i < m_cbSchemas->count(); ++i)
     {
-      return;
+      if(m_cbSchemas->text(i) == oldname)
+      {
+        m_cbSchemas->changeItem(m_schema.name(), i);
+        m_cbSchemas->setCurrentItem(i);
+        break;
+      }
     }
   }
-  m_cbSchemas->insertItem(m_schema.name());
+  else
+  {
+    m_map[m_schema.name()] = m_schema;
+    m_cbSchemas->insertItem(m_schema.name());    
+    m_cbSchemas->setCurrentItem(m_cbSchemas->count()-1);
+  }  
 }
 
 void SchemaConfigurationDialog::slotDeleteSchema()
@@ -273,7 +349,17 @@ void SchemaConfigurationDialog::slotDeleteSchema()
   if(idx != -1)
   {
     m_map.remove(m_cbSchemas->currentText());
-    m_cbSchemas->removeItem(idx);
+    m_cbSchemas->removeItem(idx);    
+    m_cbSchemas->setCurrentItem(m_cbSchemas->count()-1);
+  }
+  
+  if(m_cbSchemas->count() > 0)
+  {
+    m_schema = m_map[m_cbSchemas->currentText()];
+    loadCurrentSchema();
+  }
+  else
+  {
     slotClear();
   }
 }
@@ -307,20 +393,11 @@ void SchemaConfigurationDialog::loadCurrentSchema()
   }
 }
 
-// void SchemaConfigurationDialog::slotOk()
-// {
-//   Schema s;
-// 
-//   s.setName(m_cbSchemas->currentText());
-//   
-//   QListViewItem* item = m_schemaListView->firstChild();
-//   while(item)
-//   {
-//     s.addDirectory(KURL::fromPathOrURL(item->text(0)));
-//     item = item->nextSibling();
-//   }
-//   KDialogBase::slotOk();
-// }
+void SchemaConfigurationDialog::slotOk()
+{
+  slotSaveSchema();
+  KDialogBase::slotOk();
+}
 
 QString SchemaConfigurationDialog::currentSchemaName()
 {
