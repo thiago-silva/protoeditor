@@ -28,20 +28,34 @@ class BrowserNode;
 class BrowserListViewItem : public KListViewItem
 {
 public:
-//   BrowserListViewItem(KListView *parent);
-  BrowserListViewItem(KListView *parent, const KURL&);
-  BrowserListViewItem(KListView *parent, BrowserNode*);
+  BrowserListViewItem(KListView*, const QString&);
+
+  BrowserListViewItem(KListView*, const KURL&);
+
+  BrowserListViewItem(KListViewItem*, const KURL&);
+
+  BrowserListViewItem(KListView*, BrowserNode*);
 //   BrowserListViewItem(KListViewItem *parent);
-  BrowserListViewItem(KListViewItem *parent, BrowserNode*);
+  BrowserListViewItem(KListViewItem*, BrowserNode*);
 
   ~BrowserListViewItem();
 
-  KURL getFileURL();
-  int getLine();
+  bool isFolder();
+
+  KURL fileURL();
+  int line();
+
+  QString stringPath();
+
+  BrowserListViewItem* lastItem();
+
+  void clear();
 private:
   void loadPixmap(BrowserNode*);
+
   int m_line;
   KURL m_url;
+  bool m_isFolder;
 };
 
 #endif

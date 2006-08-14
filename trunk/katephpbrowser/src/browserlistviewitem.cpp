@@ -23,22 +23,36 @@
 
 #include "browsernode.h"
 
+BrowserListViewItem::BrowserListViewItem(KListView *parent, const QString& label)
+  : KListViewItem(parent), m_line(0), m_url(), m_isFolder(true)
+{
+  setText(0, label);
+  setPixmap(0, SmallIcon("folder"));
+}
+
 BrowserListViewItem::BrowserListViewItem(KListView *parent, const KURL& url)
-  : KListViewItem(parent), m_line(0), m_url(url)
+  : KListViewItem(parent), m_line(0), m_url(url), m_isFolder(false)
+{
+  setPixmap(0, SmallIcon("source_php"));
+  setText(0, url.filename());
+}
+
+BrowserListViewItem::BrowserListViewItem(KListViewItem* parent, const KURL& url)
+  : KListViewItem(parent), m_line(0), m_url(url), m_isFolder(false)
 {
   setPixmap(0, SmallIcon("source_php"));
   setText(0, url.filename());
 }
 
 BrowserListViewItem::BrowserListViewItem(KListView *parent, BrowserNode* node)
-  : KListViewItem(parent), m_line(node->line()), m_url(node->fileURL())
+  : KListViewItem(parent), m_line(node->line()), m_url(node->fileURL()), m_isFolder(false)
 {
   setText(0, node->name());
   loadPixmap(node);
 }
 
 BrowserListViewItem::BrowserListViewItem(KListViewItem *parent, BrowserNode* node)
-  : KListViewItem(parent), m_line(node->line()), m_url(node->fileURL())
+  : KListViewItem(parent), m_line(node->line()), m_url(node->fileURL()), m_isFolder(false)
 {
   setText(0, node->name());
   loadPixmap(node);
@@ -48,14 +62,19 @@ BrowserListViewItem::~BrowserListViewItem()
 {
 }
 
-KURL BrowserListViewItem::getFileURL()
+KURL BrowserListViewItem::fileURL()
 {
   return m_url;
 }
 
-int BrowserListViewItem::getLine()
+int BrowserListViewItem::line()
 {
   return m_line;
+}
+
+bool BrowserListViewItem::isFolder()
+{
+  return m_isFolder;
 }
 
 void BrowserListViewItem::loadPixmap(BrowserNode* node)
@@ -79,5 +98,35 @@ void BrowserListViewItem::loadPixmap(BrowserNode* node)
       //check for access mode
       setPixmap(0, SmallIcon("next"));
       break;
+  }
+}
+
+QString BrowserListViewItem::stringPath()
+{
+  QListViewItem* item = this;
+  QString str = item->text(0);
+  while((item = item->parent()) != NULL) {
+    str = item->text(0) + "/" + str;
+  }
+  return str;
+}
+
+BrowserListViewItem* BrowserListViewItem::lastItem()
+{
+  QListViewItem *item =  firstChild();
+  while(item)
+  {
+    item = item->nextSibling();
+  }
+  return dynamic_cast<BrowserListViewItem*>(item);
+}
+
+void BrowserListViewItem::clear()
+{
+  QListViewItem *item =  firstChild();
+  while(item)
+  {
+    delete item;
+    item = firstChild();
   }
 }
