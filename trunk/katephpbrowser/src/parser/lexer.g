@@ -199,9 +199,9 @@ T_CLOSE_BRACKET
 T_STRING_LIT
   : '"' ( ~( '"' | '\\' | '\n' | '\r' ) | LINE_BRK | ESC)* '"'  
   {
-    if(!php_context) {
+//     if(!php_context) {
       $setType(antlr::Token::SKIP);
-    }
+//     }
   }
 
   ;
@@ -209,9 +209,9 @@ T_STRING_LIT
 T_CARAC_LIT
   : '\'' ( ~( '\'' | '\\' | '\n' | '\r' ) | LINE_BRK | ESC)* '\''  
   {
-    if(!php_context) {
+//     if(!php_context) {
       $setType(antlr::Token::SKIP);
-    }
+//     }
   }
 
   ;
