@@ -62,9 +62,13 @@ BrowserTab::BrowserTab(Kate::Application *app, QWidget* parent,const char* name)
   connect(m_browserList, SIGNAL(gotoFileLine(const KURL&, int)),
     this, SLOT(slotGotoFileLine(const KURL&, int)));
 
+  connect(m_cbSchema, SIGNAL(activated(int)),
+    this, SLOT(slotSchemaChanged(int)));
+
   connect(m_btConfig, SIGNAL(clicked()), this, SLOT(slotConfigureSchemas()));
 
   reloadSettings();
+  reloadBrowser();
 }
 
 BrowserTab::~BrowserTab()
@@ -74,6 +78,9 @@ BrowserTab::~BrowserTab()
 
 void BrowserTab::reloadSettings()
 {
+  //remembe the current item
+  QString current = m_cbSchema->currentText();
+
   m_cbSchema->clear();
 
   QMap<QString, Schema> map = m_settings->schemas();  
@@ -82,6 +89,18 @@ void BrowserTab::reloadSettings()
   {
     m_cbSchema->insertItem(it.key());
   }
+
+  //sets the current item
+  for(int i = 0; i < m_cbSchema->count(); ++i)
+  {
+    if(m_cbSchema->text(i) == current)
+    {
+      m_cbSchema->setCurrentText(current);
+    }
+  }
+
+  //update the current item settings
+  m_settings->setCurrentSchemaName(m_cbSchema->currentText());  
 }
 
 void BrowserTab::slotConfigureSchemas()
@@ -95,10 +114,9 @@ void BrowserTab::slotConfigureSchemas()
     m_settings->setCurrentSchemaName(dialog->currentSchemaName());
     m_settings->writeConfig();
 
-    m_loader->update(m_settings->schema(m_settings->currentSchemaName()));
-  }
-
-  reloadSettings();
+    reloadSettings();
+    reloadBrowser();
+  }  
 
   delete dialog;  
 }
@@ -112,6 +130,22 @@ void BrowserTab::slotGotoFileLine(const KURL& url, int line)
 {
   activateDocument(url);
   m_app->activeMainWindow()->viewManager()->activeView()->setCursorPosition(line-1, 0);
+}
+
+void BrowserTab::slotSchemaChanged(int)
+{
+  m_settings->setCurrentSchemaName(m_cbSchema->currentText());
+  reloadBrowser();
+}
+
+void BrowserTab::reloadBrowser()
+{
+  m_browserList->clear();
+  m_loader->clear();
+  if(m_settings->schemas().count() > 0)
+  {
+    m_loader->update(m_settings->schema(m_settings->currentSchemaName()));
+  }
 }
 
 void BrowserTab::activateDocument(const KURL& url)

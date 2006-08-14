@@ -46,11 +46,13 @@ protected slots:
 
 private slots:
   void slotGotoFileLine(const KURL&, int);
-
+  void slotSchemaChanged(int);
 private:
   void reloadSettings();
 
   void activateDocument(const KURL&);
+
+  void reloadBrowser();
 
   Kate::Application* m_app;
 
