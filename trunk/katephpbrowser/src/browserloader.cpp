@@ -25,28 +25,101 @@
 #include "browserlistview.h"
 #include "browsernode.h"
 #include <kfileitem.h>
+#include <qfileinfo.h> 
 
 #include "phpbrowserparser.h"
+#include <kdirwatch.h>
 
 
 BrowserLoader::BrowserLoader(BrowserTab* tab)
-  : m_browserTab(tab)
+  : m_browserTab(tab), m_dirWatch(0)
 {
+  init();
+
 }
 
 BrowserLoader::~BrowserLoader()
 {
+  delete m_dirWatch;
+}
+
+void BrowserLoader::init()
+{
+  m_dirWatch = new KDirWatch();
+  connect(m_dirWatch, SIGNAL(dirty(const QString &)),
+      this, SLOT(slotDirty(const QString &)));
+
+  connect(m_dirWatch, SIGNAL(created(const QString &)),
+      this, SLOT(slotCreated(const QString &)));
+
+  connect(m_dirWatch, SIGNAL(deleted(const QString &)),
+      this, SLOT(slotDeleted(const QString &)));
+
+  m_dirWatch->startScan(true);
+}
+
+void BrowserLoader::clear()
+{
+  delete m_dirWatch;
+  init();
 }
 
 void BrowserLoader::update(const Schema& schema)
 {
   m_dirlist = schema.directoryList();
 
-  if(m_dirlist.count() == 0) return;
 
-  m_currentURL = m_dirlist.front();
-  m_dirlist.pop_front();
-  processDirectories();
+  if(m_dirlist.count() != 0)
+  {
+    m_currentURL = m_dirlist.front();
+    m_dirlist.pop_front();
+
+    processDirectories();
+
+    if(!m_dirWatch->contains(m_currentURL.path()))
+    {
+      m_dirWatch->addDir(m_currentURL.path(), true);
+    }
+  }  
+}
+
+void BrowserLoader::slotDirty(const QString& path)
+{
+  if(QFileInfo(path).isDir())
+  {
+    m_currentURL = KURL::fromPathOrURL(path);
+    processDirectories();
+  }
+  else
+  {
+    loadFile(KURL::fromPathOrURL(path));
+  } 
+}
+
+void BrowserLoader::slotCreated(const QString& path)
+{
+  if(QFileInfo(path).isDir())
+  {
+    m_currentURL = KURL::fromPathOrURL(path);
+    processDirectories();
+  }
+  else
+  {
+    loadFile(KURL::fromPathOrURL(path));
+  }
+}
+
+void BrowserLoader::slotDeleted(const QString& path)
+{  
+  if(QFileInfo(path).isDir())
+  {
+    m_currentURL = KURL::fromPathOrURL(path);
+    processDirectories();
+  }
+  else
+  {
+    loadFile(KURL::fromPathOrURL(path));
+  }
 }
 
 void BrowserLoader::processDirectories()
@@ -68,14 +141,18 @@ void BrowserLoader::slotResult(KIO::Job *job)
 {
 	if (job && job->error())
   {
-		//job->showErrorDialog();
-    //ops!
+		job->showErrorDialog();
+    return;
   }
 
   if(m_dirlist.count() != 0) 
   {    
     m_currentURL = m_dirlist.front();
     m_dirlist.pop_front();
+    if(!m_dirWatch->contains(m_currentURL.path()))
+    {
+      m_dirWatch->addDir(m_currentURL.path(), true);
+    }
     processDirectories();
   }
 }
@@ -85,25 +162,38 @@ void BrowserLoader::slotRedirection(KIO::Job *, const KURL & url)
 	m_currentURL = url;
 }
 
-void BrowserLoader::slotEntries(KIO::Job *, const KIO::UDSEntryList &entries)
+void BrowserLoader::slotEntries(KIO::Job * job, const KIO::UDSEntryList &entries)
 {
+  if (job && job->error())
+  {
+    job->showErrorDialog();
+    return;
+  }
+
 	KIO::UDSEntryListConstIterator it = entries.begin();
 	KIO::UDSEntryListConstIterator end = entries.end();
-
-  PHPBrowserParser parser;
+  
   for (; it != end; ++it)
   {
     KFileItem file(*it, m_currentURL, false /* no mimetype detection */, true);
-    if (!file.isDir() && (file.url().filename().right(4) == ".php"))
-    {   
-      KURL url = file.url();
-      QValueList<BrowserNode*> list = parser.parseURL(file.url());
-      if(list.count() > 0)
-      { 
-        m_browserTab->listView()->loadFileNodes(file.url(), list);
-      }
+    if(!file.isDir() && (file.url().filename().right(4) == ".php"))
+    {
+      loadFile(file.url());
     }
 	}
+}
+
+void BrowserLoader::loadFile(const KURL& url)
+{  
+  if(!m_dirWatch->contains(url.path()))
+  {
+    m_dirWatch->addFile(url.path());
+  }
+
+  PHPBrowserParser parser;
+
+  QPtrList<BrowserNode> list = parser.parseURL(url);
+  m_browserTab->listView()->addFileNodes(url, list);
 }
 
 #include "browserloader.moc"

@@ -33,6 +33,7 @@ namespace KIO { class Job; }
 
 class BrowserTab;
 class BrowserNode;
+class KDirWatch;
 
 class BrowserLoader : public QObject
 {
@@ -43,16 +44,26 @@ public:
 
   void update(const Schema&);
 
+  void clear();
 private slots:
   void slotResult(KIO::Job*);
   void slotRedirection(KIO::Job*, const KURL &);
   void slotEntries(KIO::Job*, const KIO::UDSEntryList &);
 
+  void slotDirty(const QString&);
+  void slotCreated(const QString&);
+  void slotDeleted(const QString&);
+
 private:
+  void init();
   void processDirectories();
+
+  void loadFile(const KURL&);
 
   BrowserTab* m_browserTab;
   
+  KDirWatch* m_dirWatch;
+
   KURL m_currentURL;
   QMap<KURL, QValueList<BrowserNode*> > m_nodeMap; //<fileurl, nodeList>
   DirectoryList_t m_dirlist;
