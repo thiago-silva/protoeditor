@@ -171,7 +171,8 @@ class_member
 access_member!
   : a:access_modifier (s:T_STATIC)? 
       (
-          v:vars (~(T_TERMINATOR|T_VARIABLE))* T_TERMINATOR! {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
+          //the negated (T_VARIABLE|T_IDENTIFIER) must be here to fix nondeterminism
+          v:vars (~(T_TERMINATOR|T_VARIABLE|T_IDENTIFIER))* T_TERMINATOR! {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
         | (T_ABSTRACT!)? m:function_decl {#access_member = #([T_FUNCTION,"function"], (m, a));}
       )
   | T_ABSTRACT (aa:access_modifier)? mm:function_decl {#access_member = #([T_FUNCTION,"function"], (mm, aa));}
@@ -198,13 +199,18 @@ var_attr!
   {#var_attr = #([T_VAR, "var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS, "mods:"], [T_PUBLIC,"public"])));}
   ;
 
+// T_IDENTIFIER must be here for "$somev = null"
 vars
-  : (T_VARIABLE)+
+  : (T_VARIABLE | T_IDENTIFIER!)+
   ;
 
 const_attr!
-  : c:T_CONST i:T_IDENTIFIER (~(T_TERMINATOR))+ T_TERMINATOR
+  : c:T_CONST i:identifiers T_TERMINATOR
   {#const_attr = #(c, i);}
+  ;
+
+identifiers
+  : (T_IDENTIFIER)+
   ;
 
 function_decl
