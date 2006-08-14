@@ -38,7 +38,7 @@ PHPBrowserParser::~PHPBrowserParser()
 {
 }
 
-QValueList<BrowserNode*> PHPBrowserParser::parseURL(const KURL& url)
+QPtrList<BrowserNode> PHPBrowserParser::parseURL(const KURL& url)
 {
   QFile file(url.path());
   file.open(IO_ReadOnly);
@@ -51,7 +51,7 @@ QValueList<BrowserNode*> PHPBrowserParser::parseURL(const KURL& url)
 
   PHPBrowserParser parser;
 
-  QValueList<BrowserNode*> list;
+  QPtrList<BrowserNode> list;
   try 
   {
     PHPLexer lexer(s);
@@ -67,7 +67,7 @@ QValueList<BrowserNode*> PHPBrowserParser::parseURL(const KURL& url)
 
     if(astree)
     {
-//       std::cerr << astree->toStringTree() << std::endl << std::endl;
+//       std::cerr << "\n\n" << astree->toStringTree() << std::endl << std::endl;
   
       PHPNodeWalker walker(url);
       list = walker.start(astree);      

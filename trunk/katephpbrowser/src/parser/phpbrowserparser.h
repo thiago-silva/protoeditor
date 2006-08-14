@@ -21,7 +21,7 @@
 #define PHPBROWSERPARSER_H
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <qptrlist.h>
 
 class KURL;
 class BrowserNode;
@@ -32,7 +32,7 @@ public:
   PHPBrowserParser();
   ~PHPBrowserParser();
 
-  QValueList<BrowserNode*> parseURL(const KURL&);
+  QPtrList<BrowserNode> parseURL(const KURL&);
 };
 
 #endif

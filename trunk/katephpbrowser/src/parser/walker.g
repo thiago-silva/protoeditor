@@ -19,7 +19,7 @@
                                                                            */ 
 
 header {
-  #include <qvaluelist.h>
+  #include <qptrlist.h>
   #include "browsernode.h"
   #include "PHPAST.hpp"
 
@@ -45,8 +45,10 @@ options {
     KURL m_url;
 }
 
-start returns [QValueList<BrowserNode*> list]
-{BrowserNode* c;}
+start returns [QPtrList<BrowserNode> list]
+{
+  BrowserNode* c;
+}
   :  #(T_PHP_MODULE 
         (
           c=root_stuff {list.append(c);}
