@@ -55,7 +55,7 @@ void PluginKatePHPBrowser::addView(Kate::MainWindow *win)
   Kate::ToolViewManager *tool_view_manager = win->toolViewManager();
 
   QWidget* dock = tool_view_manager->createToolView("kate_plugin_phpbrowser",
-      Kate::ToolViewManager::Left, SmallIcon("gear"), i18n("PHP Browser"));
+      Kate::ToolViewManager::Left, SmallIcon("phpbrowser"), i18n("PHP Browser"));
 
   (void)new BrowserTab(application(), dock);
 

@@ -20,7 +20,7 @@
 #ifndef BROWSERNODE_H
 #define BROWSERNODE_H
 
-#include <qvaluelist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 #include <kurl.h>
 
@@ -54,9 +54,11 @@ public:
   bool isStatic() const;
 
   void addChild(BrowserNode*);
-  void setChilds(QValueList<BrowserNode*>);
-  QValueList<BrowserNode*> childs() const;
+  void setChilds(QPtrList<BrowserNode>);
+  QPtrList<BrowserNode> childs() const;
 
+  void setError(bool);
+  bool hasError();
 private:
   QString m_name;
   int m_type;
@@ -64,7 +66,8 @@ private:
   int m_line;
   int m_visibility;
   bool m_static;
-  QValueList<BrowserNode*> m_childs;
+  bool m_hasError;
+  QPtrList<BrowserNode> m_childs;
 };
 
 #endif

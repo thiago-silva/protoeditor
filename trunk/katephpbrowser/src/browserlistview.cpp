@@ -294,48 +294,42 @@ void BrowserListView::movableDropEvent(QListViewItem* parent_, QListViewItem* af
 }
 
 
-void BrowserListView::addFileNodes(const KURL& url, QPtrList<BrowserNode> list)
+void BrowserListView::addFileNode(BrowserNode* root)
 {
   BrowserListViewItem* folder = 0;
   BrowserListViewItem* item   = 0;
 
-  if(m_map.contains(url))
+  if(m_map.contains(root->fileURL()))
   {
 
-    item = m_map[url].first;
+    item = m_map[root->fileURL()].first;
     item->clear();
 
-    //get the folder where the item is    
+    //get the folder where the item is (if any)
     folder = dynamic_cast<BrowserListViewItem*>(item->parent());
 
     //remove the old list
-    QPtrList<BrowserNode> oldlist = m_map[url].second;
+    QPtrList<BrowserNode> oldlist = m_map[root->fileURL()].second;
     oldlist.setAutoDelete(true);
     oldlist.clear();    
   }
 
-  if(list.count() == 0)
-  {
-    m_map.erase(url);
-    return;
-  }
-  else
-  {
-    m_map[url].second = list;
-  }
+  m_map[root->fileURL()].second = root->childs();
 
   if(!item)
   {
     if(folder)
     {
-      item = new BrowserListViewItem(folder, url);
+      item = new BrowserListViewItem(folder, root->fileURL());
     }
     else
     {
-      item = new BrowserListViewItem(this, url);
+      item = new BrowserListViewItem(this, root->fileURL());
     }
-    m_map[url].first = item;
-  }  
+    m_map[root->fileURL()].first = item;
+  }
+
+  QPtrList<BrowserNode> list = root->childs();
 
   for(BrowserNode* node = list.last(); node; node = list.prev())
   {
@@ -360,13 +354,13 @@ void BrowserListView::addNode(BrowserNode* node, BrowserListViewItem* parent)
   QString name = node->name();
   item->setText(0, name);
 
-  QValueList<BrowserNode*> list = node->childs();
+  QPtrList<BrowserNode> list = node->childs();
 
   if(list.count() > 0)
   {
-    for(QValueList<BrowserNode*>::iterator it = list.fromLast(); it != list.end(); --it)
+    for(BrowserNode* node = list.last(); node; node = list.prev())
     {
-      addNode(*it, item);
+      addNode(node, item);
     }
   }
 }

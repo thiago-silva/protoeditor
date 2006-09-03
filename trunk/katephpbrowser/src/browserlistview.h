@@ -35,7 +35,7 @@ public:
   BrowserListView(QWidget*, const char* = 0);
   ~BrowserListView();
 
-  void addFileNodes(const KURL&, QPtrList<BrowserNode>);
+  void addFileNode(BrowserNode*);
 
   void clear();
 signals:

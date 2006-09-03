@@ -192,8 +192,8 @@ void BrowserLoader::loadFile(const KURL& url)
 
   PHPBrowserParser parser;
 
-  QPtrList<BrowserNode> list = parser.parseURL(url);
-  m_browserTab->listView()->addFileNodes(url, list);
+  BrowserNode* root = parser.parseURL(url);
+  m_browserTab->listView()->addFileNode(root);
 }
 
 #include "browserloader.moc"

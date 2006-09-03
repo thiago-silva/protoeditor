@@ -28,6 +28,7 @@
 #include "PHPNodeWalker.hpp"
 
 #include <qfile.h>
+#include <qptrlist.h>
 
 PHPBrowserParser::PHPBrowserParser()
 {
@@ -38,7 +39,7 @@ PHPBrowserParser::~PHPBrowserParser()
 {
 }
 
-QPtrList<BrowserNode> PHPBrowserParser::parseURL(const KURL& url)
+BrowserNode* PHPBrowserParser::parseURL(const KURL& url)
 {
   QFile file(url.path());
   file.open(IO_ReadOnly);
@@ -50,10 +51,15 @@ QPtrList<BrowserNode> PHPBrowserParser::parseURL(const KURL& url)
   RefPHPAST astree;
 
   PHPBrowserParser parser;
+  
+  BrowserNode* root = new BrowserNode();
+  root->setFileURL(url);
+  root->setName(url.filename());
 
-  QPtrList<BrowserNode> list;
   try 
   {
+    QPtrList<BrowserNode> list;
+
     PHPLexer lexer(s);
     PHPParser parser(lexer);
     
@@ -71,9 +77,13 @@ QPtrList<BrowserNode> PHPBrowserParser::parseURL(const KURL& url)
   
       PHPNodeWalker walker(url);
       list = walker.start(astree);      
+      root->setChilds(list);
     }
   }
-  catch (exception& e) { }    
-
-  return list;
+  catch (exception& e) 
+  { 
+    root->setError(true);
+  }
+  
+  return root;
 }

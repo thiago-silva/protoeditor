@@ -50,7 +50,7 @@ BrowserTab::BrowserTab(Kate::Application *app, QWidget* parent,const char* name)
   hbox->addWidget(m_cbSchema);
 
   m_btConfig = new QToolButton(this);
-  m_btConfig->setIconSet(SmallIcon("gear"));  
+  m_btConfig->setIconSet(SmallIcon("configure"));  
   m_btConfig->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, m_btConfig->sizePolicy().hasHeightForWidth()));
   hbox->addWidget(m_btConfig);
 

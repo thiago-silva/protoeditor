@@ -13,7 +13,7 @@ noinst_HEADERS = phpbrowserparser.h PHPAST.hpp
 
 lexer_g       = lexer.g
 parser_g      = parser.g
-walker_g       = walker.g
+walker_g      = walker.g
 
 EXTRA_DIST = $(lexer_g) $(parser_g) $(walker_h)
 
@@ -25,9 +25,8 @@ CLEANFILES = PHPLexer.cpp PHPLexer.hpp PHPParser.cpp PHPParser.hpp \
 PHPLexer.cpp: $(srcdir)/$(lexer_g)
 	$(ANTLR_BIN) $(srcdir)/$(lexer_g)
 
-PHPParser.cpp: $(srcdir)/$(parser_g) PHPLexer.cpp
+PHPParser.cpp: PHPLexer.cpp $(srcdir)/$(parser_g)
 	$(ANTLR_BIN) $(srcdir)/$(parser_g)
 
-PHPNodeWalker.cpp: $(srcdir)/$(walker_g) PHPParser.cpp
+PHPNodeWalker.cpp: PHPParser.cpp $(srcdir)/$(walker_g)
 	$(ANTLR_BIN) $(srcdir)/$(walker_g)
-

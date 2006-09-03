@@ -51,11 +51,13 @@ public:
 
   void clear();
 private:
-  void loadPixmap(BrowserNode*);
+  void load(BrowserNode*);
+  bool isClassLevel();
 
   int m_line;
   KURL m_url;
   bool m_isFolder;
+  bool m_isClassLevel;
 };
 
 #endif

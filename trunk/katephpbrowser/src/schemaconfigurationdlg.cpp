@@ -228,8 +228,8 @@ void SchemaConfigurationDialog::addRecursive(const QString& path)
       QDir other(*it);
       if(dir.isReadable() && ((*it) != ".") && ((*it) != ".."))
       {
-        addDirectory(path + other.absPath());
-        addRecursive(path + other.absPath());
+        addDirectory(path + "/" + other.path());
+        addRecursive(path + "/" + other.path());
       }
     }
   }

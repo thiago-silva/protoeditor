@@ -21,7 +21,7 @@
 #include "browsernode.h"
 
 BrowserNode::BrowserNode()
-  : m_name(),m_type(0), m_url(), m_line(0), m_visibility(0), m_static(false)
+  : m_name(),m_type(0), m_url(), m_line(0), m_visibility(0), m_static(false), m_hasError(false)
 {
 }
 
@@ -104,15 +104,26 @@ void BrowserNode::addChild(BrowserNode* node)
   m_childs.append(node);
 }
 
-void BrowserNode::setChilds(QValueList<BrowserNode*> list)
+void BrowserNode::setChilds(QPtrList<BrowserNode> list)
 {
   m_childs = list;
 }
 
-QValueList<BrowserNode*> BrowserNode::childs() const
+QPtrList<BrowserNode> BrowserNode::childs() const
 {
   return m_childs;
 }
+
+void BrowserNode::setError(bool val)
+{
+  m_hasError = val;
+}
+
+bool BrowserNode::hasError()
+{
+  return m_hasError;
+}
+
 
 // BrowserNode& BrowserNode::operator=(const BrowserNode& right)
 // {
