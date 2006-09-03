@@ -304,7 +304,7 @@ void BrowserListView::addFileNode(BrowserNode* root)
   if(m_map.contains(root->fileURL()))
   {
 
-    item = m_map[root->fileURL()].first;
+    item = m_map[root->fileURL()].first;    
     item->clear();
 
     //get the folder where the item is (if any)
@@ -345,9 +345,17 @@ void BrowserListView::addFileNode(BrowserNode* root)
 
   QPtrList<BrowserNode> list = root->childs();
 
-  for(BrowserNode* node = list.last(); node; node = list.prev())
+  if(root->hasError())
   {
-    addNode(node, item);
+    item->hasError(true);
+  }
+  else
+  {
+    item->hasError(false);
+    for(BrowserNode* node = list.last(); node; node = list.prev())
+    {
+      addNode(node, item);
+    }
   }
 
   reexpandItems();

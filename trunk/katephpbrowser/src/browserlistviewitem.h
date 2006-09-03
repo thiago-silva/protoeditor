@@ -51,6 +51,7 @@ public:
 
   BrowserListViewItem* lastItem();
 
+  void hasError(bool);
   void clear();
 private:
   void load(BrowserNode*);

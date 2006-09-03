@@ -174,3 +174,15 @@ void BrowserListViewItem::clear()
     item = firstChild();
   }
 }
+
+void BrowserListViewItem::hasError(bool v)
+{
+  if(v)
+  {
+    setPixmap(0, SmallIcon("stop"));
+  }
+  else
+  {
+    setPixmap(0, SmallIcon("source_php"));
+  }
+}

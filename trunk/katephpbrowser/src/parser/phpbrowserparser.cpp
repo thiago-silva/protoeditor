@@ -80,7 +80,7 @@ BrowserNode* PHPBrowserParser::parseURL(const KURL& url)
       root->setChilds(list);
     }
   }
-  catch (exception& e) 
+  catch (...) 
   { 
     root->setError(true);
   }

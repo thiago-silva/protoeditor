@@ -37,6 +37,7 @@ options {
   genHashLines=false;//no #line in the generated code
   testLiterals = true;
   noConstructors=true;
+  defaultErrorHandler=false;
 }
 
 tokens {
