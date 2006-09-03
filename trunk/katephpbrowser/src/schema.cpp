@@ -66,3 +66,13 @@ const DirectoryList_t Schema::directoryList() const
 {
   return m_directoryList;
 }
+
+void Schema::setFolderStructure(const QMap<QString, QStringList>& map)
+{
+  m_folderStructure = map;
+}
+
+QMap<QString, QStringList> Schema::folderStructure()
+{
+  return m_folderStructure;
+}

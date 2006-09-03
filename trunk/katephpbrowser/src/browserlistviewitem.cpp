@@ -140,6 +140,21 @@ QString BrowserListViewItem::stringPath()
   return str;
 }
 
+QStringList BrowserListViewItem::folderChilds()
+{
+  QStringList l;
+  if(isFolder())
+  {
+    BrowserListViewItem* child = dynamic_cast<BrowserListViewItem*>(firstChild());
+    while(child)
+    {
+      l << child->text(0);
+      child = dynamic_cast<BrowserListViewItem*>(child->nextSibling());
+    }
+  }
+  return l;
+}
+
 BrowserListViewItem* BrowserListViewItem::lastItem()
 {
   QListViewItem *item =  firstChild();

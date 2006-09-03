@@ -53,6 +53,7 @@ private:
   void activateDocument(const KURL&);
 
   void reloadBrowser();
+  void saveSettings();
 
   Kate::Application* m_app;
 
@@ -62,6 +63,9 @@ private:
 
   SchemaSettings* m_settings;
   BrowserLoader* m_loader;
+
+  QString m_currentSchemaName;
+  QMap<QString, QMap<QString, QStringList> > m_folderStructure;
 };
 
 #endif

@@ -47,6 +47,8 @@ public:
 
   QString stringPath();
 
+  QStringList folderChilds();
+
   BrowserListViewItem* lastItem();
 
   void clear();

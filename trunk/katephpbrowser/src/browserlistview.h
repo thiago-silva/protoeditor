@@ -37,6 +37,9 @@ public:
 
   void addFileNode(BrowserNode*);
 
+  QMap<QString, QStringList> folderStructure();
+  void setFolderStructure(const QMap<QString, QStringList>&);
+
   void clear();
 signals:
   void gotoFileLine(const KURL&, int);
@@ -62,7 +65,11 @@ private:
   void deleteFolder(QListViewItem*);
   bool folderExists(const QString&);
 
+//   QListViewItem* findItem(const QString&);
 
+  QMap<QString, QStringList> m_folderStructure;
+
+  QMap<QString, QListViewItem*> m_folders;
 
   QMap<KURL, QPair<BrowserListViewItem*, QPtrList<BrowserNode> > > m_map;
   QValueList<QString>    m_expanded;

@@ -36,6 +36,7 @@ public:
   QString currentSchemaName();
 
   Schema schema(const QString&);
+  void setSchema(const Schema&);
   void setSchemas(const QMap<QString, Schema>&);
   void setSchemas(const QValueList<Schema>&);
 

@@ -73,7 +73,22 @@ BrowserTab::BrowserTab(Kate::Application *app, QWidget* parent,const char* name)
 
 BrowserTab::~BrowserTab()
 {
+  saveSettings();
   delete m_settings;
+  delete m_loader;
+}
+
+void BrowserTab::saveSettings()
+{
+  m_folderStructure[m_currentSchemaName] = m_browserList->folderStructure();
+  for(QMap<QString, QMap<QString, QStringList> >::iterator it = m_folderStructure.begin();
+      it != m_folderStructure.end(); ++it)
+  {
+    Schema s = m_settings->schema(it.key());
+    s.setFolderStructure(it.data());
+    m_settings->setSchema(s);
+  }
+  m_settings->writeConfig();
 }
 
 void BrowserTab::reloadSettings()
@@ -85,9 +100,10 @@ void BrowserTab::reloadSettings()
 
   QMap<QString, Schema> map = m_settings->schemas();  
   QMap<QString, Schema>::iterator it;
-  for(it = map.begin(); it != map.end(); ++it)   
+  for(it = map.begin(); it != map.end(); ++it)
   {
     m_cbSchema->insertItem(it.key());
+    m_folderStructure[it.key()] = it.data().folderStructure();
   }
 
   //sets the current item
@@ -100,7 +116,8 @@ void BrowserTab::reloadSettings()
   }
 
   //update the current item settings
-  m_settings->setCurrentSchemaName(m_cbSchema->currentText());  
+  m_settings->setCurrentSchemaName(m_cbSchema->currentText());
+  m_currentSchemaName = m_cbSchema->currentText();
 }
 
 void BrowserTab::slotConfigureSchemas()
@@ -112,6 +129,7 @@ void BrowserTab::slotConfigureSchemas()
   {
     m_settings->setSchemas(dialog->schemas());
     m_settings->setCurrentSchemaName(dialog->currentSchemaName());
+    m_currentSchemaName = dialog->currentSchemaName();
     m_settings->writeConfig();
 
     reloadSettings();
@@ -134,17 +152,22 @@ void BrowserTab::slotGotoFileLine(const KURL& url, int line)
 
 void BrowserTab::slotSchemaChanged(int)
 {
+  m_folderStructure[m_currentSchemaName] = m_browserList->folderStructure();  
+
   m_settings->setCurrentSchemaName(m_cbSchema->currentText());
+  m_currentSchemaName = m_cbSchema->currentText();
+
   reloadBrowser();
 }
 
 void BrowserTab::reloadBrowser()
-{
+{  
   m_browserList->clear();
   m_loader->clear();
   if(m_settings->schemas().count() > 0)
   {
-    m_loader->update(m_settings->schema(m_settings->currentSchemaName()));
+    m_browserList->setFolderStructure(m_folderStructure[m_currentSchemaName]);
+    m_loader->update(m_settings->schema(m_currentSchemaName));
   }
 }
 

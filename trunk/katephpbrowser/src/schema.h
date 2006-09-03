@@ -23,6 +23,7 @@
 #include <qstring.h>
 #include <qvaluelist.h>
 #include <kurl.h>
+#include <qmap.h>
 
 typedef QValueList<KURL> DirectoryList_t;
 class Schema
@@ -39,9 +40,14 @@ public:
   void addDirectory(const KURL&);
   void setDirectoryList(const DirectoryList_t&);
   const DirectoryList_t directoryList() const;
+
+  void setFolderStructure(const QMap<QString, QStringList>&);
+  QMap<QString, QStringList> folderStructure();
+
 private:
   QString m_name;
   DirectoryList_t m_directoryList;
+  QMap<QString, QStringList> m_folderStructure;
 };
 
 #endif

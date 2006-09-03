@@ -55,6 +55,10 @@ Schema SchemaSettings::schema(const QString& name)
     return Schema();
   }
 }
+void SchemaSettings::setSchema(const Schema& s)
+{
+  m_map[s.name()] = s;
+}
 
 void SchemaSettings::setSchemas(const QMap<QString, Schema>& map)
 {
@@ -83,8 +87,12 @@ void SchemaSettings::usrWriteConfig()
   DirectoryList_t list;
   QMap<QString, Schema>::iterator it;
   QStringList slist;
+
+  QMap<QString, QStringList> folderstructure;
+  QStringList flist;
   for(it = m_map.begin(); it != m_map.end(); ++it, i++) 
   {
+    c->deleteGroup(QString("Schema_%1").arg(i));
     c->setGroup(QString("Schema_%1").arg(i));
      
     c->writeEntry("SchemaName", it.key());
@@ -95,8 +103,22 @@ void SchemaSettings::usrWriteConfig()
     }     
     c->writeEntry("Directories", slist);
     slist.clear();
+
+    //folder structures
+    folderstructure = it.data().folderStructure();    
+    int j = 0;
+    for(QMap<QString, QStringList>::iterator fit = folderstructure.begin(); fit !=
+        folderstructure.end(); ++fit, j++)
+    {
+      flist << fit.key();
+      flist += fit.data();
+      c->writeEntry(QString("FolderStructure_%1").arg(j), flist);
+      flist.clear();
+    }
+    folderstructure.clear();    
   }
 
+  //remove pending
   QString group = QString("Schema_%1").arg(i);
   while(c->hasGroup(group)) 
   {
@@ -110,8 +132,10 @@ void SchemaSettings::usrReadConfig()
 {
   KConfig* c = config();
   int i = 0;
+  int j = 0;
   QString name;
   QStringList dirs;
+  QMap<QString, QStringList> folders;
 
   QString group = QString("Schema_%1").arg(i);
   while(c->hasGroup(group)) 
@@ -120,10 +144,24 @@ void SchemaSettings::usrReadConfig()
 
     name = c->readEntry("SchemaName");
     dirs = c->readListEntry("Directories");
-    m_map[name] = Schema(name, dirs);
-
+    
+    Schema s(name, dirs);
+    
+    j = 0;
+    while(c->hasKey(QString("FolderStructure_%1").arg(j)))
+    {
+      QStringList s = c->readListEntry(QString("FolderStructure_%1").arg(j));
+      QString fname = s.first();
+      s.pop_front();
+      folders[fname] = s;
+      j++;
+    }
+    
+    s.setFolderStructure(folders);
+    folders.clear();
+    m_map[name] = s;
+    
     i++;
-
     group = QString("Schema_%1").arg(i);
   }
 }

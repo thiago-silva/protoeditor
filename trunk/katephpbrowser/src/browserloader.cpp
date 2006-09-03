@@ -66,8 +66,9 @@ void BrowserLoader::clear()
 
 void BrowserLoader::update(const Schema& schema)
 {
-  m_dirlist = schema.directoryList();
+  clear();
 
+  m_dirlist = schema.directoryList();
 
   if(m_dirlist.count() != 0)
   {

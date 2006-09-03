@@ -196,14 +196,16 @@ BrowserListViewItem* BrowserListView::getItemFromPath(QString path)
 
 void BrowserListView::createFolder(const QString& folderName)
 {
+  BrowserListViewItem* nitem = 0;
   if(folderExists(folderName))
   {
-    KMessageBox::sorry(0, i18n("Folder \"") + folderName + i18n("\" already exists"));
+    KMessageBox::sorry(0, i18n("Folder \"") + folderName + i18n("\" already exists"));    
   }
   else
-  {
-    BrowserListViewItem* nitem;
+  {    
     nitem = new BrowserListViewItem(this, folderName);
+
+    m_folders[folderName] = nitem;
 
     QListViewItem* after = lastRootItem();
     if(after)
@@ -329,6 +331,18 @@ void BrowserListView::addFileNode(BrowserNode* root)
     m_map[root->fileURL()].first = item;
   }
 
+  //put in the right folder
+  for(QMap<QString, QStringList>::iterator it = m_folderStructure.begin(); it != m_folderStructure.end(); ++it)
+  {
+    for(QStringList::iterator lit = it.data().begin(); lit != it.data().end(); ++lit)
+    {
+      if(item->text(0) == *lit)
+      {
+        moveItem(item, m_folders[it.key()],0);
+      }
+    }
+  }
+
   QPtrList<BrowserNode> list = root->childs();
 
   for(BrowserNode* node = list.last(); node; node = list.prev())
@@ -375,6 +389,34 @@ BrowserListViewItem* BrowserListView::lastRootItem()
   return dynamic_cast<BrowserListViewItem*>(item);  
 }
 
+QMap<QString, QStringList> BrowserListView::folderStructure()
+{
+  QMap<QString, QStringList> map;
+
+  QString s;
+  BrowserListViewItem* child = dynamic_cast<BrowserListViewItem*>(firstChild());
+  while(child)
+  {
+    if (child->isFolder())
+    {
+      map[child->text(0)] = child->folderChilds();
+    }
+    child = dynamic_cast<BrowserListViewItem*>(child->nextSibling());
+  }
+  return map;
+}
+
+void BrowserListView::setFolderStructure(const QMap<QString, QStringList>& map)
+{
+  m_folderStructure = map;
+
+  QMap<QString, QStringList>::const_iterator it;
+  for(it = map.begin(); it != map.end(); ++it)
+  {
+    createFolder(it.key());
+  }
+}
+
 void BrowserListView::clear()
 {
   QMap<KURL, QPair<BrowserListViewItem*, QPtrList<BrowserNode> > >::iterator it;
@@ -384,8 +426,26 @@ void BrowserListView::clear()
     oldlist.setAutoDelete(true);
     oldlist.clear();
   }
+
   m_map.clear();
+  m_folders.clear();
+  m_folderStructure.clear();
+
   KListView::clear();
 }
+
+// QListViewItem* BrowserListView::findItem(const QString& name)
+// {
+//   QListViewItem* item = firstChild();
+//   while(item)
+//   {
+//     if(item->text(0) == name)
+//     {
+//       return item;
+//     }
+//     item = item->nextSibling();
+//   }
+//   return 0;
+// }
 
 #include "browserlistview.moc"
