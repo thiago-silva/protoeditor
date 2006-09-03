@@ -111,7 +111,7 @@ void BrowserListView::slotContextMenuRequested(QListViewItem* item, const QPoint
       break;
     case RenameFolder:
       folderName = KInputDialog::getText(i18n("New Folder"), i18n("Folder name:"), 
-                      QString::null, &ok);
+                      item->text(0), &ok);
       if(folderExists(folderName))
       {
         KMessageBox::sorry(0, i18n("Folder \"") + folderName + i18n("\" already exists"));
