@@ -134,7 +134,7 @@ T_VARIABLE
 options {
   paraphrase = "T_VARIABLE";
 }
-  : '$' T_IDENTIFIER
+  : '$'! T_IDENTIFIER
   {
     if(!php_context) {
       $setType(antlr::Token::SKIP);
