@@ -15,7 +15,7 @@ lexer_g       = $(srcdir)/lexer.g
 parser_g      = $(srcdir)/parser.g
 walker_g      = $(srcdir)/walker.g
 
-EXTRA_DIST = $(lexer_g) $(parser_g) $(walker_h)
+EXTRA_DIST = $(lexer_g) $(parser_g) $(walker_g)
 
 CLEANFILES = PHPLexer.cpp PHPLexer.hpp PHPParser.cpp PHPParser.hpp \
              PHPNodeWalker.cpp PHPNodeWalker.hpp PHPParserTokenTypes.hpp \
