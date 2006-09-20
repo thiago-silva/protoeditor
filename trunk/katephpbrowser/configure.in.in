@@ -1,6 +1,36 @@
 #MIN_CONFIG(3.2.0)
 
-AM_INIT_AUTOMAKE(katephpbrowser, 0.1)
+AM_INIT_AUTOMAKE(katephpbrowser, 0.1beta)
 AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
 
+
+dnl------------------------------
+dnl Checks for ANTLR
+dnl------------------------------
+
+AC_ARG_WITH(antlr,
+    [  --with-antlr=PATH  ANTLR base path (ex: /usr/local)],
+[
+  AC_PATH_PROG(ANTLR, "${antlr}/bin/antlr", no, $withval)
+  ANTLR_BIN="${ANTLR}"
+],
+[
+  AC_PATH_PROG(ANTLR, antlr)
+  ANTLR_BIN="antlr"
+])
+
+if test "x${ANTLR}" != "x"; then
+  ANTLR_LIB=`${ANTLR_BIN}-config --libs`
+  ANTLR_INC=`${ANTLR_BIN}-config --cflags`
+  
+  AC_SUBST(ANTLR_BIN)
+  AC_SUBST(ANTLR_INC)
+  AC_SUBST(ANTLR_LIB)
+else
+  AC_MSG_ERROR(
+  [
+    The "antlr" executable wasn't found in your system.
+    See the INSTALL file.    
+  ])  
+fi
