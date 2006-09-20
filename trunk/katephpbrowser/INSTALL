@@ -1,3 +1,24 @@
+Quick Installation
+==================
+
+1 - Make sure you have antlr v ~2.7.6 (www.antlr.org) installed.
+    The executable "antlr" should be in your PATH.
+
+2 - Now build it
+
+  $ ./configure
+  $ make
+  # make install
+
+  Notes:
+
+  Additionally, one can inform the antlr path using "--with-antlr" flag when executing
+  the configure (ie "--with-antlr=/usr/local")
+
+  The "antlr" executable usually is just a bash script executing "java antlr.Tool".
+  In Debian, this script is named "runantlr", so a symbolic link should solve the
+  problem.
+
 Basic Installation
 ==================
 
