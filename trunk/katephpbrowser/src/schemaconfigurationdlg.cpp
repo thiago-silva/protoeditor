@@ -312,9 +312,21 @@ void SchemaConfigurationDialog::slotNewSchema()
 void SchemaConfigurationDialog::slotSaveSchema()
 {
   QString oldname = m_schema.name();
+  if(m_schemaListView->childCount() == 0)
+  {
+    KMessageBox::sorry(this, i18n("Resource has no directories"));
+    return;
+  }
+
+  if(m_edName->text().isEmpty())
+  {
+    KMessageBox::sorry(this, i18n("Resource has no name"));
+    return;
+  }
+
   if(oldname.isEmpty() && m_map.contains(m_edName->text()))
   {
-    KMessageBox::sorry(this, i18n("Schema \"") + m_edName->text() + i18n("\" already exists"));
+    KMessageBox::sorry(this, i18n("Resource \"") + m_edName->text() + i18n("\" already exists"));
     return;
   }
 
