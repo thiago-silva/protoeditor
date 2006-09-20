@@ -159,6 +159,7 @@ class_member
   abstract public function f();
   abstract function f();
   public abstract function f();
+  pulic final function f();
 
   ---
   var $x;
@@ -169,14 +170,19 @@ class_member
   public static $x;
   public static $x = 3;
 */
-access_member!
-  : a:access_modifier (s:T_STATIC)? 
+access_member
+  :! a:access_modifier (s:T_STATIC)? 
       (
-          //the negated (T_VARIABLE|T_IDENTIFIER) must be here to fix nondeterminism
-          v:vars (~(T_TERMINATOR|T_VARIABLE|T_IDENTIFIER))* T_TERMINATOR! {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
+          //the negated (T_VARIABLE|T_IDENTIFIER|T_ARRAY) must be here to fix nondeterminism
+          v:vars (~(T_TERMINATOR|T_VARIABLE|T_IDENTIFIER|T_ARRAY))* T_TERMINATOR! {#access_member = #([T_VAR,"var"], ([T_VARIABLES,"vars:"],v, ([T_MODIFIERS,"mods"],a, s)));}
         | (T_ABSTRACT!)? m:function_decl {#access_member = #([T_FUNCTION,"function"], (m, a));}
       )
-  | T_ABSTRACT (aa:access_modifier)? mm:function_decl {#access_member = #([T_FUNCTION,"function"], (mm, aa));}
+  | T_ABSTRACT! abs_func
+  ;
+
+abs_func!
+  : a:access_modifier m:function_decl {#abs_func = #([T_FUNCTION,"function"], (m, a));}
+  | mm:function_decl {#abs_func = #([T_FUNCTION,"function"], (mm, [T_PUBLIC,"public"]));}
   ;
 
 static_member!
@@ -187,7 +193,8 @@ static_member!
   ;
 
 access_modifier
-  : ( T_PUBLIC | T_PROTECTED | T_PRIVATE )
+  : ( T_PUBLIC | T_PROTECTED | T_PRIVATE ) (T_FINAL!)?
+  | T_FINAL! ( T_PUBLIC | T_PROTECTED | T_PRIVATE )
   ;
 
 // access_member_ex
@@ -201,8 +208,9 @@ var_attr!
   ;
 
 // T_IDENTIFIER must be here for "$somev = null"
+// T_ARRAY : $somev = array(....)
 vars
-  : (T_VARIABLE | T_IDENTIFIER!)+
+  : (T_VARIABLE | T_IDENTIFIER! | T_ARRAY! T_OPEN_PAR! (~T_CLOSE_PAR)* T_CLOSE_PAR! )+
   ;
 
 const_attr!
@@ -215,7 +223,7 @@ identifiers
   ;
 
 function_decl
-  : T_FUNCTION! T_IDENTIFIER  params function_decl_ex
+  : T_FUNCTION! (T_AMPER!)? T_IDENTIFIER  params function_decl_ex
   ;
 
 function_decl_ex

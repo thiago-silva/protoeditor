@@ -53,6 +53,9 @@ tokens {
   T_EXTENDS="extends";
   T_IMPLEMENTS="implements";  
   T_ABSTRACT="abstract";
+  T_ARRAY="array";
+  T_AMPER="&";
+  T_FINAL="final";
 
   T_PHP_MODULE;
 
@@ -249,7 +252,6 @@ SL_COMMENT
   ;
 
 ML_COMMENT
-{int line = getLine();}
   : "/*" 
     ( 
       options { generateAmbigWarnings=false; } :  
