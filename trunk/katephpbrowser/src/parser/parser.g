@@ -23,6 +23,7 @@ header {
    #include "antlr/Token.hpp"
    #include "PHPAST.hpp"
    #include "PHPParserTokenTypes.hpp"
+   #include <iostream>
   using namespace antlr;
 }
 
@@ -46,16 +47,16 @@ options {
 		if ( DEBUG_PARSER )
 		{
 			traceIndent();
-			ANTLR_USE_NAMESPACE(std)cout << "enter match(" << t << ") with LA(1)=" << LA(1)  
-        << " (LT(1)) \"" << LT(1)->getText() << "\" at line " << LT(1)->getLine() << ANTLR_USE_NAMESPACE(std)endl;
+			std::cout << "enter match(" << t << ") with LA(1)=" << LA(1)  
+        << " (LT(1)) \"" << LT(1)->getText() << "\" at line " << LT(1)->getLine() << std::endl;
 		}
 		if ( LA(1) != t )
 		{
 			if ( DEBUG_PARSER )
 			{
 				traceIndent();
-				ANTLR_USE_NAMESPACE(std)cout << "token mismatch: " << LA(1) << "!=" << t << " (LT(1)) \"" 
-          << LT(1)->getText() << "\" at line " << LT(1)->getLine() << ANTLR_USE_NAMESPACE(std)endl;
+				std::cout << "token mismatch: " << LA(1) << "!=" << t << " (LT(1)) \"" 
+          << LT(1)->getText() << "\" at line " << LT(1)->getLine() << std::endl;
 			}
 			throw MismatchedTokenException(getTokenNames(), getNumTokens(), LT(1), t, false, getFilename());
 		}
@@ -71,18 +72,18 @@ options {
 		if ( DEBUG_PARSER )
 		{
 			traceIndent();
-			ANTLR_USE_NAMESPACE(std)cout << "enter match(" << "bitset" /*<< b.toString()*/
+			std::cout << "enter match(" << "bitset" /*<< b.toString()*/
 				<< ") with LA(1)=" << LA(1) 
-        << " (LT(1)) \"" << LT(1)->getText() << "\" at line " << LT(1)->getLine() << ANTLR_USE_NAMESPACE(std)endl;
+        << " (LT(1)) \"" << LT(1)->getText() << "\" at line " << LT(1)->getLine() << std::endl;
 		}
 		if ( !b.member(LA(1)) )
 		{
 			if ( DEBUG_PARSER )
 			{
 				traceIndent();
-				ANTLR_USE_NAMESPACE(std)cout << "token mismatch: " << LA(1) << " not member of "
+				std::cout << "token mismatch: " << LA(1) << " not member of "
 					<< "bitset" /*<< b.toString() << */
-          << " (LT(1)) \"" << LT(1)->getText() << "\" at line " << LT(1)->getLine() << ANTLR_USE_NAMESPACE(std)endl;
+          << " (LT(1)) \"" << LT(1)->getText() << "\" at line " << LT(1)->getLine() << std::endl;
 			}
 			throw MismatchedTokenException(getTokenNames(), getNumTokens(), LT(1), b, false, getFilename());
 		}
