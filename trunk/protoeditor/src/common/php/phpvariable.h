@@ -68,12 +68,15 @@ private:
 class PHPArrayValue : public PHPListValue {
 public:  
 
-  PHPArrayValue(Variable* owner);
+  PHPArrayValue(Variable* owner, int size = 0);
   virtual ~PHPArrayValue();  
   
   virtual QString typeName();  
 
   virtual QString toString(int indent = 0);
+
+private:
+  int m_size;
 };
 
 class PHPObjectValue : public PHPListValue {

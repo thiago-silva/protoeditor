@@ -38,7 +38,11 @@ QString PHPVariable::compositeName()
   if(parent()) {
     cname = parent()->compositeName();
     if(parent()->value()->type() == PHPListValue::Array) {
-      cname += "['" + name() + "']";
+      if((name() != "0") && (name().toInt() == 0)) {
+        cname += "['" + name() + "']";
+      } else {
+        cname += "[" + name() + "]";
+      }
     } else {
       cname += "->" + name();
     }
@@ -122,8 +126,8 @@ int PHPListValue::type()
 
 //----------------------------------------------------------------
 
-PHPArrayValue::PHPArrayValue(Variable* owner)
-  : PHPListValue(owner, PHPListValue::Array)
+PHPArrayValue::PHPArrayValue(Variable* owner, int size)
+  : PHPListValue(owner, PHPListValue::Array), m_size(size)
 {
 }
 
@@ -133,13 +137,13 @@ PHPArrayValue::~PHPArrayValue()
 
 
 QString PHPArrayValue::typeName()
-{  
+{
   QString s = i18n("Array");
   s += "[";
-  if(m_list) {
+  if(initialized()) {
     s += QString::number(m_list->count()) + "]";
   } else {
-    s += "0]";
+    s += QString::number(m_size) + "]";
   }
 
   return s;
@@ -153,22 +157,25 @@ QString PHPArrayValue::toString(int indent)
   QString s;
 
   Variable* v;
-  for(v =  m_list->first(); v; v = m_list->next()) {
-    s += "\n";
-    s += ind;
-
-    if(v->isReference()) {
-      s += v->name() + " => &" + v->value()->owner()->name();
-    } else {
-      if(v->value()->isScalar()) {
-        s += v->name() + " => " + v->value()->toString();
+  if (!initialized()) {  
+    s = "//** NOT LOADED";
+  } else {
+    for(v =  m_list->first(); v; v = m_list->next()) {
+      s += "\n";
+      s += ind;
+  
+      if(v->isReference()) {
+        s += v->name() + " => &" + v->value()->owner()->name();
       } else {
-        s += v->name() + " = (" + v->value()->typeName() + ")";
-        s += v->value()->toString(indent+3);
+        if(v->value()->isScalar()) {
+          s += v->name() + " => " + v->value()->toString();
+        } else {
+          s += v->name() + " = (" + v->value()->typeName() + ")";
+          s += v->value()->toString(indent+3);
+        }
       }
     }
   }
-
   return s;
 }
 
