@@ -44,6 +44,8 @@
 #include <kurl.h>
 #include <kmdcodec.h>
 
+// #include <iostream>
+
 XDNet::XDNet(DebuggerXD* debugger, QObject *parent, const char *name)
     : QObject(parent, name), m_tempBreakpointId(0),
        m_site(0), m_debugger(debugger), m_con(0), m_socket(0)
@@ -233,13 +235,20 @@ void XDNet::requestWatch(const QString& expression, int ctx_id)
 
 void XDNet::requestProperty(const QString& expression, int ctx_id, int id)
 {
-  QString property_get = "property_get -n ";
+  QString property_get = "property_get -n \"";
   property_get += expression;
-  property_get += " -d ";
+  property_get += "\" -d ";
   property_get += QString::number(ctx_id);
   property_get += " -i ";
   property_get += QString::number(id);
+//   std::cerr << "sent: " << property_get << "\n<<<\n" << std::endl;
   m_socket->writeBlock(property_get, property_get.length()+1);
+}
+
+void XDNet::requestChildren(int scope, Variable* var)
+{
+  m_updateVars.append(var);
+  requestProperty(var->compositeName(), scope, ChildId);
 }
 
 void XDNet::requestBreakpoint(DebuggerBreakpoint* bp)
@@ -313,7 +322,7 @@ void XDNet::slotIncomingConnection(QSocket* socket)
   emit sigNewConnection();
 }
 
-#include <iostream>
+
 
 void XDNet::slotReadBuffer()
 {
@@ -360,7 +369,7 @@ void XDNet::slotReadBuffer()
     data[xmlSize] = 0;
     
     str.setAscii(data,xmlSize);
-    std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
+//     std::cerr << "read: " << totalread << ", datalen: [" << xmlSize << "]>>>>\n" << data << "\n<<<\n" << std::endl;
     processXML(str);
 
   }
@@ -454,6 +463,12 @@ void XDNet::processInit(QDomElement& init)
 void XDNet::processResponse(QDomElement& root)
 {  
   QString cmd = root.attribute("command");
+
+  if (root.firstChild().toElement().tagName() == "error") 
+  {
+    processError(root.firstChild().toElement());
+    return; 
+  }
 
 //   kdDebug() << "process response for cmd: " << cmd << ", status: " << root.attribute("status") << endl;
 
@@ -557,13 +572,14 @@ void XDNet::processResponse(QDomElement& root)
   else if(cmd == "context_get")
   {
     QDomNodeList list = root.childNodes();
-    XDVariableParser p;
 
+    XDVariableParser p;
     VariableList_t* array = p.parse(list);
+
     int trans = root.attributeNode("transaction_id").value().toInt();
 
     if(trans == LocalScopeId)
-    {
+    {      
       m_debugger->updateVariables(array, false);
     }
     else if(trans == GlobalScopeId)
@@ -577,7 +593,7 @@ void XDNet::processResponse(QDomElement& root)
         m_debugger->updateVariables(array, true);
       }
     } 
-    else 
+    else
     {
       error(i18n("Xdebug client: Internal error"));
     }
@@ -588,7 +604,8 @@ void XDNet::processResponse(QDomElement& root)
     XDVariableParser p;
 
     Variable* var = p.parse(nd);
-    if(root.attributeNode("transaction_id").value().toInt() == SuperGlobalId)
+    int trans = root.attributeNode("transaction_id").value().toInt();
+    if(trans == SuperGlobalId)
     {
       m_globalVars->append(var);
       m_superglobalsCount--;
@@ -597,6 +614,15 @@ void XDNet::processResponse(QDomElement& root)
       {
         m_debugger->updateVariables(m_globalVars, true);
       }
+    }
+    else if(trans == ChildId) 
+    {
+      Variable* updateVar;
+      updateVar = m_updateVars.first();
+      m_updateVars.remove();
+      VariableList_t* array = p.parseList(root.firstChild().childNodes(), updateVar, false);
+      dynamic_cast<PHPListValue*>(updateVar->value())->setList(array);
+      m_debugger->updateVariable(updateVar);
     }
     else
     {

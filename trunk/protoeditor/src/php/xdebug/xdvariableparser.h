@@ -33,11 +33,11 @@ public:
   ~XDVariableParser();
   
   VariableList_t* parse(QDomNodeList&);
-  PHPVariable* parse(QDomNode&);
+  Variable* parse(QDomNode&);
 
-private:
-  VariableList_t* parseList(const QDomNodeList& list, PHPVariable* parent);
-  PHPVariable*     parseVar(QDomNode& e, PHPVariable* parent);
+  VariableList_t* parseList(const QDomNodeList& list, Variable* parent, bool fullname = true);
+private:  
+  Variable*     parseVar(QDomNode& e, Variable* parent, bool fullname = true);
 };
 
 #endif

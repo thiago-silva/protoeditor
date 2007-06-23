@@ -66,11 +66,13 @@ public:
   virtual void addWatches(const QStringList&);
   virtual void addWatch(const QString& expression);
   virtual void removeWatch(const QString& expression);
+  virtual void getChildren(int scope, Variable* var);
 
   //Communication with XDNet
 
   void updateStack(DebuggerStack* stack);
   void updateVariables(VariableList_t*, bool);
+  void updateVariable(Variable* var);
 
   void updateWatch(Variable*);
   void updateBreakpoint(int id, const QString& filePath, int line, const QString& state, int hitcount, int skiphits,

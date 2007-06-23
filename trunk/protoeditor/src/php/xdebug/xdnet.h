@@ -49,7 +49,7 @@ public:
     LocalScopeId, //ID for requesting local variables
     GlobalScopeId, //ID for requesting global variables
     SuperGlobalId, //ID for requesting super globals
-
+    ChildId,
     ErrorStackId //ID for requesting Stack to build error data, only
   };
 
@@ -78,6 +78,7 @@ public:
   void requestWatch(const QString& expression, int ctx_id = 0);
   void requestVariables(int scope, int id);
   void requestSuperGlobals(int scope);
+  void requestChildren(int scope, Variable* var);
 
   void requestModifyVar(Variable*, int);
 
@@ -145,6 +146,8 @@ private:
   };
 
   Error            m_error; //php error  
+
+  QPtrList<Variable>     m_updateVars;
 };
 
 #endif

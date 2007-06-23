@@ -247,6 +247,11 @@ void DebuggerXD::removeWatch(const QString& expression)
   }
 }
 
+void DebuggerXD::getChildren(int scope, Variable* var)
+{
+  m_net->requestChildren(scope, var);
+}
+
 void DebuggerXD::slotSettingsChanged()
 {
   if(m_xdSettings->languageSettings()->isEnabled() && m_xdSettings->enableJIT())
@@ -361,6 +366,11 @@ void DebuggerXD::updateVariables(VariableList_t* array, bool isGlobal)
   {
     Protoeditor::self()->dataController()->updateLocalVars(array);
   }
+}
+
+void DebuggerXD::updateVariable(Variable* var)
+{
+  Protoeditor::self()->dataController()->updateVariable(var);
 }
 
 void DebuggerXD::updateWatch(Variable* var)

@@ -80,30 +80,31 @@ VariableList_t* XDVariableParser::parse(QDomNodeList& list)
   return parseList(list, 0);
 }
 
-PHPVariable* XDVariableParser::parse(QDomNode& node)
+Variable* XDVariableParser::parse(QDomNode& node)
 {
   return parseVar(node, 0);
 }
 
-VariableList_t* XDVariableParser::parseList(const QDomNodeList& list, PHPVariable* parent)
+VariableList_t* XDVariableParser::parseList(const QDomNodeList& list, Variable* parent, bool fullname)
 {
   QDomElement e;
   VariableList_t* vlist = new VariableList_t;
-  PHPVariable* var;
-  for(uint i = 0; i < list.count(); i++)
+  Variable* var;
+  uint count = list.count();
+  for(uint i = 0; i < count; i++)
   {
     e = list.item(i).toElement();
     
     if(e.attributeNode("type").value() == "uninitialized")
       continue;
 
-    var = parseVar(e, parent);
+    var = parseVar(e, parent, fullname);
     vlist->append(var);
   }
   return vlist;
 }
 
-PHPVariable* XDVariableParser::parseVar(QDomNode& node, PHPVariable* parent)
+Variable* XDVariableParser::parseVar(QDomNode& node, Variable* parent, bool fullname)
 {
   QDomElement e = node.toElement();
   
@@ -112,7 +113,8 @@ PHPVariable* XDVariableParser::parseVar(QDomNode& node, PHPVariable* parent)
   int children = e.attributeNode("numchildren").value().toInt();
   QString type = e.attributeNode("type").value();
   
-  var->setName(e.attributeNode("fullname").value());
+  QString fname = fullname?"fullname":"name";
+  var->setName(e.attributeNode(fname).value());
 
   if(type == "object")
   {
@@ -124,10 +126,13 @@ PHPVariable* XDVariableParser::parseVar(QDomNode& node, PHPVariable* parent)
   }
   else if(children)
   {
-    PHPArrayValue* arrayValue = new PHPArrayValue(var);
+    PHPArrayValue* arrayValue = new PHPArrayValue(var, children);
     var->setValue(arrayValue);
     arrayValue->setScalar(false);
-    arrayValue->setList(parseList(e.childNodes(), var));
+    if (e.childNodes().count() > 0) 
+    {
+      arrayValue->setList(parseList(e.childNodes(), var, false));
+    }
   }
   else
   {
