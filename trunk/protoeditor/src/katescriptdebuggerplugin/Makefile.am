@@ -12,8 +12,8 @@ katescriptdebuggerplugin_la_SOURCES = plugin_katescriptdebugger.cpp kateeditorui
 
 katescriptdebuggerplugin_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 
-katescriptdebuggerplugin_la_LIBADD = $(top_builddir)/src/protoeditor/libprotoeditor.la \
-	-lkateinterfaces $(LIB_KDEUI)
+katescriptdebuggerplugin_la_LIBADD = \
+	$(top_builddir)/src/protoeditor/libprotoeditor.la -lkateinterfaces $(LIB_KDEUI)
 
 pluginsdir = $(kde_datadir)/kate/plugins/katescriptdebugger
 plugins_DATA = ui.rc
