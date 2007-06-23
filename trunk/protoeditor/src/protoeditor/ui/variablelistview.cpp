@@ -162,7 +162,7 @@ void VariableListView::slotContextMenuRequested(QListViewItem* item, const QPoin
   
   switch(selection)
   {
-    case CopyVarItem:
+    case CopyVarItem:      
       clip->setText(vitem->variable()->toString(), QClipboard::Clipboard);
       break;
     case CopyValueItem:
@@ -251,6 +251,7 @@ void VariableListView::setVariables(VariableList_t* vars)
 void VariableListView::updateVariable(Variable*)
 {  
   VariableListViewItem* item = m_needChildList.first();
+
   m_needChildList.remove();
   if (item)
   {
@@ -275,35 +276,33 @@ void VariableListView::reexpandItems()
 
   QValueList<QString> paths = m_expanded;
 
-  loop:
-
-  for(it = paths.begin(); it != paths.end(); it++)
+  while (true)
   {
-    if(itemStatus(*it) != 1) // != needchild (exists or is invalid)
+    for(it = paths.begin(); it != paths.end(); it++)
     {
-      item = getItemFromPath(*it);
-      //check for existence: variable might not exist in the scope anymore
-      //check for scalar: variable (name) might have changed from list to scalar
-      if(item && !item->variable()->value()->isScalar())
+      if(itemStatus(*it) != 1) // != needchild (exists or is invalid)
       {
-        item->setOpen(true);
+        item = getItemFromPath(*it);
+        //check for existence: variable might not exist in the scope anymore
+        //check for scalar: variable (name) might have changed from list to scalar
+        
+        if(item && !item->variable()->value()->isScalar())
+        {
+          item->setOpen(true);
+        }
+        paths.remove(*it);
+        break;
       }
-      paths.remove(*it);
-      break;
+      else
+      {
+        return;
+      }
     }
-    else
+
+    if(paths.count() == 0)
     {
       return;
     }
-  }
-
-  if(paths.count() == 0)
-  {
-    return;
-  } 
-  else
-  {
-    goto loop;
   }
 }
 
