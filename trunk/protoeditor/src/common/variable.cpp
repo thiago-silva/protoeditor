@@ -159,6 +159,11 @@ VariableListValue::VariableListValue(Variable* owner)
 
 VariableListValue::~VariableListValue()
 {
+  clearList();  
+}
+
+void VariableListValue::clearList()
+{
   delete m_list; //autoDelete must be set to true;
 }
 
@@ -166,10 +171,21 @@ void VariableListValue::setList(VariableList_t* list)
 {
   m_initialized = true;
 
-  delete m_list;
+  clearList();
 
   m_list = list;
-  m_list->setAutoDelete(true);
+
+  //TODO: this must be set, but it triggers a really annoying segfault with expanded 
+  //vars in the variables listview. It only occurs with debuggers
+  //that don't send the full variables and uses needChild.
+  //Then, when a root(er) node is requested, the client uses this->setList, 
+  //invalidating all listviewitem children nodes.
+
+  //--Also, there might have some issues with the variables stack used in 
+  //lots of places (such as XDNet::m_updateVars and VariablesListView::m_needChildList).
+  //Deleting this list might invalidate objects in those too.
+
+  //   m_list->setAutoDelete(true);
 }
 
 bool VariableListValue::initialized()

@@ -117,6 +117,7 @@ public:
 
 //   virtual QString toString(int indent = 0);
 protected:  
+  void clearList();
   bool    m_initialized;
   VariableList_t* m_list;
 };
