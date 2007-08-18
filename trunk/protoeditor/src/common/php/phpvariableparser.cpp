@@ -29,6 +29,7 @@
 PHPVariableParser::PHPVariableParser(const QString& raw)
   : m_raw(raw), m_index(0)
 {
+ 
 }
 
 PHPVariableParser::~PHPVariableParser()
@@ -290,8 +291,16 @@ VariableValue* PHPVariableParser::parseValue(PHPVariable* var)
       scalarValue->setType(PHPScalarValue::Resource);
       scalarValue->set(parseResource());
       return scalarValue;
+    case '?':
+      scalarValue = new PHPScalarValue(var);
+      m_indexedVarList.append(scalarValue);
+      scalarValue->setType(PHPScalarValue::Undefined);
+      scalarValue->set("?");
+      m_index += 2;
+      return scalarValue;
     default:
-      kdDebug() << "+++++ Bug on PHPVariableParser!" << endl;
+      kdDebug() << "+++++ Bug on PHPVariableParser! > " << m_index << endl;
+      kdDebug() << m_raw.mid(0, 200) << endl;
       return 0;
   }
 }
